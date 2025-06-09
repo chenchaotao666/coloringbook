@@ -2,8 +2,8 @@
   {
     "id": "43",
     "name": "43",
-    "defaultUrl": "/src/images-mock/43-default.png",
-    "colorUrl": "/src/images-mock/43-color.png",
+    "defaultUrl": "/images-mock/43-default.png",
+    "colorUrl": "/images-mock/43-color.png",
     "title": "4:3的图片",
     "description": "4:3的图片",
     "tags": ["Nintendo", "Mario", "Cute", "Game"],
@@ -43,8 +43,8 @@
   {
     "id": "mario",
     "name": "mario",
-    "defaultUrl": "/src/images-mock/mario-default.png",
-    "colorUrl": "/src/images-mock/mario-color.png",
+    "defaultUrl": "/images-mock/mario-default.png",
+    "colorUrl": "/images-mock/mario-color.png",
     "title": "马里奥",
     "description": "经典游戏角色马里奥",
     "tags": ["Nintendo", "Mario", "Cute", "Game"],

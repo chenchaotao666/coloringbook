@@ -8,7 +8,7 @@ import protectIcon from '../images/protect.svg';
 import payMastercard from '../images/pay-mastercard.svg';
 import payVisa from '../images/pay-visa.svg';
 import payAmericanExpress from '../images/pay-americanExpress.svg';
-import payApplePay from '../images/pay-applepay.svg';
+import payApplePay from '../images/pay-applePay.svg';
 import payUnionpay from '../images/pay-unionpay.svg';
 import payClicktopay from '../images/pay-clicktopay.svg';
 

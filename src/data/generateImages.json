@@ -1,0 +1,144 @@
+{
+  "imagePool": {
+    "3:4": [
+      {
+        "thumbnail": "/src/images-mock/cat-default.png",
+        "fullSize": "/src/images-mock/cat-default.png",
+        "prompt": "Cute cat sitting peacefully"
+      },
+      {
+        "thumbnail": "/src/images-mock/cat1-default.png",
+        "fullSize": "/src/images-mock/cat1-default.png",
+        "prompt": "Another cute cat in different pose"
+      },
+      {
+        "thumbnail": "/src/images-mock/flower-default.png",
+        "fullSize": "/src/images-mock/flower-default.png",
+        "prompt": "Beautiful flower with detailed petals"
+      },
+      {
+        "thumbnail": "/src/images-mock/flower1-default.png",
+        "fullSize": "/src/images-mock/flower1-default.png",
+        "prompt": "Another blooming flower design"
+      },
+      {
+        "thumbnail": "/src/images-mock/robot-default.png",
+        "fullSize": "/src/images-mock/robot-default.png",
+        "prompt": "Futuristic robot with mechanical details"
+      }
+    ],
+    "4:3": [
+      {
+        "thumbnail": "/src/images-mock/mario-default.png",
+        "fullSize": "/src/images-mock/mario-default.png",
+        "prompt": "Classic Mario character"
+      },
+      {
+        "thumbnail": "/src/images-mock/mario1-default.png",
+        "fullSize": "/src/images-mock/mario1-default.png",
+        "prompt": "Mario in different pose"
+      },
+      {
+        "thumbnail": "/src/images-mock/cartoon-default.png",
+        "fullSize": "/src/images-mock/cartoon-default.png",
+        "prompt": "Fun cartoon character"
+      },
+      {
+        "thumbnail": "/src/images-mock/cartoon1-default.png",
+        "fullSize": "/src/images-mock/cartoon1-default.png",
+        "prompt": "Another cartoon character design"
+      },
+      {
+        "thumbnail": "/src/images-mock/spider-man-default.png",
+        "fullSize": "/src/images-mock/spider-man-default.png",
+        "prompt": "Spider-Man superhero"
+      }
+    ],
+    "1:1": [
+      {
+        "thumbnail": "/src/images-mock/robot1-default.png",
+        "fullSize": "/src/images-mock/robot1-default.png",
+        "prompt": "Advanced robot design"
+      },
+      {
+        "thumbnail": "/src/images-mock/spider-man1-default.png",
+        "fullSize": "/src/images-mock/spider-man1-default.png",
+        "prompt": "Spider-Man in action pose"
+      },
+      {
+        "thumbnail": "/src/images-mock/magician-default.jpg",
+        "fullSize": "/src/images-mock/magician-default.jpg",
+        "prompt": "Magical wizard character"
+      },
+      {
+        "thumbnail": "/src/images-mock/icecream-default.jpg",
+        "fullSize": "/src/images-mock/icecream-default.jpg",
+        "prompt": "Delicious ice cream treat"
+      },
+      {
+        "thumbnail": "/src/images-mock/unicorn-default.jpg",
+        "fullSize": "/src/images-mock/unicorn-default.jpg",
+        "prompt": "Magical unicorn with horn"
+      }
+    ]
+  },
+  "exampleImages": {
+    "text": [
+      {
+        "id": "text-1",
+        "url": "https://picsum.photos/seed/dragon-example/250/250",
+        "fullSizeUrl": "https://picsum.photos/seed/dragon-example/460/460",
+        "category": "text",
+        "prompt": "A friendly dragon breathing colorful flowers"
+      },
+      {
+        "id": "text-2",
+        "url": "https://picsum.photos/seed/princess-example/250/250",
+        "fullSizeUrl": "https://picsum.photos/seed/princess-example/460/460",
+        "category": "text",
+        "prompt": "Princess in a magical forest"
+      },
+      {
+        "id": "text-3",
+        "url": "https://picsum.photos/seed/superhero-example/250/250",
+        "fullSizeUrl": "https://picsum.photos/seed/superhero-example/460/460",
+        "category": "text",
+        "prompt": "Superhero saving the city"
+      }
+    ],
+    "image": [
+      {
+        "id": "image-1",
+        "url": "https://picsum.photos/seed/upload-example1/250/250",
+        "fullSizeUrl": "https://picsum.photos/seed/upload-example1/460/460",
+        "category": "image"
+      },
+      {
+        "id": "image-2",
+        "url": "https://picsum.photos/seed/upload-example2/250/250",
+        "fullSizeUrl": "https://picsum.photos/seed/upload-example2/460/460",
+        "category": "image"
+      },
+      {
+        "id": "image-3",
+        "url": "https://picsum.photos/seed/upload-example3/250/250",
+        "fullSizeUrl": "https://picsum.photos/seed/upload-example3/460/460",
+        "category": "image"
+      }
+    ]
+  },
+  "styleSuggestions": [
+    { "id": "cartoon", "name": "Cartoon", "category": "Style" },
+    { "id": "realistic", "name": "Realistic", "category": "Style" },
+    { "id": "anime", "name": "Anime", "category": "Style" },
+    { "id": "watercolor", "name": "Watercolor", "category": "Art" },
+    { "id": "sketch", "name": "Sketch", "category": "Art" },
+    { "id": "digital", "name": "Digital Art", "category": "Art" },
+    { "id": "vintage", "name": "Vintage", "category": "Theme" },
+    { "id": "modern", "name": "Modern", "category": "Theme" },
+    { "id": "fantasy", "name": "Fantasy", "category": "Theme" },
+    { "id": "nature", "name": "Nature", "category": "Theme" },
+    { "id": "abstract", "name": "Abstract", "category": "Style" },
+    { "id": "minimalist", "name": "Minimalist", "category": "Style" }
+  ]
+} 

@@ -1,0 +1,412 @@
+[
+  {
+    "id": "43",
+    "name": "43",
+    "defaultUrl": "/src/images-mock/43-default.png",
+    "colorUrl": "/src/images-mock/43-color.png",
+    "title": "4:3的图片",
+    "description": "4:3的图片",
+    "tags": ["Nintendo", "Mario", "Cute", "Game"],
+    "type": "text2image",
+    "ratio": "4:3",
+    "isPublic": true,
+    "createdAt": "2024-01-15T09:30:00.000Z",
+    "prompt": "经典游戏角色马里奥涂色页，包含标志性的红帽子和蓝色工装裤",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "经典游戏角色设计，线条清晰简洁",
+        "标志性的红帽子和蓝色工装裤",
+        "友好的面部表情，充满活力",
+        "适合打印在A4纸张上的完美比例"
+      ],
+      "suitableFor": [
+        "3-8岁儿童：培养手眼协调能力",
+        "游戏爱好者：重温经典角色",
+        "初学者：简单的线条设计易于上色",
+        "亲子活动：家长与孩子共同完成"
+      ],
+      "coloringSuggestions": [
+        "经典配色：红色帽子、蓝色工装裤、黄色纽扣",
+        "创意配色：尝试不同颜色组合创造个性马里奥",
+        "渐变技法：使用深浅不同的颜色增加立体感",
+        "细节处理：注意帽子上的M标志和胡须的涂色"
+      ],
+      "creativeUses": [
+        "制作生日贺卡：适合游戏主题生日派对",
+        "房间装饰：裱框后作为儿童房装饰画",
+        "教学工具：用于美术课程的色彩搭配教学",
+        "收藏纪念：完成后可作为游戏文化收藏品"
+      ]
+    }
+  },
+  {
+    "id": "mario",
+    "name": "mario",
+    "defaultUrl": "/src/images-mock/mario-default.png",
+    "colorUrl": "/src/images-mock/mario-color.png",
+    "title": "马里奥",
+    "description": "经典游戏角色马里奥",
+    "tags": ["Nintendo", "Mario", "Cute", "Game"],
+    "type": "text2image",
+    "ratio": "1:1",
+    "isPublic": true,
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "prompt": "经典游戏角色马里奥涂色页，包含标志性的红帽子和蓝色工装裤",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "经典游戏角色设计，线条清晰简洁",
+        "标志性的红帽子和蓝色工装裤",
+        "友好的面部表情，充满活力",
+        "适合打印在A4纸张上的完美比例"
+      ],
+      "suitableFor": [
+        "3-8岁儿童：培养手眼协调能力",
+        "游戏爱好者：重温经典角色",
+        "初学者：简单的线条设计易于上色",
+        "亲子活动：家长与孩子共同完成"
+      ],
+      "coloringSuggestions": [
+        "经典配色：红色帽子、蓝色工装裤、黄色纽扣",
+        "创意配色：尝试不同颜色组合创造个性马里奥",
+        "渐变技法：使用深浅不同的颜色增加立体感",
+        "细节处理：注意帽子上的M标志和胡须的涂色"
+      ],
+      "creativeUses": [
+        "制作生日贺卡：适合游戏主题生日派对",
+        "房间装饰：裱框后作为儿童房装饰画",
+        "教学工具：用于美术课程的色彩搭配教学",
+        "收藏纪念：完成后可作为游戏文化收藏品"
+      ]
+    }
+  },
+  {
+    "id": "cat",
+    "name": "cat",
+    "defaultUrl": "/src/images-mock/cat-default.png",
+    "colorUrl": "/src/images-mock/cat-color.png",
+    "title": "小猫",
+    "description": "可爱的小猫咪",
+    "tags": ["Animal", "Cat", "Cute", "Pet"],
+    "type": "text2image",
+    "ratio": "1:1",
+    "isPublic": true,
+    "createdAt": "2024-01-15T11:15:00.000Z",
+    "prompt": "可爱的小猫咪涂色页，圆润的线条设计，大眼睛和小鼻子",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "可爱的小猫造型，圆润的线条设计",
+        "大眼睛和小鼻子，表情生动有趣",
+        "简洁的轮廓，适合幼儿涂色",
+        "毛茸茸的质感，易于表现不同纹理"
+      ],
+      "suitableFor": [
+        "2-6岁幼儿：培养对动物的喜爱",
+        "宠物爱好者：表达对猫咪的喜爱",
+        "初学涂色者：简单易懂的图案",
+        "安静活动：适合需要专注的时光"
+      ],
+      "coloringSuggestions": [
+        "自然色彩：橙色、灰色、白色等真实猫咪颜色",
+        "梦幻配色：粉色、紫色、蓝色等童话色彩",
+        "条纹图案：添加虎斑或其他猫咪花纹",
+        "背景装饰：可添加小鱼、毛线球等相关元素"
+      ],
+      "creativeUses": [
+        "宠物主题装饰：适合爱猫人士的房间布置",
+        "儿童教育：认识动物特征和习性",
+        "情感表达：通过涂色表达对宠物的爱",
+        "礼物制作：送给喜欢猫咪的朋友"
+      ]
+    }
+  },
+  {
+    "id": "flower",
+    "name": "flower",
+    "defaultUrl": "/src/images-mock/flower-default.png",
+    "colorUrl": "/src/images-mock/flower-color.png",
+    "title": "花朵",
+    "description": "美丽的花朵图案",
+    "tags": ["Nature", "Plants", "Flower", "Beautiful"],
+    "type": "text2image",
+    "ratio": "3:4",
+    "isPublic": true,
+    "createdAt": "2024-01-15T12:00:00.000Z",
+    "prompt": "美丽的花朵涂色页，精美的花瓣设计，层次丰富的自然图案",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "精美的花朵图案，层次丰富的花瓣设计",
+        "自然流畅的线条，展现花朵的优雅",
+        "适中的复杂度，提供涂色挑战",
+        "经典的植物造型，永不过时"
+      ],
+      "suitableFor": [
+        "4-10岁儿童：培养对自然美的欣赏",
+        "花卉爱好者：表达对植物的热爱",
+        "有涂色经验者：适中难度提供挑战",
+        "冥想放松：通过涂色达到心灵平静"
+      ],
+      "coloringSuggestions": [
+        "自然配色：粉色、红色、黄色等真实花朵颜色",
+        "渐变效果：从花心到花瓣边缘的颜色过渡",
+        "对比搭配：花朵与叶子的颜色对比",
+        "细节处理：花蕊、花脉等细节的精细涂色"
+      ],
+      "creativeUses": [
+        "春季装饰：适合春天主题的房间布置",
+        "母亲节礼物：表达对母亲的爱与感谢",
+        "园艺教育：学习花朵结构和植物知识",
+        "艺术创作：作为绘画技巧练习的素材"
+      ]
+    }
+  },
+  {
+    "id": "robot",
+    "name": "robot",
+    "defaultUrl": "/src/images-mock/robot-default.png",
+    "colorUrl": "/src/images-mock/robot-color.png",
+    "title": "机器人",
+    "description": "未来科技机器人",
+    "tags": ["Robot", "Machinery", "Structure", "Technology"],
+    "type": "text2image",
+    "ratio": "3:4",
+    "isPublic": true,
+    "createdAt": "2024-01-15T12:45:00.000Z",
+    "prompt": "未来科技机器人涂色页，复杂的机械结构设计，充满科技感",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "复杂的机械结构设计，细节丰富",
+        "未来科技感的造型，充满想象力",
+        "精密的线条和几何图形组合",
+        "挑战性的涂色难度，适合进阶用户"
+      ],
+      "suitableFor": [
+        "6-12岁儿童：培养对科技的兴趣",
+        "科技爱好者：表达对未来科技的憧憬",
+        "有经验的涂色者：复杂图案提供挑战",
+        "STEM教育：结合科技知识的学习"
+      ],
+      "coloringSuggestions": [
+        "金属质感：银色、灰色、蓝色等科技感颜色",
+        "霓虹配色：亮蓝、绿色、紫色等未来感色彩",
+        "层次渐变：不同部件使用不同深浅的颜色",
+        "细节突出：用对比色突出重要的机械部件"
+      ],
+      "creativeUses": [
+        "科技主题装饰：适合现代风格的房间",
+        "STEM教育工具：激发对机器人技术的兴趣",
+        "创意挑战：测试和提高涂色技巧",
+        "未来主题活动：科技展览或机器人比赛装饰"
+      ]
+    }
+  },
+  {
+    "id": "spiderman",
+    "name": "spiderman",
+    "defaultUrl": "/src/images-mock/spider-man-default.png",
+    "colorUrl": "/src/images-mock/spider-man-color.png",
+    "title": "蜘蛛侠",
+    "description": "超级英雄蜘蛛侠",
+    "tags": ["Superhero", "Marvel", "Action", "Hero"],
+    "type": "text2image",
+    "ratio": "3:4",
+    "isPublic": true,
+    "createdAt": "2024-01-15T13:30:00.000Z",
+    "prompt": "超级英雄蜘蛛侠涂色页，经典造型设计，标志性蜘蛛网图案",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "经典超级英雄造型，动感十足",
+        "标志性的蜘蛛网图案设计",
+        "肌肉线条清晰，展现英雄力量",
+        "面具和服装细节丰富，涂色层次多样"
+      ],
+      "suitableFor": [
+        "5-12岁儿童：培养正义感和勇气",
+        "漫画爱好者：重现经典超级英雄",
+        "中级涂色者：适中难度的挑战",
+        "英雄主题活动：生日派对或主题装饰"
+      ],
+      "coloringSuggestions": [
+        "经典配色：红色和蓝色的经典蜘蛛侠配色",
+        "蜘蛛网细节：用深色勾勒蜘蛛网图案",
+        "肌肉阴影：用深浅对比表现立体感",
+        "背景搭配：可添加城市建筑或蜘蛛网背景"
+      ],
+      "creativeUses": [
+        "超级英雄主题装饰：男孩房间的完美装饰",
+        "生日派对道具：蜘蛛侠主题生日会",
+        "勇气教育：通过英雄故事传递正能量",
+        "收藏展示：漫画迷的珍贵收藏品"
+      ]
+    }
+  },
+  {
+    "id": "cartoon",
+    "name": "cartoon",
+    "defaultUrl": "/src/images-mock/cartoon-default.png",
+    "colorUrl": "/src/images-mock/cartoon-color.png",
+    "title": "卡通角色",
+    "description": "有趣的卡通角色",
+    "tags": ["Cartoon", "Character", "Fun", "Animation"],
+    "type": "text2image",
+    "ratio": "1:1",
+    "isPublic": true,
+    "createdAt": "2024-01-15T14:15:00.000Z",
+    "prompt": "有趣的卡通角色涂色页，活泼可爱的设计，充满童趣",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "活泼可爱的卡通角色设计",
+        "夸张有趣的表情和动作",
+        "简洁明快的线条，易于识别",
+        "充满童趣的造型设计"
+      ],
+      "suitableFor": [
+        "3-8岁儿童：培养想象力和创造力",
+        "动画爱好者：重现喜爱的卡通角色",
+        "初学者：简单有趣的涂色体验",
+        "家庭活动：全家一起享受涂色乐趣"
+      ],
+      "coloringSuggestions": [
+        "明亮色彩：使用鲜艳的颜色增加活力",
+        "对比搭配：用对比色突出角色特征",
+        "渐变技巧：在服装和背景中使用渐变",
+        "创意发挥：鼓励使用非传统颜色组合"
+      ],
+      "creativeUses": [
+        "儿童房装饰：营造活泼有趣的氛围",
+        "动画主题活动：卡通角色主题派对",
+        "创意教学：通过角色学习色彩搭配",
+        "情感表达：通过涂色表达个性和情感"
+      ]
+    }
+  },
+  {
+    "id": "unicorn",
+    "name": "unicorn",
+    "defaultUrl": "/src/images-mock/unicorn-default.jpg",
+    "colorUrl": "/src/images-mock/unicorn-color.jpg",
+    "title": "独角兽",
+    "description": "神奇的独角兽",
+    "tags": ["Fantasy", "Unicorn", "Magic", "Mythical"],
+    "type": "image2image",
+    "ratio": "",
+    "isPublic": true,
+    "createdAt": "2024-01-15T15:00:00.000Z",
+    "prompt": "神奇的独角兽涂色页，优雅的马身配上螺旋角，充满魔法色彩",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "神话传说中的独角兽造型",
+        "优雅的马身配上螺旋角",
+        "飘逸的鬃毛和尾巴设计",
+        "充满魔法色彩的幻想生物"
+      ],
+      "suitableFor": [
+        "3-10岁儿童：培养想象力和对美好事物的向往",
+        "幻想爱好者：表达对神话世界的喜爱",
+        "女孩群体：特别受女孩子喜爱的主题",
+        "亲子活动：家长与孩子共同探索幻想世界"
+      ],
+      "coloringSuggestions": [
+        "梦幻配色：粉色、紫色、蓝色等梦幻色彩",
+        "彩虹效果：鬃毛和尾巴可以使用彩虹色",
+        "珍珠光泽：白色身体配上珍珠般的光泽效果",
+        "魔法元素：角可以用金色或银色突出神奇感"
+      ],
+      "creativeUses": [
+        "幻想主题装饰：营造梦幻的房间氛围",
+        "生日派对：独角兽主题生日会装饰",
+        "想象力培养：通过涂色激发创造力",
+        "礼物制作：送给喜欢幻想的朋友"
+      ]
+    }
+  },
+  {
+    "id": "magician",
+    "name": "magician",
+    "defaultUrl": "/src/images-mock/magician-default.jpg",
+    "colorUrl": "/src/images-mock/magician-color.jpg",
+    "title": "魔法师",
+    "description": "神秘的魔法师",
+    "tags": ["Magic", "Wizard", "Fantasy", "Mystical"],
+    "type": "image2image",
+    "ratio": "",
+    "isPublic": true,
+    "createdAt": "2024-01-15T15:45:00.000Z",
+    "prompt": "神秘的魔法师涂色页，经典的尖顶帽和长袍设计，充满智慧和神秘感",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "经典的魔法师造型设计",
+        "尖顶帽和长袍的传统形象",
+        "魔法杖和神秘符号元素",
+        "充满智慧和神秘感的角色"
+      ],
+      "suitableFor": [
+        "4-12岁儿童：培养对魔法世界的兴趣",
+        "奇幻爱好者：重现经典魔法师形象",
+        "中级涂色者：适中复杂度的挑战",
+        "故事教学：结合童话故事进行教育"
+      ],
+      "coloringSuggestions": [
+        "神秘配色：深蓝、紫色、黑色等神秘色彩",
+        "魔法光效：用亮色表现魔法的光芒效果",
+        "星空图案：帽子和长袍可以添加星星图案",
+        "对比突出：用金色或银色突出魔法杖"
+      ],
+      "creativeUses": [
+        "奇幻主题装饰：适合魔法主题的房间布置",
+        "万圣节装饰：万圣节主题活动装饰",
+        "故事配图：童话故事的插图制作",
+        "想象力启发：激发对魔法世界的想象"
+      ]
+    }
+  },
+  {
+    "id": "icecream",
+    "name": "icecream",
+    "defaultUrl": "/src/images-mock/icecream-default.jpg",
+    "colorUrl": "/src/images-mock/icecream-color.jpg",
+    "title": "冰淇淋",
+    "description": "美味的冰淇淋",
+    "tags": ["Food", "Sweet", "Dessert", "Summer"],
+    "type": "image2image",
+    "ratio": "",
+    "isPublic": true,
+    "createdAt": "2024-01-15T16:30:00.000Z",
+    "prompt": "美味的冰淇淋涂色页，多层冰淇淋球设计，夏日清凉的美食主题",
+    "userId": "system",
+    "additionalInfo": {
+      "features": [
+        "可爱的冰淇淋造型设计",
+        "多层冰淇淋球的丰富层次",
+        "甜筒和装饰元素的细节",
+        "夏日清凉的美食主题"
+      ],
+      "suitableFor": [
+        "2-8岁儿童：培养对美食的认知和兴趣",
+        "美食爱好者：表达对甜品的喜爱",
+        "初学者：简单可爱的涂色主题",
+        "夏日活动：夏季主题的涂色活动"
+      ],
+      "coloringSuggestions": [
+        "甜美配色：粉色、黄色、绿色等甜美色彩",
+        "口味表现：不同颜色代表不同冰淇淋口味",
+        "装饰元素：添加樱桃、巧克力片等装饰",
+        "渐变效果：用渐变色表现冰淇淋的质感"
+      ],
+      "creativeUses": [
+        "夏日装饰：适合夏季主题的房间布置",
+        "美食教育：认识不同种类的甜品",
+        "餐厅装饰：甜品店或餐厅的装饰画",
+        "快乐主题：营造轻松愉快的氛围"
+      ]
+    }
+  }
+] 

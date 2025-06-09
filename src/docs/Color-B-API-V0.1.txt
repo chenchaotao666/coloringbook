@@ -1,0 +1,197 @@
+1.[登录API使用] 
+  
+      console.log('[登录请求]', JSON.stringify(credentials, null, 2));
+      const response = await axios.post('/api/v1/auth/login', credentials);
+      // 详细打印响应结构
+     console.log('[登录响应]', JSON.stringify(response.data, null, 2));
+[登录请求] {
+  "email": "lihongyu@sina.com",
+  "password": "12345678"
+}
+[登录响应] {
+  "status": "success",
+  "data": {
+    "user": {
+      "_id": "684515af599d5da15717aba0",
+      "email": "lihongyu@sina.com",
+      "username": "lihongyu65",
+      "createdAt": "2025-06-08T04:46:39.379Z",
+      "role": "user",
+      "membershipLevel": "bronze",
+      "useravailableScore": 0
+    },
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDUxNWFmNTk5ZDVkYTE1NzE3YWJhMCIsImlhdCI6MTc0OTM2MTE2MiwiZXhwIjoxNzQ5MzYyMDYyfQ.pWgVq0vD9U8adBIrixeRj6u92JYicmt3gQ3KMWE7mOU",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDUxNWFmNTk5ZDVkYTE1NzE3YWJhMCIsImlhdCI6MTc0OTM2MTE2MiwiZXhwIjoxNzQ5OTY1OTYyfQ.Z9JeNpOdczVGXPxSom0CK8ov2Do_QyDbJJwcuwjCCiY"
+  }
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2.[注册API使用 
+console.log('[登录请求]', JSON.stringify(credentials, null, 2));
+const response = await axios.post('/api/v1/auth/login', credentials);
+// 详细打印响应结构
+console.log('[登录响应]', JSON.stringify(response.data, null, 2));
+
+[注册请求] {
+  "username": "mingming",
+  "email": "mingming@sina.com",
+  "password": "12345678",
+  "confirmPassword": "12345678"
+}
+
+[注册响应] {
+  "status": "success",
+  "data": {
+    "user": {
+      "_id": "684515af599d5da15717aba0",
+      "email": "lihongyu@sina.com",
+      "username": "lihongyu65",
+      "createdAt": "2025-06-08T04:46:39.379Z"
+    },
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDUxNWFmNTk5ZDVkYTE1NzE3YWJhMCIsImlhdCI6MTc0OTM1ODAwMCwiZXhwIjoxNzQ5MzU4OTAwfQ.uaqPg41eUhIXwpuSZ2xkzDn6mCDFDzZRxm3mDke4r2s",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDUxNWFmNTk5ZDVkYTE1NzE3YWJhMCIsImlhdCI6MTc0OTM1ODAwMCwiZXhwIjoxNzQ5OTYyODAwfQ.yPzO1d-xpJAXwZzi3Cx9HoLGzxw0XU2twRBefj4o-pU",
+    "expiresIn": "15m"
+  }
+}
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+3.退出API使用：
+      const response =await axios.post('/api/v1/auth/logout', null, {
+        headers: {
+          Authorization: `Bearer ${state.accessToken}`
+        }
+      });
+
+[退出请求] {
+  "user": {
+    "email": "lihongyu@sina.com",
+    "username": "lihongyu65",
+    "id": "684515af599d5da15717aba0",
+    "role": "user",
+    "membershipLevel": "bronze",
+    "useravailableScore": 0,
+    "avatar": "http://localhost:5000/images/default-avatar.png"
+  },
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDUxNWFmNTk5ZDVkYTE1NzE3YWJhMCIsImlhdCI6MTc0OTM2MDg5MCwiZXhwIjoxNzQ5MzYxNzkwfQ.t88SiNNzwGxw8PxcL8kMyvOJGT2gymEo63p5K7xJ-U4",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDUxNWFmNTk5ZDVkYTE1NzE3YWJhMCIsImlhdCI6MTc0OTM2MDg5MCwiZXhwIjoxNzQ5OTY1NjkwfQ.3JQdfSziv9EDQF4Feezeoj_aYcNFdt5AJ_5LSXJJgcQ"
+}
+
+[退出响应] {
+  "status": "success",
+  "message": "成功注销"
+}
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+4.[刷新token API使用 
+
+console.log('[刷新令牌请求]', JSON.stringify({ refreshToken: state.refreshToken }, null, 2));
+// 发送刷新令牌请求
+const response = await axios.post('/api/v1/auth/refresh', 
+  { refreshToken: state.refreshToken },
+  {
+	headers: {
+	  'Content-Type': 'application/json'
+	}
+  }
+);
+
+console.log('[刷新令牌响应]', JSON.stringify(response.data, null, 2));
+[刷新请求] 
+
+[刷新响应] 
+ const response = await axios.post('/api/v1/auth/refresh', 
+      { refreshToken: state.refreshToken },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+5.获取头像API（工程坏了，log打不出来，等我打出来给你，不过这些差不多了）
+console.log('开始获取用户头像，用户ID:', userId);
+
+const response = await axios.get(`/api/v1/users/${userId}/avatar`, {
+  headers: {
+	Authorization: `Bearer ${rootState.auth.accessToken}` // 添加这行
+  }
+});
+
+console.log('获取头像接口响应:', {
+  status: response.status,
+  fullResponse: response.data,
+  avatarUrl: response.data?.data?.avatarUrl
+});
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+6.上传头像API（工程坏了，log打不出来，等我打出来给你，不过这些差不多了）
+
+    // 正确构建 FormData
+    const formData = new FormData();
+    formData.append('avatar', file, file.name); // 必须包含文件名
+
+    
+    await store.dispatch('user/uploadAvatar', formData)
+
+      console.log('开始上传头像，表单数据:', formData);
+      const response = await axios.put('/api/v1/users/avatar', formData, {
+        headers: {
+          'Authorization': `Bearer ${rootState.auth.accessToken}`
+        },
+        onUploadProgress: progressEvent => {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log(`上传进度: ${percent}%`);
+        }
+      });
+    console.log('上传头像接口响应:', {
+        status: response.status,        
+        fullResponse: response.data,
+        avatarUrl: response.data?.data?.avatar
+      });
+------------------------------------------------------------------------------------------------------------------------------------------------------
+7.图生图的API --和这个类似， 这个是两个图，生成一张图的--后面，一张图出一张图
+
+const processImage = async () => {
+  if (!canProcess.value) return
+
+  try {
+    isProcessing.value = true
+    const formData = new FormData()
+    
+    const originalBlob = await fetch(originalImage.value).then(r => r.blob())
+    const backgroundBlob = await fetch(backgroundImage.value).then(r => r.blob())
+    
+    formData.append('original', new File([originalBlob], 'original.png'))
+    formData.append('background', new File([backgroundBlob], 'background.png'))
+
+    const { data } = await axios.post('http://localhost:5050/api/process', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 30000
+    })
+
+    processedImage.value = data.result ? `data:image/png;base64,${data.result}` : ''
+  } catch (error) {
+    console.error('处理失败:', error)
+    alert(`处理失败: ${error.message}`)
+  } finally {
+    isProcessing.value = false
+  }
+}
+
+const downloadImage = () => {
+  if (!processedImage.value) return
+  
+  const link = document.createElement('a')
+  link.download = `processed-${Date.now()}.png`
+  link.href = processedImage.value
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+	  

@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import FAQ from '../components/home/FAQ';
-import arrowRightIcon from '../images/arrow-right-outline.svg';
-import checkIcon from '../images/check.svg';
-import protectIcon from '../images/protect.svg';
-import payMastercard from '../images/pay-mastercard.svg';
-import payVisa from '../images/pay-visa.svg';
-import payAmericanExpress from '../images/pay-americanExpress.svg';
-import payApplePay from '../images/pay-applePay.svg';
-import payUnionpay from '../images/pay-unionpay.svg';
-import payClicktopay from '../images/pay-clicktopay.svg';
+const arrowRightIcon = '/images/arrow-right-outline.svg';
+const checkIcon = '/images/check.svg';
+const protectIcon = '/images/protect.svg';
+const payMastercard = '/images/pay-mastercard.svg';
+const payVisa = '/images/pay-visa.svg';
+const payAmericanExpress = '/images/pay-americanExpress.svg';
+const payApplePay = '/images/pay-applePay.svg';
+const payUnionpay = '/images/pay-unionpay.svg';
+const payClicktopay = '/images/pay-clicktopay.svg';
 
 // Feature check component for pricing plans
 const FeatureItem = ({ text, highlighted = false }: { text: string, highlighted?: boolean }) => (

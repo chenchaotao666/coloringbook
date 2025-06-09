@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../images/logo.svg';
-import intlIcon from '../../images/intl.svg';
-import expandIcon from '../../images/expand.svg';
+const logo = '/images/logo.svg';
+const intlIcon = '/images/intl.svg';
+const expandIcon = '/images/expand.svg';
 import { useLanguage, Language } from '../../contexts/LanguageContext';
 
 interface HeaderProps {

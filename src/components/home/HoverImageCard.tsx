@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import HoverColorImage from './HoverColorImage';
 import { HomeImage } from '../../services/imageService';
 import { downloadImageById } from '../../utils/downloadUtils';
-import downloadIcon from '../../images/download.svg';
-import downloadColorIcon from '../../images/download-hover.svg';
+const downloadIcon = '/images/download.svg';
+const downloadColorIcon = '/images/download-hover.svg';
 
 interface HoverImageCardProps {
   image: HomeImage;

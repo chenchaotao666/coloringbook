@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import homeFeatureAlt from '../../images/home-feature-alt.png';
-import homeFeature from '../../images/home-feature.png';
-import coloringPrincess from '../../images/long-color.svg';
-import coloringmMickeyMouse from '../../images/xxx.svg';
+const homeFeatureAlt = '/images/home-feature-alt.png';
+const homeFeature = '/images/home-feature.png';
+const coloringPrincess = '/images/long-color.svg';
+const coloringmMickeyMouse = '/images/xxx.svg';
 import { Button } from '../ui/button';
 
 interface FeatureItemProps {

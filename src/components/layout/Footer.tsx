@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../images/logo.svg';
-import socialIcon1 from '../../images/Link → SVG-1.svg';
-import socialIcon2 from '../../images/Link → SVG-2.svg';
-import socialIcon3 from '../../images/Link → SVG-3.svg';
-import socialIcon4 from '../../images/Link → SVG-4.svg';
-import socialIcon5 from '../../images/Link → SVG-5.svg';
+const logo = '/images/logo.svg';
+const socialIcon1 = '/images/Link → SVG-1.svg';
+const socialIcon2 = '/images/Link → SVG-2.svg';
+const socialIcon3 = '/images/Link → SVG-3.svg';
+const socialIcon4 = '/images/Link → SVG-4.svg';
+const socialIcon5 = '/images/Link → SVG-5.svg';
 
 // Interface for footer links section
 interface FooterSectionProps {

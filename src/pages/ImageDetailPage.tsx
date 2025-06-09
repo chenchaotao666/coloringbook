@@ -9,9 +9,9 @@ import { CategoriesService } from '../services/categoriesService';
 import { downloadImageById } from '../utils/downloadUtils';
 import { HomeImage } from '../services/imageService';
 import { CategoryImage } from '../services/categoriesService';
-import homeIcon from '../images/home.svg';
-import chevronRightIcon from '../images/chevron-right.svg';
-import downloadIcon from '../images/download-white.svg';
+const homeIcon = '/images/home.svg';
+const chevronRightIcon = '/images/chevron-right.svg';
+const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
   const { imageId } = useParams<{ imageId: string }>();

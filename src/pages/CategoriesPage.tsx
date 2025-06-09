@@ -4,9 +4,9 @@ import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import { CategoriesService, Category } from '../services/categoriesService';
 import CategoryCard from '../components/categories/CategoryCard';
-import homeIcon from '../images/home.svg';
-import chevronRightIcon from '../images/chevron-right.svg';
-import noResultIcon from '../images/no-result.svg';
+const homeIcon = '/images/home.svg';
+const chevronRightIcon = '/images/chevron-right.svg';
+const noResultIcon = '/images/no-result.svg';
 
 
 

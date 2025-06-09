@@ -1,5 +1,5 @@
 import React from 'react';
-import avatar from '../../images/Avatar.png'; // 使用home-icon作为临时头像
+const avatar = '/images/Avatar.png'; // 使用home-icon作为临时头像
 
 interface TestimonialItemProps {
   content: string;

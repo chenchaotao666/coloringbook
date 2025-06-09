@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ratioIcon from '../../images/ratio.svg';
+const ratioIcon = '/images/ratio.svg';
 
 interface RatioSelectorProps {
   value: '3:4' | '4:3' | '1:1';

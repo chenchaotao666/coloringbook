@@ -5,7 +5,7 @@
     "displayName": "Animals",
     "description": "Cute and wild animals coloring pages",
     "imageCount": 156,
-    "thumbnailUrl": "/src/images-mock/cat-default.png"
+    "thumbnailUrl": "/images-mock/cat-default.png"
   },
   {
     "id": "disney",
@@ -13,7 +13,7 @@
     "displayName": "Disney",
     "description": "Disney characters and princesses",
     "imageCount": 89,
-    "thumbnailUrl": "/src/images-mock/mario-default.png"
+    "thumbnailUrl": "/images-mock/mario-default.png"
   },
   {
     "id": "flowers",
@@ -21,7 +21,7 @@
     "displayName": "Flowers",
     "description": "Beautiful flowers and plants",
     "imageCount": 124,
-    "thumbnailUrl": "/src/images-mock/flower-default.png"
+    "thumbnailUrl": "/images-mock/flower-default.png"
   },
   {
     "id": "vehicles",
@@ -29,7 +29,7 @@
     "displayName": "Vehicles",
     "description": "Cars, trucks, planes and more",
     "imageCount": 78,
-    "thumbnailUrl": "/src/images-mock/robot-default.png"
+    "thumbnailUrl": "/images-mock/robot-default.png"
   },
   {
     "id": "fantasy",
@@ -37,7 +37,7 @@
     "displayName": "Fantasy",
     "description": "Dragons, unicorns and magical creatures",
     "imageCount": 92,
-    "thumbnailUrl": "/src/images-mock/cartoon-default.png"
+    "thumbnailUrl": "/images-mock/cartoon-default.png"
   },
   {
     "id": "nature",
@@ -45,6 +45,6 @@
     "displayName": "Nature",
     "description": "Trees, landscapes and natural scenes",
     "imageCount": 67,
-    "thumbnailUrl": "/src/images-mock/flower1-default.png"
+    "thumbnailUrl": "/images-mock/flower1-default.png"
   }
 ] 

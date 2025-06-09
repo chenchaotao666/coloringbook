@@ -3,14 +3,14 @@ import LayoutNoFooter from '../components/layout/LayoutNoFooter';
 import useGeneratePage from '../hooks/useGeneratePage';
 import { downloadSelectedImage } from '../utils/downloadUtils';
 import CircularProgress from '../components/ui/CircularProgress';
-import aiGenerateIcon from '../images/AI-generate.svg';
-import crownIcon from '../images/crown.svg';
-import refreshIcon from '../images/refresh.svg';
-import tipIcon from '../images/tip.svg';
-import subtractColorIcon from '../images/subtract-color.svg';
-import subtractIcon from '../images/subtract.svg';
-import downloadIcon from '../images/download.svg';
-import moreIcon from '../images/more.svg';
+const aiGenerateIcon = '/images/AI-generate.svg';
+const crownIcon = '/images/crown.svg';
+const refreshIcon = '/images/refresh.svg';
+const tipIcon = '/images/tip.svg';
+const subtractColorIcon = '/images/subtract-color.svg';
+const subtractIcon = '/images/subtract.svg';
+const downloadIcon = '/images/download.svg';
+const moreIcon = '/images/more.svg';
 
 interface GeneratePageProps {
   initialTab?: 'text' | 'image';

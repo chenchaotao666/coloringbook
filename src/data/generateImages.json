@@ -2,82 +2,82 @@
   "imagePool": {
     "3:4": [
       {
-        "thumbnail": "/src/images-mock/cat-default.png",
-        "fullSize": "/src/images-mock/cat-default.png",
+        "thumbnail": "/images-mock/cat-default.png",
+        "fullSize": "/images-mock/cat-default.png",
         "prompt": "Cute cat sitting peacefully"
       },
       {
-        "thumbnail": "/src/images-mock/cat1-default.png",
-        "fullSize": "/src/images-mock/cat1-default.png",
+        "thumbnail": "/images-mock/cat1-default.png",
+        "fullSize": "/images-mock/cat1-default.png",
         "prompt": "Another cute cat in different pose"
       },
       {
-        "thumbnail": "/src/images-mock/flower-default.png",
-        "fullSize": "/src/images-mock/flower-default.png",
+        "thumbnail": "/images-mock/flower-default.png",
+        "fullSize": "/images-mock/flower-default.png",
         "prompt": "Beautiful flower with detailed petals"
       },
       {
-        "thumbnail": "/src/images-mock/flower1-default.png",
-        "fullSize": "/src/images-mock/flower1-default.png",
+        "thumbnail": "/images-mock/flower1-default.png",
+        "fullSize": "/images-mock/flower1-default.png",
         "prompt": "Another blooming flower design"
       },
       {
-        "thumbnail": "/src/images-mock/robot-default.png",
-        "fullSize": "/src/images-mock/robot-default.png",
+        "thumbnail": "/images-mock/robot-default.png",
+        "fullSize": "/images-mock/robot-default.png",
         "prompt": "Futuristic robot with mechanical details"
       }
     ],
     "4:3": [
       {
-        "thumbnail": "/src/images-mock/mario-default.png",
-        "fullSize": "/src/images-mock/mario-default.png",
+        "thumbnail": "/images-mock/mario-default.png",
+        "fullSize": "/images-mock/mario-default.png",
         "prompt": "Classic Mario character"
       },
       {
-        "thumbnail": "/src/images-mock/mario1-default.png",
-        "fullSize": "/src/images-mock/mario1-default.png",
+        "thumbnail": "/images-mock/mario1-default.png",
+        "fullSize": "/images-mock/mario1-default.png",
         "prompt": "Mario in different pose"
       },
       {
-        "thumbnail": "/src/images-mock/cartoon-default.png",
-        "fullSize": "/src/images-mock/cartoon-default.png",
+        "thumbnail": "/images-mock/cartoon-default.png",
+        "fullSize": "/images-mock/cartoon-default.png",
         "prompt": "Fun cartoon character"
       },
       {
-        "thumbnail": "/src/images-mock/cartoon1-default.png",
-        "fullSize": "/src/images-mock/cartoon1-default.png",
+        "thumbnail": "/images-mock/cartoon1-default.png",
+        "fullSize": "/images-mock/cartoon1-default.png",
         "prompt": "Another cartoon character design"
       },
       {
-        "thumbnail": "/src/images-mock/spider-man-default.png",
-        "fullSize": "/src/images-mock/spider-man-default.png",
+        "thumbnail": "/images-mock/spider-man-default.png",
+        "fullSize": "/images-mock/spider-man-default.png",
         "prompt": "Spider-Man superhero"
       }
     ],
     "1:1": [
       {
-        "thumbnail": "/src/images-mock/robot1-default.png",
-        "fullSize": "/src/images-mock/robot1-default.png",
+        "thumbnail": "/images-mock/robot1-default.png",
+        "fullSize": "/images-mock/robot1-default.png",
         "prompt": "Advanced robot design"
       },
       {
-        "thumbnail": "/src/images-mock/spider-man1-default.png",
-        "fullSize": "/src/images-mock/spider-man1-default.png",
+        "thumbnail": "/images-mock/spider-man1-default.png",
+        "fullSize": "/images-mock/spider-man1-default.png",
         "prompt": "Spider-Man in action pose"
       },
       {
-        "thumbnail": "/src/images-mock/magician-default.jpg",
-        "fullSize": "/src/images-mock/magician-default.jpg",
+        "thumbnail": "/images-mock/magician-default.jpg",
+        "fullSize": "/images-mock/magician-default.jpg",
         "prompt": "Magical wizard character"
       },
       {
-        "thumbnail": "/src/images-mock/icecream-default.jpg",
-        "fullSize": "/src/images-mock/icecream-default.jpg",
+        "thumbnail": "/images-mock/icecream-default.jpg",
+        "fullSize": "/images-mock/icecream-default.jpg",
         "prompt": "Delicious ice cream treat"
       },
       {
-        "thumbnail": "/src/images-mock/unicorn-default.jpg",
-        "fullSize": "/src/images-mock/unicorn-default.jpg",
+        "thumbnail": "/images-mock/unicorn-default.jpg",
+        "fullSize": "/images-mock/unicorn-default.jpg",
         "prompt": "Magical unicorn with horn"
       }
     ]

@@ -7,9 +7,9 @@ import MasonryGrid from '../components/layout/MasonryGrid';
 import RatioSelector from '../components/ui/RatioSelector';
 import { CategoriesService, Category, CategoryImage } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
-import homeIcon from '../images/home.svg';
-import chevronRightIcon from '../images/chevron-right.svg';
-import imageIcon from '../images/image.svg';
+const homeIcon = '/images/home.svg';
+const chevronRightIcon = '/images/chevron-right.svg';
+const imageIcon = '/images/image.svg';
 
 // 数据转换函数
 const convertCategoryImageToHomeImage = (categoryImage: CategoryImage): HomeImage => {

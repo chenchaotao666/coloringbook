@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import openIcon from '../../images/open.svg';
-import closeIcon from '../../images/close.svg';
+const openIcon = '/images/open.svg';
+const closeIcon = '/images/close.svg';
 
 interface FAQItemProps {
   question: string;

@@ -1,4 +1,4 @@
-import { mockApiService } from '../services/generateService';
+import { generateService } from '../services/generateService';
 
 /**
  * 通用的图片下载函数
@@ -16,7 +16,7 @@ export const downloadImageById = async (
     const finalFileName = fileName || `coloring-page-${imageId}.${format}`;
     
     // 调用API下载图片
-    const blob = await mockApiService.downloadImage(imageId, format);
+    const blob = await generateService.downloadImage(imageId, format);
     
     // 创建下载链接
     const url = URL.createObjectURL(blob);

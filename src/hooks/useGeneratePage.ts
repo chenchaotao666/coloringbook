@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { GeneratedImage, ExampleImage, StyleSuggestion, mockApiService } from '../services/generateService';
+import { GeneratedImage, ExampleImage, StyleSuggestion, generateService } from '../services/generateService';
 
 export interface UseGeneratePageState {
   // 基础状态
@@ -137,7 +137,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
           throw new Error('Please enter a prompt');
         }
         
-        response = await mockApiService.generateTextToImage({
+        response = await generateService.generateTextToImage({
           prompt: state.prompt,
           ratio: state.selectedRatio,
           isPublic: state.publicVisibility,
@@ -147,7 +147,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
           throw new Error('Please upload an image');
         }
         
-        response = await mockApiService.generateImageToImage({
+        response = await generateService.generateImageToImage({
           imageFile: state.uploadedFile,
           ratio: state.selectedRatio,
           isPublic: state.publicVisibility,
@@ -176,7 +176,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const pollTaskStatus = useCallback(async (taskId: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const taskStatus = await mockApiService.getTaskStatus(taskId);
+        const taskStatus = await generateService.getTaskStatus(taskId);
         
         updateState({
           generationProgress: taskStatus.progress,
@@ -223,7 +223,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
     
     try {
       updateState({ isLoadingExamples: true, error: null });
-      const examples = await mockApiService.getExampleImages(state.selectedTab);
+      const examples = await generateService.getExampleImages(state.selectedTab);
       
       // 更新缓存
       setExampleImagesCache(prev => ({
@@ -245,7 +245,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const loadStyleSuggestions = useCallback(async () => {
     try {
       updateState({ isLoadingStyles: true, error: null });
-      const styles = await mockApiService.getStyleSuggestions();
+      const styles = await generateService.getStyleSuggestions();
       updateState({ styleSuggestions: styles });
     } catch (error) {
       updateState({
@@ -260,7 +260,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const recreateExample = useCallback(async (exampleId: string) => {
     try {
       updateState({ isGenerating: true, error: null });
-      const response = await mockApiService.recreateExample(exampleId);
+      const response = await generateService.recreateExample(exampleId);
       
       if (response.success) {
         // 使用函数式更新确保获取最新的 generatedImages
@@ -293,7 +293,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
         ? `coloring-page-${imageData.ratio}-${imageId.slice(-8)}.${format}`
         : `coloring-page-${imageId}.${format}`;
       
-      const blob = await mockApiService.downloadImage(imageId, format);
+      const blob = await generateService.downloadImage(imageId, format);
       
       // 创建下载链接
       const url = URL.createObjectURL(blob);
@@ -352,7 +352,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   // 加载生成历史
   const loadGeneratedImages = useCallback(async () => {
     try {
-      const images = await mockApiService.getAllGeneratedImages();
+      const images = await generateService.getAllGeneratedImages();
       updateState({ generatedImages: images });
     } catch (error) {
       console.error('Failed to load generated images:', error);

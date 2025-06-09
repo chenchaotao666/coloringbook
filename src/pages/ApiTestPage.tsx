@@ -19,11 +19,16 @@ const ApiTestPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState('一只可爱的小猫');
 
+  // API 基础 URL - 开发环境使用本地API服务器
+  const API_BASE_URL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3001' 
+    : '';
+
   // 测试获取图片列表
   const testImagesApi = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/images?page=1&limit=5');
+      const response = await fetch(`${API_BASE_URL}/api/images?page=1&limit=5`);
       const data = await response.json();
       setImagesData(data);
     } catch (error) {
@@ -37,7 +42,7 @@ const ApiTestPage: React.FC = () => {
   const testCategoriesApi = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch(`${API_BASE_URL}/api/categories`);
       const data = await response.json();
       setCategoriesData(data);
     } catch (error) {
@@ -51,7 +56,7 @@ const ApiTestPage: React.FC = () => {
   const testGenerateApi = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/generate', {
+      const response = await fetch(`${API_BASE_URL}/api/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

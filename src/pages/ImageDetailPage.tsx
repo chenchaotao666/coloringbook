@@ -36,7 +36,7 @@ const ImageDetailPage: React.FC = () => {
         setIsLoading(true);
         
         // 尝试从HomeImage中查找
-        let foundImage: HomeImage | CategoryImage | null = HomeImageService.getImageById(imageId) || null;
+        let foundImage: HomeImage | CategoryImage | null = await HomeImageService.getImageById(imageId);
         
         // 如果没找到，尝试从CategoryImage中查找
         if (!foundImage) {
@@ -66,7 +66,7 @@ const ImageDetailPage: React.FC = () => {
           
           if ('defaultUrl' in foundImage) {
             // HomeImage类型：调用HomeImageService.getRelatedImages方法
-            relatedImages = HomeImageService.getRelatedImages(foundImage.id, 5);
+            relatedImages = await HomeImageService.getRelatedImages(foundImage.id, 5);
           } else {
             // CategoryImage类型：使用CategoriesService的getRelatedImages方法
             const related = await CategoriesService.getRelatedImages(foundImage.id, 5);

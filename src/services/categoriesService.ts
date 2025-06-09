@@ -1,6 +1,3 @@
-import categoriesData from '../data/categories.json';
-import categoryImagesData from '../data/categoryImages.json';
-
 // 分类图片数据类型
 export interface CategoryImage {
   id: string;
@@ -23,10 +20,6 @@ export interface Category {
   thumbnailUrl: string;
 }
 
-// 从JSON文件加载数据
-const mockCategories: Category[] = categoriesData;
-const mockCategoryImages: CategoryImage[] = categoryImagesData as CategoryImage[];
-
 // 搜索结果接口
 export interface SearchResult {
   images: CategoryImage[];
@@ -44,19 +37,76 @@ export interface SearchParams {
   limit?: number;
 }
 
+// API 响应接口
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  total?: number;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  error?: string;
+}
+
+// API 配置
+const API_BASE_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:3001' 
+  : '';
+
 // 分类服务类
 export class CategoriesService {
+  // 通用API请求方法
+  private static async apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'API request failed');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('API request error:', error);
+      throw error;
+    }
+  }
+
   // 获取所有分类
   static async getCategories(): Promise<Category[]> {
-    // 模拟API延迟
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return mockCategories;
+    try {
+      const response = await this.apiRequest<ApiResponse<Category[]>>('/api/categories');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      // 返回空数组作为降级处理
+      return [];
+    }
   }
 
   // 根据ID获取分类
   static async getCategoryById(categoryId: string): Promise<Category | null> {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    return mockCategories.find(cat => cat.id === categoryId) || null;
+    try {
+      const response = await this.apiRequest<ApiResponse<Category>>(`/api/categories/${categoryId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch category ${categoryId}:`, error);
+      return null;
+    }
   }
 
   // 搜索图片
@@ -70,53 +120,44 @@ export class CategoriesService {
       limit = 20
     } = params;
 
-    // 模拟API延迟
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      // 构建查询参数
+      const searchParams = new URLSearchParams();
+      if (query) searchParams.append('search', query);
+      if (category) searchParams.append('category', category);
+      if (ratio) searchParams.append('difficulty', ratio); // 使用difficulty参数映射ratio
+      searchParams.append('page', page.toString());
+      searchParams.append('limit', limit.toString());
+      
+      // 如果有标签，将其作为搜索词的一部分
+      if (tags.length > 0) {
+        const tagQuery = tags.join(' ');
+        const combinedQuery = query ? `${query} ${tagQuery}` : tagQuery;
+        searchParams.set('search', combinedQuery);
+      }
 
-    let filteredImages = [...mockCategoryImages];
-
-    // 按分类过滤
-    if (category) {
-      filteredImages = filteredImages.filter(img => img.category === category);
+      const response = await this.apiRequest<ApiResponse<CategoryImage[]>>(`/api/images?${searchParams.toString()}`);
+      
+      return {
+        images: response.data,
+        totalCount: response.pagination?.total || response.data.length,
+        hasMore: response.pagination ? 
+          (response.pagination.page * response.pagination.limit) < response.pagination.total : 
+          false
+      };
+    } catch (error) {
+      console.error('Failed to search images:', error);
+      return {
+        images: [],
+        totalCount: 0,
+        hasMore: false
+      };
     }
-
-    // 按查询词过滤
-    if (query) {
-      const queryLower = query.toLowerCase();
-      filteredImages = filteredImages.filter(img => 
-        img.title.toLowerCase().includes(queryLower) ||
-        img.tags.some(tag => tag.toLowerCase().includes(queryLower)) ||
-        img.description?.toLowerCase().includes(queryLower)
-      );
-    }
-
-    // 按标签过滤
-    if (tags.length > 0) {
-      filteredImages = filteredImages.filter(img =>
-        tags.some(tag => img.tags.includes(tag))
-      );
-    }
-
-    // 按比例过滤
-    if (ratio) {
-      filteredImages = filteredImages.filter(img => img.ratio === ratio);
-    }
-
-    // 分页
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedImages = filteredImages.slice(startIndex, endIndex);
-
-    return {
-      images: paginatedImages,
-      totalCount: filteredImages.length,
-      hasMore: endIndex < filteredImages.length
-    };
   }
 
   // 获取热门搜索词
   static async getPopularSearchTerms(): Promise<string[]> {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    // 这个可以从API获取，或者保持静态数据
     return [
       'cat', 'dog', 'flower', 'car', 'princess', 'dragon',
       'robot', 'butterfly', 'tree', 'castle', 'superhero', 'cartoon'
@@ -125,7 +166,7 @@ export class CategoriesService {
 
   // 获取推荐标签
   static async getRecommendedTags(): Promise<string[]> {
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // 这个可以从API获取，或者保持静态数据
     return [
       'cute', 'fun', 'colorful', 'simple', 'detailed', 'fantasy',
       'realistic', 'cartoon', 'nature', 'adventure'
@@ -134,48 +175,38 @@ export class CategoriesService {
 
   // 根据ID获取图片
   static async getImageById(imageId: string): Promise<CategoryImage | null> {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    return mockCategoryImages.find(img => img.id === imageId) || null;
+    try {
+      const response = await this.apiRequest<ApiResponse<CategoryImage>>(`/api/images/${imageId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch image ${imageId}:`, error);
+      return null;
+    }
   }
 
   // 获取相关图片
   static async getRelatedImages(imageId: string, limit: number = 8): Promise<CategoryImage[]> {
-    await new Promise(resolve => setTimeout(resolve, 400));
-    
-    const targetImage = mockCategoryImages.find(img => img.id === imageId);
-    if (!targetImage) return [];
+    try {
+      // 首先获取目标图片信息
+      const targetImage = await this.getImageById(imageId);
+      if (!targetImage) return [];
 
-    // 优先获取同分类的其他图片
-    let relatedImages = mockCategoryImages
-      .filter(img => img.id !== imageId && img.category === targetImage.category);
+      // 获取同分类的其他图片
+      const searchResult = await this.searchImages({
+        category: targetImage.category,
+        limit: limit * 2 // 获取更多图片以便过滤
+      });
 
-    // 如果同分类图片不够，从其他分类中获取相似标签的图片
-    if (relatedImages.length < limit) {
-      const otherCategoryImages = mockCategoryImages
-        .filter(img => 
-          img.id !== imageId && 
-          img.category !== targetImage.category &&
-          img.tags.some(tag => targetImage.tags.includes(tag))
-        );
-      
-      relatedImages = [...relatedImages, ...otherCategoryImages];
+      // 过滤掉当前图片，并限制数量
+      const relatedImages = searchResult.images
+        .filter(img => img.id !== imageId)
+        .slice(0, limit);
+
+      return relatedImages;
+    } catch (error) {
+      console.error(`Failed to fetch related images for ${imageId}:`, error);
+      return [];
     }
-
-    // 如果还是不够，随机添加其他图片
-    if (relatedImages.length < limit) {
-      const remainingImages = mockCategoryImages
-        .filter(img => 
-          img.id !== imageId && 
-          !relatedImages.some(related => related.id === img.id)
-        );
-      
-      relatedImages = [...relatedImages, ...remainingImages];
-    }
-
-    // 随机排序并限制数量
-    return relatedImages
-      .sort(() => Math.random() - 0.5)
-      .slice(0, limit);
   }
 }
 

@@ -99,3 +99,4 @@ public/uploads/
 *.zip
 *.tar.gz
 *.rar 
+.vercel

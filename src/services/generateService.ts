@@ -563,12 +563,17 @@ class MockApiService {
         if (homeImage) {
           imageUrl = homeImage.defaultUrl; // 使用默认的黑白图片
           // 根据HomeImage的尺寸计算比例
-          const { width, height } = homeImage.dimensions;
-          if (width === height) {
-            imageRatio = '1:1';
-          } else if (width > height) {
-            imageRatio = '4:3';
+          if (homeImage.dimensions) {
+            const { width, height } = homeImage.dimensions;
+            if (width === height) {
+              imageRatio = '1:1';
+            } else if (width > height) {
+              imageRatio = '4:3';
+            } else {
+              imageRatio = '3:4';
+            }
           } else {
+            // 如果没有尺寸信息，使用默认比例
             imageRatio = '3:4';
           }
         }

@@ -51,7 +51,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setSelectedRatio,
     setPublicVisibility,
     setSelectedImage,
-    setUploadedFile,
     setUploadedImageWithDimensions,
     generateImages,
     recreateExample,

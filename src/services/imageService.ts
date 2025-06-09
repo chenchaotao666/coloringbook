@@ -9,7 +9,7 @@ export interface HomeImage {
   title: string;
   description: string;
   tags: string[];
-  dimensions: {
+  dimensions?: {
     width: number;
     height: number;
   };

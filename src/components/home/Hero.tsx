@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import arrowRightIcon from '../../images/arrow-right-outline-default.svg';

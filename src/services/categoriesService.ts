@@ -9,7 +9,7 @@ export interface CategoryImage {
   colorUrl?: string; // 彩色版本URL
   tags: string[];
   category: string;
-  ratio: '1:1' | '3:4' | '4:3';
+  ratio: string;
   description?: string;
 }
 
@@ -25,6 +25,7 @@ export interface Category {
 
 // 从JSON文件加载数据
 const mockCategories: Category[] = categoriesData;
+const mockCategoryImages: CategoryImage[] = categoryImagesData as CategoryImage[];
 
 // 搜索结果接口
 export interface SearchResult {
@@ -72,7 +73,7 @@ export class CategoriesService {
     // 模拟API延迟
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    let filteredImages = [...categoryImagesData];
+    let filteredImages = [...mockCategoryImages];
 
     // 按分类过滤
     if (category) {
@@ -134,23 +135,23 @@ export class CategoriesService {
   // 根据ID获取图片
   static async getImageById(imageId: string): Promise<CategoryImage | null> {
     await new Promise(resolve => setTimeout(resolve, 200));
-    return categoryImagesData.find(img => img.id === imageId) || null;
+    return mockCategoryImages.find(img => img.id === imageId) || null;
   }
 
   // 获取相关图片
   static async getRelatedImages(imageId: string, limit: number = 8): Promise<CategoryImage[]> {
     await new Promise(resolve => setTimeout(resolve, 400));
     
-    const targetImage = categoryImagesData.find(img => img.id === imageId);
+    const targetImage = mockCategoryImages.find(img => img.id === imageId);
     if (!targetImage) return [];
 
     // 优先获取同分类的其他图片
-    let relatedImages = categoryImagesData
+    let relatedImages = mockCategoryImages
       .filter(img => img.id !== imageId && img.category === targetImage.category);
 
     // 如果同分类图片不够，从其他分类中获取相似标签的图片
     if (relatedImages.length < limit) {
-      const otherCategoryImages = categoryImagesData
+      const otherCategoryImages = mockCategoryImages
         .filter(img => 
           img.id !== imageId && 
           img.category !== targetImage.category &&
@@ -162,7 +163,7 @@ export class CategoriesService {
 
     // 如果还是不够，随机添加其他图片
     if (relatedImages.length < limit) {
-      const remainingImages = categoryImagesData
+      const remainingImages = mockCategoryImages
         .filter(img => 
           img.id !== imageId && 
           !relatedImages.some(related => related.id === img.id)

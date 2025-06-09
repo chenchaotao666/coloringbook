@@ -4,7 +4,7 @@ import homeFeatureAlt from '../../images/home-feature-alt.png';
 import homeFeature from '../../images/home-feature.png';
 import coloringPrincess from '../../images/long-color.svg';
 import coloringmMickeyMouse from '../../images/xxx.svg';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/button';
 
 interface FeatureItemProps {
   title: string;

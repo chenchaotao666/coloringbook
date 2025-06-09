@@ -1,31 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
-import { CategoriesService, Category, CategoryImage, SearchResult } from '../services/categoriesService';
-import MasonryGrid from '../components/layout/MasonryGrid';
+import { CategoriesService, Category } from '../services/categoriesService';
 import CategoryCard from '../components/categories/CategoryCard';
-import { HomeImage } from '../services/homeImageService';
 import homeIcon from '../images/home.svg';
 import chevronRightIcon from '../images/chevron-right.svg';
 import noResultIcon from '../images/no-result.svg';
 
-// 将CategoryImage转换为MasonryGrid所需的HomeImage格式
-const convertCategoryImageToHomeImage = (categoryImage: CategoryImage): HomeImage => {
-  return {
-    id: categoryImage.id,
-    name: categoryImage.title,
-    defaultUrl: categoryImage.url,
-    colorUrl: categoryImage.colorUrl || categoryImage.url, // 如果没有彩色版本，使用原图
-    title: categoryImage.title,
-    description: categoryImage.description || '',
-    tags: categoryImage.tags,
-    dimensions: {
-      width: 400,
-      height: 500
-    }
-  };
-};
+
 
 const CategoriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -89,11 +72,7 @@ const CategoriesPage: React.FC = () => {
     handleSearch();
   };
 
-  // 清空搜索
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setIsSearchActive(false);
-  };
+
 
   // 主分类列表页面
   return (

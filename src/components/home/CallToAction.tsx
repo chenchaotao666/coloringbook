@@ -1,7 +1,7 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import arrowRightIcon from '../../images/arrow-right-outline.svg';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/button';
 
 const CallToAction = () => {
   return (

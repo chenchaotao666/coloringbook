@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { Button } from '../components/ui/button';
-import HoverImageCard from '../components/home/HoverImageCard';
 import MasonryGrid from '../components/layout/MasonryGrid';
 import { HomeImageService } from '../services/imageService';
 import { CategoriesService } from '../services/categoriesService';
@@ -185,7 +184,7 @@ const ImageDetailPage: React.FC = () => {
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 mb-12">
           {breadcrumbPath.map((item, index) => (
-            <React.Fragment key={index}>
+            <Fragment key={index}>
               {index > 0 && (
                 <img src={chevronRightIcon} alt=">" className="w-3 h-3" />
               )}
@@ -204,7 +203,7 @@ const ImageDetailPage: React.FC = () => {
                   {item.label}
                 </button>
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </nav>
 

@@ -1,6 +1,6 @@
 [
   {
-    "id": "animals",
+    "id": "id-animals",
     "name": "animals",
     "displayName": "Animals",
     "description": "Cute and wild animals coloring pages",
@@ -8,7 +8,7 @@
     "thumbnailUrl": "/images-mock/cat-default.png"
   },
   {
-    "id": "disney",
+    "id": "id-disney",
     "name": "disney",
     "displayName": "Disney",
     "description": "Disney characters and princesses",
@@ -16,7 +16,7 @@
     "thumbnailUrl": "/images-mock/mario-default.png"
   },
   {
-    "id": "flowers",
+    "id": "id-flowers",
     "name": "flowers",
     "displayName": "Flowers",
     "description": "Beautiful flowers and plants",
@@ -24,7 +24,7 @@
     "thumbnailUrl": "/images-mock/flower-default.png"
   },
   {
-    "id": "vehicles",
+    "id": "id-vehicles",
     "name": "vehicles",
     "displayName": "Vehicles",
     "description": "Cars, trucks, planes and more",
@@ -32,7 +32,7 @@
     "thumbnailUrl": "/images-mock/robot-default.png"
   },
   {
-    "id": "fantasy",
+    "id": "id-fantasy",
     "name": "fantasy",
     "displayName": "Fantasy",
     "description": "Dragons, unicorns and magical creatures",
@@ -40,7 +40,7 @@
     "thumbnailUrl": "/images-mock/cartoon-default.png"
   },
   {
-    "id": "nature",
+    "id": "id-nature",
     "name": "nature",
     "displayName": "Nature",
     "description": "Trees, landscapes and natural scenes",

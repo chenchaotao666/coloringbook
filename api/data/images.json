@@ -13,6 +13,7 @@
     "createdAt": "2024-01-15T09:30:00.000Z",
     "prompt": "经典游戏角色马里奥涂色页，包含标志性的红帽子和蓝色工装裤",
     "userId": "system",
+    "category": "id-animals",
     "additionalInfo": {
       "features": [
         "经典游戏角色设计，线条清晰简洁",
@@ -54,6 +55,7 @@
     "createdAt": "2024-01-15T10:30:00.000Z",
     "prompt": "经典游戏角色马里奥涂色页，包含标志性的红帽子和蓝色工装裤",
     "userId": "system",
+    "category": "id-disney",
     "additionalInfo": {
       "features": [
         "经典游戏角色设计，线条清晰简洁",
@@ -95,6 +97,7 @@
     "createdAt": "2024-01-15T11:15:00.000Z",
     "prompt": "可爱的小猫咪涂色页，圆润的线条设计，大眼睛和小鼻子",
     "userId": "system",
+    "category": "id-animals",
     "additionalInfo": {
       "features": [
         "可爱的小猫造型，圆润的线条设计",
@@ -136,6 +139,7 @@
     "createdAt": "2024-01-15T12:00:00.000Z",
     "prompt": "美丽的花朵涂色页，精美的花瓣设计，层次丰富的自然图案",
     "userId": "system",
+    "category": "id-flowers",
     "additionalInfo": {
       "features": [
         "精美的花朵图案，层次丰富的花瓣设计",
@@ -177,6 +181,7 @@
     "createdAt": "2024-01-15T12:45:00.000Z",
     "prompt": "未来科技机器人涂色页，复杂的机械结构设计，充满科技感",
     "userId": "system",
+    "category": "id-vehicles",
     "additionalInfo": {
       "features": [
         "复杂的机械结构设计，细节丰富",
@@ -218,6 +223,7 @@
     "createdAt": "2024-01-15T13:30:00.000Z",
     "prompt": "超级英雄蜘蛛侠涂色页，经典造型设计，标志性蜘蛛网图案",
     "userId": "system",
+    "category": "id-fantasy",
     "additionalInfo": {
       "features": [
         "经典超级英雄造型，动感十足",
@@ -259,6 +265,7 @@
     "createdAt": "2024-01-15T14:15:00.000Z",
     "prompt": "有趣的卡通角色涂色页，活泼可爱的设计，充满童趣",
     "userId": "system",
+    "category": "id-fantasy",
     "additionalInfo": {
       "features": [
         "活泼可爱的卡通角色设计",
@@ -299,7 +306,8 @@
     "isPublic": true,
     "createdAt": "2024-01-15T15:00:00.000Z",
     "prompt": "神奇的独角兽涂色页，优雅的马身配上螺旋角，充满魔法色彩",
-    "userId": "system",
+    "userId": "userId-1",
+    "category": "id-fantasy",
     "additionalInfo": {
       "features": [
         "神话传说中的独角兽造型",
@@ -340,7 +348,8 @@
     "isPublic": true,
     "createdAt": "2024-01-15T15:45:00.000Z",
     "prompt": "神秘的魔法师涂色页，经典的尖顶帽和长袍设计，充满智慧和神秘感",
-    "userId": "system",
+    "userId": "userId-1",
+    "category": "id-nature",
     "additionalInfo": {
       "features": [
         "经典的魔法师造型设计",
@@ -381,7 +390,8 @@
     "isPublic": true,
     "createdAt": "2024-01-15T16:30:00.000Z",
     "prompt": "美味的冰淇淋涂色页，多层冰淇淋球设计，夏日清凉的美食主题",
-    "userId": "system",
+    "userId": "userId-1",
+    "category": "id-fantasy",
     "additionalInfo": {
       "features": [
         "可爱的冰淇淋造型设计",

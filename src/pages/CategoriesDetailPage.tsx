@@ -5,46 +5,27 @@ import { Button } from '../components/ui/button';
 
 import MasonryGrid from '../components/layout/MasonryGrid';
 import RatioSelector from '../components/ui/RatioSelector';
-import { CategoriesService, Category, CategoryImage } from '../services/categoriesService';
+import { CategoriesService, Category } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
 const homeIcon = '/images/home.svg';
 const chevronRightIcon = '/images/chevron-right.svg';
 const imageIcon = '/images/image.svg';
-
-// 数据转换函数
-const convertCategoryImageToHomeImage = (categoryImage: CategoryImage): HomeImage => {
-  return {
-    id: categoryImage.id,
-    name: categoryImage.title,
-    defaultUrl: categoryImage.url,
-    colorUrl: categoryImage.colorUrl || categoryImage.url, // 如果没有彩色版本，使用默认图片
-    title: categoryImage.title,
-    description: categoryImage.title,
-    tags: categoryImage.tags,
-    dimensions: { width: 400, height: 500 },
-    additionalInfo: {
-      features: [],
-      suitableFor: [],
-      coloringSuggestions: [],
-      creativeUses: []
-    }
-  };
-};
 
 const CategoriesDetailPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
   
   const [category, setCategory] = useState<Category | null>(null);
-  const [categoryImages, setCategoryImages] = useState<CategoryImage[]>([]);
-  const [filteredImages, setFilteredImages] = useState<CategoryImage[]>([]);
+  const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
+  const [filteredImages, setFilteredImages] = useState<HomeImage[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [generatePrompt, setGeneratePrompt] = useState('');
   const [selectedRatio, setSelectedRatio] = useState<'3:4' | '4:3' | '1:1'>('3:4');
-
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
 
   // 处理标签过滤
   const handleTagClick = (tag: string) => {
@@ -57,6 +38,41 @@ const CategoriesDetailPage: React.FC = () => {
       setSelectedTag(tag);
       const filtered = categoryImages.filter(img => img.tags.includes(tag));
       setFilteredImages(filtered);
+    }
+  };
+
+  // 加载分类图片数据
+  const loadCategoryImages = async (page: number = 1, search?: string) => {
+    if (!categoryId) return;
+    
+    try {
+      // 使用新的 getImagesByCategory 方法
+      const result = await CategoriesService.getImagesByCategory(categoryId, {
+        page,
+        limit: 20,
+        search
+      });
+      
+      if (page === 1) {
+        // 第一页，替换现有数据
+        setCategoryImages(result.images);
+        setFilteredImages(result.images);
+        
+        // 生成子分类列表（从图片标签中提取）
+        const allTags = result.images.flatMap((img: HomeImage) => img.tags);
+        const uniqueTags = Array.from(new Set(allTags)) as string[];
+        setSubcategories(uniqueTags);
+      } else {
+        // 后续页面，追加数据
+        setCategoryImages(prev => [...prev, ...result.images]);
+        setFilteredImages(prev => [...prev, ...result.images]);
+      }
+      
+      setHasMore(result.hasMore);
+      setTotalCount(result.totalCount);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error('Failed to load category images:', error);
     }
   };
 
@@ -73,17 +89,8 @@ const CategoriesDetailPage: React.FC = () => {
         if (foundCategory) {
           setCategory(foundCategory);
           
-          // 加载分类图片 - 使用搜索功能获取该分类的图片
-          const searchResult = await CategoriesService.searchImages({ category: categoryId });
-          setCategoryImages(searchResult.images);
-          setFilteredImages(searchResult.images);
-          
-          // 生成子分类列表（从图片标签中提取）
-          const allTags = searchResult.images.flatMap((img: CategoryImage) => img.tags);
-          const uniqueTags = Array.from(new Set(allTags)) as string[];
-          setSubcategories(uniqueTags);
-          
-
+          // 加载分类图片 - 使用新的 getImagesByCategory 方法
+          await loadCategoryImages(1);
         }
       } catch (error) {
         console.error('Failed to load category data:', error);
@@ -94,6 +101,15 @@ const CategoriesDetailPage: React.FC = () => {
 
     loadCategoryData();
   }, [categoryId]);
+
+  // 加载更多图片
+  const handleLoadMore = async () => {
+    if (hasMore && !isLoading) {
+      setIsLoading(true);
+      await loadCategoryImages(currentPage + 1);
+      setIsLoading(false);
+    }
+  };
 
   const handleBackToCategories = () => {
     navigate('/categories');
@@ -113,8 +129,7 @@ const CategoriesDetailPage: React.FC = () => {
     setSelectedRatio(ratio);
   };
 
-
-  if (isLoading) {
+  if (isLoading && categoryImages.length === 0) {
     return (
       <Layout>
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
@@ -182,6 +197,15 @@ const CategoriesDetailPage: React.FC = () => {
             {category.displayName}
           </h1>
 
+          {/* Category Stats */}
+          {totalCount > 0 && (
+            <div className="text-center mb-6">
+              <p className="text-[#6B7280] text-sm">
+                Showing {filteredImages.length} of {totalCount} images
+              </p>
+            </div>
+          )}
+
           {/* Subcategories Tags */}
           {subcategories.length > 0 && (
             <div className="flex justify-center items-center gap-2 flex-wrap mb-16">
@@ -230,10 +254,30 @@ const CategoriesDetailPage: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <MasonryGrid 
-                images={filteredImages.map(convertCategoryImageToHomeImage)}
-                isLoading={false}
-              />
+              <>
+                <MasonryGrid 
+                  images={filteredImages}
+                  isLoading={false}
+                  onImageClick={(image) => {
+                    // 导航到图片详情页，传递分类信息用于面包屑
+                    navigate(`/image/${image.id}?from=category&categoryId=${categoryId}&categoryName=${encodeURIComponent(category?.displayName || '')}`);
+                  }}
+                />
+                
+                {/* Load More Button */}
+                {hasMore && selectedTag === null && (
+                  <div className="flex justify-center mt-12">
+                    <Button 
+                      onClick={handleLoadMore}
+                      variant="outline"
+                      disabled={isLoading}
+                      className="px-8 py-3"
+                    >
+                      {isLoading ? 'Loading...' : 'Load More Images'}
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
 

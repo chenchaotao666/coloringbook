@@ -1,3 +1,5 @@
+import { ApiUtils, ApiResponse } from '../utils/apiUtils';
+
 export interface HomeImage {
   id: string;
   name: string;
@@ -18,71 +20,72 @@ export interface HomeImage {
   };
 }
 
-// API 响应接口
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  total?: number;
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-  error?: string;
+// 搜索结果接口
+export interface SearchResult {
+  images: HomeImage[];
+  totalCount: number;
+  hasMore: boolean;
 }
 
-// API 配置
-const API_BASE_URL = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:3001' 
-  : '';
+// 搜索参数接口
+export interface SearchParams {
+  query?: string;
+  category?: string;
+  tags?: string[];
+  ratio?: '1:1' | '3:4' | '4:3';
+  type?: 'text2image' | 'image2image';
+  page?: number;
+  limit?: number;
+}
 
 export class HomeImageService {
-  // 通用API请求方法
-  private static async apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        ...options,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'API request failed');
-      }
-
-      return data;
-    } catch (error) {
-      console.error('API request error:', error);
-      throw error;
-    }
-  }
-
   /**
-   * 获取默认显示的图片（mario作为默认）
+   * 搜索图片（根据标题、描述、标签）- 核心方法
    */
-  static async getDefaultImage(): Promise<HomeImage | null> {
+  static async searchImages(params: SearchParams = {}): Promise<SearchResult> {
+    const {
+      query = '',
+      category = '',
+      tags = [],
+      ratio,
+      type,
+      page = 1,
+      limit = 20
+    } = params;
+
     try {
-      // 尝试获取mario图片
-      const response = await this.apiRequest<ApiResponse<HomeImage>>('/api/images/mario');
-      return response.data;
-    } catch (error) {
-      // 如果mario不存在，获取第一张图片
-      try {
-        const allImages = await this.getAllImages();
-        return allImages.length > 0 ? allImages[0] : null;
-      } catch (fallbackError) {
-        console.error('Failed to get default image:', fallbackError);
-        return null;
+      // 构建查询参数
+      const searchParams = new URLSearchParams();
+      if (query) searchParams.append('search', query);
+      if (category) searchParams.append('category', category);
+      if (ratio) searchParams.append('difficulty', ratio); // 使用difficulty参数映射ratio
+      if (type) searchParams.append('type', type);
+      searchParams.append('page', page.toString());
+      searchParams.append('limit', limit.toString());
+      
+      // 如果有标签，将其作为搜索词的一部分
+      if (tags.length > 0) {
+        const tagQuery = tags.join(' ');
+        const combinedQuery = query ? `${query} ${tagQuery}` : tagQuery;
+        searchParams.set('search', combinedQuery);
       }
+
+      const response = await ApiUtils.apiRequest<ApiResponse<HomeImage[]>>(`/api/images?${searchParams.toString()}`);
+      
+      return {
+        images: response.data,
+        totalCount: response.pagination?.total || response.data.length,
+        hasMore: response.pagination ? 
+          (response.pagination.page * response.pagination.limit) < response.pagination.total : 
+          false
+      };
+    } catch (error) {
+      console.error('Failed to search images:', error);
+      return {
+        images: [],
+        totalCount: 0,
+        hasMore: false
+      };
     }
   }
 
@@ -91,8 +94,8 @@ export class HomeImageService {
    */
   static async getAllImages(): Promise<HomeImage[]> {
     try {
-      const response = await this.apiRequest<ApiResponse<HomeImage[]>>('/api/images?limit=100');
-      return response.data;
+      const result = await this.searchImages({ limit: 100 });
+      return result.images;
     } catch (error) {
       console.error('Failed to fetch all images:', error);
       return [];
@@ -104,7 +107,7 @@ export class HomeImageService {
    */
   static async getImageById(id: string): Promise<HomeImage | null> {
     try {
-      const response = await this.apiRequest<ApiResponse<HomeImage>>(`/api/images/${id}`);
+      const response = await ApiUtils.apiRequest<ApiResponse<HomeImage>>(`/api/images/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Failed to fetch image ${id}:`, error);
@@ -113,73 +116,10 @@ export class HomeImageService {
   }
 
   /**
-   * 模拟API请求获取首页图片
-   */
-  static async fetchHomeImage(): Promise<HomeImage | null> {
-    return this.getDefaultImage();
-  }
-
-  /**
    * 模拟API请求获取所有首页图片
    */
   static async fetchAllHomeImages(): Promise<HomeImage[]> {
     return this.getAllImages();
-  }
-
-  /**
-   * 根据标签过滤图片
-   */
-  static async getImagesByTag(tag: string): Promise<HomeImage[]> {
-    try {
-      const response = await this.apiRequest<ApiResponse<HomeImage[]>>(`/api/images?search=${encodeURIComponent(tag)}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Failed to get images by tag ${tag}:`, error);
-      return [];
-    }
-  }
-
-  /**
-   * 根据多个标签过滤图片
-   */
-  static async getImagesByTags(tags: string[]): Promise<HomeImage[]> {
-    if (tags.length === 0) return this.getAllImages();
-    
-    try {
-      const searchQuery = tags.join(' ');
-      const response = await this.apiRequest<ApiResponse<HomeImage[]>>(`/api/images?search=${encodeURIComponent(searchQuery)}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Failed to get images by tags:`, error);
-      return [];
-    }
-  }
-
-  /**
-   * 搜索图片（根据标题、描述、标签）
-   */
-  static async searchImages(query: string): Promise<HomeImage[]> {
-    try {
-      const response = await this.apiRequest<ApiResponse<HomeImage[]>>(`/api/images?search=${encodeURIComponent(query)}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Failed to search images with query "${query}":`, error);
-      return [];
-    }
-  }
-
-  /**
-   * 获取所有唯一标签
-   */
-  static async getAllTags(): Promise<string[]> {
-    try {
-      const allImages = await this.getAllImages();
-      const allTags = allImages.flatMap(img => img.tags || []);
-      return [...new Set(allTags)].sort();
-    } catch (error) {
-      console.error('Failed to get all tags:', error);
-      return [];
-    }
   }
 
   /**
@@ -194,110 +134,38 @@ export class HomeImageService {
       const targetImage = await this.getImageById(imageId);
       if (!targetImage) return [];
 
-      // 获取所有图片
-      const allImages = await this.getAllImages();
-      
-      // 过滤掉当前图片
-      const otherImages = allImages.filter(img => img.id !== imageId);
-      
       // 如果有标签，优先返回有相同标签的图片
       if (targetImage.tags && targetImage.tags.length > 0) {
-        const relatedByTags = otherImages.filter(img => 
-          img.tags && img.tags.some(tag => targetImage.tags.includes(tag))
-        );
+        const result = await this.searchImages({
+          tags: targetImage.tags,
+          limit: limit * 2 // 获取更多图片以便过滤
+        });
         
-        if (relatedByTags.length >= limit) {
-          return relatedByTags.slice(0, limit);
+        // 过滤掉当前图片
+        const relatedImages = result.images.filter(img => img.id !== imageId);
+        
+        if (relatedImages.length >= limit) {
+          return relatedImages.slice(0, limit);
         }
         
         // 如果相关图片不够，补充其他图片
-        const remaining = otherImages.filter(img => 
-          !relatedByTags.some(related => related.id === img.id)
+        const additionalResult = await this.searchImages({
+          limit: limit * 2
+        });
+        
+        const additionalImages = additionalResult.images.filter(img => 
+          img.id !== imageId && !relatedImages.some(related => related.id === img.id)
         );
         
-        return [...relatedByTags, ...remaining].slice(0, limit);
+        return [...relatedImages, ...additionalImages].slice(0, limit);
       }
       
-      // 如果没有标签，随机返回其他图片
-      return otherImages.slice(0, limit);
+      // 如果没有标签，返回其他图片
+      const result = await this.searchImages({ limit: limit + 1 });
+      return result.images.filter(img => img.id !== imageId).slice(0, limit);
     } catch (error) {
       console.error(`Failed to get related images for ${imageId}:`, error);
       return [];
-    }
-  }
-
-  /**
-   * 获取图片统计信息
-   */
-  static async getImageStats() {
-    try {
-      const allImages = await this.getAllImages();
-      const allTags = await this.getAllTags();
-      
-      const tagCounts = allTags.map(tag => ({
-        tag,
-        count: allImages.filter(img => img.tags && img.tags.includes(tag)).length
-      }));
-
-      return {
-        totalImages: allImages.length,
-        totalTags: allTags.length,
-        tagCounts: tagCounts.sort((a, b) => b.count - a.count),
-        averageTagsPerImage: allImages.reduce((sum, img) => sum + (img.tags?.length || 0), 0) / allImages.length
-      };
-    } catch (error) {
-      console.error('Failed to get image stats:', error);
-      return {
-        totalImages: 0,
-        totalTags: 0,
-        tagCounts: [],
-        averageTagsPerImage: 0
-      };
-    }
-  }
-
-  /**
-   * 验证图片数据完整性
-   */
-  static async validateImageData(): Promise<{ isValid: boolean; errors: string[] }> {
-    try {
-      const allImages = await this.getAllImages();
-      const errors: string[] = [];
-      
-      allImages.forEach((img, index) => {
-        if (!img.id) errors.push(`Image at index ${index} missing id`);
-        if (!img.title) errors.push(`Image ${img.id || index} missing title`);
-        if (!img.defaultUrl) errors.push(`Image ${img.id || index} missing defaultUrl`);
-        if (!img.colorUrl) errors.push(`Image ${img.id || index} missing colorUrl`);
-        if (!Array.isArray(img.tags)) errors.push(`Image ${img.id || index} tags is not an array`);
-        if (!img.additionalInfo) errors.push(`Image ${img.id || index} missing additionalInfo`);
-        
-        if (img.additionalInfo) {
-          if (!Array.isArray(img.additionalInfo.features)) {
-            errors.push(`Image ${img.id || index} additionalInfo.features is not an array`);
-          }
-          if (!Array.isArray(img.additionalInfo.suitableFor)) {
-            errors.push(`Image ${img.id || index} additionalInfo.suitableFor is not an array`);
-          }
-          if (!Array.isArray(img.additionalInfo.coloringSuggestions)) {
-            errors.push(`Image ${img.id || index} additionalInfo.coloringSuggestions is not an array`);
-          }
-          if (!Array.isArray(img.additionalInfo.creativeUses)) {
-            errors.push(`Image ${img.id || index} additionalInfo.creativeUses is not an array`);
-          }
-        }
-      });
-
-      return {
-        isValid: errors.length === 0,
-        errors
-      };
-    } catch (error) {
-      console.error('Failed to validate image data:', error);
-      return {
-        isValid: false,
-        errors: ['Failed to fetch image data for validation']
-      };
     }
   }
 }

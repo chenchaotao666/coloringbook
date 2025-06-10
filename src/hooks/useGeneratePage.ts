@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { GeneratedImage, ExampleImage, StyleSuggestion, generateService } from '../services/generateService';
+import GenerateServiceInstance, { StyleSuggestion } from '../services/generateService';
+import { HomeImage } from '../services/imageService';
 
 export interface UseGeneratePageState {
   // 基础状态
@@ -13,8 +14,8 @@ export interface UseGeneratePageState {
   uploadedImageDimensions: { width: number; height: number } | null;
   
   // 数据状态
-  generatedImages: GeneratedImage[];
-  exampleImages: ExampleImage[];
+  generatedImages: HomeImage[];
+  exampleImages: HomeImage[];
   styleSuggestions: StyleSuggestion[];
   
   // 加载状态
@@ -58,8 +59,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   
   // 缓存示例图片，避免重复加载和闪烁
   const [exampleImagesCache, setExampleImagesCache] = useState<{
-    text: ExampleImage[];
-    image: ExampleImage[];
+    text: HomeImage[];
+    image: HomeImage[];
   }>({ text: [], image: [] });
   
   // 从URL参数获取初始值
@@ -137,7 +138,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
           throw new Error('Please enter a prompt');
         }
         
-        response = await generateService.generateTextToImage({
+        response = await GenerateServiceInstance.generateTextToImage({
           prompt: state.prompt,
           ratio: state.selectedRatio,
           isPublic: state.publicVisibility,
@@ -147,7 +148,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
           throw new Error('Please upload an image');
         }
         
-        response = await generateService.generateImageToImage({
+        response = await GenerateServiceInstance.generateImageToImage({
           imageFile: state.uploadedFile,
           ratio: state.selectedRatio,
           isPublic: state.publicVisibility,
@@ -176,7 +177,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const pollTaskStatus = useCallback(async (taskId: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const taskStatus = await generateService.getTaskStatus(taskId);
+        const taskStatus = await GenerateServiceInstance.getTaskStatus(taskId);
         
         updateState({
           generationProgress: taskStatus.progress,
@@ -189,15 +190,16 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
           setState(prevState => ({
             ...prevState,
             isGenerating: false,
-            generatedImages: [...(taskStatus.images || []), ...prevState.generatedImages],
-            selectedImage: taskStatus.images?.[0]?.fullSizeUrl || null,
+            generatedImages: taskStatus.image ? [taskStatus.image, ...prevState.generatedImages] : prevState.generatedImages,
+            selectedImage: taskStatus.image?.colorUrl || null,
             generationProgress: 100,
           }));
         } else if (taskStatus.status === 'failed') {
           clearInterval(pollInterval);
           updateState({
             isGenerating: false,
-            error: taskStatus.error || 'Generation failed',
+            error: 'Generation failed',
+            generationProgress: 0,
           });
         }
       } catch (error) {
@@ -223,7 +225,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
     
     try {
       updateState({ isLoadingExamples: true, error: null });
-      const examples = await generateService.getExampleImages(state.selectedTab);
+      const examples = await GenerateServiceInstance.getExampleImages(state.selectedTab);
       
       // 更新缓存
       setExampleImagesCache(prev => ({
@@ -245,7 +247,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const loadStyleSuggestions = useCallback(async () => {
     try {
       updateState({ isLoadingStyles: true, error: null });
-      const styles = await generateService.getStyleSuggestions();
+      const styles = await GenerateServiceInstance.getStyleSuggestions();
       updateState({ styleSuggestions: styles });
     } catch (error) {
       updateState({
@@ -260,27 +262,25 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const recreateExample = useCallback(async (exampleId: string) => {
     try {
       updateState({ isGenerating: true, error: null });
-      const response = await generateService.recreateExample(exampleId);
+      const response = await GenerateServiceInstance.recreateExample(exampleId);
       
-      if (response.success) {
-        // 使用函数式更新确保获取最新的 generatedImages
-        // 新生成的图片插入到最前面
-        setState(prevState => ({
-          ...prevState,
-          generatedImages: [...response.data.images, ...prevState.generatedImages],
-          selectedImage: response.data.images[0]?.fullSizeUrl || null,
-        }));
+      if (response.success && response.data.taskId) {
+        updateState({
+          currentTaskId: response.data.taskId,
+        });
+        
+        // 开始轮询任务状态
+        pollTaskStatus(response.data.taskId);
       } else {
         throw new Error(response.message || 'Recreation failed');
       }
     } catch (error) {
       updateState({
         error: error instanceof Error ? error.message : 'Recreation failed',
+        isGenerating: false,
       });
-    } finally {
-      updateState({ isGenerating: false });
     }
-  }, [updateState]);
+  }, [updateState, pollTaskStatus]);
 
   // 下载图片
   const downloadImage = useCallback(async (imageId: string, format: 'png' | 'pdf') => {
@@ -290,10 +290,10 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
       // 查找图片信息以获取更好的文件名
       const imageData = state.generatedImages.find(img => img.id === imageId);
       const fileName = imageData 
-        ? `coloring-page-${imageData.ratio}-${imageId.slice(-8)}.${format}`
+        ? `coloring-page-${imageData.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${imageId.slice(-8)}.${format}`
         : `coloring-page-${imageId}.${format}`;
       
-      const blob = await generateService.downloadImage(imageId, format);
+      const blob = await GenerateServiceInstance.downloadImage(imageId, format);
       
       // 创建下载链接
       const url = URL.createObjectURL(blob);
@@ -352,7 +352,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   // 加载生成历史
   const loadGeneratedImages = useCallback(async () => {
     try {
-      const images = await generateService.getAllGeneratedImages();
+      const images = await GenerateServiceInstance.getAllGeneratedImages();
       updateState({ generatedImages: images });
     } catch (error) {
       console.error('Failed to load generated images:', error);

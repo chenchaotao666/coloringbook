@@ -1,14 +1,12 @@
-import { useState, useEffect, useRef, Fragment } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
 import { HomeImageService } from '../services/imageService';
-import { CategoriesService } from '../services/categoriesService';
-import { downloadImageById } from '../utils/downloadUtils';
 import { HomeImage } from '../services/imageService';
-import { CategoryImage } from '../services/categoriesService';
+import { downloadImageById } from '../utils/downloadUtils';
 const homeIcon = '/images/home.svg';
 const chevronRightIcon = '/images/chevron-right.svg';
 const downloadIcon = '/images/download-white.svg';
@@ -17,14 +15,13 @@ const ImageDetailPage: React.FC = () => {
   const { imageId } = useParams<{ imageId: string }>();
   const navigate = useNavigate();
   
-  const [image, setImage] = useState<HomeImage | CategoryImage | null>(null);
+  const [image, setImage] = useState<HomeImage | null>(null);
   const [relatedImages, setRelatedImages] = useState<HomeImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState<{ png: boolean; pdf: boolean }>({
     png: false,
     pdf: false
   });
-  const [categoryInfo, setCategoryInfo] = useState<{ id: string; displayName: string } | null>(null);
   
   const leftImagesRef = useRef<HTMLDivElement>(null);
 
@@ -35,59 +32,19 @@ const ImageDetailPage: React.FC = () => {
       try {
         setIsLoading(true);
         
-        // 尝试从HomeImage中查找
-        let foundImage: HomeImage | CategoryImage | null = await HomeImageService.getImageById(imageId);
-        
-        // 如果没找到，尝试从CategoryImage中查找
-        if (!foundImage) {
-          foundImage = await CategoriesService.getImageById(imageId);
-        }
+        // 尝试从HomeImageService中查找
+        let foundImage: HomeImage | null = await HomeImageService.getImageById(imageId);
 
         if (foundImage) {
           setImage(foundImage);
           
-          // 如果是CategoryImage，加载分类信息
-          if (!('defaultUrl' in foundImage)) {
-            try {
-              const category = await CategoriesService.getCategoryById(foundImage.category);
-              if (category) {
-                setCategoryInfo({
-                  id: category.id,
-                  displayName: category.displayName
-                });
-              }
-            } catch (error) {
-              console.error('Failed to load category info:', error);
-            }
-          }
-          
-          // 加载相关图片
+          // 加载相关图片 - 优先使用HomeImageService
           let relatedImages: HomeImage[] = [];
           
-          if ('defaultUrl' in foundImage) {
-            // HomeImage类型：调用HomeImageService.getRelatedImages方法
+          try {
             relatedImages = await HomeImageService.getRelatedImages(foundImage.id, 5);
-          } else {
-            // CategoryImage类型：使用CategoriesService的getRelatedImages方法
-            const related = await CategoriesService.getRelatedImages(foundImage.id, 5);
-            
-            // 转换CategoryImage为HomeImage格式以兼容HoverImageCard
-            relatedImages = related.map(img => ({
-              id: img.id,
-              name: img.title,
-              defaultUrl: img.url,
-              colorUrl: img.colorUrl || img.url,
-              title: img.title,
-              description: img.description || img.title,
-              tags: img.tags,
-              dimensions: { width: 400, height: 500 },
-              additionalInfo: {
-                features: [],
-                suitableFor: [],
-                coloringSuggestions: [],
-                creativeUses: []
-              }
-            }));
+          } catch (error) {
+            console.error('Failed to load related images from HomeImageService:', error);
           }
           
           setRelatedImages(relatedImages);
@@ -101,8 +58,6 @@ const ImageDetailPage: React.FC = () => {
 
     loadImageData();
   }, [imageId]);
-
-
 
   const handleDownload = async (format: 'png' | 'pdf') => {
     if (!imageId) return;
@@ -120,23 +75,24 @@ const ImageDetailPage: React.FC = () => {
   const getBreadcrumbPath = () => {
     if (!image) return [];
     
-    // 根据图片类型确定面包屑路径
-    const isHomeImage = 'defaultUrl' in image;
-    if (isHomeImage) {
-      // HomeImage：只显示 Home -> 图片名字
-      return [
-        { label: 'Home', path: '/' },
-        { label: image.title, path: '', current: true }
-      ];
-    } else {
-      // CategoryImage的面包屑路径
-      const categoryLabel = categoryInfo?.displayName || 'Category';
-      const categoryPath = categoryInfo?.id ? `/categories/${categoryInfo.id}` : '/categories';
-      
+    // 检查是否从分类页面跳转过来
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromCategory = urlParams.get('from') === 'category';
+    const categoryId = urlParams.get('categoryId');
+    const categoryName = urlParams.get('categoryName');
+    
+    if (fromCategory && categoryId && categoryName) {
+      // 4层面包屑：Home > Coloring Pages Free > xxx category > 图片名字
       return [
         { label: 'Home', path: '/' },
         { label: 'Coloring Pages Free', path: '/categories' },
-        { label: categoryLabel, path: categoryPath },
+        { label: decodeURIComponent(categoryName), path: `/categories/${categoryId}` },
+        { label: image.title, path: '', current: true }
+      ];
+    } else {
+      // 默认2层面包屑：Home > 图片名字
+      return [
+        { label: 'Home', path: '/' },
         { label: image.title, path: '', current: true }
       ];
     }
@@ -174,7 +130,6 @@ const ImageDetailPage: React.FC = () => {
   }
 
   const breadcrumbPath = getBreadcrumbPath();
-  const isHomeImage = 'defaultUrl' in image;
 
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
@@ -214,7 +169,7 @@ const ImageDetailPage: React.FC = () => {
             {/* Black & White Image */}
             <div className="w-[300px] flex items-start justify-center">
               <img
-                src={isHomeImage ? image.defaultUrl : image.url}
+                src={image.defaultUrl}
                 alt={image.title}
                 className="max-w-full max-h-full object-contain rounded-lg"
               />
@@ -223,7 +178,7 @@ const ImageDetailPage: React.FC = () => {
             {/* Color Image */}
             <div className="w-[300px] flex items-start justify-center">
               <img
-                src={isHomeImage ? image.colorUrl : (image.colorUrl || image.url)}
+                src={image.colorUrl}
                 alt={`${image.title} - Colored`}
                 className="max-w-full max-h-full object-contain rounded-lg"
               />
@@ -298,7 +253,7 @@ const ImageDetailPage: React.FC = () => {
           <section>
             <h2 className="text-2xl font-bold text-black mb-6">🎁 图片特色</h2>
             <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {isHomeImage && image.additionalInfo && image.additionalInfo.features ? (
+              {image.additionalInfo && image.additionalInfo.features && image.additionalInfo.features.length > 0 ? (
                 image.additionalInfo.features.map((feature, index) => (
                   <p key={index}>• {feature}</p>
                 ))
@@ -317,7 +272,7 @@ const ImageDetailPage: React.FC = () => {
           <section>
             <h2 className="text-2xl font-bold text-black mb-6">💖 适合人群</h2>
             <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {isHomeImage && image.additionalInfo && image.additionalInfo.suitableFor ? (
+              {image.additionalInfo && image.additionalInfo.suitableFor && image.additionalInfo.suitableFor.length > 0 ? (
                 image.additionalInfo.suitableFor.map((suitable, index) => (
                   <p key={index}>• {suitable}</p>
                 ))
@@ -336,7 +291,7 @@ const ImageDetailPage: React.FC = () => {
           <section>
             <h2 className="text-2xl font-bold text-black mb-6">🎨 涂色建议</h2>
             <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {isHomeImage && image.additionalInfo && image.additionalInfo.coloringSuggestions ? (
+              {image.additionalInfo && image.additionalInfo.coloringSuggestions && image.additionalInfo.coloringSuggestions.length > 0 ? (
                 image.additionalInfo.coloringSuggestions.map((suggestion, index) => (
                   <p key={index}>• {suggestion}</p>
                 ))
@@ -355,7 +310,7 @@ const ImageDetailPage: React.FC = () => {
           <section>
             <h2 className="text-2xl font-bold text-black mb-6">💡 创意用途</h2>
             <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {isHomeImage && image.additionalInfo && image.additionalInfo.creativeUses ? (
+              {image.additionalInfo && image.additionalInfo.creativeUses && image.additionalInfo.creativeUses.length > 0 ? (
                 image.additionalInfo.creativeUses.map((use, index) => (
                   <p key={index}>• {use}</p>
                 ))

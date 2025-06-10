@@ -62,7 +62,9 @@ app.get('/', (req, res) => {
       images: {
         'GET /api/images': '获取图片列表，支持分页、搜索、筛选',
         'GET /api/images/:id': '获取单个图片详情',
-        'PUT /api/images/:id': '更新图片信息'
+        'PUT /api/images/:id': '更新图片信息',
+        'POST /api/images/generate/text-to-image': '文本生成图片',
+        'POST /api/images/generate/image-to-image': '图片转图片生成'
       },
       categories: {
         'GET /api/categories': '获取所有分类',
@@ -75,7 +77,8 @@ app.get('/', (req, res) => {
         'POST /api/generate/text-to-image': '文本生成图片',
         'POST /api/generate/image-to-image': '图片转换',
         'GET /api/generate/status/:taskId': '查询生成状态',
-        'GET /api/generate/history': '获取生成历史',
+        'GET /api/generate/history?userId=xxx': '获取用户生成历史',
+        'GET /api/generate/user/:userId/images': '获取用户生成的图片',
         'GET /api/generate/stats': '获取生成统计'
       },
       users: {

@@ -5,7 +5,6 @@ import GeneratePage from './pages/GeneratePage';
 import CategoriesPage from './pages/CategoriesPage';
 import CategoriesDetailPage from './pages/CategoriesDetailPage';
 import ImageDetailPage from './pages/ImageDetailPage';
-import ApiTestPage from './pages/ApiTestPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider } from './contexts/LanguageContext';
 import MasonryGridTest from './test/MasonryGridTest';
@@ -26,7 +25,6 @@ function App() {
           <Route path="/categories/:categoryId" element={<CategoriesDetailPage />} />
           <Route path="/image/:imageId" element={<ImageDetailPage />} />
           <Route path="/test/masonry" element={<MasonryGridTest />} />
-          <Route path="/test/api" element={<ApiTestPage />} />
           {/* Add more routes as needed */}
         </Routes>
       </Router>

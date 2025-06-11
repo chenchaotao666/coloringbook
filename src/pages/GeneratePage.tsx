@@ -77,8 +77,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     if (generatedImages.length > 0 && !isGenerating) {
       const latestImage = generatedImages[0]; // 假设数组已按时间排序
       // 如果当前没有选中图片，或者当前选中的图片不在列表中，则选择最新的
-      if (!selectedImage || !generatedImages.find(img => img.defaultUrl === selectedImage)) {
-        setSelectedImage(latestImage.defaultUrl);
+      if (!selectedImage || !generatedImages.find(img => img.id === selectedImage)) {
+        setSelectedImage(latestImage.id);
       }
     }
   }, [generatedImages, isGenerating, selectedImage, setSelectedImage, isInitialLoad]);
@@ -102,8 +102,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setPrompt(e.target.value);
   };
 
-  const handleImageSelect = (colorUrl: string) => {
-    setSelectedImage(colorUrl);
+  const handleImageSelect = (imageId: string) => {
+    setSelectedImage(imageId);
   };
 
   const handleGenerate = async () => {
@@ -112,10 +112,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   const handleDownload = async (format: 'png' | 'pdf') => {
     if (selectedImage) {
-      const imageId = generatedImages.find(img => img.colorUrl === selectedImage)?.id;
-      if (imageId) {
-        await downloadImage(imageId, format);
-      }
+      // selectedImage 现在存储的就是图片的 id
+      await downloadImage(selectedImage, format);
     }
   };
 
@@ -211,67 +209,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         return { width: getCenterImageWidth(selectedRatio), height: 'h-[460px]' };
       }
 
-      // 如果有选中的图片，尝试从生成的图片中找到对应的比例信息
-      if (selectedImage) {
-        const currentImage = generatedImages.find(img => img.colorUrl === selectedImage);
-        // 注意：HomeImage接口没有ratio属性，使用默认比例
-
-        // 使用图片的实际尺寸（因为HomeImage没有ratio属性）
-        if (true) {
-          // 检查是否已经获取过这张图片的尺寸
-          const cachedDimensions = dynamicImageDimensions[selectedImage];
-          if (cachedDimensions) {
-            const { width, height } = cachedDimensions;
-            const aspectRatio = width / height;
-
-            // 设置最大高度为460px，根据比例计算宽度
-            const maxHeight = 460;
-            const calculatedWidth = Math.round(maxHeight * aspectRatio);
-
-            // 限制最大宽度为800px，最小宽度为300px
-            const finalWidth = Math.max(300, Math.min(800, calculatedWidth));
-            const finalHeight = Math.round(finalWidth / aspectRatio);
-
-            return {
-              width: `w-[${finalWidth}px]`,
-              height: `h-[${finalHeight}px]`
-            };
-          } else {
-            // 异步获取图片尺寸 - 添加检查避免重复加载
-            if (!dynamicImageDimensions[`loading_${selectedImage}`]) {
-              setDynamicImageDimensions(prev => ({
-                ...prev,
-                [`loading_${selectedImage}`]: { width: 0, height: 0 }
-              }));
-
-              const img = new Image();
-              img.onload = () => {
-                setDynamicImageDimensions(prev => {
-                  const newState = { ...prev };
-                  delete newState[`loading_${selectedImage}`];
-                  newState[selectedImage] = { width: img.width, height: img.height };
-                  return newState;
-                });
-              };
-              img.onerror = () => {
-                setDynamicImageDimensions(prev => {
-                  const newState = { ...prev };
-                  delete newState[`loading_${selectedImage}`];
-                  return newState;
-                });
-              };
-              img.src = selectedImage;
-            }
-
-            // 在获取尺寸之前，使用默认的 1:1 比例
-            return { width: 'w-[460px]', height: 'h-[460px]' };
-          }
-        } else {
-          // 使用默认的比例
-          return { width: getCenterImageWidth(selectedRatio), height: 'h-[460px]' };
+      // 在 Text to Image 模式下，如果有选中的图片，使用图片自身的 ratio
+      if (selectedImage && selectedTab === 'text') {
+        const currentImage = generatedImages.find(img => img.id === selectedImage);
+        if (currentImage && (currentImage as any).ratio) {
+          // 使用图片自身的 ratio 来显示
+          return { width: getCenterImageWidth((currentImage as any).ratio), height: 'h-[460px]' };
         }
       }
 
+      // 默认情况下，使用用户选择的 ratio
       return { width: getCenterImageWidth(selectedRatio), height: 'h-[460px]' };
     };
 
@@ -308,11 +255,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     </div>
                   </div>
                 ) : selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Selected coloring page"
-                    className="w-full h-full rounded-lg"
-                  />
+                  (() => {
+                    const currentImage = generatedImages.find(img => img.id === selectedImage);
+                    return currentImage ? (
+                      <img
+                        src={currentImage.defaultUrl}
+                        alt="Selected coloring page"
+                        className="w-full h-full rounded-lg"
+                      />
+                    ) : null;
+                  })()
                 ) : null}
               </div>
 
@@ -493,7 +445,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
       // 如果有选中的图片，使用默认比例（因为HomeImage没有ratio属性）
       if (selectedImage && !isGenerating) {
-        const currentImage = generatedImages.find(img => img.colorUrl === selectedImage);
+        const currentImage = generatedImages.find(img => img.id === selectedImage);
         // 使用默认的selectedRatio
 
         // 如果是 Image to Image 生成的图片，使用图片的实际尺寸
@@ -557,11 +509,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                         </div>
                       </div>
                     ) : selectedImage ? (
-                      <img
-                        src={selectedImage}
-                        alt="Selected coloring page"
-                        className="w-full h-full rounded-lg"
-                      />
+                      (() => {
+                        const currentImage = generatedImages.find(img => img.id === selectedImage);
+                        return currentImage ? (
+                          <img
+                            src={currentImage.defaultUrl}
+                            alt="Selected coloring page"
+                            className="w-full h-full rounded-lg"
+                          />
+                        ) : null;
+                      })()
                     ) : null}
                   </div>
                 );
@@ -823,32 +780,125 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   const renderRightSidebar = () => {
     // 获取生成过程中应该使用的容器尺寸
     const getGeneratingContainerSize = () => {
-      // 在 Image to Image 模式下，生成过程中使用1:1的框
-      if (selectedTab === 'image') {
-        return { width: '90px', height: '90px' };
-      }
-
-      // 在 Text to Image 模式下，使用选中的比例
-      return getContainerSize(selectedRatio);
-    };
-
-    // 获取图片容器尺寸的辅助函数
-    const getImageContainerSize = (image: any) => {
-      if (selectedTab === 'image') {
-        // Image to Image 模式下，所有图片都使用1:1
-        return { width: '90px', height: '90px' };
-      } else {
-        // Text to Image 模式下，根据选中的比例显示
+      // 在 Text to Image 模式下，根据选中的比例计算
+      if (selectedTab === 'text') {
         switch (selectedRatio) {
           case '3:4':
             return { width: '68px', height: '90px' };
           case '4:3':
             return { width: '90px', height: '68px' };
           case '1:1':
+            return { width: '90px', height: '90px' };
           default:
             return { width: '90px', height: '90px' };
         }
       }
+      
+      // 在 Image to Image 模式下，如果有上传图片的尺寸信息，使用实际比例
+      if (selectedTab === 'image' && uploadedImageDimensions) {
+        const { width, height } = uploadedImageDimensions;
+        const aspectRatio = width / height;
+        
+        const maxSize = 90;
+        
+        if (aspectRatio >= 1) {
+          const calculatedHeight = Math.round(maxSize / aspectRatio);
+          return { 
+            width: `${maxSize}px`, 
+            height: `${Math.max(60, calculatedHeight)}px`
+          };
+        } else {
+          const calculatedWidth = Math.round(maxSize * aspectRatio);
+          return { 
+            width: `${Math.max(60, calculatedWidth)}px`, 
+            height: `${maxSize}px` 
+          };
+        }
+      }
+      
+      // 默认使用正方形
+      return { width: '90px', height: '90px' };
+    };
+
+    // 获取图片容器尺寸的辅助函数 - 根据图片的 ratio 或实际尺寸计算比例
+    const getImageContainerSize = (image: any) => {
+      // 在 Text to Image 模式下，优先使用图片的 ratio 属性
+      if (selectedTab === 'text' && image.ratio) {
+        switch (image.ratio) {
+          case '3:4':
+            return { width: '68px', height: '90px' };
+          case '4:3':
+            return { width: '90px', height: '68px' };
+          case '1:1':
+            return { width: '90px', height: '90px' };
+          default:
+            return { width: '90px', height: '90px' };
+        }
+      }
+      
+      // 在 Image to Image 模式下，或者没有 ratio 属性时，使用实际尺寸计算
+      // 如果图片有尺寸信息，根据实际比例计算容器尺寸
+      if (image.dimensions && image.dimensions.width && image.dimensions.height) {
+        const { width, height } = image.dimensions;
+        const aspectRatio = width / height;
+        
+        // 设置最大尺寸为90px，根据比例计算另一边
+        const maxSize = 90;
+        
+        if (aspectRatio >= 1) {
+          // 横向图片：宽度为90px，高度按比例缩放
+          const calculatedHeight = Math.round(maxSize / aspectRatio);
+          return { 
+            width: `${maxSize}px`, 
+            height: `${Math.max(60, calculatedHeight)}px` // 最小高度60px
+          };
+        } else {
+          // 竖向图片：高度为90px，宽度按比例缩放
+          const calculatedWidth = Math.round(maxSize * aspectRatio);
+          return { 
+            width: `${Math.max(60, calculatedWidth)}px`, // 最小宽度60px
+            height: `${maxSize}px` 
+          };
+        }
+      }
+      
+      // 如果没有尺寸信息，尝试从图片URL异步获取尺寸
+      if (image.defaultUrl && !sidebarImageDimensions[image.defaultUrl]) {
+        // 异步获取图片尺寸
+        const img = new Image();
+        img.onload = () => {
+          setSidebarImageDimensions(prev => ({
+            ...prev,
+            [image.defaultUrl]: { width: img.width, height: img.height }
+          }));
+        };
+        img.src = image.defaultUrl;
+      }
+      
+      // 如果已经异步获取到了尺寸，使用获取到的尺寸
+      if (sidebarImageDimensions[image.defaultUrl]) {
+        const { width, height } = sidebarImageDimensions[image.defaultUrl];
+        const aspectRatio = width / height;
+        
+        const maxSize = 90;
+        
+        if (aspectRatio >= 1) {
+          const calculatedHeight = Math.round(maxSize / aspectRatio);
+          return { 
+            width: `${maxSize}px`, 
+            height: `${Math.max(60, calculatedHeight)}px`
+          };
+        } else {
+          const calculatedWidth = Math.round(maxSize * aspectRatio);
+          return { 
+            width: `${Math.max(60, calculatedWidth)}px`, 
+            height: `${maxSize}px` 
+          };
+        }
+      }
+      
+      // 默认情况下使用正方形
+      return { width: '90px', height: '90px' };
     };
 
     return (
@@ -881,14 +931,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         {generatedImages.length > 0 ? (
           generatedImages
             .map((image, index) => {
-              const isSelected = selectedImage === image.defaultUrl;
+              // 使用图片的 id 进行选中状态判断
+              const isSelected = selectedImage === image.id;
               return (
                 <div
                   key={image.id}
                   className={`mb-4 rounded-lg cursor-pointer relative transition-all border-2 ${isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-transparent hover:border-gray-200'
                     }`}
                   style={getImageContainerSize(image)}
-                  onClick={() => handleImageSelect(image.defaultUrl)}
+                  onClick={() => handleImageSelect(image.id)}
                 >
                   <img
                     src={image.defaultUrl}

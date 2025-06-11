@@ -179,6 +179,7 @@ router.post('/text-to-image', (req, res) => {
 
 // 图片转图片生成接口
 router.post('/image-to-image', upload.single('image'), (req, res) => {
+  console.log('into image-to-image', req.body);
   try {
     const { ratio, isPublic, userId } = req.body;
     const imageFile = req.file;

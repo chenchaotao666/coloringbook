@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { HomeImageService, HomeImage } from '../../services/imageService';
+import { ImageService, HomeImage } from '../../services/imageService';
 import MasonryGrid from '../layout/MasonryGrid';
 
 interface GalleryProps {
@@ -16,7 +16,7 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
     const loadImages = async () => {
       try {
         setIsLoading(true);
-        const images = await HomeImageService.fetchAllHomeImages();
+        const images = await ImageService.fetchAllHomeImages();
         setHomeImages(images);
       } catch (error) {
         console.error('Failed to load home images:', error);

@@ -35,24 +35,3 @@ export const downloadImageById = async (
     throw error; // 重新抛出错误，让调用者处理
   }
 };
-
-/**
- * 为GeneratePage使用的下载函数
- * @param selectedImage 选中的图片URL
- * @param generatedImages 生成的图片列表
- * @param format 下载格式
- */
-export const downloadSelectedImage = async (
-  selectedImage: string | null,
-  generatedImages: any[],
-  format: 'png' | 'pdf'
-): Promise<void> => {
-  if (!selectedImage) return;
-  
-  // 找到选中图片的ID - 现在selectedImage存储的是默认图片URL
-  const selectedImageData = generatedImages.find(img => img.url === selectedImage);
-  if (selectedImageData) {
-    const fileName = `coloring-page-${selectedImageData.ratio}-${selectedImageData.id.slice(-8)}.${format}`;
-    await downloadImageById(selectedImageData.id, format, fileName);
-  }
-}; 

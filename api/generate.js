@@ -178,19 +178,35 @@ router.post('/text-to-image', (req, res) => {
 });
 
 // 图片转图片生成接口
-router.post('/image-to-image', upload.single('image'), (req, res) => {
-  console.log('into image-to-image', req.body);
-  try {
-    const { ratio, isPublic, userId } = req.body;
-    const imageFile = req.file;
-    
-    // 验证必需参数
-    if (!imageFile || typeof isPublic !== 'boolean') {
+router.post('/image-to-image', (req, res) => {
+  // 使用 multer 中间件处理文件上传
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Multer error:', err);
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: image file and isPublic are required'
+        error: err.message || 'File upload failed',
+        details: err.code || 'UPLOAD_ERROR'
       });
     }
+    
+    console.log('into image-to-image', req.body);
+    console.log('Uploaded file:', req.file);
+    
+    try {
+      const { ratio, isPublic, userId } = req.body;
+      const imageFile = req.file;
+      
+      // 验证必需参数
+      if (!imageFile) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing required fields: image file is required'
+        });
+      }
+    
+    // 转换 isPublic 为布尔值
+    const isPublicBool = isPublic === 'true' || isPublic === true;
     
     // 验证ratio值（可选）
     if (ratio) {
@@ -218,7 +234,7 @@ router.post('/image-to-image', upload.single('image'), (req, res) => {
       tags: ['Generated', 'AI', 'Image2Image', 'Converted'],
       type: 'image2image',
       ratio: ratio || '1:1',
-      isPublic: isPublic,
+      isPublic: isPublicBool,
       createdAt: new Date().toISOString(),
       prompt: `基于上传图片的转换: ${imageFile.originalname}`,
       userId: userId || 'anonymous',
@@ -318,14 +334,15 @@ router.post('/image-to-image', upload.single('image'), (req, res) => {
       },
       message: 'Image to image generation started successfully'
     });
-  } catch (error) {
-    console.error('Image to Image Generation API Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal Server Error',
-      message: error.message
-    });
-  }
+    } catch (error) {
+      console.error('Image to Image Generation API Error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Internal Server Error',
+        message: error.message
+      });
+    }
+  });
 });
 
 // 查询生成任务状态接口
@@ -379,350 +396,6 @@ router.get('/status/:taskId', (req, res) => {
     });
   } catch (error) {
     console.error('Get Task Status API Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal Server Error',
-      message: error.message
-    });
-  }
-});
-
-// 获取用户的所有生成任务
-router.get('/tasks', (req, res) => {
-  try {
-    const { userId, status, type, page = '1', limit = '10' } = req.query;
-    
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        error: 'UserId is required'
-      });
-    }
-    
-    // 获取所有任务并转换为数组
-    let userTasks = Array.from(generationTasks.values())
-      .filter(task => task.userId === userId);
-    
-    // 按状态筛选
-    if (status) {
-      userTasks = userTasks.filter(task => task.status === status);
-    }
-    
-    // 按类型筛选
-    if (type) {
-      userTasks = userTasks.filter(task => task.type === type);
-    }
-    
-    // 按创建时间倒序排列
-    userTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    // 分页
-    const pageNum = Math.max(1, parseInt(page) || 1);
-    const limitNum = Math.max(1, Math.min(50, parseInt(limit) || 10));
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = startIndex + limitNum;
-    const paginatedTasks = userTasks.slice(startIndex, endIndex);
-    
-    // 构建响应数据
-    const responseData = paginatedTasks.map(task => {
-      const taskData = {
-        taskId: task.taskId,
-        imageId: task.imageId,
-        status: task.status,
-        progress: task.progress,
-        type: task.type,
-        prompt: task.prompt,
-        createdAt: task.createdAt,
-        estimatedTime: task.estimatedTime
-      };
-      
-      if (task.status === 'completed' && task.completedAt) {
-        taskData.completedAt = task.completedAt;
-      }
-      
-      if (task.originalFileName) {
-        taskData.originalFileName = task.originalFileName;
-      }
-      
-      return taskData;
-    });
-    
-    res.json({
-      success: true,
-      data: responseData,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total: userTasks.length,
-        totalPages: Math.ceil(userTasks.length / limitNum),
-        hasMore: endIndex < userTasks.length
-      },
-      stats: {
-        total: userTasks.length,
-        processing: userTasks.filter(task => task.status === 'processing').length,
-        completed: userTasks.filter(task => task.status === 'completed').length,
-        failed: userTasks.filter(task => task.status === 'failed').length,
-        text2image: userTasks.filter(task => task.type === 'text2image').length,
-        image2image: userTasks.filter(task => task.type === 'image2image').length
-      }
-    });
-  } catch (error) {
-    console.error('Get User Tasks API Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal Server Error',
-      message: error.message
-    });
-  }
-});
-
-// 获取用户生成历史 - 调用images API获取用户生成的图片
-router.get('/history', async (req, res) => {
-  try {
-    const { userId, page = '1', limit = '10', status, style, type } = req.query;
-    
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        error: 'UserId is required'
-      });
-    }
-    
-    // 首先从本地mock数据获取生成记录
-    let generatedRecords = [...mockGeneratedImages];
-    
-    // 按用户筛选
-    generatedRecords = generatedRecords.filter(img => img.userId === userId);
-    
-    // 按状态筛选
-    if (status) {
-      generatedRecords = generatedRecords.filter(img => img.status === status);
-    }
-    
-    // 按风格筛选
-    if (style) {
-      generatedRecords = generatedRecords.filter(img => img.style === style);
-    }
-    
-    // 调用images API获取用户的图片数据
-    try {
-      const imagesApiUrl = `http://localhost:3001/api/images?userId=${userId}&limit=100`;
-      const fetch = (await import('node-fetch')).default;
-      const response = await fetch(imagesApiUrl);
-      const imagesData = await response.json();
-      
-      if (imagesData.success && imagesData.data.length > 0) {
-        // 将images API的数据转换为生成历史格式
-        const imageHistoryRecords = imagesData.data.map(img => ({
-          id: `img_${img.id}`,
-          prompt: img.prompt || img.description || img.title,
-          imageUrl: img.defaultUrl,
-          fullSizeUrl: img.colorUrl,
-          thumbnailUrl: img.defaultUrl,
-          status: "completed",
-          createdAt: img.createdAt || new Date().toISOString(),
-          userId: img.userId,
-          style: img.type || 'default',
-          type: img.type || 'text2image',
-          title: img.title,
-          description: img.description,
-          tags: img.tags || [],
-          ratio: img.ratio || '1:1',
-          category: img.category,
-          isFromImagesApi: true // 标记来源
-        }));
-        
-        // 按类型筛选（如果指定了type参数）
-        const filteredImageRecords = type ? 
-          imageHistoryRecords.filter(img => img.type === type) : 
-          imageHistoryRecords;
-        
-        // 合并两个数据源
-        generatedRecords = [...generatedRecords, ...filteredImageRecords];
-      }
-    } catch (apiError) {
-      console.warn('Failed to fetch from images API:', apiError.message);
-      // 如果API调用失败，继续使用本地数据
-    }
-    
-    // 按时间倒序排列
-    generatedRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    // 分页
-    const pageNum = Math.max(1, parseInt(page) || 1);
-    const limitNum = Math.max(1, Math.min(50, parseInt(limit) || 10));
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = startIndex + limitNum;
-    const paginatedImages = generatedRecords.slice(startIndex, endIndex);
-    
-    res.json({
-      success: true,
-      data: paginatedImages,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total: generatedRecords.length,
-        totalPages: Math.ceil(generatedRecords.length / limitNum),
-        hasMore: endIndex < generatedRecords.length
-      },
-      // 添加统计信息
-      stats: {
-        total: generatedRecords.length,
-        completed: generatedRecords.filter(img => img.status === 'completed').length,
-        processing: generatedRecords.filter(img => img.status === 'processing').length,
-        failed: generatedRecords.filter(img => img.status === 'failed').length,
-        fromImagesApi: generatedRecords.filter(img => img.isFromImagesApi).length,
-        fromGenerate: generatedRecords.filter(img => !img.isFromImagesApi).length
-      },
-      // 搜索信息
-      searchInfo: {
-        userId: userId,
-        status: status || '',
-        style: style || '',
-        type: type || '',
-        totalResults: generatedRecords.length
-      }
-    });
-  } catch (error) {
-    console.error('Get User Generated Images API Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal Server Error',
-      message: error.message
-    });
-  }
-});
-
-// 获取用户生成的图片 - 专门的接口
-router.get('/user/:userId/images', async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { page = '1', limit = '20', type, status = 'completed' } = req.query;
-    
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        error: 'UserId is required'
-      });
-    }
-    
-    let userImages = [];
-    
-    // 调用images API获取用户的图片
-    try {
-      const queryParams = new URLSearchParams({
-        userId: userId,
-        limit: '100' // 获取更多数据用于筛选
-      });
-      
-      if (type) {
-        queryParams.append('type', type);
-      }
-      
-      const imagesApiUrl = `http://localhost:3001/api/images?${queryParams.toString()}`;
-      const fetch = (await import('node-fetch')).default;
-      const response = await fetch(imagesApiUrl);
-      const imagesData = await response.json();
-      
-      if (imagesData.success && imagesData.data.length > 0) {
-        // 转换为统一的生成图片格式
-        userImages = imagesData.data.map(img => ({
-          id: img.id,
-          title: img.title,
-          description: img.description,
-          prompt: img.prompt || img.description || img.title,
-          defaultUrl: img.defaultUrl,
-          colorUrl: img.colorUrl,
-          thumbnailUrl: img.defaultUrl,
-          tags: img.tags || [],
-          type: img.type || 'text2image',
-          ratio: img.ratio || '1:1',
-          category: img.category,
-          createdAt: img.createdAt || new Date().toISOString(),
-          userId: img.userId,
-          status: 'completed', // 来自images API的都是已完成的
-          isPublic: img.isPublic || false,
-          additionalInfo: img.additionalInfo || {}
-        }));
-      }
-    } catch (apiError) {
-      console.warn('Failed to fetch user images from API:', apiError.message);
-    }
-    
-    // 从本地生成记录中获取用户的图片
-    const localGeneratedImages = mockGeneratedImages
-      .filter(img => img.userId === userId)
-      .filter(img => status ? img.status === status : true)
-      .map(img => ({
-        id: img.id,
-        title: img.prompt,
-        description: img.prompt,
-        prompt: img.prompt,
-        defaultUrl: img.imageUrl,
-        colorUrl: img.imageUrl,
-        thumbnailUrl: img.imageUrl,
-        tags: [],
-        type: 'text2image',
-        ratio: '1:1',
-        category: 'generated',
-        createdAt: img.createdAt,
-        userId: img.userId,
-        status: img.status,
-        style: img.style,
-        isPublic: false,
-        isFromGenerate: true // 标记来源
-      }));
-    
-    // 合并数据
-    const allUserImages = [...userImages, ...localGeneratedImages];
-    
-    // 按类型筛选
-    let filteredImages = type ? 
-      allUserImages.filter(img => img.type === type) : 
-      allUserImages;
-    
-    // 按状态筛选
-    if (status) {
-      filteredImages = filteredImages.filter(img => img.status === status);
-    }
-    
-    // 按时间倒序排列
-    filteredImages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    // 分页
-    const pageNum = Math.max(1, parseInt(page) || 1);
-    const limitNum = Math.max(1, Math.min(50, parseInt(limit) || 20));
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = startIndex + limitNum;
-    const paginatedImages = filteredImages.slice(startIndex, endIndex);
-    
-    res.json({
-      success: true,
-      data: paginatedImages,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total: filteredImages.length,
-        totalPages: Math.ceil(filteredImages.length / limitNum),
-        hasMore: endIndex < filteredImages.length
-      },
-      stats: {
-        total: filteredImages.length,
-        completed: filteredImages.filter(img => img.status === 'completed').length,
-        processing: filteredImages.filter(img => img.status === 'processing').length,
-        failed: filteredImages.filter(img => img.status === 'failed').length,
-        text2image: filteredImages.filter(img => img.type === 'text2image').length,
-        image2image: filteredImages.filter(img => img.type === 'image2image').length
-      },
-      searchInfo: {
-        userId: userId,
-        type: type || '',
-        status: status || '',
-        totalResults: filteredImages.length
-      }
-    });
-  } catch (error) {
-    console.error('Get User Images API Error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Internal Server Error',

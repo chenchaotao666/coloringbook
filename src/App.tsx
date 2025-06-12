@@ -7,7 +7,6 @@ import CategoriesDetailPage from './pages/CategoriesDetailPage';
 import ImageDetailPage from './pages/ImageDetailPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider } from './contexts/LanguageContext';
-import MasonryGridTest from './test/MasonryGridTest';
 
 // This is just a placeholder until we copy over our components
 function App() {
@@ -24,7 +23,6 @@ function App() {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/categories/:categoryId" element={<CategoriesDetailPage />} />
           <Route path="/image/:imageId" element={<ImageDetailPage />} />
-          <Route path="/test/masonry" element={<MasonryGridTest />} />
           {/* Add more routes as needed */}
         </Routes>
       </Router>

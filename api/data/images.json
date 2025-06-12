@@ -1,96 +1,17 @@
 [
   {
-    "id": "43",
-    "name": "43",
-    "defaultUrl": "/images-mock/43-default.png",
-    "colorUrl": "/images-mock/43-color.png",
-    "title": "4:3的图片",
-    "description": "4:3的图片",
-    "tags": ["Nintendo", "Mario", "Cute", "Game"],
-    "type": "text2image",
-    "ratio": "4:3",
-    "isPublic": true,
-    "createdAt": "2024-01-15T09:30:00.000Z",
-    "prompt": "经典游戏角色马里奥涂色页，包含标志性的红帽子和蓝色工装裤",
-    "userId": "system",
-    "category": "id-animals",
-    "additionalInfo": {
-      "features": [
-        "经典游戏角色设计，线条清晰简洁",
-        "标志性的红帽子和蓝色工装裤",
-        "友好的面部表情，充满活力",
-        "适合打印在A4纸张上的完美比例"
-      ],
-      "suitableFor": [
-        "3-8岁儿童：培养手眼协调能力",
-        "游戏爱好者：重温经典角色",
-        "初学者：简单的线条设计易于上色",
-        "亲子活动：家长与孩子共同完成"
-      ],
-      "coloringSuggestions": [
-        "经典配色：红色帽子、蓝色工装裤、黄色纽扣",
-        "创意配色：尝试不同颜色组合创造个性马里奥",
-        "渐变技法：使用深浅不同的颜色增加立体感",
-        "细节处理：注意帽子上的M标志和胡须的涂色"
-      ],
-      "creativeUses": [
-        "制作生日贺卡：适合游戏主题生日派对",
-        "房间装饰：裱框后作为儿童房装饰画",
-        "教学工具：用于美术课程的色彩搭配教学",
-        "收藏纪念：完成后可作为游戏文化收藏品"
-      ]
-    }
-  },
-  {
-    "id": "mario",
-    "name": "mario",
-    "defaultUrl": "/images-mock/mario-default.png",
-    "colorUrl": "/images-mock/mario-color.png",
-    "title": "马里奥",
-    "description": "经典游戏角色马里奥",
-    "tags": ["Nintendo", "Mario", "Cute", "Game"],
-    "type": "text2image",
-    "ratio": "1:1",
-    "isPublic": true,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "prompt": "经典游戏角色马里奥涂色页，包含标志性的红帽子和蓝色工装裤",
-    "userId": "system",
-    "category": "id-disney",
-    "additionalInfo": {
-      "features": [
-        "经典游戏角色设计，线条清晰简洁",
-        "标志性的红帽子和蓝色工装裤",
-        "友好的面部表情，充满活力",
-        "适合打印在A4纸张上的完美比例"
-      ],
-      "suitableFor": [
-        "3-8岁儿童：培养手眼协调能力",
-        "游戏爱好者：重温经典角色",
-        "初学者：简单的线条设计易于上色",
-        "亲子活动：家长与孩子共同完成"
-      ],
-      "coloringSuggestions": [
-        "经典配色：红色帽子、蓝色工装裤、黄色纽扣",
-        "创意配色：尝试不同颜色组合创造个性马里奥",
-        "渐变技法：使用深浅不同的颜色增加立体感",
-        "细节处理：注意帽子上的M标志和胡须的涂色"
-      ],
-      "creativeUses": [
-        "制作生日贺卡：适合游戏主题生日派对",
-        "房间装饰：裱框后作为儿童房装饰画",
-        "教学工具：用于美术课程的色彩搭配教学",
-        "收藏纪念：完成后可作为游戏文化收藏品"
-      ]
-    }
-  },
-  {
     "id": "cat",
     "name": "cat",
     "defaultUrl": "/images-mock/cat-default.png",
     "colorUrl": "/images-mock/cat-color.png",
     "title": "小猫",
     "description": "可爱的小猫咪",
-    "tags": ["Animal", "Cat", "Cute", "Pet"],
+    "tags": [
+      "Animal",
+      "Cat",
+      "Cute",
+      "Pet"
+    ],
     "type": "text2image",
     "ratio": "1:1",
     "isPublic": true,
@@ -132,7 +53,12 @@
     "colorUrl": "/images-mock/flower-color.png",
     "title": "花朵",
     "description": "美丽的花朵图案",
-    "tags": ["Nature", "Plants", "Flower", "Beautiful"],
+    "tags": [
+      "Nature",
+      "Plants",
+      "Flower",
+      "Beautiful"
+    ],
     "type": "text2image",
     "ratio": "3:4",
     "isPublic": true,
@@ -174,7 +100,12 @@
     "colorUrl": "/images-mock/robot-color.png",
     "title": "机器人",
     "description": "未来科技机器人",
-    "tags": ["Robot", "Machinery", "Structure", "Technology"],
+    "tags": [
+      "Robot",
+      "Machinery",
+      "Structure",
+      "Technology"
+    ],
     "type": "text2image",
     "ratio": "3:4",
     "isPublic": true,
@@ -216,7 +147,12 @@
     "colorUrl": "/images-mock/spider-man-color.png",
     "title": "蜘蛛侠",
     "description": "超级英雄蜘蛛侠",
-    "tags": ["Superhero", "Marvel", "Action", "Hero"],
+    "tags": [
+      "Superhero",
+      "Marvel",
+      "Action",
+      "Hero"
+    ],
     "type": "text2image",
     "ratio": "3:4",
     "isPublic": true,
@@ -252,55 +188,18 @@
     }
   },
   {
-    "id": "cartoon",
-    "name": "cartoon",
-    "defaultUrl": "/images-mock/cartoon-default.png",
-    "colorUrl": "/images-mock/cartoon-color.png",
-    "title": "卡通角色",
-    "description": "有趣的卡通角色",
-    "tags": ["Cartoon", "Character", "Fun", "Animation"],
-    "type": "text2image",
-    "ratio": "1:1",
-    "isPublic": true,
-    "createdAt": "2024-01-15T14:15:00.000Z",
-    "prompt": "有趣的卡通角色涂色页，活泼可爱的设计，充满童趣",
-    "userId": "system",
-    "category": "id-fantasy",
-    "additionalInfo": {
-      "features": [
-        "活泼可爱的卡通角色设计",
-        "夸张有趣的表情和动作",
-        "简洁明快的线条，易于识别",
-        "充满童趣的造型设计"
-      ],
-      "suitableFor": [
-        "3-8岁儿童：培养想象力和创造力",
-        "动画爱好者：重现喜爱的卡通角色",
-        "初学者：简单有趣的涂色体验",
-        "家庭活动：全家一起享受涂色乐趣"
-      ],
-      "coloringSuggestions": [
-        "明亮色彩：使用鲜艳的颜色增加活力",
-        "对比搭配：用对比色突出角色特征",
-        "渐变技巧：在服装和背景中使用渐变",
-        "创意发挥：鼓励使用非传统颜色组合"
-      ],
-      "creativeUses": [
-        "儿童房装饰：营造活泼有趣的氛围",
-        "动画主题活动：卡通角色主题派对",
-        "创意教学：通过角色学习色彩搭配",
-        "情感表达：通过涂色表达个性和情感"
-      ]
-    }
-  },
-  {
     "id": "unicorn",
     "name": "unicorn",
     "defaultUrl": "/images-mock/unicorn-default.jpg",
     "colorUrl": "/images-mock/unicorn-color.jpg",
     "title": "独角兽",
     "description": "神奇的独角兽",
-    "tags": ["Fantasy", "Unicorn", "Magic", "Mythical"],
+    "tags": [
+      "Fantasy",
+      "Unicorn",
+      "Magic",
+      "Mythical"
+    ],
     "type": "image2image",
     "ratio": "",
     "isPublic": true,
@@ -334,89 +233,5 @@
         "礼物制作：送给喜欢幻想的朋友"
       ]
     }
-  },
-  {
-    "id": "magician",
-    "name": "magician",
-    "defaultUrl": "/images-mock/magician-default.jpg",
-    "colorUrl": "/images-mock/magician-color.jpg",
-    "title": "魔法师",
-    "description": "神秘的魔法师",
-    "tags": ["Magic", "Wizard", "Fantasy", "Mystical"],
-    "type": "image2image",
-    "ratio": "",
-    "isPublic": true,
-    "createdAt": "2024-01-15T15:45:00.000Z",
-    "prompt": "神秘的魔法师涂色页，经典的尖顶帽和长袍设计，充满智慧和神秘感",
-    "userId": "userId-1",
-    "category": "id-nature",
-    "additionalInfo": {
-      "features": [
-        "经典的魔法师造型设计",
-        "尖顶帽和长袍的传统形象",
-        "魔法杖和神秘符号元素",
-        "充满智慧和神秘感的角色"
-      ],
-      "suitableFor": [
-        "4-12岁儿童：培养对魔法世界的兴趣",
-        "奇幻爱好者：重现经典魔法师形象",
-        "中级涂色者：适中复杂度的挑战",
-        "故事教学：结合童话故事进行教育"
-      ],
-      "coloringSuggestions": [
-        "神秘配色：深蓝、紫色、黑色等神秘色彩",
-        "魔法光效：用亮色表现魔法的光芒效果",
-        "星空图案：帽子和长袍可以添加星星图案",
-        "对比突出：用金色或银色突出魔法杖"
-      ],
-      "creativeUses": [
-        "奇幻主题装饰：适合魔法主题的房间布置",
-        "万圣节装饰：万圣节主题活动装饰",
-        "故事配图：童话故事的插图制作",
-        "想象力启发：激发对魔法世界的想象"
-      ]
-    }
-  },
-  {
-    "id": "icecream",
-    "name": "icecream",
-    "defaultUrl": "/images-mock/icecream-default.jpg",
-    "colorUrl": "/images-mock/icecream-color.jpg",
-    "title": "冰淇淋",
-    "description": "美味的冰淇淋",
-    "tags": ["Food", "Sweet", "Dessert", "Summer"],
-    "type": "image2image",
-    "ratio": "",
-    "isPublic": true,
-    "createdAt": "2024-01-15T16:30:00.000Z",
-    "prompt": "美味的冰淇淋涂色页，多层冰淇淋球设计，夏日清凉的美食主题",
-    "userId": "userId-1",
-    "category": "id-fantasy",
-    "additionalInfo": {
-      "features": [
-        "可爱的冰淇淋造型设计",
-        "多层冰淇淋球的丰富层次",
-        "甜筒和装饰元素的细节",
-        "夏日清凉的美食主题"
-      ],
-      "suitableFor": [
-        "2-8岁儿童：培养对美食的认知和兴趣",
-        "美食爱好者：表达对甜品的喜爱",
-        "初学者：简单可爱的涂色主题",
-        "夏日活动：夏季主题的涂色活动"
-      ],
-      "coloringSuggestions": [
-        "甜美配色：粉色、黄色、绿色等甜美色彩",
-        "口味表现：不同颜色代表不同冰淇淋口味",
-        "装饰元素：添加樱桃、巧克力片等装饰",
-        "渐变效果：用渐变色表现冰淇淋的质感"
-      ],
-      "creativeUses": [
-        "夏日装饰：适合夏季主题的房间布置",
-        "美食教育：认识不同种类的甜品",
-        "餐厅装饰：甜品店或餐厅的装饰画",
-        "快乐主题：营造轻松愉快的氛围"
-      ]
-    }
   }
-] 
+]

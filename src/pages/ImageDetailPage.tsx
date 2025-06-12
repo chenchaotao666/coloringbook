@@ -4,7 +4,7 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
-import { HomeImageService } from '../services/imageService';
+import { ImageService } from '../services/imageService';
 import { HomeImage } from '../services/imageService';
 import { downloadImageById } from '../utils/downloadUtils';
 const homeIcon = '/images/home.svg';
@@ -32,19 +32,19 @@ const ImageDetailPage: React.FC = () => {
       try {
         setIsLoading(true);
         
-        // 尝试从HomeImageService中查找
-        let foundImage: HomeImage | null = await HomeImageService.getImageById(imageId);
+        // 尝试从ImageService中查找
+        let foundImage: HomeImage | null = await ImageService.getImageById(imageId);
 
         if (foundImage) {
           setImage(foundImage);
           
-          // 加载相关图片 - 优先使用HomeImageService
+          // 加载相关图片 - 优先使用ImageService
           let relatedImages: HomeImage[] = [];
           
           try {
-            relatedImages = await HomeImageService.getRelatedImages(foundImage.id, 5);
+            relatedImages = await ImageService.getRelatedImages(foundImage.id, 5);
           } catch (error) {
-            console.error('Failed to load related images from HomeImageService:', error);
+            console.error('Failed to load related images from ImageService:', error);
           }
           
           setRelatedImages(relatedImages);

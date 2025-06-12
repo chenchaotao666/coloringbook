@@ -8,6 +8,13 @@ export interface HomeImage {
   title: string;
   description: string;
   tags: string[];
+  type: 'text2image' | 'image2image';
+  ratio: '3:4' | '4:3' | '1:1' | '';
+  isPublic: boolean;
+  createdAt: string;
+  prompt: string;
+  userId: string;
+  category: string;
   dimensions?: {
     width: number;
     height: number;
@@ -38,7 +45,7 @@ export interface SearchParams {
   limit?: number;
 }
 
-export class HomeImageService {
+export class ImageService {
   /**
    * 搜索图片（根据标题、描述、标签）- 核心方法
    */
@@ -166,6 +173,24 @@ export class HomeImageService {
     } catch (error) {
       console.error(`Failed to get related images for ${imageId}:`, error);
       return [];
+    }
+  }
+
+  /**
+   * 删除图片
+   * @param imageId 要删除的图片ID
+   * @returns Promise<boolean> 删除是否成功
+   */
+  static async deleteImage(imageId: string): Promise<boolean> {
+    try {
+      const response = await ApiUtils.apiRequest<ApiResponse<any>>(`/api/images/${imageId}`, {
+        method: 'DELETE'
+      });
+      
+      return response.success;
+    } catch (error) {
+      console.error(`Failed to delete image ${imageId}:`, error);
+      return false;
     }
   }
 }

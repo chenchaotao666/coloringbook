@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
 import useGeneratePage from '../hooks/useGeneratePage';
-import { downloadSelectedImage } from '../utils/downloadUtils';
 import CircularProgress from '../components/ui/CircularProgress';
+import { 
+  getCenterImageSize,
+  getExampleImageSize,
+  getGeneratingContainerSize,
+  getImageContainerSize,
+  EXAMPLE_IMAGE_DIMENSIONS
+} from '../utils/imageUtils';
 const aiGenerateIcon = '/images/AI-generate.svg';
 const crownIcon = '/images/crown.svg';
 const refreshIcon = '/images/refresh.svg';
@@ -11,21 +17,22 @@ const subtractColorIcon = '/images/subtract-color.svg';
 const subtractIcon = '/images/subtract.svg';
 const downloadIcon = '/images/download.svg';
 const moreIcon = '/images/more.svg';
+const deleteIcon = '/images/delete.svg';
+const reportIcon = '/images/report.svg';
 
 interface GeneratePageProps {
   initialTab?: 'text' | 'image';
 }
 
 const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
-  // 右侧边栏图片尺寸状态
-  const [sidebarImageDimensions, setSidebarImageDimensions] = React.useState<{ [key: string]: { width: number; height: number } }>({});
-
   // 状态：存储动态获取的图片尺寸（用于Text to Image和Image to Image模式）
   const [dynamicImageDimensions, setDynamicImageDimensions] = React.useState<{ [key: string]: { width: number; height: number } }>({});
-  const [exampleImageDimensions, setExampleImageDimensions] = React.useState<{ [key: string]: { width: number; height: number } }>({});
 
   // 跟踪是否是初始加载
   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+
+  // 控制更多选项菜单的显示
+  const [showMoreMenu, setShowMoreMenu] = React.useState(false);
 
   // 使用我们创建的 Hook 来管理状态和 API 调用
   const {
@@ -36,7 +43,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     publicVisibility,
     selectedImage,
     uploadedFile,
-    uploadedImageDimensions,
+
     generatedImages,
     exampleImages,
     styleSuggestions,
@@ -58,6 +65,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     clearError,
     refreshExamples,
     refreshStyleSuggestions,
+    deleteImage,
   } = useGeneratePage(initialTab);
 
   // 当initialTab变化时更新selectedTab
@@ -72,6 +80,23 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   }, [generatedImages]);
 
+  // 点击外部关闭更多选项菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showMoreMenu) {
+        const target = event.target as Element;
+        if (!target.closest('.more-menu-container')) {
+          setShowMoreMenu(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMoreMenu]);
+
   // 自动选择最新生成的图片
   useEffect(() => {
     if (generatedImages.length > 0 && !isGenerating) {
@@ -83,19 +108,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   }, [generatedImages, isGenerating, selectedImage, setSelectedImage, isInitialLoad]);
 
-  // 根据比例计算缩略图容器尺寸 - 移到组件顶层
-  const getContainerSize = (ratio: string) => {
-    switch (ratio) {
-      case '3:4':
-        return { width: '90px', height: '120px' }; // 3:4 竖向比例
-      case '4:3':
-        return { width: '110px', height: '82px' }; // 4:3 横向比例，调整为适合边栏宽度
-      case '1:1':
-        return { width: '100px', height: '100px' }; // 1:1 正方形
-      default:
-        return { width: '100px', height: '100px' };
-    }
-  };
 
   // 事件处理函数
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -129,348 +141,57 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     await refreshStyleSuggestions();
   };
 
-  // Text to Image Content
-  const renderTextToImageContent = () => {
-    // 根据比例计算中间图片容器宽度（固定高度460px）
-    const getCenterImageWidth = (ratio: string) => {
-      switch (ratio) {
-        case '3:4':
-          return 'w-[345px]';
-        case '4:3':
-          return 'w-[613px]';
-        case '1:1':
-          return 'w-[460px]';
-        default:
-          return 'w-[460px]';
-      }
-    };
-
-    // 根据图片本身的比例计算 Example Images 的容器尺寸
-    const getExampleImageSize = (imageUrl?: string) => {
-      // 固定宽度，高度根据图片实际比例自适应
-      const fixedWidth = 250;
-
-      if (imageUrl && dynamicImageDimensions[imageUrl]) {
-        const { width, height } = dynamicImageDimensions[imageUrl];
-        const aspectRatio = width / height;
-
-        // 根据固定宽度和实际比例计算高度
-        const calculatedHeight = Math.round(fixedWidth / aspectRatio);
-
-        return {
-          width: fixedWidth,
-          height: calculatedHeight,
-          style: { width: `${fixedWidth}px`, height: `${calculatedHeight}px` }
-        };
-      }
-
-      // 如果还没有获取到图片尺寸，异步获取 - 添加检查避免重复加载
-      if (imageUrl && !dynamicImageDimensions[imageUrl] && !dynamicImageDimensions[`loading_${imageUrl}`]) {
-        // 标记为正在加载
-        setDynamicImageDimensions(prev => ({
-          ...prev,
-          [`loading_${imageUrl}`]: { width: 0, height: 0 }
-        }));
-
-        const img = new Image();
-        img.onload = () => {
-          setDynamicImageDimensions(prev => {
-            const newState = { ...prev };
-            delete newState[`loading_${imageUrl}`];
-            newState[imageUrl] = { width: img.width, height: img.height };
-            return newState;
-          });
-        };
-        img.onerror = () => {
-          setDynamicImageDimensions(prev => {
-            const newState = { ...prev };
-            delete newState[`loading_${imageUrl}`];
-            return newState;
-          });
-        };
-        img.src = imageUrl;
-      }
-
-      // 默认尺寸（正方形）
-      return {
-        width: fixedWidth,
-        height: fixedWidth,
-        style: { width: `${fixedWidth}px`, height: `${fixedWidth}px` }
-      };
-    };
-
-    // 获取当前应该使用的容器尺寸
-    const getCurrentImageSize = () => {
-      if (isGenerating) {
-        // 在 Image to Image 模式下，生成过程中返回1:1尺寸
-        if (selectedTab === 'image') {
-          return { width: 'w-[460px]', height: 'h-[460px]' };
-        }
-        return { width: getCenterImageWidth(selectedRatio), height: 'h-[460px]' };
-      }
-
-      // 在 Text to Image 模式下，如果有选中的图片，使用图片自身的 ratio
-      if (selectedImage && selectedTab === 'text') {
-        const currentImage = generatedImages.find(img => img.id === selectedImage);
-        if (currentImage && (currentImage as any).ratio) {
-          // 使用图片自身的 ratio 来显示
-          return { width: getCenterImageWidth((currentImage as any).ratio), height: 'h-[460px]' };
-        }
-      }
-
-      // 默认情况下，使用用户选择的 ratio
-      return { width: getCenterImageWidth(selectedRatio), height: 'h-[460px]' };
-    };
-
-    return (
-      <div className="flex-1 px-10 flex flex-col pb-20">
-        {/* 固定的文字部分 */}
-        <div className="text-center pt-32 pb-8">
-          <h1 className="text-3xl font-bold text-[#161616] capitalize">Text to coloring page</h1>
-          <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto">
-            Create high-quality coloring sheets for free with coloring page generator.
-            Spark your kids' creativity with AI-designed coloring pages.
-          </p>
-        </div>
-
-        {/* 图片内容区域 - 固定高度 */}
-        <div className="flex-1 flex flex-col items-center">
-          {selectedImage || isGenerating ? (
-            <div className="flex flex-col items-center">
-              <div className={`${getCurrentImageSize().width} ${getCurrentImageSize().height} bg-[#F2F3F5] rounded-2xl border border-[#EDEEF0] relative flex items-center justify-center transition-all duration-300`}>
-                {isGenerating ? (
-                  <div className="flex flex-col items-center">
-                    <CircularProgress
-                      progress={generationProgress}
-                      size="large"
-                      showPercentage={false}
-                    />
-                    <div className="mt-6 text-center">
-                      <div className="text-[#161616] text-2xl font-semibold">
-                        {Math.round(generationProgress)}%
-                      </div>
-                      <div className="text-[#6B7280] text-base mt-1">
-                        Generating...
-                      </div>
-                    </div>
-                  </div>
-                ) : selectedImage ? (
-                  (() => {
-                    const currentImage = generatedImages.find(img => img.id === selectedImage);
-                    return currentImage ? (
-                      <img
-                        src={currentImage.defaultUrl}
-                        alt="Selected coloring page"
-                        className="w-full h-full rounded-lg"
-                      />
-                    ) : null;
-                  })()
-                ) : null}
-              </div>
-
-              {!isGenerating && (
-                <div className="mt-8 flex items-center gap-4">
-                  <button
-                    onClick={() => handleDownload('png')}
-                    className="h-12 px-4 bg-[#F2F3F5] rounded-lg flex items-center gap-2 hover:bg-[#E5E7EB] transition-colors"
-                  >
-                    <span className="w-6 h-6">
-                      <img src={downloadIcon || aiGenerateIcon} alt="Download" className="w-6 h-6" />
-                    </span>
-                    <span className="text-[#161616] font-medium">Download PNG</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleDownload('pdf')}
-                    className="h-12 px-4 bg-[#F2F3F5] rounded-lg flex items-center gap-2 hover:bg-[#E5E7EB] transition-colors"
-                  >
-                    <span className="w-6 h-6">
-                      <img src={downloadIcon || aiGenerateIcon} alt="Download" className="w-6 h-6" />
-                    </span>
-                    <span className="text-[#161616] font-medium">Download PDF</span>
-                  </button>
-
-                  <button className="w-12 h-12 bg-[#F2F3F5] rounded-lg flex items-center justify-center hover:bg-[#E5E7EB] transition-colors">
-                    <span className="w-6 h-6">
-                      <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
-                    </span>
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            // 只有在没有历史照片时才显示Example
-            generatedImages.length === 0 && (
-              <div>
-                <div className="w-full max-w-[795px] mx-auto flex justify-between items-center">
-                  <div className="text-[#161616] font-medium text-sm">Example</div>
-                  <div className="flex items-center text-[#6B7280] text-sm cursor-pointer" onClick={refreshExamples}>
-                    {isLoadingExamples ? 'Loading...' : 'Change'}
-                    <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
-                  </div>
-                </div>
-
-                {/* Example Images */}
-                <div className="mt-2 flex justify-center gap-6">
-                  {exampleImages.length > 0 ? exampleImages.map((example) => {
-                    const exampleSize = getExampleImageSize(example.defaultUrl);
-                    return (
-                      <div
-                        key={example.id}
-                        className="relative bg-white rounded-2xl border border-[#EDEEF0]"
-                        style={exampleSize.style}
-                      >
-                        <img
-                          src={example.defaultUrl}
-                          alt={example.description || `Example ${example.id}`}
-                          className="w-full h-full object-cover rounded-2xl"
-                        />
-                        <button
-                          onClick={() => handleRecreateExample(example.id)}
-                          className="absolute top-3 left-3 bg-[#FF5C07] text-white text-xs py-1 px-2 rounded-full hover:bg-[#FF7A47] transition-all duration-300 cursor-pointer"
-                        >
-                          Recreate
-                        </button>
-                      </div>
-                    );
-                  }) : (
-                    // 加载状态
-                    [1, 2, 3].map((index) => {
-                      const exampleSize = getExampleImageSize();
-                      return (
-                        <div
-                          key={index}
-                          className="relative bg-white rounded-2xl border border-[#EDEEF0] animate-pulse"
-                          style={exampleSize.style}
-                        >
-                          <div className="w-full h-full bg-gray-200 rounded-2xl"></div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            )
-          )}
-        </div>
-      </div>
-    );
+  const handleMoreMenuToggle = () => {
+    setShowMoreMenu(!showMoreMenu);
   };
 
-  // Image to Image Content
-  const renderImageToImageContent = () => {
-    // 根据图片本身的比例计算 Example Images 的容器尺寸
-    const getExampleImageSize = (imageUrl?: string) => {
-      // 固定宽度，高度根据图片实际比例自适应
-      const fixedWidth = 250;
+  const handleDelete = async () => {
+    if (selectedImage) {
+      try {
+        // 显示确认对话框
+        const confirmed = window.confirm('确定要删除这张图片吗？此操作无法撤销。');
+        if (!confirmed) {
+          setShowMoreMenu(false);
+          return;
+        }
 
-      if (imageUrl && exampleImageDimensions[imageUrl]) {
-        const { width, height } = exampleImageDimensions[imageUrl];
-        const aspectRatio = width / height;
-
-        // 根据固定宽度和实际比例计算高度
-        const calculatedHeight = Math.round(fixedWidth / aspectRatio);
-
-        return {
-          width: fixedWidth,
-          height: calculatedHeight,
-          style: { width: `${fixedWidth}px`, height: `${calculatedHeight}px` }
-        };
-      }
-
-      // 如果还没有获取到图片尺寸，异步获取
-      if (imageUrl && !exampleImageDimensions[imageUrl]) {
-        const img = new Image();
-        img.onload = () => {
-          setExampleImageDimensions(prev => ({
-            ...prev,
-            [imageUrl]: { width: img.width, height: img.height }
-          }));
-        };
-        img.src = imageUrl;
-      }
-
-      // 默认尺寸（正方形）
-      return {
-        width: fixedWidth,
-        height: fixedWidth,
-        style: { width: `${fixedWidth}px`, height: `${fixedWidth}px` }
-      };
-    };
-
-    // 根据比例计算中间图片容器宽度和高度
-    const getCenterImageSize = () => {
-      // 在 Image to Image 模式下，如果正在生成，返回1:1尺寸
-      if (selectedTab === 'image' && isGenerating) {
-        return { width: 'w-[460px]', height: 'h-[460px]' };
-      }
-
-      // 在 Image to Image 模式下，如果有上传图片和尺寸信息，使用实际比例
-      if (selectedTab === 'image' && uploadedFile && uploadedImageDimensions) {
-        const { width, height } = uploadedImageDimensions;
-        const aspectRatio = width / height;
-
-        // 根据宽高比智能选择基准尺寸
-        let finalWidth, finalHeight;
-
-        if (aspectRatio >= 1) {
-          // 横向图片或正方形：以宽度为基准，最大宽度600px
-          const maxWidth = 600;
-          finalWidth = Math.min(maxWidth, Math.max(400, maxWidth));
-          finalHeight = Math.round(finalWidth / aspectRatio);
-
-          // 如果计算出的高度太大，以高度为基准重新计算
-          if (finalHeight > 460) {
-            finalHeight = 460;
-            finalWidth = Math.round(finalHeight * aspectRatio);
-          }
+        // 调用删除方法
+        const success = await deleteImage(selectedImage);
+        
+        if (success) {
+          // 显示成功提示
+          alert('图片删除成功！');
         } else {
-          // 竖向图片：以高度为基准，最大高度460px
-          const maxHeight = 460;
-          finalHeight = Math.min(maxHeight, Math.max(300, maxHeight));
-          finalWidth = Math.round(finalHeight * aspectRatio);
-
-          // 确保最小宽度
-          if (finalWidth < 300) {
-            finalWidth = 300;
-            finalHeight = Math.round(finalWidth / aspectRatio);
-          }
+          // 删除失败
+          alert('删除图片失败，请稍后重试。');
         }
-
-        return {
-          width: `w-[${finalWidth}px]`,
-          height: `h-[${finalHeight}px]`
-        };
+      } catch (error) {
+        console.error('Delete image error:', error);
+        alert('删除图片时发生错误，请稍后重试。');
+      } finally {
+        setShowMoreMenu(false);
       }
+    }
+  };
 
-      // 如果有选中的图片，使用默认比例（因为HomeImage没有ratio属性）
-      if (selectedImage && !isGenerating) {
-        const currentImage = generatedImages.find(img => img.id === selectedImage);
-        // 使用默认的selectedRatio
+  const handleReport = () => {
+    if (selectedImage) {
+      // TODO: 实现举报功能
+      console.log('Report image:', selectedImage);
+      setShowMoreMenu(false);
+    }
+  };
 
-        // 如果是 Image to Image 生成的图片，使用图片的实际尺寸
-        if (!selectedRatio) {
-          // 使用1:1作为默认比例
-          return { width: '90px', height: '90px' };
-        }
-
-        // 使用选中的比例
-        return getContainerSize(selectedRatio);
-      }
-
-      // 默认情况下，使用选中的比例
-      return getContainerSize(selectedRatio);
-
-      // 回退到固定比例
-      switch (selectedRatio) {
-        case '3:4':
-          return { width: 'w-[345px]', height: 'h-[460px]' };
-        case '4:3':
-          return { width: 'w-[613px]', height: 'h-[460px]' };
-        case '1:1':
-          return { width: 'w-[460px]', height: 'h-[460px]' };
-        default:
-          return { width: 'w-[460px]', height: 'h-[460px]' };
+  // 通用内容渲染方法
+  const renderContent = (mode: 'text' | 'image') => {
+    const config = {
+      text: {
+        title: 'Text to coloring page',
+        description: 'Create high-quality coloring sheets for free with coloring page generator. Spark your kids\' creativity with AI-designed coloring pages.'
+      },
+      image: {
+        title: 'Image to coloring page', 
+        description: 'Upload your image and transform your photo into an amazing coloring page in just seconds, unleashing your imagination.'
       }
     };
 
@@ -478,9 +199,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       <div className="flex-1 px-10 flex flex-col pb-20">
         {/* 固定的文字部分 */}
         <div className="text-center pt-32 pb-8">
-          <h1 className="text-3xl font-bold text-[#161616] capitalize">Image to coloring page</h1>
+          <h1 className="text-3xl font-bold text-[#161616] capitalize">{config[mode].title}</h1>
           <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto">
-            Upload your image and transform your photo into an amazing coloring page in just seconds, unleashing your imagination.
+            {config[mode].description}
           </p>
         </div>
 
@@ -489,9 +210,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {selectedImage || isGenerating ? (
             <div className="flex flex-col items-center">
               {(() => {
-                const imageSize = getCenterImageSize();
+                const imageSize = getCenterImageSize(mode, isGenerating, selectedImage, generatedImages, dynamicImageDimensions, setDynamicImageDimensions);
                 return (
-                  <div className={`${imageSize.width} ${imageSize.height} bg-[#F2F3F5] rounded-2xl border border-[#EDEEF0] relative flex items-center justify-center transition-all duration-300`}>
+                  <div 
+                    className="bg-[#F2F3F5] rounded-2xl border border-[#EDEEF0] relative flex items-center justify-center transition-all duration-300"
+                    style={imageSize.style}
+                  >
                     {isGenerating ? (
                       <div className="flex flex-col items-center">
                         <CircularProgress
@@ -546,11 +270,36 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     <span className="text-[#161616] font-medium">Download PDF</span>
                   </button>
 
-                  <button className="w-12 h-12 bg-[#F2F3F5] rounded-lg flex items-center justify-center hover:bg-[#E5E7EB] transition-colors">
-                    <span className="w-6 h-6">
-                      <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
-                    </span>
-                  </button>
+                  <div className="relative more-menu-container">
+                    <button 
+                      onClick={handleMoreMenuToggle}
+                      className="w-12 h-12 bg-[#F2F3F5] rounded-lg flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
+                    >
+                      <span className="w-6 h-6">
+                        <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
+                      </span>
+                    </button>
+
+                    {/* 下拉菜单 */}
+                    {showMoreMenu && (
+                      <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
+                        <button
+                          onClick={handleDelete}
+                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                        >
+                          <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
+                          <span className="text-sm">Delete</span>
+                        </button>
+                        <button
+                          onClick={handleReport}
+                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                        >
+                          <img src={reportIcon} alt="Report" className="w-4 h-4" />
+                          <span className="text-sm">Report</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -569,8 +318,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 {/* Example Images */}
                 <div className="mt-2 flex justify-center gap-6">
                   {exampleImages.length > 0 ? exampleImages.map((example) => {
-                    const exampleSize = getExampleImageSize(example.defaultUrl);
-
+                    const exampleSize = getExampleImageSize(example.id, example.defaultUrl, EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, dynamicImageDimensions, setDynamicImageDimensions);
                     return (
                       <div
                         key={example.id}
@@ -593,7 +341,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   }) : (
                     // 加载状态
                     [1, 2, 3].map((index) => {
-                      const exampleSize = getExampleImageSize();
+                      const exampleSize = getExampleImageSize(undefined, undefined, EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, dynamicImageDimensions, setDynamicImageDimensions);
                       return (
                         <div
                           key={index}
@@ -778,129 +526,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Render right sidebar with generated images
   const renderRightSidebar = () => {
-    // 获取生成过程中应该使用的容器尺寸
-    const getGeneratingContainerSize = () => {
-      // 在 Text to Image 模式下，根据选中的比例计算
-      if (selectedTab === 'text') {
-        switch (selectedRatio) {
-          case '3:4':
-            return { width: '68px', height: '90px' };
-          case '4:3':
-            return { width: '90px', height: '68px' };
-          case '1:1':
-            return { width: '90px', height: '90px' };
-          default:
-            return { width: '90px', height: '90px' };
-        }
-      }
-      
-      // 在 Image to Image 模式下，如果有上传图片的尺寸信息，使用实际比例
-      if (selectedTab === 'image' && uploadedImageDimensions) {
-        const { width, height } = uploadedImageDimensions;
-        const aspectRatio = width / height;
-        
-        const maxSize = 90;
-        
-        if (aspectRatio >= 1) {
-          const calculatedHeight = Math.round(maxSize / aspectRatio);
-          return { 
-            width: `${maxSize}px`, 
-            height: `${Math.max(60, calculatedHeight)}px`
-          };
-        } else {
-          const calculatedWidth = Math.round(maxSize * aspectRatio);
-          return { 
-            width: `${Math.max(60, calculatedWidth)}px`, 
-            height: `${maxSize}px` 
-          };
-        }
-      }
-      
-      // 默认使用正方形
-      return { width: '90px', height: '90px' };
-    };
-
-    // 获取图片容器尺寸的辅助函数 - 根据图片的 ratio 或实际尺寸计算比例
-    const getImageContainerSize = (image: any) => {
-      // 在 Text to Image 模式下，优先使用图片的 ratio 属性
-      if (selectedTab === 'text' && image.ratio) {
-        switch (image.ratio) {
-          case '3:4':
-            return { width: '68px', height: '90px' };
-          case '4:3':
-            return { width: '90px', height: '68px' };
-          case '1:1':
-            return { width: '90px', height: '90px' };
-          default:
-            return { width: '90px', height: '90px' };
-        }
-      }
-      
-      // 在 Image to Image 模式下，或者没有 ratio 属性时，使用实际尺寸计算
-      // 如果图片有尺寸信息，根据实际比例计算容器尺寸
-      if (image.dimensions && image.dimensions.width && image.dimensions.height) {
-        const { width, height } = image.dimensions;
-        const aspectRatio = width / height;
-        
-        // 设置最大尺寸为90px，根据比例计算另一边
-        const maxSize = 90;
-        
-        if (aspectRatio >= 1) {
-          // 横向图片：宽度为90px，高度按比例缩放
-          const calculatedHeight = Math.round(maxSize / aspectRatio);
-          return { 
-            width: `${maxSize}px`, 
-            height: `${Math.max(60, calculatedHeight)}px` // 最小高度60px
-          };
-        } else {
-          // 竖向图片：高度为90px，宽度按比例缩放
-          const calculatedWidth = Math.round(maxSize * aspectRatio);
-          return { 
-            width: `${Math.max(60, calculatedWidth)}px`, // 最小宽度60px
-            height: `${maxSize}px` 
-          };
-        }
-      }
-      
-      // 如果没有尺寸信息，尝试从图片URL异步获取尺寸
-      if (image.defaultUrl && !sidebarImageDimensions[image.defaultUrl]) {
-        // 异步获取图片尺寸
-        const img = new Image();
-        img.onload = () => {
-          setSidebarImageDimensions(prev => ({
-            ...prev,
-            [image.defaultUrl]: { width: img.width, height: img.height }
-          }));
-        };
-        img.src = image.defaultUrl;
-      }
-      
-      // 如果已经异步获取到了尺寸，使用获取到的尺寸
-      if (sidebarImageDimensions[image.defaultUrl]) {
-        const { width, height } = sidebarImageDimensions[image.defaultUrl];
-        const aspectRatio = width / height;
-        
-        const maxSize = 90;
-        
-        if (aspectRatio >= 1) {
-          const calculatedHeight = Math.round(maxSize / aspectRatio);
-          return { 
-            width: `${maxSize}px`, 
-            height: `${Math.max(60, calculatedHeight)}px`
-          };
-        } else {
-          const calculatedWidth = Math.round(maxSize * aspectRatio);
-          return { 
-            width: `${Math.max(60, calculatedWidth)}px`, 
-            height: `${maxSize}px` 
-          };
-        }
-      }
-      
-      // 默认情况下使用正方形
-      return { width: '90px', height: '90px' };
-    };
-
     return (
       <div className="w-[140px] border-l border-[#E3E4E5] py-5 px-2 overflow-y-auto overflow-x-hidden h-full flex flex-col items-center max-w-[140px]">
         {/* 生成中的 loading 圆圈 - 使用智能计算的尺寸 */}
@@ -938,7 +563,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   key={image.id}
                   className={`mb-4 rounded-lg cursor-pointer relative transition-all border-2 ${isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-transparent hover:border-gray-200'
                     }`}
-                  style={getImageContainerSize(image)}
+                  style={getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions)}
                   onClick={() => handleImageSelect(image.id)}
                 >
                   <img
@@ -1033,7 +658,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
 
         {/* Center Content Area - Dynamic based on selected tab */}
-        {selectedTab === 'text' ? renderTextToImageContent() : renderImageToImageContent()}
+        {renderContent(selectedTab)}
 
         {/* Right Sidebar - Generated Images */}
         {renderRightSidebar()}

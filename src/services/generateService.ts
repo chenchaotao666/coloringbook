@@ -1,6 +1,7 @@
 // 动态导入相关服务，避免循环依赖
 import { ApiUtils } from '../utils/apiUtils';
 import { HomeImage } from './imageService';
+import { ImageService } from './imageService';
 
 // ==================== 类型定义 ====================
 // 接口类型定义
@@ -105,30 +106,16 @@ const getRandomStyleSuggestions = (count: number = 6): StyleSuggestion[] => {
 // 获取示例图片
 const getExampleImages = async (category: 'text' | 'image'): Promise<HomeImage[]> => {
   try {
-    // 导入 HomeImageService
-    const { HomeImageService } = await import('./imageService');
-    
     // 根据类别确定搜索类型
     const searchType = category === 'text' ? 'text2image' : 'image2image';
     
     // 使用 searchImages API 获取对应类型的图片
-    const result = await HomeImageService.searchImages({
+    const result = await ImageService.searchImages({
       type: searchType,
-      limit: 10
+      limit: 3
     });
     
-    let selectedImages = result.images;
-    
-    // 如果没有找到特定类型的图片，尝试获取一些通用图片
-    if (selectedImages.length === 0) {
-      const fallbackResult = await HomeImageService.searchImages({
-        limit: 10
-      });
-      selectedImages = fallbackResult.images;
-    }
-    
-    // 返回前3张图片作为示例
-    return selectedImages.slice(0, 3);
+    return result.images;
   } catch (error) {
     console.error('Failed to get example images:', error);
     return [];
@@ -259,16 +246,16 @@ class GenerateService {
   async getAllGeneratedImages(): Promise<HomeImage[]> {
     try {
       // 由于这是模拟环境，我们返回一些示例图片作为"生成的"图片
-      const { HomeImageService } = await import('./imageService');
-      const result = await HomeImageService.searchImages({
+      const { ImageService } = await import('./imageService');
+      const result = await ImageService.searchImages({
         limit: 6 // 获取6张图片作为示例
       });
 
       // 为这些图片添加一些模拟的生成信息
       const generatedImages = result.images.map((img, index) => ({
         ...img,
-        // 模拟生成时间戳
-        generatedAt: new Date(Date.now() - (index * 60000)).toISOString(),
+        // 更新创建时间为模拟的生成时间
+        createdAt: new Date(Date.now() - (index * 60000)).toISOString(),
         // 模拟用户ID
         userId: 'demo-user'
       }));
@@ -324,15 +311,17 @@ class GenerateService {
   async downloadImage(imageId: string, format: 'png' | 'pdf'): Promise<Blob> {
     try {
       // 首先获取图片信息
-      const { HomeImageService } = await import('./imageService');
-      const image = await HomeImageService.getImageById(imageId);
+      const { ImageService } = await import('./imageService');
+      const image = await ImageService.getImageById(imageId);
       
       if (!image) {
         throw new Error('Image not found');
       }
 
-      // 根据格式下载对应的图片
-      const imageUrl = format === 'png' ? image.colorUrl : image.defaultUrl;
+      // 下载涂色页（黑白线稿）- 无论PNG还是PDF都使用defaultUrl
+      // format参数用于调用方生成不同的文件名
+      const imageUrl = image.defaultUrl;
+      console.log(`Downloading ${format} format for image ${imageId}`);
       const response = await fetch(imageUrl);
       
       if (!response.ok) {

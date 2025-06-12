@@ -11,7 +11,6 @@ export interface UseGeneratePageState {
   publicVisibility: boolean;
   selectedImage: string | null;
   uploadedFile: File | null;
-  uploadedImageDimensions: { width: number; height: number } | null;
   
   // 数据状态
   generatedImages: HomeImage[];
@@ -78,7 +77,6 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
     publicVisibility: true,
     selectedImage: null,
     uploadedFile: null,
-    uploadedImageDimensions: null,
     generatedImages: [],
     exampleImages: [],
     styleSuggestions: [],
@@ -101,7 +99,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   }, [updateState]);
 
   const setSelectedTab = useCallback((selectedTab: 'text' | 'image') => {
-    updateState({ selectedTab, selectedImage: null, uploadedFile: null, uploadedImageDimensions: null });
+    updateState({ selectedTab, selectedImage: null, uploadedFile: null });
   }, [updateState]);
 
   const setSelectedRatio = useCallback((selectedRatio: '3:4' | '4:3' | '1:1') => {
@@ -120,8 +118,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
     updateState({ uploadedFile });
   }, [updateState]);
 
-  const setUploadedImageWithDimensions = useCallback((uploadedFile: File | null, uploadedImageDimensions: { width: number; height: number } | null) => {
-    updateState({ uploadedFile, uploadedImageDimensions });
+  const setUploadedImageWithDimensions = useCallback((uploadedFile: File | null, _dimensions: { width: number; height: number } | null) => {
+    updateState({ uploadedFile });
   }, [updateState]);
 
   // 生成图片
@@ -142,6 +140,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
           prompt: state.prompt,
           ratio: state.selectedRatio,
           isPublic: state.publicVisibility,
+          userId: 'demo-user', // 添加默认用户ID
         });
       } else {
         if (!state.uploadedFile) {
@@ -150,8 +149,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
         
         response = await GenerateServiceInstance.generateImageToImage({
           imageFile: state.uploadedFile,
-          ratio: state.selectedRatio,
           isPublic: state.publicVisibility,
+          userId: 'demo-user', // 添加默认用户ID
         });
       }
       
@@ -326,7 +325,6 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
       prompt: '',
       selectedImage: null,
       uploadedFile: null,
-      uploadedImageDimensions: null,
       generatedImages: [],
       error: null,
       currentTaskId: null,
@@ -348,6 +346,31 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   const refreshStyleSuggestions = useCallback(async () => {
     await loadStyleSuggestions();
   }, [loadStyleSuggestions]);
+
+  // 删除图片
+  const deleteImage = useCallback(async (imageId: string): Promise<boolean> => {
+    try {
+      const { ImageService } = await import('../services/imageService');
+      const success = await ImageService.deleteImage(imageId);
+      
+      if (success) {
+        // 从生成的图片列表中移除
+        setState(prevState => ({
+          ...prevState,
+          generatedImages: prevState.generatedImages.filter(img => img.id !== imageId),
+          selectedImage: prevState.selectedImage === imageId ? null : prevState.selectedImage
+        }));
+      }
+      
+      return success;
+    } catch (error) {
+      console.error('Delete image error:', error);
+      updateState({
+        error: error instanceof Error ? error.message : 'Failed to delete image',
+      });
+      return false;
+    }
+  }, [updateState]);
 
   // 加载生成历史
   const loadGeneratedImages = useCallback(async () => {
@@ -393,6 +416,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
     refreshExamples,
     refreshStyleSuggestions,
     loadGeneratedImages,
+    deleteImage,
   };
 };
 

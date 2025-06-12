@@ -13,8 +13,6 @@ const __dirname = path.dirname(__filename);
 const imagesPath = path.join(__dirname, './data/images.json');
 let mockImages = [];
 
-// 存储生成任务的状态
-const generationTasks = new Map();
 
 try {
   const imagesData = fs.readFileSync(imagesPath, 'utf8');
@@ -208,6 +206,75 @@ router.get('/:id', (req, res) => {
     res.status(500).json({ 
       success: false, 
       error: 'Internal Server Error' 
+    });
+  }
+});
+
+// 保存数据到文件的辅助函数
+const saveImagesToFile = () => {
+  try {
+    fs.writeFileSync(imagesPath, JSON.stringify(mockImages, null, 2), 'utf8');
+    return true;
+  } catch (error) {
+    console.error('❌ 保存图片数据失败:', error.message);
+    return false;
+  }
+};
+
+// 根据ID删除图片
+router.delete('/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: 'Image ID is required'
+      });
+    }
+    
+    // 查找图片索引
+    const imageIndex = mockImages.findIndex(img => img.id === id);
+    
+    if (imageIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: 'Image not found'
+      });
+    }
+    
+    // 获取要删除的图片信息（用于返回）
+    const deletedImage = mockImages[imageIndex];
+    
+    // 从数组中删除图片
+    mockImages.splice(imageIndex, 1);
+    
+    // 保存到文件
+    const saveSuccess = saveImagesToFile();
+    
+    if (!saveSuccess) {
+      // 如果保存失败，恢复数据
+      mockImages.splice(imageIndex, 0, deletedImage);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to save changes'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Image deleted successfully',
+      data: {
+        deletedImage: deletedImage,
+        remainingCount: mockImages.length
+      }
+    });
+  } catch (error) {
+    console.error('Delete Image API Error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Internal Server Error',
+      message: error.message 
     });
   }
 });

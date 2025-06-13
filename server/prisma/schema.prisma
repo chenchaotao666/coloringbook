@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  displayName  String
+  description  String
+  imageCount   Int      @default(0)
+  thumbnailUrl String?
+  images       Image[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Image {
+  id             String           @id @default(cuid())
+  title          String
+  description    String?
+  url            String
+  colorUrl       String?
+  tags           String[]
+  ratio          String
+  difficulty     String?
+  type           String           @default("default") // default, text2image, image2image
+  isPublic       Boolean          @default(true)
+  status         String           @default("completed") // processing, completed, failed
+  prompt         String?          // For AI generated images
+  style          String?          // For AI generated images
+  category       Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId     String
+  userId         String?
+  favorites      UserFavorite[]
+  generationTask GenerationTask?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@map("images")
+}
+
+model User {
+  id                String         @id @default(cuid())
+  username          String         @unique
+  email             String         @unique
+  avatar            String?
+  passwordHash      String?
+  preferences       Json?          // Store user preferences as JSON
+  stats             Json?          // Store user stats as JSON
+  favorites         UserFavorite[]
+  generationTasks   GenerationTask[]
+  lastLoginAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@map("users")
+}
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, imageId])
+  @@map("user_favorites")
+}
+
+model GenerationTask {
+  id            String    @id @default(cuid())
+  taskId        String    @unique
+  status        String    @default("processing") // processing, completed, failed
+  progress      Int       @default(0)
+  type          String    // text2image, image2image
+  prompt        String?
+  estimatedTime Int?      // in seconds
+  errorMessage  String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId        String?
+  image         Image?    @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  imageId       String?   @unique
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("generation_tasks")
+} 

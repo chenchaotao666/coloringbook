@@ -1,0 +1,121 @@
+增加用户管理API
+
+1、用户注册API，/api/users/registe 传入
+"username": "hongyu",
+"email": "hongyu@example.com",
+"password": "password123"
+
+2、用户信息修改API，/api/users/update, 传入
+"username": "hongyu",
+"password": "password123"
+
+3、用户头像修改API，/api/users/avatar 传入
+"file": "xxxxxxxxxxxxxx"
+
+4、用户登录API，/api/users/login, 传入
+"email": "hongyu@example.com"
+"password": "password123"
+
+5、用户充值API，/api/users/recharge, 传入
+"type": "monthly or yearly or integral"
+"level": "lite or pro"
+"integral": "", // 当前不需要
+"payType": "master/visa/americanexpress/applepay/unionpay/..."
+
+
+图片管理API
+1、图片查询API，/api/images 传入：
+GET
+{
+  imageId: ""  // 根据imageId查询图片，只查一张
+  query: ""           // 搜索关键词
+  category: ""        // 分类筛选
+  tags: "xxx,xxx,xxx,xxxx"           // 标签筛选（可以是逗号分隔的字符串）
+  ratio: "1:1 or 4:3 or 3:4"          // 比例筛选（映射到difficulty）
+  type: "text2image or image2image"           // 类型筛选（text2image 或 image2image）
+  userId: ""         // 用户ID筛选
+  isPublic: "true or false",  // 不传就是不限制
+  currentPage: 1,     // 第几页
+  pageSize: 20,   // 每页多少条，用与翻页，不传就是查全量数据
+  isRelated: "true or false" // 如果是true，肯定会传入imageId，用于表示用户正在查看imageId这图片，需要给用户推荐几张图片（需要根据category或tags进行推荐）
+}
+
+返回 ImageInfo 信息 数组：多个数据是按createdAt排序
+[{
+    "id": "cat",
+    "name": "cat",
+    "defaultUrl": "/images-mock/cat-default.png",
+    "colorUrl": "/images-mock/cat-color.png",
+    "title": "小猫",
+    "description": "可爱的小猫咪",
+    "tags": [
+      "Animal",
+      "Cat",
+      "Cute",
+      "Pet"
+    ],
+    "type": "text2image",
+    "ratio": "1:1",
+    "isPublic": true,
+    "createdAt": "2024-01-15T11:15:00.000Z",
+    "prompt": "可爱的小猫咪涂色页，圆润的线条设计，大眼睛和小鼻子",
+    "userId": "system",
+    "category": "id-animals",
+    "size": "100,500"  // 宽，高   最好能够有，方便前段显示
+    "additionalInfo": "{
+      "features": [
+        "可爱的小猫造型，圆润的线条设计",
+        "大眼睛和小鼻子，表情生动有趣",
+        "简洁的轮廓，适合幼儿涂色",
+        "毛茸茸的质感，易于表现不同纹理"
+      ],
+      "suitableFor": [
+        "2-6岁幼儿：培养对动物的喜爱",
+        "宠物爱好者：表达对猫咪的喜爱",
+        "初学涂色者：简单易懂的图案",
+        "安静活动：适合需要专注的时光"
+      ],
+      "coloringSuggestions": [
+        "自然色彩：橙色、灰色、白色等真实猫咪颜色",
+        "梦幻配色：粉色、紫色、蓝色等童话色彩",
+        "条纹图案：添加虎斑或其他猫咪花纹",
+        "背景装饰：可添加小鱼、毛线球等相关元素"
+      ],
+      "creativeUses": [
+        "宠物主题装饰：适合爱猫人士的房间布置",
+        "儿童教育：认识动物特征和习性",
+        "情感表达：通过涂色表达对宠物的爱",
+        "礼物制作：送给喜欢猫咪的朋友"
+      ]
+    }"
+  },
+]
+
+2、文生图API，/api/images/text2imggenerate 传入
+{
+  prompt: ""
+  ratio: "1:1 or 4:3 or 3:4"
+  isPublic: "true or false"
+}
+返回： ImageInfo 信息
+
+3、图生图API，/api/images/img2imggenerate, 传入
+{
+  file: ""
+  isPublic: ""
+}
+返回：  ImageInfo 信息
+
+
+图片类别API
+1、查询所有类别API，/api/categories, 传入：
+{}
+返回：
+[{
+    "id": "id-animals",  // 考虑是否需要有
+    "name": "animals",
+    "displayName": "Animals",
+    "description": "Cute and wild animals coloring pages",
+    "imageCount": 156,
+    "thumbnailUrl": "/images-mock/cat-default.png"
+  },]

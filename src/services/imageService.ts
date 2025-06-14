@@ -1,4 +1,4 @@
-import { ApiUtils, ApiResponse } from '../utils/apiUtils';
+import { ApiUtils, PaginatedResponse, ApiError } from '../utils/apiUtils';
 
 export interface HomeImage {
   id: string;
@@ -7,7 +7,7 @@ export interface HomeImage {
   colorUrl: string;
   title: string;
   description: string;
-  tags: string[];
+  tags: string;
   type: 'text2image' | 'image2image';
   ratio: '3:4' | '4:3' | '1:1' | '';
   isPublic: boolean;
@@ -15,16 +15,8 @@ export interface HomeImage {
   prompt: string;
   userId: string;
   category: string;
-  dimensions?: {
-    width: number;
-    height: number;
-  };
-  additionalInfo: {
-    features: string[];
-    suitableFor: string[];
-    coloringSuggestions: string[];
-    creativeUses: string[];
-  };
+  size: string;
+  additionalInfo: string;
 }
 
 // 搜索结果接口
@@ -32,17 +24,29 @@ export interface SearchResult {
   images: HomeImage[];
   totalCount: number;
   hasMore: boolean;
+  currentPage: number;
+  pageSize: number;
 }
 
 // 搜索参数接口
 export interface SearchParams {
+  imageId?: string;
   query?: string;
   category?: string;
-  tags?: string[];
+  tags?: string;
   ratio?: '1:1' | '3:4' | '4:3';
   type?: 'text2image' | 'image2image';
-  page?: number;
-  limit?: number;
+  userId?: string;
+  isPublic?: boolean;
+  currentPage?: number;
+  pageSize?: number;
+  isRelated?: boolean;
+}
+
+// 举报请求接口
+export interface ReportImageRequest {
+  content: string;
+  imageId: string;
 }
 
 export class ImageService {
@@ -51,47 +55,61 @@ export class ImageService {
    */
   static async searchImages(params: SearchParams = {}): Promise<SearchResult> {
     const {
-      query = '',
-      category = '',
-      tags = [],
+      imageId,
+      query,
+      category,
+      tags,
       ratio,
       type,
-      page = 1,
-      limit = 20
+      userId,
+      isPublic,
+      currentPage = 1,
+      pageSize = 20,
+      isRelated = false
     } = params;
 
     try {
       // 构建查询参数
       const searchParams = new URLSearchParams();
-      if (query) searchParams.append('search', query);
-      if (category) searchParams.append('category', category);
-      if (ratio) searchParams.append('difficulty', ratio); // 使用difficulty参数映射ratio
-      if (type) searchParams.append('type', type);
-      searchParams.append('page', page.toString());
-      searchParams.append('limit', limit.toString());
       
-      // 如果有标签，将其作为搜索词的一部分
-      if (tags.length > 0) {
-        const tagQuery = tags.join(' ');
-        const combinedQuery = query ? `${query} ${tagQuery}` : tagQuery;
-        searchParams.set('search', combinedQuery);
-      }
+      if (imageId) searchParams.append('imageId', imageId);
+      if (query) searchParams.append('query', query);
+      if (category) searchParams.append('category', category);
+      if (tags) searchParams.append('tags', tags);
+      if (ratio) searchParams.append('ratio', ratio);
+      if (type) searchParams.append('type', type);
+      if (userId) searchParams.append('userId', userId);
+      if (isPublic !== undefined) searchParams.append('isPublic', isPublic.toString());
+      if (isRelated) searchParams.append('isRelated', isRelated.toString());
+      
+      searchParams.append('currentPage', currentPage.toString());
+      searchParams.append('pageSize', pageSize.toString());
 
-      const response = await ApiUtils.apiRequest<ApiResponse<HomeImage[]>>(`/api/images?${searchParams.toString()}`);
+      const response = await ApiUtils.get<{images: HomeImage[], total: number}>(`/api/images?${searchParams.toString()}`);
+      
+      // 处理服务器返回的格式: {images: [...], total: number}
+      const images = response.images || [];
+      const totalCount = response.total || 0;
+      
+      // 计算分页信息
+      const totalPages = Math.ceil(totalCount / pageSize);
+      const hasMore = currentPage < totalPages;
       
       return {
-        images: response.data,
-        totalCount: response.pagination?.total || response.data.length,
-        hasMore: response.pagination ? 
-          (response.pagination.page * response.pagination.limit) < response.pagination.total : 
-          false
+        images,
+        totalCount,
+        hasMore,
+        currentPage,
+        pageSize
       };
     } catch (error) {
       console.error('Failed to search images:', error);
       return {
         images: [],
         totalCount: 0,
-        hasMore: false
+        hasMore: false,
+        currentPage: 1,
+        pageSize: 20
       };
     }
   }
@@ -101,7 +119,7 @@ export class ImageService {
    */
   static async getAllImages(): Promise<HomeImage[]> {
     try {
-      const result = await this.searchImages({ limit: 100 });
+      const result = await this.searchImages({ pageSize: 100 });
       return result.images;
     } catch (error) {
       console.error('Failed to fetch all images:', error);
@@ -110,12 +128,12 @@ export class ImageService {
   }
 
   /**
-   * 根据ID获取图片
+   * 根据ID获取单张图片
    */
   static async getImageById(id: string): Promise<HomeImage | null> {
     try {
-      const response = await ApiUtils.apiRequest<ApiResponse<HomeImage>>(`/api/images/${id}`);
-      return response.data;
+      const result = await this.searchImages({ imageId: id });
+      return result.images.length > 0 ? result.images[0] : null;
     } catch (error) {
       console.error(`Failed to fetch image ${id}:`, error);
       return null;
@@ -137,39 +155,13 @@ export class ImageService {
    */
   static async getRelatedImages(imageId: string, limit: number = 4): Promise<HomeImage[]> {
     try {
-      // 首先获取目标图片信息
-      const targetImage = await this.getImageById(imageId);
-      if (!targetImage) return [];
-
-      // 如果有标签，优先返回有相同标签的图片
-      if (targetImage.tags && targetImage.tags.length > 0) {
-        const result = await this.searchImages({
-          tags: targetImage.tags,
-          limit: limit * 2 // 获取更多图片以便过滤
-        });
-        
-        // 过滤掉当前图片
-        const relatedImages = result.images.filter(img => img.id !== imageId);
-        
-        if (relatedImages.length >= limit) {
-          return relatedImages.slice(0, limit);
-        }
-        
-        // 如果相关图片不够，补充其他图片
-        const additionalResult = await this.searchImages({
-          limit: limit * 2
-        });
-        
-        const additionalImages = additionalResult.images.filter(img => 
-          img.id !== imageId && !relatedImages.some(related => related.id === img.id)
-        );
-        
-        return [...relatedImages, ...additionalImages].slice(0, limit);
-      }
+      const result = await this.searchImages({ 
+        imageId, 
+        isRelated: true, 
+        pageSize: limit 
+      });
       
-      // 如果没有标签，返回其他图片
-      const result = await this.searchImages({ limit: limit + 1 });
-      return result.images.filter(img => img.id !== imageId).slice(0, limit);
+      return result.images;
     } catch (error) {
       console.error(`Failed to get related images for ${imageId}:`, error);
       return [];
@@ -183,14 +175,95 @@ export class ImageService {
    */
   static async deleteImage(imageId: string): Promise<boolean> {
     try {
-      const response = await ApiUtils.apiRequest<ApiResponse<any>>(`/api/images/${imageId}`, {
-        method: 'DELETE'
-      });
-      
-      return response.success;
+      await ApiUtils.delete<any>(`/api/images/${imageId}`, true);
+      return true;
     } catch (error) {
       console.error(`Failed to delete image ${imageId}:`, error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
       return false;
     }
   }
+
+  /**
+   * 举报图片
+   * @param data 举报数据
+   * @returns Promise<boolean> 举报是否成功
+   */
+  static async reportImage(data: ReportImageRequest): Promise<boolean> {
+    try {
+      await ApiUtils.post<any>('/api/images/report', data, true);
+      return true;
+    } catch (error) {
+      console.error('Failed to report image:', error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      return false;
+    }
+  }
+
+  /**
+   * 按分类获取图片
+   * @param category 分类名称
+   * @param params 查询参数
+   * @returns Promise<SearchResult>
+   */
+  static async getImagesByCategory(
+    category: string, 
+    params: { currentPage?: number; pageSize?: number; query?: string } = {}
+  ): Promise<SearchResult> {
+    return this.searchImages({
+      category,
+      ...params
+    });
+  }
+
+  /**
+   * 按标签获取图片
+   * @param tags 标签字符串（逗号分隔）
+   * @param params 查询参数
+   * @returns Promise<SearchResult>
+   */
+  static async getImagesByTags(
+    tags: string, 
+    params: { currentPage?: number; pageSize?: number } = {}
+  ): Promise<SearchResult> {
+    return this.searchImages({
+      tags,
+      ...params
+    });
+  }
+
+  /**
+   * 获取用户创建的图片
+   * @param userId 用户ID
+   * @param params 查询参数
+   * @returns Promise<SearchResult>
+   */
+  static async getUserImages(
+    userId: string, 
+    params: { currentPage?: number; pageSize?: number; type?: 'text2image' | 'image2image' } = {}
+  ): Promise<SearchResult> {
+    return this.searchImages({
+      userId,
+      ...params
+    });
+  }
+
+  /**
+   * 获取公开图片
+   * @param params 查询参数
+   * @returns Promise<SearchResult>
+   */
+  static async getPublicImages(
+    params: { currentPage?: number; pageSize?: number; query?: string; category?: string } = {}
+  ): Promise<SearchResult> {
+    return this.searchImages({
+      isPublic: true,
+      ...params
+    });
+  }
+
 }

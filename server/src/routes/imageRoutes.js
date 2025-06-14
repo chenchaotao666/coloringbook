@@ -11,8 +11,8 @@ const {
 } = require('../controllers/imageController');
 
 // 查询图片（可选认证）
-router.get('/query', optionalAuth, queryImages);
-router.post('/query', optionalAuth, queryImages);
+router.get('/', optionalAuth, queryImages);
+router.post('/', optionalAuth, queryImages);
 
 // 文本生成图片（需要认证）
 router.post('/text2image', authenticateToken, text2Image);

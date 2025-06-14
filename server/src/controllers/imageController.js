@@ -41,6 +41,7 @@ function formatImageResponse(image) {
  * 查询图片
  */
 async function queryImages(req, res) {
+  console.log('into queryImages', req.query, req.body);
   try {
     // 验证查询参数
     const validation = validateImageQuery({ ...req.query, ...req.body });
@@ -141,12 +142,7 @@ async function queryImages(req, res) {
 
     return successResponse(res, {
       images: formattedImages,
-      pagination: {
-        currentPage,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
-      }
+      total
     }, total);
   } catch (error) {
     console.error('查询图片错误:', error);

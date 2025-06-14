@@ -34,8 +34,6 @@
     "start": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "dev:api": "node api/server.js",
-    "dev:full": "concurrently \"npm run dev\" \"npm run dev:api\""
+    "preview": "vite preview"
   }
 }

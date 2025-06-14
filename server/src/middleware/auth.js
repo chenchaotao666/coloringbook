@@ -59,6 +59,7 @@ async function authenticateToken(req, res, next) {
  * 可选认证中间件（用户可以是匿名的）
  */
 async function optionalAuth(req, res, next) {
+  console.log('into optionalAuth', req.headers);
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

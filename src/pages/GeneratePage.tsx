@@ -45,10 +45,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     uploadedFile,
 
     generatedImages,
-    exampleImages,
+    textExampleImages,      // 直接使用分离的变量
+    imageExampleImages,     // 直接使用分离的变量
     styleSuggestions,
     isGenerating,
-    isLoadingExamples,
+    isLoadingTextExamples,  // 直接使用分离的加载状态
+    isLoadingImageExamples, // 直接使用分离的加载状态
     error,
     generationProgress,
 
@@ -195,6 +197,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       }
     };
 
+    // 根据模式选择对应的示例图片和加载状态
+    const currentExampleImages = mode === 'text' ? textExampleImages : imageExampleImages;
+    const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
+
     return (
       <div className="flex-1 px-10 flex flex-col pb-20">
         {/* 固定的文字部分 */}
@@ -224,100 +230,97 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                           showPercentage={false}
                         />
                         <div className="mt-6 text-center">
-                          <div className="text-[#161616] text-2xl font-semibold">
-                            {Math.round(generationProgress)}%
-                          </div>
-                          <div className="text-[#6B7280] text-base mt-1">
-                            Generating...
-                          </div>
+                          <div className="text-[#161616] font-medium text-lg mb-2">Generating your coloring page...</div>
+                          <div className="text-[#6B7280] text-sm">This may take a few moments</div>
                         </div>
                       </div>
                     ) : selectedImage ? (
-                      (() => {
-                        const currentImage = generatedImages.find(img => img.id === selectedImage);
-                        return currentImage ? (
-                          <img
-                            src={currentImage.defaultUrl}
-                            alt="Selected coloring page"
-                            className="w-full h-full rounded-lg"
-                          />
-                        ) : null;
-                      })()
+                      <>
+                        <img
+                          src={generatedImages.find(img => img.id === selectedImage)?.defaultUrl}
+                          alt="Generated coloring page"
+                          className="w-full h-full object-contain rounded-2xl"
+                        />
+                        
+                        {/* Download and More Options */}
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          {/* Download Button */}
+                          <div className="relative group">
+                            <button className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-lg p-2 hover:bg-white transition-all duration-200 shadow-sm">
+                              <img src={downloadIcon} alt="Download" className="w-5 h-5" />
+                            </button>
+                            
+                            {/* Download Dropdown */}
+                            <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                              <button
+                                onClick={() => handleDownload('png')}
+                                className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 transition-colors"
+                              >
+                                <span className="text-sm">PNG</span>
+                              </button>
+                              <button
+                                onClick={() => handleDownload('pdf')}
+                                className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 transition-colors"
+                              >
+                                <span className="text-sm">PDF</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* More Options Button */}
+                          <div className="relative more-menu-container">
+                            <button 
+                              onClick={handleMoreMenuToggle}
+                              className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-lg p-2 hover:bg-white transition-all duration-200 shadow-sm"
+                            >
+                              <span className="w-6 h-6">
+                                <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
+                              </span>
+                            </button>
+
+                            {/* 下拉菜单 */}
+                            {showMoreMenu && (
+                              <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
+                                <button
+                                  onClick={handleDelete}
+                                  className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                                >
+                                  <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
+                                  <span className="text-sm">Delete</span>
+                                </button>
+                                <button
+                                  onClick={handleReport}
+                                  className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                                >
+                                  <img src={reportIcon} alt="Report" className="w-4 h-4" />
+                                  <span className="text-sm">Report</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </>
                     ) : null}
                   </div>
                 );
               })()}
-
-              {!isGenerating && (
-                <div className="mt-8 flex items-center gap-4">
-                  <button
-                    onClick={() => handleDownload('png')}
-                    className="h-12 px-4 bg-[#F2F3F5] rounded-lg flex items-center gap-2 hover:bg-[#E5E7EB] transition-colors"
-                  >
-                    <span className="w-6 h-6">
-                      <img src={downloadIcon || aiGenerateIcon} alt="Download" className="w-6 h-6" />
-                    </span>
-                    <span className="text-[#161616] font-medium">Download PNG</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleDownload('pdf')}
-                    className="h-12 px-4 bg-[#F2F3F5] rounded-lg flex items-center gap-2 hover:bg-[#E5E7EB] transition-colors"
-                  >
-                    <span className="w-6 h-6">
-                      <img src={downloadIcon || aiGenerateIcon} alt="Download" className="w-6 h-6" />
-                    </span>
-                    <span className="text-[#161616] font-medium">Download PDF</span>
-                  </button>
-
-                  <div className="relative more-menu-container">
-                    <button 
-                      onClick={handleMoreMenuToggle}
-                      className="w-12 h-12 bg-[#F2F3F5] rounded-lg flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
-                    >
-                      <span className="w-6 h-6">
-                        <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
-                      </span>
-                    </button>
-
-                    {/* 下拉菜单 */}
-                    {showMoreMenu && (
-                      <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
-                        <button
-                          onClick={handleDelete}
-                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
-                        >
-                          <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
-                          <span className="text-sm">Delete</span>
-                        </button>
-                        <button
-                          onClick={handleReport}
-                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
-                        >
-                          <img src={reportIcon} alt="Report" className="w-4 h-4" />
-                          <span className="text-sm">Report</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             // 只有在没有历史照片时才显示Example
             generatedImages.length === 0 && (
               <div>
-                <div className="w-full max-w-[795px] mx-auto flex justify-between items-center">
+                {/* Example 标题栏 - 固定宽度 */}
+                <div className="w-[795px] mx-auto flex justify-between items-center mb-2">
                   <div className="text-[#161616] font-medium text-sm">Example</div>
-                  <div className="flex items-center text-[#6B7280] text-sm cursor-pointer" onClick={refreshExamples}>
-                    {isLoadingExamples ? 'Loading...' : 'Change'}
+                  <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
+                    {currentLoadingState ? 'Loading...' : 'Change'}
                     <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
                   </div>
                 </div>
 
                 {/* Example Images */}
-                <div className="mt-2 flex justify-center gap-6">
-                  {exampleImages.length > 0 ? exampleImages.map((example) => {
+                <div className="flex justify-center gap-6">
+                  {currentExampleImages.length > 0 ? currentExampleImages.map((example) => {
                     const exampleSize = getExampleImageSize(example.id, example.defaultUrl, EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, dynamicImageDimensions, setDynamicImageDimensions);
                     return (
                       <div
@@ -338,7 +341,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                         </button>
                       </div>
                     );
-                  }) : (
+                  }) : currentLoadingState ? (
                     // 加载状态
                     [1, 2, 3].map((index) => {
                       const exampleSize = getExampleImageSize(undefined, undefined, EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, dynamicImageDimensions, setDynamicImageDimensions);
@@ -352,6 +355,22 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                         </div>
                       );
                     })
+                  ) : (
+                    // 空状态 - 没有示例图片
+                    <div className="w-full flex flex-col items-center justify-center py-16">
+                      <div className="text-center">
+                        <div className="mb-6">
+                          <img 
+                            src="/images/no-result.svg" 
+                            alt="No example images" 
+                            className="w-[305px] h-[200px] mx-auto"
+                          />
+                        </div>
+                        <p className="text-[#6B7280] text-base font-normal leading-6">
+                          No example images.
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -692,4 +711,4 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   );
 };
 
-export default GeneratePage; 
+export default GeneratePage;

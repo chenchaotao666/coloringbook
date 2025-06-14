@@ -1,12 +1,12 @@
-// 设置默认环境变量
-process.env.DATABASE_URL = process.env.DATABASE_URL || "postgresql://postgres:password@localhost:5432/coloring_book_db";
+// 首先加载环境变量
+require('dotenv').config();
+
+// 设置默认环境变量（只在未设置时生效）
 process.env.PORT = process.env.PORT || "3001";
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 process.env.JWT_SECRET = process.env.JWT_SECRET || "coloring-book-super-secret-jwt-key-2024";
 process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "coloring-book-super-secret-refresh-key-2024";
 process.env.CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
-
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');

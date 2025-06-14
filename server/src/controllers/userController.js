@@ -154,6 +154,34 @@ async function login(req, res) {
 }
 
 /**
+ * 获取当前用户信息
+ */
+async function getCurrentUser(req, res) {
+  try {
+    const userId = req.user.id;
+
+    // 查找用户
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      return errorResponse(res, ERROR_CODES.USER_NOT_FOUND, '用户不存在', 404);
+    }
+
+    // 检查账户是否被禁用
+    if (!user.isActive) {
+      return errorResponse(res, ERROR_CODES.ACCOUNT_DISABLED, '账户已被禁用，请联系客服', 403);
+    }
+
+    return successResponse(res, formatUserResponse(user));
+  } catch (error) {
+    console.error('获取用户信息错误:', error);
+    return errorResponse(res, ERROR_CODES.INTERNAL_SERVER_ERROR, '服务器内部错误', 500);
+  }
+}
+
+/**
  * 更新用户信息
  */
 async function updateUser(req, res) {
@@ -404,6 +432,7 @@ async function refreshToken(req, res) {
 module.exports = {
   register,
   login,
+  getCurrentUser,
   updateUser,
   uploadAvatar,
   recharge,

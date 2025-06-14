@@ -249,9 +249,32 @@ export const getExampleImageSize = (
     };
   }
 
-  // 使用 getImageSize 处理异步获取逻辑，但我们只需要触发异步获取，不使用其返回值
-  if (imageId && imageUrl && dimensionsCache && setDimensionsCache) {
-    getImageSize(imageId, imageUrl, fixedWidth, fixedWidth, undefined, undefined, dimensionsCache, setDimensionsCache);
+  // 检查是否正在加载，避免重复触发异步获取
+  if (imageId && imageUrl && dimensionsCache && setDimensionsCache && !dimensionsCache[`loading_${imageId}`]) {
+    // 标记为正在加载
+    setDimensionsCache(prev => ({
+      ...prev,
+      [`loading_${imageId}`]: { width: 0, height: 0 }
+    }));
+
+    // 异步获取图片尺寸
+    getImageDimensionsFromUrl(imageUrl)
+      .then((dimensions) => {
+        setDimensionsCache(prev => {
+          const newState = { ...prev };
+          delete newState[`loading_${imageId}`];
+          newState[imageId] = dimensions;
+          return newState;
+        });
+      })
+      .catch((error) => {
+        console.error('Failed to get example image dimensions:', error);
+        setDimensionsCache(prev => {
+          const newState = { ...prev };
+          delete newState[`loading_${imageId}`];
+          return newState;
+        });
+      });
   }
 
   // 默认尺寸（正方形）

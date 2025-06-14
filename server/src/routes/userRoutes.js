@@ -5,6 +5,7 @@ const { singleAvatar } = require('../middleware/upload');
 const {
   register,
   login,
+  getCurrentUser,
   updateUser,
   uploadAvatar,
   recharge,
@@ -16,6 +17,9 @@ router.post('/register', register);
 
 // 用户登录
 router.post('/login', login);
+
+// 获取当前用户信息（需要认证）
+router.get('/profile', authenticateToken, getCurrentUser);
 
 // 更新用户信息（需要认证）
 router.put('/update', authenticateToken, updateUser);

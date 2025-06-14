@@ -1,289 +1,221 @@
-# Coloring Book API Server
+# 涂色书 API 服务器
 
-基于 TypeScript + Express + PostgreSQL + Prisma 构建的涂色书后端API服务。
+基于 Express.js 和 PostgreSQL 的完整涂色书后端服务，支持用户管理、图片生成、文件上传等功能。
 
-## 🚀 技术栈
+## 🚀 功能特性
 
-- **框架**: Express.js
-- **语言**: TypeScript
-- **数据库**: PostgreSQL
-- **ORM**: Prisma
-- **验证**: Zod
-- **安全**: Helmet, CORS
-- **日志**: Morgan
+- **用户管理**: 注册、登录、更新信息、头像上传、充值
+- **图片管理**: 查询、文本生成图片、图片转换、删除、举报
+- **分类管理**: 获取所有分类和分类详情
+- **任务管理**: 查询任务状态、获取用户任务、取消任务
+- **文件上传**: 支持头像和图片上传，自动压缩和处理
+- **参数验证**: 完整的请求参数验证和错误处理
+- **认证授权**: JWT 令牌认证和权限控制
+- **错误处理**: 统一的错误码和响应格式
 
-## 📁 项目结构
+## 📋 环境要求
 
-```
-server/
-├── src/
-│   ├── config/          # 配置文件
-│   │   ├── database.ts  # 数据库配置
-│   │   └── index.ts     # 应用配置
-│   ├── controllers/     # 控制器
-│   │   ├── categoryController.ts
-│   │   └── imageController.ts
-│   ├── middleware/      # 中间件
-│   │   ├── errorHandler.ts
-│   │   └── validation.ts
-│   ├── routes/          # 路由
-│   │   ├── categoryRoutes.ts
-│   │   ├── imageRoutes.ts
-│   │   ├── userRoutes.ts
-│   │   └── generateRoutes.ts
-│   ├── schemas/         # Zod验证模式
-│   │   └── index.ts
-│   ├── types/           # TypeScript类型定义
-│   │   └── index.ts
-│   └── index.ts         # 应用入口
-├── prisma/
-│   └── schema.prisma    # 数据库模式
-├── package.json
-├── tsconfig.json
-└── README.md
-```
+- Node.js >= 18.0.0
+- PostgreSQL >= 12
+- npm 或 yarn
 
-## 🛠️ 安装和运行
+## 🛠️ 安装和配置
 
 ### 1. 安装依赖
 
 ```bash
-cd server
 npm install
 ```
 
-### 2. 环境配置
+### 2. 环境变量配置
 
-复制环境变量示例文件：
+复制环境变量示例文件并配置：
 
 ```bash
 cp env.example .env
 ```
 
-编辑 `.env` 文件，配置数据库连接等信息：
+编辑 `.env` 文件，配置以下变量：
 
 ```env
+# 数据库连接
 DATABASE_URL="postgresql://username:password@localhost:5432/coloring_book_db"
+
+# 服务器配置
 PORT=3001
 NODE_ENV=development
-JWT_SECRET=your-super-secret-jwt-key
+
+# JWT密钥
+JWT_SECRET=your-super-secret-jwt-key-here-change-in-production
+JWT_REFRESH_SECRET=your-super-secret-refresh-key-here-change-in-production
+
+# 文件上传配置
+UPLOAD_DIR=uploads
+MAX_FILE_SIZE=10485760
+ALLOWED_IMAGE_TYPES=image/jpeg,image/png,image/gif,image/webp
+
+# CORS配置
+CORS_ORIGIN=http://localhost:3000
 ```
 
 ### 3. 数据库设置
 
+生成 Prisma 客户端：
+
 ```bash
-# 生成Prisma客户端
 npm run db:generate
+```
 
-# 推送数据库模式（开发环境）
+推送数据库模式：
+
+```bash
 npm run db:push
+```
 
-# 或者运行迁移（生产环境）
-npm run db:migrate
+初始化种子数据：
 
-# 填充初始数据（可选）
+```bash
 npm run db:seed
 ```
 
-### 4. 启动服务
+## 🚀 启动服务
+
+### 开发模式
 
 ```bash
-# 开发模式（热重载）
 npm run dev
+```
 
-# 构建
-npm run build
+### 生产模式
 
-# 生产模式
+```bash
 npm start
 ```
 
+服务器将在 `http://localhost:3001` 启动。
+
 ## 📚 API 文档
 
-### 基础信息
+详细的 API 文档请参考 [API_DOCS.md](./API_DOCS.md)。
 
-- **Base URL**: `http://localhost:3001`
-- **API版本**: v1
-- **数据格式**: JSON
+### 主要端点
 
-### 通用响应格式
+- **健康检查**: `GET /health`
+- **用户管理**: `/api/users/*`
+- **图片管理**: `/api/images/*`
+- **分类管理**: `/api/categories/*`
+- **任务管理**: `/api/tasks/*`
 
-```typescript
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-  pagination?: PaginationInfo;
-  searchInfo?: SearchInfo;
-}
+## 🗂️ 项目结构
+
+```
+server/
+├── prisma/
+│   └── schema.prisma          # 数据库模式定义
+├── src/
+│   ├── config/
+│   │   ├── database.js        # 数据库配置
+│   │   └── constants.js       # 常量定义
+│   ├── controllers/
+│   │   ├── userController.js  # 用户控制器
+│   │   ├── imageController.js # 图片控制器
+│   │   ├── categoryController.js # 分类控制器
+│   │   └── taskController.js  # 任务控制器
+│   ├── middleware/
+│   │   ├── auth.js           # 认证中间件
+│   │   └── upload.js         # 文件上传中间件
+│   ├── routes/
+│   │   ├── userRoutes.js     # 用户路由
+│   │   ├── imageRoutes.js    # 图片路由
+│   │   ├── categoryRoutes.js # 分类路由
+│   │   └── taskRoutes.js     # 任务路由
+│   ├── scripts/
+│   │   └── seed.js           # 数据库种子脚本
+│   ├── utils/
+│   │   ├── response.js       # 响应工具
+│   │   └── fileUtils.js      # 文件工具
+│   ├── validation/
+│   │   ├── userValidation.js # 用户验证
+│   │   └── imageValidation.js # 图片验证
+│   └── server.js             # 主服务器文件
+├── uploads/                  # 上传文件目录
+├── images-mock/              # 预制图片目录
+├── package.json
+├── env.example
+└── README.md
 ```
 
-### 端点列表
+## 🧪 测试账户
 
-#### 健康检查
-- `GET /health` - 服务器健康检查
+种子数据包含以下测试账户：
 
-#### 分类管理
-- `GET /api/categories` - 获取所有分类
-- `GET /api/categories/:id` - 获取单个分类详情
-- `POST /api/categories` - 创建新分类
-- `PUT /api/categories/:id` - 更新分类
-- `DELETE /api/categories/:id` - 删除分类
+**Pro 用户**
+- 邮箱: `test@example.com`
+- 密码: `password123`
+- 积分: 100
 
-#### 图片管理
-- `GET /api/images` - 搜索图片（支持分页、筛选）
-- `GET /api/images/category/:categoryId` - 获取分类下的图片
-- `GET /api/images/:id` - 获取单个图片详情
-- `DELETE /api/images/:id` - 删除图片
+**Lite 用户**
+- 邮箱: `demo@example.com`
+- 密码: `password123`
+- 积分: 50
 
-#### 用户管理（待实现）
-- `GET /api/users/:id` - 获取用户信息
-- `PUT /api/users/:id` - 更新用户信息
-- `GET /api/users/:id/favorites` - 获取用户收藏
-- `POST /api/users/:id/favorites` - 添加收藏
-- `DELETE /api/users/:id/favorites/:imageId` - 删除收藏
+## 🔧 开发工具
 
-#### AI生成（待实现）
-- `POST /api/generate/text-to-image` - 文本生成图片
-- `POST /api/generate/image-to-image` - 图片转换
-- `GET /api/generate/status/:taskId` - 查询生成状态
-
-## 🗄️ 数据库模式
-
-### 主要表结构
-
-#### Categories (分类)
-```sql
-- id: String (主键)
-- name: String (唯一)
-- displayName: String
-- description: String
-- imageCount: Int
-- thumbnailUrl: String?
-- createdAt: DateTime
-- updatedAt: DateTime
-```
-
-#### Images (图片)
-```sql
-- id: String (主键)
-- title: String
-- description: String?
-- url: String
-- colorUrl: String?
-- tags: String[]
-- ratio: String
-- difficulty: String?
-- type: String (default/text2image/image2image)
-- isPublic: Boolean
-- status: String
-- categoryId: String (外键)
-- userId: String?
-- createdAt: DateTime
-- updatedAt: DateTime
-```
-
-#### Users (用户)
-```sql
-- id: String (主键)
-- username: String (唯一)
-- email: String (唯一)
-- avatar: String?
-- preferences: Json?
-- stats: Json?
-- createdAt: DateTime
-- updatedAt: DateTime
-```
-
-## 🔧 开发指南
-
-### 添加新的API端点
-
-1. 在 `src/schemas/index.ts` 中定义验证模式
-2. 在相应的控制器中实现业务逻辑
-3. 在路由文件中添加路由定义
-4. 更新类型定义（如需要）
-
-### 数据库迁移
+### 数据库管理
 
 ```bash
-# 创建新的迁移
-npx prisma migrate dev --name migration_name
+# 查看数据库
+npm run db:studio
 
 # 重置数据库
-npx prisma migrate reset
+npm run db:push --force-reset
 
-# 查看数据库
-npx prisma studio
+# 重新初始化种子数据
+npm run db:seed
 ```
 
-### 代码规范
+### 日志和调试
 
-- 使用 TypeScript 严格模式
-- 遵循 ESLint 规则
-- 使用 Zod 进行参数验证
-- 使用 Prisma 进行数据库操作
-- 错误处理使用统一的错误中间件
+- 开发环境下会显示详细的请求日志
+- 所有错误都会记录到控制台
+- 支持 Prisma 查询日志
 
-## 🚀 部署
+## 🛡️ 安全特性
 
-### Vercel 部署
+- **Helmet**: 设置安全相关的 HTTP 头
+- **CORS**: 跨域资源共享配置
+- **速率限制**: 防止 API 滥用
+- **JWT 认证**: 安全的用户认证
+- **参数验证**: 防止恶意输入
+- **文件上传限制**: 限制文件类型和大小
 
-1. 安装 Vercel CLI
-```bash
-npm i -g vercel
-```
+## 📝 错误处理
 
-2. 配置 `vercel.json`
+API 使用统一的错误响应格式：
+
 ```json
 {
-  "builds": [
-    {
-      "src": "dist/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "dist/index.js"
-    }
-  ]
+  "status": "fail",
+  "errorCode": "1001",
+  "message": "错误描述"
 }
 ```
 
-3. 设置环境变量
-```bash
-vercel env add DATABASE_URL
-vercel env add JWT_SECRET
-```
+错误码分类：
+- 1000-1999: 用户相关错误
+- 2000-2999: 图片相关错误
+- 3000-3999: 分类相关错误
+- 4000-4999: 举报相关错误
+- 9000-9999: 系统相关错误
 
-4. 部署
-```bash
-npm run build
-vercel --prod
-```
-
-## 📝 待办事项
-
-- [ ] 完善用户管理功能
-- [ ] 实现AI图片生成功能
-- [ ] 添加认证和授权
-- [ ] 实现文件上传功能
-- [ ] 添加单元测试
-- [ ] 添加API文档生成
-- [ ] 实现缓存机制
-- [ ] 添加监控和日志
-
-## 🤝 贡献
+## 🤝 贡献指南
 
 1. Fork 项目
-2. 创建功能分支
-3. 提交更改
-4. 推送到分支
-5. 创建 Pull Request
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
 
-## �� 许可证
+## 📄 许可证
 
-MIT License 
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。 

@@ -26,23 +26,24 @@ model Category {
 
 model Image {
   id             String           @id @default(cuid())
+  name           String           // API中需要name字段，通常是title的slug版本
   title          String
   description    String?
-  url            String
+  defaultUrl     String           @map("url")        // API中使用defaultUrl
   colorUrl       String?
   tags           String[]
   ratio          String
-  difficulty     String?
-  type           String           @default("default") // default, text2image, image2image
+  type           String           @default("text2image") // text2image, image2image
   isPublic       Boolean          @default(true)
-  status         String           @default("completed") // processing, completed, failed
   prompt         String?          // For AI generated images
-  style          String?          // For AI generated images
+  userId         String?          // 可以为null，表示系统图片
   category       Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId     String
-  userId         String?
+  size           String?          // API中需要size字段，格式如"512,512"
+  additionalInfo String?          // API中需要additionalInfo字段，JSON字符串
   favorites      UserFavorite[]
   generationTask GenerationTask?
+  reports        ImageReport[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
@@ -50,18 +51,22 @@ model Image {
 }
 
 model User {
-  id                String         @id @default(cuid())
-  username          String         @unique
-  email             String         @unique
+  id                String           @id @default(cuid())
+  username          String           @unique
+  email             String           @unique
   avatar            String?
-  passwordHash      String?
-  preferences       Json?          // Store user preferences as JSON
-  stats             Json?          // Store user stats as JSON
+  passwordHash      String
+  credits           Int              @default(40)     // 用户积分，默认40
+  userType          String           @default("free") // free, lite, pro
+  membershipExpiry  DateTime?        // 会员到期时间
+  isActive          Boolean          @default(true)   // 账户是否激活，用于禁用功能
   favorites         UserFavorite[]
   generationTasks   GenerationTask[]
+  orders            Order[]          // 充值订单
+  reports           ImageReport[]    // 用户举报
   lastLoginAt       DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
   @@map("users")
 }
@@ -81,19 +86,58 @@ model UserFavorite {
 model GenerationTask {
   id            String    @id @default(cuid())
   taskId        String    @unique
-  status        String    @default("processing") // processing, completed, failed
+  status        String    @default("processing") // pending, processing, completed, failed, cancelled
   progress      Int       @default(0)
   type          String    // text2image, image2image
   prompt        String?
+  ratio         String?   // 图片比例
+  isPublic      Boolean?  // 是否公开
   estimatedTime Int?      // in seconds
   errorMessage  String?
+  errorCode     String?   // API错误码
+  message       String?   // 失败消息
   user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId        String?
   image         Image?    @relation(fields: [imageId], references: [id], onDelete: SetNull)
   imageId       String?   @unique
   completedAt   DateTime?
+  failedAt      DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   @@map("generation_tasks")
+}
+
+model Order {
+  id          String    @id @default(cuid())
+  orderId     String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  amount      Float     // 订单金额
+  currency    String    @default("USD") // 货币类型
+  type        String    // monthly, yearly, credits
+  level       String?   // lite, pro (充值类型为credits时可为null)
+  credits     Int?      // 充值积分数量
+  payType     String    // master, visa, americanexpress, applepay, unionpay
+  status      String    @default("pending") // pending, completed, failed, cancelled
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("orders")
+}
+
+model ImageReport {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId   String
+  content   String   // 举报内容
+  type      String?  // 举报类型：inappropriate, copyright, spam, other
+  status    String   @default("pending") // pending, reviewed, resolved
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, imageId]) // 防止重复举报
+  @@map("image_reports")
 } 

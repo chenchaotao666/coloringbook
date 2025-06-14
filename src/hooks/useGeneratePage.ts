@@ -52,7 +52,7 @@ export interface UseGeneratePageActions {
   // 工具操作
   clearError: () => void;
   resetForm: () => void;
-  refreshExamples: () => Promise<void>;
+  refreshExamples: () => void;
 }
 
 export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
@@ -444,84 +444,28 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text') => {
   }, [updateState]);
 
   // 刷新示例（只有点击 Change 按钮时才调用）
-  const refreshExamples = useCallback(async () => {
+  const refreshExamples = useCallback(() => {
     if (state.selectedTab === 'text') {
-      // Text to Image 刷新逻辑
+      // Text to Image 刷新逻辑 - 只从缓存中随机选择
       if (textExampleCache.current.allImages.length > 0) {
         const randomImages = getRandomImages(textExampleCache.current.allImages);
-        // 直接更新图片，不设置加载状态，避免闪烁
         setState(prev => ({ 
           ...prev,
           textExampleImages: randomImages
         }));
-        return;
-      }
-      
-      // 如果没有缓存，重新加载
-      try {
-        textExampleCache.current.isLoading = true;
-        setState(prev => ({ ...prev, isLoadingTextExamples: true, error: null }));
-        
-        const examples = await GenerateServiceInstance.getExampleImages('text', 21);
-        const randomImages = getRandomImages(examples);
-        
-        textExampleCache.current = {
-          allImages: examples,
-          isLoaded: true,
-          isLoading: false
-        };
-        
-        setState(prev => ({ 
-          ...prev, 
-          textExampleImages: randomImages, 
-          isLoadingTextExamples: false 
-        }));
-      } catch (error) {
-        textExampleCache.current.isLoading = false;
-        setState(prev => ({
-          ...prev,
-          error: error instanceof Error ? error.message : 'Failed to load text examples',
-          isLoadingTextExamples: false,
-        }));
+      } else {
+        console.warn('Text example cache is empty, cannot refresh');
       }
     } else {
-      // Image to Image 刷新逻辑
+      // Image to Image 刷新逻辑 - 只从缓存中随机选择
       if (imageExampleCache.current.allImages.length > 0) {
         const randomImages = getRandomImages(imageExampleCache.current.allImages);
-        // 直接更新图片，不设置加载状态，避免闪烁
         setState(prev => ({ 
           ...prev,
           imageExampleImages: randomImages
         }));
-        return;
-      }
-      
-      // 如果没有缓存，重新加载
-      try {
-        imageExampleCache.current.isLoading = true;
-        setState(prev => ({ ...prev, isLoadingImageExamples: true, error: null }));
-        
-        const examples = await GenerateServiceInstance.getExampleImages('image', 21);
-        const randomImages = getRandomImages(examples);
-        
-        imageExampleCache.current = {
-          allImages: examples,
-          isLoaded: true,
-          isLoading: false
-        };
-        
-        setState(prev => ({ 
-          ...prev, 
-          imageExampleImages: randomImages, 
-          isLoadingImageExamples: false 
-        }));
-      } catch (error) {
-        imageExampleCache.current.isLoading = false;
-        setState(prev => ({
-          ...prev,
-          error: error instanceof Error ? error.message : 'Failed to load image examples',
-          isLoadingImageExamples: false,
-        }));
+      } else {
+        console.warn('Image example cache is empty, cannot refresh');
       }
     }
   }, [state.selectedTab]);

@@ -313,7 +313,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <div className="w-[795px] mx-auto flex justify-between items-center mb-2">
                   <div className="text-[#161616] font-medium text-sm">Example</div>
                   <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
-                    {currentLoadingState ? 'Loading...' : 'Change'}
+                    Change
                     <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
                   </div>
                 </div>
@@ -341,21 +341,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                         </button>
                       </div>
                     );
-                  }) : currentLoadingState ? (
-                    // 加载状态
-                    [1, 2, 3].map((index) => {
-                      const exampleSize = getExampleImageSize(undefined, undefined, EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, dynamicImageDimensions, setDynamicImageDimensions);
-                      return (
-                        <div
-                          key={index}
-                          className="relative bg-white rounded-2xl border border-[#EDEEF0] animate-pulse"
-                          style={exampleSize.style}
-                        >
-                          <div className="w-full h-full bg-gray-200 rounded-2xl"></div>
-                        </div>
-                      );
-                    })
-                  ) : (
+                  }) : (
                     // 空状态 - 没有示例图片
                     <div className="w-full flex flex-col items-center justify-center py-16">
                       <div className="text-center">

@@ -47,10 +47,10 @@ const CategoriesDetailPage: React.FC = () => {
     
     try {
       // 使用新的 getImagesByCategory 方法
-      const result = await CategoriesService.getImagesByCategory(categoryId, {
-        page,
-        limit: 20,
-        search
+      const result = await CategoriesService.getImagesByCategoryId(categoryId, {
+        currentPage: page,
+        pageSize: 20,
+        query: search
       });
       
       if (page === 1) {
@@ -246,8 +246,7 @@ const CategoriesDetailPage: React.FC = () => {
             {filteredImages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="text-center">
-                  <div className="text-6xl mb-4">📁</div>
-                  <h3 className="text-xl font-semibold text-[#161616] mb-2">No images found</h3>
+                  <img src="/images/no-result.svg" alt="No results" className="mb-4 mx-auto" />
                   <p className="text-[#6B7280] text-sm max-w-md">
                     This category doesn't have any images yet. Please try another category.
                   </p>

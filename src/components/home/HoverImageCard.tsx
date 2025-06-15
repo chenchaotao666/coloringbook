@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HoverColorImage from './HoverColorImage';
 import { HomeImage, ImageService } from '../../services/imageService';
-import { downloadImageById } from '../../utils/downloadUtils';
+import { downloadImageByUrl, downloadImageAsPdf } from '../../utils/downloadUtils';
 const downloadIcon = '/images/download.svg';
 const downloadColorIcon = '/images/download-hover.svg';
 const moreIcon = '/images/more.svg';
@@ -46,9 +46,15 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
         setIsDownloadingPdf(true);
       }
 
-      // 使用共用的下载函数
-      const fileName = `coloring-page-${image.id}.${format}`;
-      await downloadImageById(image.id, format, fileName);
+      // 生成文件名
+      const fileName = `coloring-page-${image.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
+      
+      // 根据格式选择不同的下载方式
+      if (format === 'png') {
+        await downloadImageByUrl(image.defaultUrl, fileName);
+      } else {
+        await downloadImageAsPdf(image.defaultUrl, fileName);
+      }
     } catch (error) {
       console.error('Download failed:', error);
       // 可以在这里添加错误提示

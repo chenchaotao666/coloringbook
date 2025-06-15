@@ -72,57 +72,109 @@ export class ImageConverter {
     // 动态导入jsPDF
     const { jsPDF } = await import('jspdf');
     
-    // 先获取原始图片尺寸
-    const originalImageDimensions = await getImageDimensionsFromUrl(imageUrl);
-    
-    // 先转换为高分辨率PNG（3倍分辨率）
-    const pngBlob = await ImageConverter.convertImageToPng(imageUrl, true);
-    const base64 = await ImageConverter.blobToBase64(pngBlob);
-    
-    // 计算图片在PDF中的实际尺寸（以毫米为单位）
-    // 使用72 DPI作为基准，这样图片会以接近原始像素大小显示
-    const baseDpi = 72;
-    const mmPerInch = 25.4;
-    const pxToMm = mmPerInch / baseDpi;
-    
-    // 使用原始图片尺寸而不是固定的ratio尺寸
-    const imageWidthMm = originalImageDimensions.width * pxToMm;
-    const imageHeightMm = originalImageDimensions.height * pxToMm;
-    
-    // 设置PDF页面尺寸，与图片尺寸完全匹配
-    const pageWidth = imageWidthMm;
-    const pageHeight = imageHeightMm;
-    
-    // 根据实际比例确定方向
-    const orientation = imageWidthMm > imageHeightMm ? 'landscape' : 'portrait';
-    
-    // 创建PDF
-    const pdf = new jsPDF({
-      orientation: orientation,
-      unit: 'mm',
-      format: [pageWidth, pageHeight],
-      compress: false // 不压缩以保持质量
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // 处理跨域问题
+      
+      img.onload = async () => {
+        try {
+          // 获取图片的原始尺寸
+          const imgWidth = img.naturalWidth || img.width;
+          const imgHeight = img.naturalHeight || img.height;
+          
+          // 判断是否需要转换为PNG
+          let base64: string;
+          const isPng = imageUrl.toLowerCase().includes('.png') || imageUrl.toLowerCase().includes('image/png');
+          
+          if (isPng) {
+            // 如果已经是PNG，直接获取base64
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) {
+              reject(new Error('Could not get canvas context'));
+              return;
+            }
+            
+            // 使用3倍分辨率提高PDF质量
+            const scale = 3;
+            canvas.width = imgWidth * scale;
+            canvas.height = imgHeight * scale;
+            
+            // 设置高质量渲染
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // 设置白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制高分辨率图片
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // 转换为base64
+            base64 = canvas.toDataURL('image/png', 1.0).split(',')[1];
+          } else {
+            // 如果不是PNG，使用convertImageToPng方法
+            const pngBlob = await ImageConverter.convertImageToPng(imageUrl, true);
+            base64 = await ImageConverter.blobToBase64(pngBlob);
+          }
+          
+          // 计算图片在PDF中的实际尺寸（以毫米为单位）
+          // 使用72 DPI作为基准，这样图片会以接近原始像素大小显示
+          const baseDpi = 72;
+          const mmPerInch = 25.4;
+          const pxToMm = mmPerInch / baseDpi;
+          
+          // 使用原始图片尺寸
+          const imageWidthMm = imgWidth * pxToMm;
+          const imageHeightMm = imgHeight * pxToMm;
+          
+          // 设置PDF页面尺寸，与图片尺寸完全匹配
+          const pageWidth = imageWidthMm;
+          const pageHeight = imageHeightMm;
+          
+          // 根据实际比例确定方向
+          const orientation = imageWidthMm > imageHeightMm ? 'landscape' : 'portrait';
+          
+          // 创建PDF
+          const pdf = new jsPDF({
+            orientation: orientation,
+            unit: 'mm',
+            format: [pageWidth, pageHeight],
+            compress: false // 不压缩以保持质量
+          });
+          
+          // 图片从左上角开始，填满整个页面
+          const imageX = 0;
+          const imageY = 0;
+          
+          // 添加高分辨率图片到PDF，填满页面
+          pdf.addImage(
+            `data:image/png;base64,${base64}`,
+            'PNG',
+            imageX,
+            imageY,
+            imageWidthMm,
+            imageHeightMm,
+            undefined,
+            'FAST' // 使用快速但高质量的压缩
+          );
+          
+          // 返回PDF Blob
+          const pdfBlob = pdf.output('blob');
+          resolve(pdfBlob);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      img.onerror = () => {
+        reject(new Error('Failed to load image for PDF conversion'));
+      };
+      
+      img.src = imageUrl;
     });
-    
-    // 图片从左上角开始，填满整个页面
-    const imageX = 0;
-    const imageY = 0;
-    
-    // 添加高分辨率图片到PDF，填满页面
-    pdf.addImage(
-      `data:image/png;base64,${base64}`,
-      'PNG',
-      imageX,
-      imageY,
-      imageWidthMm,
-      imageHeightMm,
-      undefined,
-      'FAST' // 使用快速但高质量的压缩
-    );
-    
-    // 返回PDF Blob
-    const pdfBlob = pdf.output('blob');
-    return pdfBlob;
   }
 
 

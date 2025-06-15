@@ -15,3 +15,6 @@
 1、image to image 和 text to image 的Example是不同的，所以他们应该独立，不要混
 
 建议使用两个数据结构存各自的Example图片
+
+
+text to image 的Example 的recreate功能是把图片的信息传给generateTextToImage方法，进行图片的生成

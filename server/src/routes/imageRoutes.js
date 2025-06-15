@@ -15,10 +15,10 @@ router.get('/', optionalAuth, queryImages);
 router.post('/', optionalAuth, queryImages);
 
 // 文本生成图片（需要认证）
-router.post('/text2image', authenticateToken, text2Image);
+router.post('/text2imggenerate', authenticateToken, text2Image);
 
 // 图片转换（需要认证）
-router.post('/image2image', authenticateToken, singleImage, image2Image);
+router.post('/img2imggenerate', authenticateToken, singleImage, image2Image);
 
 // 删除图片（需要认证）
 router.delete('/:imageId', authenticateToken, deleteImage);

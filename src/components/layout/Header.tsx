@@ -14,7 +14,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const { language, setLanguage, t } = useLanguage();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -109,7 +109,13 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
         </div>
         
         {/* 用户认证区域 */}
-        {isAuthenticated && user ? (
+        {isLoading ? (
+          /* 加载状态 - 显示占位符，避免闪烁 */
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-8 rounded-lg animate-pulse"></div>
+            <div className="w-8 h-8 rounded-full animate-pulse"></div>
+          </div>
+        ) : isAuthenticated && user ? (
           <div className="flex items-center gap-4">
             {/* 积分显示 */}
             <div className="flex items-center justify-center gap-1.5 px-5 py-1.5 rounded-lg" style={{backgroundColor: '#F9FAFB'}}>

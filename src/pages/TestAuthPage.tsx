@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { TokenRefreshDebug } from '../components/TokenRefreshDebug';
 
 // 导入图标
 const creditsIcon = '/images/credits.svg';
@@ -78,18 +79,33 @@ const TestAuthPage: React.FC = () => {
                 </div>
               </div>
               
-              <div className="flex space-x-4">
-                <Link
-                  to="/profile"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  个人资料
-                </Link>
+              <div className="mt-6 space-y-4">
                 <button
                   onClick={handleLogout}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                 >
                   退出登录
+                </button>
+                
+                <button
+                  onClick={() => window.location.href = '/generate'}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  测试生成功能
+                </button>
+                
+                <button
+                  onClick={() => window.location.href = '/price'}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  充值页面
+                </button>
+                
+                <button
+                  onClick={() => window.location.href = '/price'}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  测试充值功能
                 </button>
               </div>
             </div>
@@ -143,6 +159,9 @@ const TestAuthPage: React.FC = () => {
             </Link>
           </div>
         </div>
+
+        {/* Token自动刷新调试 */}
+        <TokenRefreshDebug className="mt-6" />
 
         {/* 本地存储调试 */}
         <div className="bg-white rounded-lg shadow p-6 mt-6">

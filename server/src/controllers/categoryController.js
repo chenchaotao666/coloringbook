@@ -22,29 +22,49 @@ function formatCategoryResponse(category) {
  */
 async function getAllCategories(req, res) {
   try {
-    // 查询所有分类并统计图片数量
+    // 查询所有分类
     const categories = await prisma.category.findMany({
-      include: {
-        _count: {
-          select: {
-            images: {
-              where: {
-                isPublic: true // 只统计公开图片
-              }
-            }
-          }
-        }
-      },
       orderBy: {
         createdAt: 'asc'
       }
     });
 
-    // 格式化响应数据
-    const formattedCategories = categories.map(category => ({
-      ...formatCategoryResponse(category),
-      imageCount: category._count.images
-    }));
+    // 为每个分类统计标签数量
+    const formattedCategories = await Promise.all(
+      categories.map(async (category) => {
+        // 获取该分类下所有公开图片的标签
+        const images = await prisma.image.findMany({
+          where: {
+            categoryId: category.id,
+            isPublic: true
+          },
+          select: {
+            tags: true
+          }
+        });
+
+        // 统计标签出现次数
+        const tagCounts = {};
+        images.forEach(image => {
+          if (image.tags && Array.isArray(image.tags)) {
+            image.tags.forEach(tag => {
+              if (tag && tag.trim()) {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+              }
+            });
+          }
+        });
+
+        return {
+          id: category.id,
+          name: category.name,
+          displayName: category.displayName,
+          description: category.description,
+          tagCounts: tagCounts,
+          thumbnailUrl: category.thumbnailUrl || ''
+        };
+      })
+    );
 
     return successResponse(res, {
       categories: formattedCategories

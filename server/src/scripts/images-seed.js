@@ -76,35 +76,6 @@ async function main() {
 
     console.log(`✅ 创建了 ${categories.length} 个分类`);
 
-    // 创建示例用户
-    console.log('👤 创建示例用户...');
-    const hashedPassword = await bcrypt.hash('password123', 12);
-    
-    const users = await Promise.all([
-      prisma.user.create({
-        data: {
-          username: 'testuser',
-          email: 'test@example.com',
-          passwordHash: hashedPassword,
-          credits: 100,
-          userType: 'pro',
-          isActive: true
-        }
-      }),
-      prisma.user.create({
-        data: {
-          username: 'demouser',
-          email: 'demo@example.com',
-          passwordHash: hashedPassword,
-          credits: 50,
-          userType: 'lite',
-          isActive: true
-        }
-      })
-    ]);
-
-    console.log(`✅ 创建了 ${users.length} 个用户`);
-
     // 创建示例图片
     console.log('🖼️ 创建示例图片...');
     const images = [
@@ -231,58 +202,6 @@ async function main() {
     }
 
     console.log(`✅ 创建了 ${createdImages.length} 张示例图片`);
-
-    // 更新分类的图片数量
-    console.log('🔄 更新分类图片数量...');
-    for (const category of categories) {
-      const imageCount = await prisma.image.count({
-        where: {
-          categoryId: category.id,
-          isPublic: true
-        }
-      });
-      
-      await prisma.category.update({
-        where: { id: category.id },
-        data: { imageCount }
-      });
-    }
-
-    // 创建示例生成任务
-    console.log('⚙️ 创建示例任务...');
-    await prisma.generationTask.create({
-      data: {
-        taskId: 'task_example_completed',
-        status: 'completed',
-        progress: 100,
-        type: 'text2image',
-        prompt: '一只可爱的小猫在花园里玩耍',
-        ratio: '1:1',
-        isPublic: true,
-        userId: users[0].id,
-        imageId: createdImages[1].id,
-        estimatedTime: 30,
-        completedAt: new Date()
-      }
-    });
-
-    console.log('✅ 数据库种子数据初始化完成！');
-    console.log(`
-📊 初始化统计:
-- 分类: ${categories.length} 个
-- 用户: ${users.length} 个  
-- 图片: ${createdImages.length} 张
-- 任务: 1 个
-
-🔑 测试账户:
-- 邮箱: test@example.com
-- 密码: password123
-- 积分: 100 (Pro用户)
-
-- 邮箱: demo@example.com  
-- 密码: password123
-- 积分: 50 (Lite用户)
-    `);
 
   } catch (error) {
     console.error('❌ 数据库种子数据初始化失败:', error);

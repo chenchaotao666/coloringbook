@@ -72,8 +72,6 @@ const CategoriesPage: React.FC = () => {
     handleSearch();
   };
 
-
-
   // 主分类列表页面
   return (
     <Layout>

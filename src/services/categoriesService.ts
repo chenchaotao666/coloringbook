@@ -7,7 +7,8 @@ export interface Category {
   name: string;
   displayName: string;
   description: string;
-  imageCount: number;
+  imageCount?: number; // 可选，为了向后兼容
+  tagCounts: { [key: string]: number }; // 标签统计
   thumbnailUrl: string;
 }
 
@@ -16,8 +17,8 @@ export class CategoriesService {
   // 获取所有分类
   static async getCategories(): Promise<Category[]> {
     try {
-      const categories = await ApiUtils.get<Category[]>('/api/categories');
-      return categories || [];
+      const data = await ApiUtils.get<{ categories: Category[] }>('/api/categories');
+      return data.categories || [];
     } catch (error) {
       console.error('Failed to fetch categories:', error);
       // 返回空数组作为降级处理
@@ -42,14 +43,14 @@ export class CategoriesService {
   }
 
   // 通过分类名称获取图片列表
-  static async getImagesByCategory(
-    categoryName: string, 
+  static async getImagesByCategoryId(
+    categoryId: string, 
     params: { currentPage?: number; pageSize?: number; query?: string } = {}
   ): Promise<SearchResult> {
     try {
-      return await ImageService.getImagesByCategory(categoryName, params);
+      return await ImageService.getImagesByCategoryId(categoryId, params);
     } catch (error) {
-      console.error(`Failed to get images by category ${categoryName}:`, error);
+      console.error(`Failed to get images by categoryId ${categoryId}:`, error);
       return {
         images: [],
         totalCount: 0,
@@ -67,7 +68,9 @@ export class CategoriesService {
       const stats: { [key: string]: number } = {};
       
       categories.forEach(category => {
-        stats[category.name] = category.imageCount;
+        // 计算总的图片数量（所有标签的数量之和）
+        const totalCount = Object.values(category.tagCounts).reduce((sum, count) => sum + count, 0);
+        stats[category.name] = totalCount;
       });
       
       return stats;
@@ -101,7 +104,11 @@ export class CategoriesService {
     try {
       const categories = await this.getCategories();
       return categories
-        .sort((a, b) => b.imageCount - a.imageCount)
+        .sort((a, b) => {
+          const aCount = Object.values(a.tagCounts).reduce((sum, count) => sum + count, 0);
+          const bCount = Object.values(b.tagCounts).reduce((sum, count) => sum + count, 0);
+          return bCount - aCount;
+        })
         .slice(0, limit);
     } catch (error) {
       console.error('Failed to get popular categories:', error);

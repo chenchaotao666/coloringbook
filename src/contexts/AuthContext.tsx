@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserService, User } from '../services/userService';
+import { tokenRefreshService } from '../services/tokenRefreshService';
 
 interface AuthContextType {
   user: User | null;
@@ -27,14 +28,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuthStatus();
   }, []);
 
+  // 监听token刷新事件
+  useEffect(() => {
+    const handleTokenRefreshed = (event: CustomEvent) => {
+      console.log('🔄 Token已刷新:', event.detail);
+      // Token刷新成功，可以在这里做一些处理，比如更新用户信息
+    };
+
+    const handleTokenExpired = (event: CustomEvent) => {
+      console.log('❌ Token已过期:', event.detail);
+      // Token过期，清除用户状态并可能需要重新登录
+      setUser(null);
+      tokenRefreshService.stop();
+    };
+
+    // 添加事件监听器
+    window.addEventListener('tokenRefreshed', handleTokenRefreshed as EventListener);
+    window.addEventListener('tokenExpired', handleTokenExpired as EventListener);
+
+    // 清理事件监听器
+    return () => {
+      window.removeEventListener('tokenRefreshed', handleTokenRefreshed as EventListener);
+      window.removeEventListener('tokenExpired', handleTokenExpired as EventListener);
+    };
+  }, []);
+
   const checkAuthStatus = async () => {
     try {
       setIsLoading(true);
       const userData = await UserService.getCurrentUser();
       setUser(userData);
+      
+      // 如果用户已登录，启动token自动刷新服务
+      if (userData) {
+        tokenRefreshService.start();
+      }
     } catch (error) {
       console.error('Failed to check auth status:', error);
       setUser(null);
+      // 认证失败，停止token刷新服务
+      tokenRefreshService.stop();
     } finally {
       setIsLoading(false);
     }
@@ -45,6 +78,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // 登录成功后获取用户信息
     const userData = await UserService.getCurrentUser();
     setUser(userData);
+    
+    // 登录成功后启动token自动刷新服务
+    if (userData) {
+      tokenRefreshService.start();
+    }
   };
 
   const register = async (username: string, email: string, password: string) => {
@@ -55,6 +93,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     await UserService.logout();
     setUser(null);
+    
+    // 登出时停止token自动刷新服务
+    tokenRefreshService.stop();
   };
 
   const updateUser = (userData: Partial<User>) => {

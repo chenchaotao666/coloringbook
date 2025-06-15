@@ -6,7 +6,7 @@ import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
 import { ImageService } from '../services/imageService';
 import { HomeImage } from '../services/imageService';
-import { downloadImageById } from '../utils/downloadUtils';
+import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
 const homeIcon = '/images/home.svg';
 const chevronRightIcon = '/images/chevron-right.svg';
 const downloadIcon = '/images/download-white.svg';
@@ -60,11 +60,20 @@ const ImageDetailPage: React.FC = () => {
   }, [imageId]);
 
   const handleDownload = async (format: 'png' | 'pdf') => {
-    if (!imageId) return;
+    if (!image) return;
 
     try {
       setIsDownloading(prev => ({ ...prev, [format]: true }));
-      await downloadImageById(imageId, format);
+      
+      // 生成文件名
+      const fileName = `coloring-page-${image.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
+      
+      // 根据格式选择不同的下载方式
+      if (format === 'png') {
+        await downloadImageByUrl(image.defaultUrl, fileName);
+      } else {
+        await downloadImageAsPdf(image.defaultUrl, fileName);
+      }
     } catch (error) {
       console.error(`Download ${format} failed:`, error);
     } finally {

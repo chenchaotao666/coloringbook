@@ -96,7 +96,7 @@ class GenerateService {
    */
   async generateTextToImage(data: GenerateTextToImageRequest): Promise<GenerateResponse> {
     try {
-      const responseData = await ApiUtils.post<{ taskId: string }>('/api/images/txt2imggenerate', {
+      const responseData = await ApiUtils.post<{ taskId: string }>('/api/images/text2imggenerate', {
         prompt: data.prompt,
         ratio: data.ratio,
         isPublic: data.isPublic,
@@ -196,25 +196,6 @@ class GenerateService {
   }
 
   /**
-   * 获取所有生成的图片（已废弃，请使用 getUserGeneratedImages）
-   * @deprecated 使用 getUserGeneratedImages 替代
-   */
-  async getAllGeneratedImages(): Promise<HomeImage[]> {
-    console.warn('getAllGeneratedImages is deprecated, use getUserGeneratedImages instead');
-    try {
-      const { ImageService } = await import('./imageService');
-      const result = await ImageService.searchImages({
-        pageSize: 100
-      });
-      
-      return result.images;
-    } catch (error) {
-      console.error('Failed to get all generated images:', error);
-      return [];
-    }
-  }
-
-  /**
    * 获取用户生成的图片
    */
   async getUserGeneratedImages(userId: string): Promise<HomeImage[]> {
@@ -234,61 +215,6 @@ class GenerateService {
    */
   async getStyleSuggestions(): Promise<StyleSuggestion[]> {
     return styleSuggestions;
-  }
-
-  /**
-   * 下载图片
-   */
-  async downloadImage(imageId: string, format: 'png' | 'pdf'): Promise<Blob> {
-    try {
-      const response = await fetch(`/api/images/${imageId}/download?format=${format}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${ApiUtils.getAccessToken()}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Download failed');
-      }
-
-      return await response.blob();
-    } catch (error) {
-      console.error('Download image error:', error);
-      throw new ApiError('2001', '图片下载失败');
-    }
-  }
-
-  /**
-   * 重新创建示例图片
-   */
-  async recreateExample(exampleId: string): Promise<GenerateResponse> {
-    try {
-      // 首先获取示例图片信息
-      const { ImageService } = await import('./imageService');
-      const image = await ImageService.getImageById(exampleId);
-      
-      if (!image) {
-        throw new ApiError('2001', '示例图片不存在');
-      }
-
-      // 根据图片类型重新生成
-      if (image.type === 'text2image') {
-        return await this.generateTextToImage({
-          prompt: image.prompt,
-          ratio: image.ratio as any,
-          isPublic: true
-        });
-      } else {
-        throw new ApiError('2012', '图片转换需要上传原始图片');
-      }
-    } catch (error) {
-      console.error('Recreate example error:', error);
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      throw new ApiError('2007', '重新生成失败');
-    }
   }
 
   /**
@@ -322,53 +248,6 @@ class GenerateService {
     }
   }
 
-  /**
-   * 获取生成统计信息
-   */
-  async getGenerationStats(): Promise<{
-    totalGenerated: number;
-    todayGenerated: number;
-    remainingCredits: number;
-    userType: string;
-  }> {
-    try {
-      const { UserService } = await import('./userService');
-      const user = await UserService.getCurrentUser();
-      
-      if (!user) {
-        return {
-          totalGenerated: 0,
-          todayGenerated: 0,
-          remainingCredits: 0,
-          userType: 'guest'
-        };
-      }
-
-      // 获取用户任务统计
-      const tasks = await this.getUserTasks(user.id);
-      
-      // 计算今日生成数量
-      const today = new Date().toDateString();
-      const todayTasks = tasks.tasks.filter(task => 
-        new Date(task.createdAt).toDateString() === today
-      );
-
-      return {
-        totalGenerated: tasks.stats.completed,
-        todayGenerated: todayTasks.length,
-        remainingCredits: user.credits,
-        userType: user.userType
-      };
-    } catch (error) {
-      console.error('Get generation stats error:', error);
-      return {
-        totalGenerated: 0,
-        todayGenerated: 0,
-        remainingCredits: 0,
-        userType: 'guest'
-      };
-    }
-  }
 }
 
 // 导出单例实例

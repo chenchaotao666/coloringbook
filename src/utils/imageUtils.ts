@@ -134,7 +134,12 @@ export const getImageSize = (
   }
   
   // 如果还没有获取到图片尺寸，异步获取
-  if (imageId && imageUrl && dimensionsCache && setDimensionsCache && !dimensionsCache[imageId] && !dimensionsCache[`loading_${imageId}`]) {
+  // 检查是否已经失败过，避免重复尝试失败的图片
+  if (imageId && imageUrl && dimensionsCache && setDimensionsCache && 
+      !dimensionsCache[imageId] && 
+      !dimensionsCache[`loading_${imageId}`] && 
+      !dimensionsCache[`failed_${imageId}`]) {
+    
     setDimensionsCache(prev => ({
       ...prev,
       [`loading_${imageId}`]: { width: 0, height: 0 }
@@ -154,6 +159,8 @@ export const getImageSize = (
         setDimensionsCache(prev => {
           const newState = { ...prev };
           delete newState[`loading_${imageId}`];
+          // 设置失败标记，防止重复尝试
+          newState[`failed_${imageId}`] = { width: 0, height: 0 };
           return newState;
         });
       });
@@ -219,76 +226,11 @@ export const getCenterImageSize = (
   };
 };
 
-/**
- * 计算Example图片的大小
- * @param imageId 图片ID（用作缓存键，可选）
- * @param imageUrl 图片URL（可选）
- * @param fixedWidth 固定宽度
- * @param dimensionsCache 图片尺寸缓存
- * @param setDimensionsCache 更新图片尺寸缓存的函数
- * @returns 计算后的图片尺寸信息
- */
-export const getExampleImageSize = (
-  imageId?: string,
-  imageUrl?: string,
-  fixedWidth: number = EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH,
-  dimensionsCache?: ImageDimensionsCache,
-  setDimensionsCache?: SetImageDimensionsFunction
-) => {
-  if (imageId && dimensionsCache && dimensionsCache[imageId]) {
-    const { width, height } = dimensionsCache[imageId];
-    const aspectRatio = width / height;
 
-    // 根据固定宽度和实际比例计算高度
-    const calculatedHeight = Math.round(fixedWidth / aspectRatio);
-
-    return {
-      width: fixedWidth,
-      height: calculatedHeight,
-      style: { width: `${fixedWidth}px`, height: `${calculatedHeight}px` }
-    };
-  }
-
-  // 检查是否正在加载，避免重复触发异步获取
-  if (imageId && imageUrl && dimensionsCache && setDimensionsCache && !dimensionsCache[`loading_${imageId}`]) {
-    // 标记为正在加载
-    setDimensionsCache(prev => ({
-      ...prev,
-      [`loading_${imageId}`]: { width: 0, height: 0 }
-    }));
-
-    // 异步获取图片尺寸
-    getImageDimensionsFromUrl(imageUrl)
-      .then((dimensions) => {
-        setDimensionsCache(prev => {
-          const newState = { ...prev };
-          delete newState[`loading_${imageId}`];
-          newState[imageId] = dimensions;
-          return newState;
-        });
-      })
-      .catch((error) => {
-        console.error('Failed to get example image dimensions:', error);
-        setDimensionsCache(prev => {
-          const newState = { ...prev };
-          delete newState[`loading_${imageId}`];
-          return newState;
-        });
-      });
-  }
-
-  // 默认尺寸（正方形）
-  return {
-    width: fixedWidth,
-    height: fixedWidth,
-    style: { width: `${fixedWidth}px`, height: `${fixedWidth}px` }
-  };
-};
 
 /**
  * 计算生成中容器的大小（右侧边栏）
  * @param selectedTab 当前选中的标签页
-
  * @returns 计算后的容器尺寸
  */
 export const getGeneratingContainerSize = () => {

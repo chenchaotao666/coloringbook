@@ -32,7 +32,7 @@ export interface SearchResult {
 export interface SearchParams {
   imageId?: string;
   query?: string;
-  category?: string;
+  categoryId?: string;
   tags?: string;
   ratio?: '1:1' | '3:4' | '4:3';
   type?: 'text2image' | 'image2image';
@@ -57,7 +57,7 @@ export class ImageService {
     const {
       imageId,
       query,
-      category,
+      categoryId,
       tags,
       ratio,
       type,
@@ -74,7 +74,7 @@ export class ImageService {
       
       if (imageId) searchParams.append('imageId', imageId);
       if (query) searchParams.append('query', query);
-      if (category) searchParams.append('category', category);
+      if (categoryId) searchParams.append('categoryId', categoryId);
       if (tags) searchParams.append('tags', tags);
       if (ratio) searchParams.append('ratio', ratio);
       if (type) searchParams.append('type', type);
@@ -206,16 +206,16 @@ export class ImageService {
 
   /**
    * 按分类获取图片
-   * @param category 分类名称
+   * @param categoryId 分类ID
    * @param params 查询参数
    * @returns Promise<SearchResult>
    */
-  static async getImagesByCategory(
-    category: string, 
+  static async getImagesByCategoryId(
+    categoryId: string, 
     params: { currentPage?: number; pageSize?: number; query?: string } = {}
   ): Promise<SearchResult> {
     return this.searchImages({
-      category,
+      categoryId,
       ...params
     });
   }

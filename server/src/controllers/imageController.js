@@ -52,7 +52,7 @@ async function queryImages(req, res) {
     const {
       imageId,
       query,
-      category,
+      categoryId,
       tags,
       ratio,
       type,
@@ -78,10 +78,8 @@ async function queryImages(req, res) {
       ];
     }
     
-    if (category) {
-      where.category = {
-        name: category
-      };
+    if (categoryId) {
+      where.categoryId = categoryId;
     }
     
     if (tags) {
@@ -154,6 +152,7 @@ async function queryImages(req, res) {
  * 文本生成图片
  */
 async function text2Image(req, res) {
+  console.log('into text2Image', req.body);
   try {
     // 验证请求数据
     const validation = validateText2Image(req.body);
@@ -170,8 +169,8 @@ async function text2Image(req, res) {
       select: { credits: true }
     });
 
-    if (user.credits < 1) {
-      return errorResponse(res, ERROR_CODES.INSUFFICIENT_BALANCE, '积分不足，请先充值', 402);
+    if (user.credits < 20) {
+      return errorResponse(res, ERROR_CODES.INSUFFICIENT_BALANCE, '积分不足，需要20积分', 402);
     }
 
     // 生成任务ID
@@ -196,13 +195,14 @@ async function text2Image(req, res) {
     await prisma.user.update({
       where: { id: userId },
       data: {
-        credits: { decrement: 1 }
+        credits: { decrement: 20 }
       }
     });
 
     // 模拟异步图片生成
     setTimeout(async () => {
       try {
+        console.log('into simulateImageGeneration............');
         await simulateImageGeneration(task.id, prompt, ratio, isPublic, userId);
       } catch (error) {
         console.error('图片生成失败:', error);
@@ -255,8 +255,8 @@ async function image2Image(req, res) {
       select: { credits: true }
     });
 
-    if (user.credits < 2) {
-      return errorResponse(res, ERROR_CODES.INSUFFICIENT_BALANCE, '积分不足，图片转换需要2积分', 402);
+    if (user.credits < 20) {
+      return errorResponse(res, ERROR_CODES.INSUFFICIENT_BALANCE, '积分不足，需要20积分', 402);
     }
 
     // 生成任务ID
@@ -279,7 +279,7 @@ async function image2Image(req, res) {
     await prisma.user.update({
       where: { id: userId },
       data: {
-        credits: { decrement: 2 }
+        credits: { decrement: 20 }
       }
     });
 
@@ -432,6 +432,7 @@ async function reportImage(req, res) {
  * 模拟图片生成
  */
 async function simulateImageGeneration(taskId, prompt, ratio, isPublic, userId) {
+  console.log('into simulateImageGeneration............');
   // 更新进度
   await prisma.generationTask.update({
     where: { id: taskId },
@@ -453,15 +454,18 @@ async function simulateImageGeneration(taskId, prompt, ratio, isPublic, userId) 
 
   const randomImage = mockImages[Math.floor(Math.random() * mockImages.length)];
   
+  console.log('randomImage............');
   // 复制预制图片到上传目录
-  const sourceDefaultPath = path.join(process.cwd(), 'images-mock', randomImage.default);
-  const sourceColorPath = path.join(process.cwd(), 'images-mock', randomImage.color);
+  const sourceDefaultPath = path.join(process.cwd(), 'uploads/preset-images', randomImage.default);
+  const sourceColorPath = path.join(process.cwd(), 'uploads/preset-images', randomImage.color);
   
   const targetDefaultPath = path.join(process.cwd(), 'uploads/images', `generated_${uuidv4()}_default.png`);
   const targetColorPath = path.join(process.cwd(), 'uploads/images', `generated_${uuidv4()}_color.png`);
   
+  console.log('before copyFile............');
   await copyFile(sourceDefaultPath, targetDefaultPath);
   await copyFile(sourceColorPath, targetColorPath);
+  console.log('copyFile............');
 
   // 获取默认分类
   const defaultCategory = await prisma.category.findFirst({
@@ -487,6 +491,7 @@ async function simulateImageGeneration(taskId, prompt, ratio, isPublic, userId) 
       additionalInfo: JSON.stringify({ generatedBy: 'AI', model: 'stable-diffusion' })
     }
   });
+  console.log('image............');
 
   // 更新任务状态
   await prisma.generationTask.update({
@@ -527,7 +532,7 @@ async function simulateImageConversion(taskId, uploadedFilePath, isPublic, userI
     'mario-color.png', 'flower-color.png', 'robot-color.png'
   ];
   const randomColorImage = colorImages[Math.floor(Math.random() * colorImages.length)];
-  const sourceColorPath = path.join(process.cwd(), 'images-mock', randomColorImage);
+  const sourceColorPath = path.join(process.cwd(), 'uploads/preset-images', randomColorImage);
   const targetColorPath = path.join(process.cwd(), 'uploads/images', `converted_${uuidv4()}_color.png`);
   
   await copyFile(sourceColorPath, targetColorPath);

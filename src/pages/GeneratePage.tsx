@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
 import useGeneratePage from '../hooks/useGeneratePage';
+import { useAuth } from '../contexts/AuthContext';
 import CircularProgress from '../components/ui/CircularProgress';
-import { 
+import ConfirmDialog from '../components/ui/ConfirmDialog';
+import {
   getCenterImageSize,
-  getExampleImageSize,
-  getGeneratingContainerSize,
+  getImageSize,
   getImageContainerSize,
-  EXAMPLE_IMAGE_DIMENSIONS
+  getGeneratingContainerSize,
+  EXAMPLE_IMAGE_DIMENSIONS,
 } from '../utils/imageUtils';
 const aiGenerateIcon = '/images/AI-generate.svg';
 const crownIcon = '/images/crown.svg';
@@ -25,6 +27,9 @@ interface GeneratePageProps {
 }
 
 const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
+  // 获取用户认证状态和刷新函数
+  const { refreshUser } = useAuth();
+  
   // 状态：存储动态获取的图片尺寸（用于Text to Image和Image to Image模式）
   const [dynamicImageDimensions, setDynamicImageDimensions] = React.useState<{ [key: string]: { width: number; height: number } }>({});
 
@@ -33,6 +38,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // 控制更多选项菜单的显示
   const [showMoreMenu, setShowMoreMenu] = React.useState(false);
+
+  // 控制删除确认对话框的显示
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
   // 使用我们创建的 Hook 来管理状态和 API 调用
   const {
@@ -51,8 +59,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     isGenerating,
     isLoadingTextExamples,  // 直接使用分离的加载状态
     isLoadingImageExamples, // 直接使用分离的加载状态
+    isLoadingGeneratedImages, // 生成历史加载状态
     error,
     generationProgress,
+
+    // 积分状态
+    userCredits,
+    canGenerate,
+    isCheckingCredits,
 
     // 操作
     setPrompt,
@@ -68,12 +82,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     refreshExamples,
     refreshStyleSuggestions,
     deleteImage,
-  } = useGeneratePage(initialTab);
+    handleInsufficientCredits,
+  } = useGeneratePage(initialTab, refreshUser);
 
   // 当initialTab变化时更新selectedTab
   useEffect(() => {
-    setSelectedTab(initialTab);
-  }, [initialTab, setSelectedTab]);
+    // 只有当当前标签页与初始标签页不同时才更新
+    if (selectedTab !== initialTab) {
+      setSelectedTab(initialTab);
+    }
+  }, [initialTab]);
 
   // 标记初始加载完成
   useEffect(() => {
@@ -147,31 +165,28 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setShowMoreMenu(!showMoreMenu);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
+    if (selectedImage) {
+      setShowMoreMenu(false);
+      setShowDeleteConfirm(true);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
     if (selectedImage) {
       try {
-        // 显示确认对话框
-        const confirmed = window.confirm('确定要删除这张图片吗？此操作无法撤销。');
-        if (!confirmed) {
-          setShowMoreMenu(false);
-          return;
-        }
-
         // 调用删除方法
         const success = await deleteImage(selectedImage);
         
         if (success) {
           // 显示成功提示
-          alert('图片删除成功！');
+          console.log('图片删除成功！');
         } else {
           // 删除失败
-          alert('删除图片失败，请稍后重试。');
+          console.error('删除图片失败，请稍后重试。');
         }
       } catch (error) {
         console.error('Delete image error:', error);
-        alert('删除图片时发生错误，请稍后重试。');
-      } finally {
-        setShowMoreMenu(false);
       }
     }
   };
@@ -241,79 +256,74 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                           alt="Generated coloring page"
                           className="w-full h-full object-contain rounded-2xl"
                         />
-                        
-                        {/* Download and More Options */}
-                        <div className="absolute top-4 right-4 flex gap-2">
-                          {/* Download Button */}
-                          <div className="relative group">
-                            <button className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-lg p-2 hover:bg-white transition-all duration-200 shadow-sm">
-                              <img src={downloadIcon} alt="Download" className="w-5 h-5" />
-                            </button>
-                            
-                            {/* Download Dropdown */}
-                            <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                              <button
-                                onClick={() => handleDownload('png')}
-                                className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 transition-colors"
-                              >
-                                <span className="text-sm">PNG</span>
-                              </button>
-                              <button
-                                onClick={() => handleDownload('pdf')}
-                                className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 transition-colors"
-                              >
-                                <span className="text-sm">PDF</span>
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* More Options Button */}
-                          <div className="relative more-menu-container">
-                            <button 
-                              onClick={handleMoreMenuToggle}
-                              className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-lg p-2 hover:bg-white transition-all duration-200 shadow-sm"
-                            >
-                              <span className="w-6 h-6">
-                                <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
-                              </span>
-                            </button>
-
-                            {/* 下拉菜单 */}
-                            {showMoreMenu && (
-                              <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
-                                <button
-                                  onClick={handleDelete}
-                                  className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
-                                >
-                                  <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
-                                  <span className="text-sm">Delete</span>
-                                </button>
-                                <button
-                                  onClick={handleReport}
-                                  className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
-                                >
-                                  <img src={reportIcon} alt="Report" className="w-4 h-4" />
-                                  <span className="text-sm">Report</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
                       </>
                     ) : null}
                   </div>
                 );
               })()}
+              
+              {/* Download and More Options - 只在有选中图片时显示 */}
+              {selectedImage && (
+                <div className="flex gap-3 mt-6">
+                  {/* Download PNG Button */}
+                  <button 
+                    onClick={() => handleDownload('png')}
+                    className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-4 py-3 flex items-center gap-2 transition-all duration-200"
+                  >
+                    <img src={downloadIcon} alt="Download" className="w-6 h-6" />
+                    <span className="text-[#161616] text-sm font-medium">Download PNG</span>
+                  </button>
+
+                  {/* Download PDF Button */}
+                  <button 
+                    onClick={() => handleDownload('pdf')}
+                    className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-4 py-3 flex items-center gap-2 transition-all duration-200"
+                  >
+                    <img src={downloadIcon} alt="Download" className="w-6 h-6" />
+                    <span className="text-[#161616] text-sm font-medium">Download PDF</span>
+                  </button>
+
+                  {/* More Options Button */}
+                  <div className="relative more-menu-container">
+                    <button 
+                      onClick={handleMoreMenuToggle}
+                      className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg p-3 transition-all duration-200"
+                    >
+                      <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
+                    </button>
+
+                    {/* 下拉菜单 */}
+                    {showMoreMenu && (
+                      <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
+                        <button
+                          onClick={handleDelete}
+                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                        >
+                          <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
+                          <span className="text-sm">Delete</span>
+                        </button>
+                        <button
+                          onClick={handleReport}
+                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                        >
+                          <img src={reportIcon} alt="Report" className="w-4 h-4" />
+                          <span className="text-sm">Report</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            // 只有在没有历史照片时才显示Example
+          ) : isLoadingGeneratedImages ? null : (
+            // 只有在没有历史照片且不在加载状态时才显示Example
             generatedImages.length === 0 && (
               <div>
                 {/* Example 标题栏 - 固定宽度 */}
                 <div className="w-[795px] mx-auto flex justify-between items-center mb-2">
                   <div className="text-[#161616] font-medium text-sm">Example</div>
                   <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
-                    Change
+                    {currentLoadingState ? 'Loading...' : 'Change'}
                     <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
                   </div>
                 </div>
@@ -321,12 +331,24 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 {/* Example Images */}
                 <div className="flex justify-center gap-6">
                   {currentExampleImages.length > 0 ? currentExampleImages.map((example) => {
-                    const exampleSize = getExampleImageSize(example.id, example.defaultUrl, EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, dynamicImageDimensions, setDynamicImageDimensions);
+                    // 使用 getImageSize 替代 getExampleImageSize
+                    // getImageSize 需要 maxWidth 和 maxHeight，我们使用固定宽度作为最大宽度，高度设为较大值让其自适应
+                    const imageSize = getImageSize(
+                      example.id, 
+                      example.defaultUrl, 
+                      EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, 
+                      EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2, // 设置一个较大的最大高度
+                      undefined, 
+                      undefined, 
+                      dynamicImageDimensions, 
+                      setDynamicImageDimensions
+                    );
+                    
                     return (
                       <div
                         key={example.id}
                         className="relative bg-white rounded-2xl border border-[#EDEEF0]"
-                        style={exampleSize.style}
+                        style={{ width: imageSize.width, height: imageSize.height }}
                       >
                         <img
                           src={example.defaultUrl}
@@ -671,15 +693,20 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         {/* Generate Button - Fixed at the bottom */}
         <div className="fixed bottom-0 left-0 w-[400px] h-[88px] bg-white flex items-center justify-center">
           <button
-            onClick={handleGenerate}
-            disabled={isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)}
-            className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)
+            onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
+            disabled={!canGenerate ? false : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
+            className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+              !canGenerate
+                ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
+                : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
                 ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
                 : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
               }`}
           >
             <img
-              src={isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)
+              src={!canGenerate
+                ? subtractColorIcon
+                : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
                 ? subtractIcon
                 : subtractColorIcon
               }
@@ -688,11 +715,25 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             />
             <span className="font-bold text-lg">20</span>
             <span className="font-bold text-lg">
-              {isGenerating ? 'Generating...' : 'Generate'}
+              {!canGenerate ? 'Insufficient Credits' :
+               isGenerating ? 'Generating...' : 
+               isCheckingCredits ? 'Checking...' :
+               'Generate'}
             </span>
           </button>
         </div>
       </div>
+
+      {/* 删除确认对话框 */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleConfirmDelete}
+        message="Are you sure you want to delete this item?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmButtonVariant="danger"
+      />
     </LayoutNoFooter>
   );
 };

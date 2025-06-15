@@ -48,7 +48,7 @@ if (process.env.NODE_ENV === 'development') {
 // 速率限制
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分钟
-  max: 100, // 限制每个IP 15分钟内最多100个请求
+  max: 10000, // 限制每个IP 15分钟内最多100个请求
   message: {
     status: 'fail',
     errorCode: ERROR_CODES.RATE_LIMIT_EXCEEDED,

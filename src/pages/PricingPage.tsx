@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import FAQ from '../components/home/FAQ';
+import { useAuth } from '../contexts/AuthContext';
+import { UserService, RechargeRequest } from '../services/userService';
+import { ApiError } from '../utils/apiUtils';
+
 const arrowRightIcon = '/images/arrow-right-outline.svg';
 const checkIcon = '/images/check.svg';
 const protectIcon = '/images/protect.svg';
@@ -11,6 +15,15 @@ const payAmericanExpress = '/images/pay-americanExpress.svg';
 const payApplePay = '/images/pay-applePay.svg';
 const payUnionpay = '/images/pay-unionpay.svg';
 const payClicktopay = '/images/pay-clicktopay.svg';
+
+// 支付方式配置
+const paymentMethods = [
+  { id: 'master', name: 'Mastercard', icon: payMastercard },
+  { id: 'visa', name: 'Visa', icon: payVisa },
+  { id: 'amex', name: 'American Express', icon: payAmericanExpress },
+  { id: 'apple', name: 'Apple Pay', icon: payApplePay },
+  { id: 'union', name: 'UnionPay', icon: payUnionpay },
+];
 
 // Feature check component for pricing plans
 const FeatureItem = ({ text, highlighted = false }: { text: string, highlighted?: boolean }) => (
@@ -23,6 +36,148 @@ const FeatureItem = ({ text, highlighted = false }: { text: string, highlighted?
     </div>
   </div>
 );
+
+// 支付方式选择弹窗
+const PaymentMethodModal = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  planTitle, 
+  price,
+  isProcessing = false
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (paymentMethod: string) => void;
+  planTitle: string;
+  price: string;
+  isProcessing?: boolean;
+}) => {
+  const [selectedMethod, setSelectedMethod] = useState('master');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+        <div className="text-center mb-6">
+          <h3 className="text-xl font-medium text-[#161616] mb-2">Choose Payment Method</h3>
+          <p className="text-sm text-[#6B7280]">
+            {planTitle} - {price}
+          </p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          {paymentMethods.map((method) => (
+            <label
+              key={method.id}
+              className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                selectedMethod === method.id
+                  ? 'border-[#FF5C07] bg-orange-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <input
+                type="radio"
+                name="paymentMethod"
+                value={method.id}
+                checked={selectedMethod === method.id}
+                onChange={(e) => setSelectedMethod(e.target.value)}
+                className="sr-only"
+                disabled={isProcessing}
+              />
+              <img src={method.icon} alt={method.name} className="w-8 h-8 mr-3" />
+              <span className="text-sm font-medium text-[#161616]">{method.name}</span>
+              <div className={`ml-auto w-4 h-4 rounded-full border-2 ${
+                selectedMethod === method.id
+                  ? 'border-[#FF5C07] bg-[#FF5C07]'
+                  : 'border-gray-300'
+              }`}>
+                {selectedMethod === method.id && (
+                  <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                )}
+              </div>
+            </label>
+          ))}
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="flex-1"
+            disabled={isProcessing}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => onConfirm(selectedMethod)}
+            className="flex-1 bg-[#FF5C07] hover:bg-[#E54A06] text-white"
+            disabled={isProcessing}
+          >
+            {isProcessing ? 'Processing...' : 'Confirm Payment'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 充值成功弹窗
+const SuccessModal = ({ 
+  isOpen, 
+  onClose, 
+  credits
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  credits: number;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="relative">
+        {/* 弹窗主体 */}
+        <div className="relative bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 pt-20 max-w-md w-full mx-4 border border-orange-200">
+          {/* credits-big.svg 图片 - 160x160，绝对定位，一半在弹框内，一半在外部 */}
+          <img 
+            src="/images/credits-big.svg" 
+            alt="Credits" 
+            className="absolute w-40 h-40 left-1/2 transform -translate-x-1/2 -top-20 z-10"
+          />
+          {/* 关闭按钮 */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-4 h-4 text-[#6B7280] hover:text-[#161616] transition-colors z-20"
+          >
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path d="M12.854 4.854a.5.5 0 0 0-.708-.708L8 8.293 3.854 4.146a.5.5 0 1 0-.708.708L7.293 9l-4.147 4.146a.5.5 0 0 0 .708.708L8 9.707l4.146 4.147a.5.5 0 0 0 .708-.708L8.707 9l4.147-4.146z"/>
+            </svg>
+          </button>
+
+          <div className="text-center">
+            <h3 className="text-xl font-medium text-[#161616] mb-2">Subscribe successfully</h3>
+            
+            {/* 积分显示 */}
+            <div className="text-6xl font-bold text-[#161616] mb-4">+{credits}</div>
+            
+            <p className="text-sm text-[#6B7280] leading-5 mb-8">
+              Thank you for your support, now you can start your creative journey!
+            </p>
+
+            <Button
+              onClick={onClose}
+              className="w-full bg-[#FF5C07] hover:bg-[#E54A06] text-white"
+            >
+              Start Creating
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // PricingCard component
 const PricingCard = ({ 
@@ -92,14 +247,20 @@ const PricingCard = ({
   </div>
 );
 
-
-
 const PricingPage: React.FC = () => {
+  const { isAuthenticated, refreshUser } = useAuth();
+  
   // State to manage selected pricing plan
   const [selectedPlan, setSelectedPlan] = useState<string>('Lite'); // 默认选中Lite
   
   // State to manage billing period
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly'); // 默认月付
+
+  // 弹窗状态
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [successCredits, setSuccessCredits] = useState(0);
 
   // Function to handle plan selection
   const handlePlanSelect = (planTitle: string) => {
@@ -111,31 +272,98 @@ const PricingPage: React.FC = () => {
     setBillingPeriod(period);
   };
 
+  // 处理购买按钮点击
+  const handleBuyClick = (planTitle: string) => {
+    if (planTitle === 'Free') {
+      // 免费计划，跳转到生成页面
+      window.location.href = '/generate';
+      return;
+    }
+
+    if (!isAuthenticated) {
+      // 未登录，跳转到登录页面
+      window.location.href = '/login';
+      return;
+    }
+
+    // 设置选中的计划并显示支付方式选择弹窗
+    setSelectedPlan(planTitle);
+    setShowPaymentModal(true);
+  };
+
+  // 处理支付确认
+  const handlePaymentConfirm = async (paymentMethod: string) => {
+    try {
+      setIsProcessing(true);
+
+      const rechargeData: RechargeRequest = {
+        type: billingPeriod,
+        level: selectedPlan.toLowerCase() as 'lite' | 'pro',
+        payType: paymentMethod as 'master' | 'visa' | 'americanexpress' | 'applepay' | 'unionpay'
+      };
+
+      await UserService.recharge(rechargeData);
+      
+      // 充值成功，根据计划和周期计算积分
+      let credits = 0;
+      if (selectedPlan === 'Lite') {
+        credits = billingPeriod === 'monthly' ? 300 : 3600; // 月付300，年付3600
+      } else if (selectedPlan === 'Pro') {
+        credits = billingPeriod === 'monthly' ? 600 : 7200; // 月付600，年付7200
+      }
+      
+      setSuccessCredits(credits);
+      setShowPaymentModal(false);
+      setShowSuccessModal(true);
+      
+      // 刷新用户信息
+      await refreshUser();
+      
+    } catch (error) {
+      console.error('充值失败:', error);
+      if (error instanceof ApiError) {
+        alert(`充值失败: ${error.message}`);
+      } else {
+        alert('充值失败，请稍后重试');
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // 获取当前选中计划的价格
+  const getCurrentPrice = () => {
+    if (selectedPlan === 'Lite') {
+      return billingPeriod === 'monthly' ? '$9.99' : '$99.99';
+    } else if (selectedPlan === 'Pro') {
+      return billingPeriod === 'monthly' ? '$19.99' : '$199.99';
+    }
+    return '';
+  };
+
   // Features for pricing plans
   const freePlanFeatures = [
-    "10 credits/month",
-    "Personal use",
-    "email support"
+    "50 credits per month",
+    "Basic image generation",
+    "Standard quality",
+    "Community support"
   ];
 
   const litePlanFeatures = [
-    "300 credits/month",
-    "24/7 email support",
-    "Personal use",
-    "Supports high print quality",
-    "Supports watermark removal",
-    "Protect your privacy",
-    "Get new features in advance"
+    "300 credits per month",
+    "High-quality generation",
+    "Priority processing",
+    "Email support",
+    "Commercial license"
   ];
 
   const proPlanFeatures = [
-    "600 credits/month",
-    "24/7 email support",
-    "Personal use",
-    "Supports high print quality",
-    "Supports watermark removal",
-    "Protect your privacy",
-    "Get new features in advance"
+    "600 credits per month",
+    "Premium quality",
+    "Fastest processing",
+    "Priority support",
+    "Advanced features",
+    "Commercial license"
   ];
 
   return (
@@ -186,30 +414,36 @@ const PricingPage: React.FC = () => {
           
           {/* Pricing Cards */}
           <div className="flex gap-5 mb-16">
-            <PricingCard 
-              title="Free" 
-              price="" 
-              features={freePlanFeatures}
-              highlighted={selectedPlan === 'Free'}
-              onSelect={() => handlePlanSelect('Free')}
-            />
-            <PricingCard 
-              title="Lite" 
-              price={billingPeriod === 'monthly' ? '$5' : '$48'} 
-              priceNote={billingPeriod === 'monthly' ? 'For first time, then $10/month' : 'For first time, then $60/year (Save 20%)'} 
-              features={litePlanFeatures} 
-              highlighted={selectedPlan === 'Lite'}
-              popular={true}
-              onSelect={() => handlePlanSelect('Lite')}
-            />
-            <PricingCard 
-              title="Pro" 
-              price={billingPeriod === 'monthly' ? '$12' : '$115'} 
-              priceNote={billingPeriod === 'monthly' ? 'For first time, then $20/month' : 'For first time, then $144/year (Save 20%)'} 
-              features={proPlanFeatures}
-              highlighted={selectedPlan === 'Pro'}
-              onSelect={() => handlePlanSelect('Pro')}
-            />
+            <div onClick={() => handleBuyClick('Free')}>
+              <PricingCard 
+                title="Free" 
+                price="" 
+                features={freePlanFeatures}
+                highlighted={selectedPlan === 'Free'}
+                onSelect={() => handlePlanSelect('Free')}
+              />
+            </div>
+            <div onClick={() => handleBuyClick('Lite')}>
+              <PricingCard 
+                title="Lite" 
+                price={billingPeriod === 'monthly' ? '$9.99' : '$99.99'} 
+                priceNote={billingPeriod === 'monthly' ? 'For first time, then $10/month' : 'For first time, then $60/year (Save 20%)'} 
+                features={litePlanFeatures} 
+                highlighted={selectedPlan === 'Lite'}
+                popular={true}
+                onSelect={() => handlePlanSelect('Lite')}
+              />
+            </div>
+            <div onClick={() => handleBuyClick('Pro')}>
+              <PricingCard 
+                title="Pro" 
+                price={billingPeriod === 'monthly' ? '$19.99' : '$199.99'} 
+                priceNote={billingPeriod === 'monthly' ? 'For first time, then $20/month' : 'For first time, then $144/year (Save 20%)'} 
+                features={proPlanFeatures}
+                highlighted={selectedPlan === 'Pro'}
+                onSelect={() => handlePlanSelect('Pro')}
+              />
+            </div>
           </div>
           
           {/* Payment Methods */}
@@ -237,6 +471,7 @@ const PricingPage: React.FC = () => {
               <Button 
                 variant="gradient"
                 className="h-14 px-5 py-2.5 text-xl font-bold flex items-center gap-2"
+                onClick={() => window.location.href = '/generate'}
               >
                 Try Now
                 <img src={arrowRightIcon} alt="Arrow right" className="w-5 h-5" />
@@ -245,6 +480,23 @@ const PricingPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* 支付方式选择弹窗 */}
+      <PaymentMethodModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onConfirm={handlePaymentConfirm}
+        planTitle={selectedPlan}
+        price={getCurrentPrice()}
+        isProcessing={isProcessing}
+      />
+
+      {/* 充值成功弹窗 */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        credits={successCredits}
+      />
     </Layout>
   );
 };

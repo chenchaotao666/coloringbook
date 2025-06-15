@@ -52,7 +52,7 @@ function formatTaskResponse(task) {
   // 如果任务完成且有关联图片，返回图片信息
   if (task.status === 'completed' && task.image) {
     response.result = {
-      imageId: task.image.id,
+      id: task.image.id,
       title: task.image.title,
       defaultUrl: task.image.defaultUrl,
       colorUrl: task.image.colorUrl,
@@ -206,7 +206,7 @@ async function cancelTask(req, res) {
     });
 
     // 退还用户积分
-    const creditsToRefund = task.type === 'text2image' ? 1 : 2;
+    const creditsToRefund = 20; // 统一退还20积分
     await prisma.user.update({
       where: { id: userId },
       data: {

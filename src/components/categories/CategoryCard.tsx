@@ -21,33 +21,22 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     name: homeImage.name.toLowerCase(),
     displayName: homeImage.title,
     description: homeImage.description,
-    imageCount: 0,
+    tagCounts: {}, // 空的标签统计
     thumbnailUrl: homeImage.defaultUrl
   } : null);
 
   if (!displayCategory) return null;
 
-  // 模拟子分类标签数据
-  const getSubCategoryTags = (categoryName: string) => {
-    switch (categoryName) {
-      case 'animals':
-        return ['Cat (12)', 'Dog (8)', 'Bird (6)', 'Fish (4)', 'Horse (3)'];
-      case 'disney':
-        return ['Princess (15)', 'Mickey (10)', 'Cars (8)', 'Frozen (6)', 'Toy Story (5)'];
-      case 'flowers':
-        return ['Peony (2)', 'Rose (4)', 'Lily (4)', 'Sunflower (4)', 'Carnation (4)'];
-      case 'vehicles':
-        return ['Car (12)', 'Truck (8)', 'Plane (6)', 'Train (4)', 'Boat (3)'];
-      case 'fantasy':
-        return ['Dragon (10)', 'Unicorn (8)', 'Fairy (6)', 'Castle (4)', 'Magic (3)'];
-      case 'nature':
-        return ['Tree (8)', 'Mountain (6)', 'Ocean (5)', 'Forest (4)', 'Garden (3)'];
-      default:
-        return ['Various (10)', 'Popular (8)', 'New (6)', 'Classic (4)'];
-    }
+  // 从后台数据获取标签统计，并格式化为显示用的标签数组
+  const getTagsFromBackend = (tagCounts: { [key: string]: number }) => {
+    // 将标签按数量排序，取前5个
+    return Object.entries(tagCounts)
+      .sort(([, a], [, b]) => b - a) // 按数量降序排序
+      .slice(0, 5) // 只取前5个
+      .map(([tag, count]) => `${tag} (${count})`);
   };
 
-  const subCategories = getSubCategoryTags(displayCategory.name);
+  const subCategories = getTagsFromBackend(displayCategory.tagCounts);
 
   const handleClick = () => {
     if (onClick) {

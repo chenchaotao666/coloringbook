@@ -5,7 +5,7 @@ const { ERROR_CODES, IMAGE_TYPES, IMAGE_RATIOS } = require('../config/constants'
 const querySchema = Joi.object({
   imageId: Joi.string().optional(),
   query: Joi.string().max(100).optional(),
-  category: Joi.string().optional(),
+  categoryId: Joi.string().optional(),
   tags: Joi.string().optional(),
   ratio: Joi.string().valid(...Object.values(IMAGE_RATIOS)).optional(),
   type: Joi.string().valid(...Object.values(IMAGE_TYPES)).optional(),

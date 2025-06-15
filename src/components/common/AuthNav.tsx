@@ -6,7 +6,7 @@ const creditsIcon = '/images/credits.svg';
 const defaultAvatar = '/images/default-avatar.svg';
 
 const AuthNav: React.FC = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -15,6 +15,16 @@ const AuthNav: React.FC = () => {
       console.error('Logout failed:', error);
     }
   };
+
+  // 加载状态 - 显示占位符，避免闪烁
+  if (isLoading) {
+    return (
+      <div className="flex items-center space-x-4">
+        <div className="w-20 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
+        <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+      </div>
+    );
+  }
 
   if (isAuthenticated && user) {
     return (

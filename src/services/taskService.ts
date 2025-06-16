@@ -86,6 +86,33 @@ export class TaskService {
   }
 
   /**
+   * 获取用户任务列表
+   */
+  static async getUserTasks(options?: {
+    status?: string;
+    type?: string;
+    currentPage?: number;
+    pageSize?: number;
+  }): Promise<UserTasksResponse> {
+    try {
+      const params = new URLSearchParams();
+      if (options?.status) params.append('status', options.status);
+      if (options?.type) params.append('type', options.type);
+      if (options?.currentPage) params.append('currentPage', options.currentPage.toString());
+      if (options?.pageSize) params.append('pageSize', options.pageSize.toString());
+
+      const response = await ApiUtils.get<UserTasksResponse>(`/api/tasks?${params.toString()}`, {}, true);
+      return response;
+    } catch (error) {
+      console.error('Get user tasks error:', error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('2014', '获取用户任务列表失败');
+    }
+  }
+
+  /**
    * 轮询任务直到完成
    */
   static async pollTaskUntilComplete(

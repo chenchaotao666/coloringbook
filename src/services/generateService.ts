@@ -144,7 +144,7 @@ class GenerateService {
   /**
    * 获取用户任务列表
    */
-  async getUserTasks(userId: string, options?: {
+  async getUserTasks(options?: {
     status?: string;
     type?: string;
     currentPage?: number;

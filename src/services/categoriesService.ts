@@ -1,5 +1,5 @@
-import { ApiUtils, ApiError } from '../utils/apiUtils';
-import { HomeImage, SearchResult, ImageService } from './imageService';
+import { ApiUtils } from '../utils/apiUtils';
+import { SearchResult, ImageService } from './imageService';
 
 // 分类接口
 export interface Category {

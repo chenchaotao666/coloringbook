@@ -61,7 +61,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
       <HoverImageCard
         image={image}
         title={image.title}
-        tags={image.tags}
+        tags={image.tags ? image.tags.split(',').map(tag => tag.trim()) : []}
         className="w-full"
       />
     </div>

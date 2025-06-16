@@ -1,4 +1,4 @@
-import { getImageDimensionsFromUrl } from './imageUtils';
+// import { getImageDimensionsFromUrl } from './imageUtils';
 
 /**
  * 图片转换工具类

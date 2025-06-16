@@ -1,5 +1,4 @@
 import { ApiUtils } from '../utils/apiUtils';
-import { UserService } from './userService';
 
 /**
  * Token自动刷新服务

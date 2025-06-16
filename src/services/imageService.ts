@@ -1,4 +1,4 @@
-import { ApiUtils, ApiError } from '../utils/apiUtils';
+uiimport { ApiUtils, ApiError } from '../utils/apiUtils';
 
 export interface HomeImage {
   id: string;

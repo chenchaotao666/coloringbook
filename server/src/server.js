@@ -32,9 +32,13 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// CORS配置
+// CORS配置 - 在生产环境中允许更多来源
+const corsOrigins = process.env.NODE_ENV === 'production' 
+  ? [process.env.CORS_ORIGIN, process.env.VERCEL_URL, 'https://*.vercel.app']
+  : [process.env.CORS_ORIGIN || 'http://localhost:3000'];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: corsOrigins,
   credentials: true
 }));
 
@@ -75,7 +79,8 @@ app.get('/health', (req, res) => {
     data: {
       message: 'Coloring Book API Server is running',
       timestamp: new Date().toISOString(),
-      version: '1.0.0'
+      version: '1.0.0',
+      environment: process.env.NODE_ENV
     }
   });
 });
@@ -108,7 +113,7 @@ app.use((error, req, res, next) => {
   return errorResponse(res, ERROR_CODES.INTERNAL_SERVER_ERROR, '服务器内部错误', 500);
 });
 
-// 启动服务器
+// 启动服务器函数
 async function startServer() {
   try {
     // 连接数据库
@@ -144,7 +149,10 @@ async function startServer() {
   }
 }
 
-// 启动应用
-startServer();
+// 只在直接运行时启动服务器（不是作为模块导入时）
+if (require.main === module) {
+  startServer();
+}
 
+// 导出应用供 Vercel 使用
 module.exports = app; 

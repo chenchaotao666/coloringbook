@@ -18,3 +18,32 @@
 
 
 text to image 的Example 的recreate功能是把图片的信息传给generateTextToImage方法，进行图片的生成
+
+
+
+
+部署vercle
+📋 已完成的配置
+✅ 项目结构优化：
+创建了 api/index.js 作为 Vercel API 入口
+修改了 server/src/server.js 支持 Vercel 函数导出
+更新了 vercel.json 配置文件
+添加了 vercel-build 脚本
+✅ 路由配置：
+API 路由：/api/* → Vercel 函数
+健康检查：/health → Vercel 函数
+静态文件：/uploads/* → 服务器文件
+前端路由：/* → React 应用
+✅ CORS 配置：
+支持 Vercel 域名
+生产环境优化
+
+1、在vercel上建一个Supabase (推荐，免费)数据库
+2、设置环境变量
+在 Vercel Dashboard 中添加：https://vercel.com/11017647-4498s-projects/coloringbook/settings/environment-variables
+数据库相关的已经自动添加了：
+DATABASE_URL="postgres://postgres.vfvkuezsuofxoeoamynj:XExzBPJC44XoQmoK@aws-0-us-east-1.pooler.supabase.com:6543/coloring_book_db"
+JWT_SECRET="5e4471f15927822cb4e9fd50a61567ecd09bd0eacbd5902d575dc45117d333fd"
+JWT_REFRESH_SECRET="0bf2d41026e7512b6ac03adf74c4f8618b0840badb5f9a5ff372c8819cef8484"
+CORS_ORIGIN="https://coloringbook-lake.vercel.app"
+NODE_ENV="production"

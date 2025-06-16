@@ -12,6 +12,7 @@ import {
   EXAMPLE_IMAGE_DIMENSIONS,
 } from '../utils/imageUtils';
 const aiGenerateIcon = '/images/AI-generate.svg';
+const addImageIcon = '/images/add-image.svg';
 const crownIcon = '/images/crown.svg';
 const refreshIcon = '/images/refresh.svg';
 const tipIcon = '/images/tip.svg';
@@ -21,6 +22,7 @@ const downloadIcon = '/images/download.svg';
 const moreIcon = '/images/more.svg';
 const deleteIcon = '/images/delete.svg';
 const reportIcon = '/images/report.svg';
+const textCountIcon = '/images/text-count.svg';
 
 interface GeneratePageProps {
   initialTab?: 'text' | 'image';
@@ -32,9 +34,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   
   // 状态：存储动态获取的图片尺寸（用于Text to Image和Image to Image模式）
   const [dynamicImageDimensions, setDynamicImageDimensions] = React.useState<{ [key: string]: { width: number; height: number } }>({});
-
-  // 跟踪是否是初始加载
-  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
 
   // 控制更多选项菜单的显示
   const [showMoreMenu, setShowMoreMenu] = React.useState(false);
@@ -53,20 +52,25 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     uploadedFile,
 
     generatedImages,
+    textGeneratedImages,    // Text to Image 生成的图片
+    imageGeneratedImages,   // Image to Image 生成的图片
     textExampleImages,      // 直接使用分离的变量
     imageExampleImages,     // 直接使用分离的变量
     styleSuggestions,
     isGenerating,
     isLoadingTextExamples,  // 直接使用分离的加载状态
     isLoadingImageExamples, // 直接使用分离的加载状态
-    isLoadingGeneratedImages, // 生成历史加载状态
+    isInitialDataLoaded,    // 初始数据是否已加载完成
     error,
     generationProgress,
 
     // 积分状态
-    userCredits,
     canGenerate,
     isCheckingCredits,
+
+    // 用户生成历史状态
+    hasTextToImageHistory,
+    hasImageToImageHistory,
 
     // 操作
     setPrompt,
@@ -93,13 +97,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   }, [initialTab]);
 
-  // 标记初始加载完成
-  useEffect(() => {
-    if (generatedImages.length >= 0) { // 即使是空数组也表示已经加载完成
-      setIsInitialLoad(false);
-    }
-  }, [generatedImages]);
-
   // 点击外部关闭更多选项菜单
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -119,15 +116,39 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // 自动选择最新生成的图片
   useEffect(() => {
-    if (generatedImages.length > 0 && !isGenerating) {
-      const latestImage = generatedImages[0]; // 假设数组已按时间排序
-      // 如果当前没有选中图片，或者当前选中的图片不在列表中，则选择最新的
-      if (!selectedImage || !generatedImages.find(img => img.id === selectedImage)) {
+    // 只有在初始数据加载完成后才自动选择图片
+    if (!isInitialDataLoaded) return;
+    
+    const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
+    
+    if (currentImages.length > 0 && !isGenerating) {
+      const latestImage = currentImages[0]; // 假设数组已按时间排序
+      // 如果当前没有选中图片，或者当前选中的图片不在当前类型的列表中，则选择最新的
+      if (!selectedImage || !currentImages.find(img => img.id === selectedImage)) {
         setSelectedImage(latestImage.id);
       }
     }
-  }, [generatedImages, isGenerating, selectedImage, setSelectedImage, isInitialLoad]);
+  }, [textGeneratedImages, imageGeneratedImages, selectedTab, isGenerating, selectedImage, setSelectedImage, isInitialDataLoaded]);
 
+  // 标签页切换时的图片选择逻辑
+  useEffect(() => {
+    if (selectedImage) {
+      // 检查当前选中的图片是否属于当前标签页类型
+      const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
+      const currentImage = currentImages.find(img => img.id === selectedImage);
+      
+      if (!currentImage) {
+        // 当前选中的图片不属于当前标签页类型，需要重新选择
+        if (currentImages.length > 0) {
+          // 选择该类型的第一张图片
+          setSelectedImage(currentImages[0].id);
+        } else {
+          // 该类型没有图片，清空选择
+          setSelectedImage(null);
+        }
+      }
+    }
+  }, [selectedTab, textGeneratedImages, imageGeneratedImages, selectedImage, setSelectedImage]);
 
   // 事件处理函数
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -315,9 +336,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 </div>
               )}
             </div>
-          ) : isLoadingGeneratedImages ? null : (
-            // 只有在没有历史照片且不在加载状态时才显示Example
-            generatedImages.length === 0 && (
+          ) : (mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples) ? null : (
+            // 根据当前模式判断是否显示Example
+            // 只有在初始数据加载完成后才决定是否显示 example 图片
+            // Text to Image 模式：用户没有 text to image 历史时显示 example
+            // Image to Image 模式：用户没有 image to image 历史时显示 example
+            isInitialDataLoaded && ((mode === 'text' && !hasTextToImageHistory) || (mode === 'image' && !hasImageToImageHistory)) && (
               <div>
                 {/* Example 标题栏 - 固定宽度 */}
                 <div className="w-[795px] mx-auto flex justify-between items-center mb-2">
@@ -333,9 +357,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   {currentExampleImages.length > 0 ? currentExampleImages.map((example) => {
                     // 使用 getImageSize 替代 getExampleImageSize
                     // getImageSize 需要 maxWidth 和 maxHeight，我们使用固定宽度作为最大宽度，高度设为较大值让其自适应
+                    const imageUrl = mode === 'image' ? example.colorUrl : example.defaultUrl;
                     const imageSize = getImageSize(
                       example.id, 
-                      example.defaultUrl, 
+                      imageUrl, 
                       EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, 
                       EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2, // 设置一个较大的最大高度
                       undefined, 
@@ -351,7 +376,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                         style={{ width: imageSize.width, height: imageSize.height }}
                       >
                         <img
-                          src={example.defaultUrl}
+                          src={mode === 'image' ? example.colorUrl : example.defaultUrl}
                           alt={example.description || `Example ${example.id}`}
                           className="w-full h-full object-cover rounded-2xl"
                         />
@@ -406,11 +431,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 maxLength={1000}
               ></textarea>
 
-              <div className="absolute bottom-2 right-4 text-xs text-[#A4A4A4]">
+              <div className="absolute bottom-2 right-4 text-sm text-[#A4A4A4] flex mb-3 items-center gap-1">
                 {prompt.length}/1000
+                <img src={textCountIcon} alt="Text count" className="w-3 h-3" />
               </div>
 
-              <div className="absolute bottom-2 left-3 bg-white rounded-full px-3 py-1 flex items-center">
+              <div className="absolute bottom-2 left-3 bg-white rounded-full px-3 py-1 mb-3 flex items-center">
                 <span className="w-4 h-4 mr-2">
                   <img src={aiGenerateIcon} alt="AI Generate" className="w-4 h-4" />
                 </span>
@@ -514,7 +540,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               ) : (
                 <>
                   <div className="w-[46px] h-[46px] mb-4">
-                    <img src={aiGenerateIcon} alt="Upload" className="w-full h-full" />
+                    <img src={addImageIcon} alt="Upload" className="w-full h-full" />
                   </div>
                   <div className="text-[#A4A4A4] text-xs">Click to upload</div>
                 </>
@@ -553,6 +579,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Render right sidebar with generated images
   const renderRightSidebar = () => {
+    // 根据当前选中的标签页选择对应的图片数组
+    const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
+
     return (
       <div className="w-[140px] border-l border-[#E3E4E5] py-5 px-2 overflow-y-auto overflow-x-hidden h-full flex flex-col items-center max-w-[140px]">
         {/* 生成中的 loading 圆圈 - 使用智能计算的尺寸 */}
@@ -579,9 +608,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           </div>
         )}
 
-        {/* 生成的图片历史 */}
-        {generatedImages.length > 0 ? (
-          generatedImages
+        {/* 生成的图片历史 - 使用分离的图片状态 */}
+        {currentImages.length > 0 ? (
+          currentImages
             .map((image, index) => {
               // 使用图片的 id 进行选中状态判断
               const isSelected = selectedImage === image.id;
@@ -602,9 +631,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               );
             })
         ) : !isGenerating ? (
-          // 空状态
+          // 空状态 - 根据当前标签页显示不同的提示
           <div className="text-center text-[#A4A4A4] text-xs mt-8">
-            No images yet
+            {selectedTab === 'text' ? 'No text to image yet' : 'No image to image yet'}
           </div>
         ) : null}
       </div>

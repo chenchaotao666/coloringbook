@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HoverColorImage from './HoverColorImage';
-import { HomeImage, ImageService } from '../../services/imageService';
+import { HomeImage } from '../../services/imageService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../../utils/downloadUtils';
 const downloadIcon = '/images/download.svg';
 const downloadColorIcon = '/images/download-hover.svg';
-const moreIcon = '/images/more.svg';
-const deleteIcon = '/images/delete.svg';
-const reportIcon = '/images/report.svg';
 
 interface HoverImageCardProps {
   image: HomeImage;
@@ -15,7 +12,6 @@ interface HoverImageCardProps {
   tags: string[];
   className?: string;
   variant?: 'default' | 'category'; // 添加变体参数
-  onImageDeleted?: (imageId: string) => void; // 删除回调
 }
 
 const HoverImageCard: React.FC<HoverImageCardProps> = ({ 
@@ -23,15 +19,13 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   title, 
   tags, 
   className = '',
-  variant = 'default',
-  onImageDeleted
+  variant = 'default'
 }) => {
   const navigate = useNavigate();
   const [isDownloadingPng, setIsDownloadingPng] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pngHovered, setPngHovered] = useState(false);
   const [pdfHovered, setPdfHovered] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const handleDownload = async (format: 'png' | 'pdf', event?: React.MouseEvent) => {
     // 阻止事件冒泡，避免触发卡片点击
@@ -72,69 +66,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
     navigate(`/image/${image.id}`);
   };
 
-  const handleMoreMenuToggle = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    setShowMoreMenu(!showMoreMenu);
-  };
 
-  const handleDelete = async (event: React.MouseEvent) => {
-    event.stopPropagation();
-    
-    try {
-      // 显示确认对话框
-      const confirmed = window.confirm('确定要删除这张图片吗？此操作无法撤销。');
-      if (!confirmed) {
-        setShowMoreMenu(false);
-        return;
-      }
-
-      // 调用删除API
-      const success = await ImageService.deleteImage(image.id);
-      
-      if (success) {
-        // 显示成功提示
-        alert('图片删除成功！');
-        
-        // 调用回调函数通知父组件
-        if (onImageDeleted) {
-          onImageDeleted(image.id);
-        }
-      } else {
-        // 删除失败
-        alert('删除图片失败，请稍后重试。');
-      }
-    } catch (error) {
-      console.error('Delete image error:', error);
-      alert('删除图片时发生错误，请稍后重试。');
-    } finally {
-      setShowMoreMenu(false);
-    }
-  };
-
-  const handleReport = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    // TODO: 实现举报功能
-    console.log('Report image:', image.id);
-    alert('举报功能正在开发中...');
-    setShowMoreMenu(false);
-  };
-
-  // 点击外部关闭更多选项菜单
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (showMoreMenu) {
-        const target = event.target as Element;
-        if (!target.closest('.more-menu-container')) {
-          setShowMoreMenu(false);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showMoreMenu]);
 
   return (
     <div 
@@ -206,7 +138,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
             </div>
           </>
         ) : (
-          /* 默认：显示下载按钮和更多选项 */
+          /* 默认：显示下载按钮 */
           <div className="w-full flex gap-2">
             <button 
               onClick={(e) => handleDownload('png', e)}
@@ -244,36 +176,6 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
                 {isDownloadingPdf ? '下载中...' : 'PDF'}
               </div>
             </button>
-            
-            {/* 更多选项按钮 */}
-            <div className="relative more-menu-container">
-              <button 
-                onClick={handleMoreMenuToggle}
-                className="w-8 h-8 rounded flex items-center justify-center hover:bg-gray-50 transition-colors border border-[#EDEEF0]"
-              >
-                <img src={moreIcon} alt="More options" className="w-4 h-4" />
-              </button>
-
-              {/* 下拉菜单 */}
-              {showMoreMenu && (
-                <div className="absolute top-full mt-1 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-1 min-w-[100px] z-50">
-                  <button
-                    onClick={handleDelete}
-                    className="w-full px-3 py-1.5 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors text-sm"
-                  >
-                    <img src={deleteIcon} alt="Delete" className="w-3 h-3" />
-                    <span>Delete</span>
-                  </button>
-                  <button
-                    onClick={handleReport}
-                    className="w-full px-3 py-1.5 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors text-sm"
-                  >
-                    <img src={reportIcon} alt="Report" className="w-3 h-3" />
-                    <span>Report</span>
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         )}
         </div>

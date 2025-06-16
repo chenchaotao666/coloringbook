@@ -78,16 +78,6 @@ export interface UserTasksResponse {
   };
 }
 
-// 样式建议数据
-const styleSuggestions: StyleSuggestion[] = [
-  { id: 'cute', name: '可爱风格', category: 'style' },
-  { id: 'cartoon', name: '卡通风格', category: 'style' },
-  { id: 'realistic', name: '写实风格', category: 'style' },
-  { id: 'fantasy', name: '奇幻风格', category: 'style' },
-  { id: 'tech', name: '科技风格', category: 'style' },
-  { id: 'nature', name: '自然风格', category: 'style' }
-];
-
 // ==================== 主要服务类 ====================
 class GenerateService {
 
@@ -208,13 +198,6 @@ class GenerateService {
       console.error('Failed to get user generated images:', error);
       return [];
     }
-  }
-
-  /**
-   * 获取风格建议
-   */
-  async getStyleSuggestions(): Promise<StyleSuggestion[]> {
-    return styleSuggestions;
   }
 
   /**

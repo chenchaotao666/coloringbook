@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import FAQ from '../components/home/FAQ';
@@ -127,11 +128,13 @@ const PaymentMethodModal = ({
 const SuccessModal = ({ 
   isOpen, 
   onClose, 
-  credits
+  credits,
+  onStartCreating
 }: {
   isOpen: boolean;
   onClose: () => void;
   credits: number;
+  onStartCreating: () => void;
 }) => {
   if (!isOpen) return null;
 
@@ -167,7 +170,7 @@ const SuccessModal = ({
             </p>
 
             <Button
-              onClick={onClose}
+              onClick={onStartCreating}
               className="w-full bg-[#FF5C07] hover:bg-[#E54A06] text-white"
             >
               Start Creating
@@ -188,6 +191,7 @@ const PricingCard = ({
   features, 
   highlighted = false,
   onSelect,
+  onBuyClick,
 }: { 
   title: string, 
   price: string, 
@@ -196,6 +200,7 @@ const PricingCard = ({
   features: string[],
   highlighted?: boolean,
   onSelect?: () => void,
+  onBuyClick?: () => void,
 }) => (
   <div 
     className={`w-[376px] p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden cursor-pointer transition-all duration-200 border-2 ${highlighted ? 'border-[#FF5C07]' : 'border-[#EDEEF0] hover:border-[#FF5C07]/50'}`}
@@ -230,6 +235,10 @@ const PricingCard = ({
               ? '!duration-0' 
               : 'border border-[#818181] bg-white text-[#161616]'
           }`}
+          onClick={(e) => {
+            e.stopPropagation(); // 阻止事件冒泡
+            if (onBuyClick) onBuyClick();
+          }}
         >
           {title === 'Free' ? 'Try Now' : 'Buy Now'}
         </Button>
@@ -249,6 +258,7 @@ const PricingCard = ({
 
 const PricingPage: React.FC = () => {
   const { isAuthenticated, refreshUser } = useAuth();
+  const navigate = useNavigate();
   
   // State to manage selected pricing plan
   const [selectedPlan, setSelectedPlan] = useState<string>('Lite'); // 默认选中Lite
@@ -341,6 +351,12 @@ const PricingPage: React.FC = () => {
     return '';
   };
 
+  // 处理开始创作按钮点击
+  const handleStartCreating = () => {
+    setShowSuccessModal(false);
+    navigate('/generate');
+  };
+
   // Features for pricing plans
   const freePlanFeatures = [
     "50 credits per month",
@@ -414,36 +430,33 @@ const PricingPage: React.FC = () => {
           
           {/* Pricing Cards */}
           <div className="flex gap-5 mb-16">
-            <div onClick={() => handleBuyClick('Free')}>
-              <PricingCard 
-                title="Free" 
-                price="" 
-                features={freePlanFeatures}
-                highlighted={selectedPlan === 'Free'}
-                onSelect={() => handlePlanSelect('Free')}
-              />
-            </div>
-            <div onClick={() => handleBuyClick('Lite')}>
-              <PricingCard 
-                title="Lite" 
-                price={billingPeriod === 'monthly' ? '$9.99' : '$99.99'} 
-                priceNote={billingPeriod === 'monthly' ? 'For first time, then $10/month' : 'For first time, then $60/year (Save 20%)'} 
-                features={litePlanFeatures} 
-                highlighted={selectedPlan === 'Lite'}
-                popular={true}
-                onSelect={() => handlePlanSelect('Lite')}
-              />
-            </div>
-            <div onClick={() => handleBuyClick('Pro')}>
-              <PricingCard 
-                title="Pro" 
-                price={billingPeriod === 'monthly' ? '$19.99' : '$199.99'} 
-                priceNote={billingPeriod === 'monthly' ? 'For first time, then $20/month' : 'For first time, then $144/year (Save 20%)'} 
-                features={proPlanFeatures}
-                highlighted={selectedPlan === 'Pro'}
-                onSelect={() => handlePlanSelect('Pro')}
-              />
-            </div>
+            <PricingCard 
+              title="Free" 
+              price="" 
+              features={freePlanFeatures}
+              highlighted={selectedPlan === 'Free'}
+              onSelect={() => handlePlanSelect('Free')}
+              onBuyClick={() => handleBuyClick('Free')}
+            />
+            <PricingCard 
+              title="Lite" 
+              price={billingPeriod === 'monthly' ? '$9.99' : '$99.99'} 
+              priceNote={billingPeriod === 'monthly' ? 'For first time, then $10/month' : 'For first time, then $60/year (Save 20%)'} 
+              features={litePlanFeatures} 
+              highlighted={selectedPlan === 'Lite'}
+              popular={true}
+              onSelect={() => handlePlanSelect('Lite')}
+              onBuyClick={() => handleBuyClick('Lite')}
+            />
+            <PricingCard 
+              title="Pro" 
+              price={billingPeriod === 'monthly' ? '$19.99' : '$199.99'} 
+              priceNote={billingPeriod === 'monthly' ? 'For first time, then $20/month' : 'For first time, then $144/year (Save 20%)'} 
+              features={proPlanFeatures}
+              highlighted={selectedPlan === 'Pro'}
+              onSelect={() => handlePlanSelect('Pro')}
+              onBuyClick={() => handleBuyClick('Pro')}
+            />
           </div>
           
           {/* Payment Methods */}
@@ -496,6 +509,7 @@ const PricingPage: React.FC = () => {
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
         credits={successCredits}
+        onStartCreating={handleStartCreating}
       />
     </Layout>
   );

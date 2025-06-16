@@ -25,6 +25,34 @@ const ImageDetailPage: React.FC = () => {
   
   const leftImagesRef = useRef<HTMLDivElement>(null);
 
+  // 解析 tags 字符串为数组
+  const parseTags = (tags: string): string[] => {
+    try {
+      if (Array.isArray(tags)) return tags;
+      return typeof tags === 'string' ? JSON.parse(tags) : [];
+    } catch {
+      return typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : [];
+    }
+  };
+
+  // 解析 additionalInfo 字符串为对象
+  const parseAdditionalInfo = (additionalInfo: string) => {
+    try {
+      // 如果已经是对象，直接返回
+      if (typeof additionalInfo === 'object' && additionalInfo !== null) {
+        return additionalInfo;
+      }
+      // 如果是字符串，尝试解析 JSON
+      if (typeof additionalInfo === 'string' && additionalInfo.trim()) {
+        return JSON.parse(additionalInfo);
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to parse additionalInfo:', error, additionalInfo);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const loadImageData = async () => {
       if (!imageId) return;
@@ -174,9 +202,9 @@ const ImageDetailPage: React.FC = () => {
         {/* Main Content */}
         <div className="flex gap-8 mb-20">
           {/* Left Side - Images */}
-          <div ref={leftImagesRef} className="flex">
+          <div ref={leftImagesRef} className="flex gap-4">
             {/* Black & White Image */}
-            <div className="w-[300px] flex items-start justify-center">
+            <div className="max-w-[300px] flex items-start justify-center">
               <img
                 src={image.defaultUrl}
                 alt={image.title}
@@ -185,7 +213,7 @@ const ImageDetailPage: React.FC = () => {
             </div>
             
             {/* Color Image */}
-            <div className="w-[300px] flex items-start justify-center">
+            <div className="max-w-[300px] flex items-start justify-center">
               <img
                 src={image.colorUrl}
                 alt={`${image.title} - Colored`}
@@ -208,11 +236,11 @@ const ImageDetailPage: React.FC = () => {
               </div>
 
               {/* Tags */}
-              {image.tags && image.tags.length > 0 && (
+              {image.tags && (
                 <div className="space-y-4">
                   <h3 className="text-base font-medium text-black">Tags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {image.tags.map((tag: string, index: number) => (
+                    {parseTags(image.tags).map((tag: string, index: number) => (
                       <span
                         key={index}
                         className="px-3 py-2 bg-white border border-[#EDEEF0] rounded-2xl text-sm text-[#161616]"
@@ -257,85 +285,65 @@ const ImageDetailPage: React.FC = () => {
         </div>
 
         {/* Detailed Description Sections */}
-        <div className="space-y-12 mb-20">
-          {/* Section 1 - 图片特色 */}
-          <section>
-            <h2 className="text-2xl font-bold text-black mb-6">🎁 图片特色</h2>
-            <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {image.additionalInfo && image.additionalInfo.features && image.additionalInfo.features.length > 0 ? (
-                image.additionalInfo.features.map((feature, index) => (
-                  <p key={index}>• {feature}</p>
-                ))
-              ) : (
-                <>
-                  <p>• 清晰的线条设计，适合各种涂色工具</p>
-                  <p>• 丰富的细节元素，提供充足的创作空间</p>
-                  <p>• 经典的构图设计，既简单又富有趣味性</p>
-                  <p>• 适合打印在标准A4纸张上</p>
-                </>
-              )}
-            </div>
-          </section>
+        {(() => {
+          const additionalInfo = parseAdditionalInfo(image.additionalInfo);
+          
+          if (!additionalInfo) {
+            return null;
+          }
 
-          {/* Section 2 - 适合人群 */}
-          <section>
-            <h2 className="text-2xl font-bold text-black mb-6">💖 适合人群</h2>
-            <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {image.additionalInfo && image.additionalInfo.suitableFor && image.additionalInfo.suitableFor.length > 0 ? (
-                image.additionalInfo.suitableFor.map((suitable, index) => (
-                  <p key={index}>• {suitable}</p>
-                ))
-              ) : (
-                <>
-                  <p>• 儿童用户：培养创造力和想象力，提高专注力和手眼协调能力</p>
-                  <p>• 成人用户：放松身心，缓解压力，享受宁静的创作时光</p>
-                  <p>• 初学者：简单易懂的图案设计</p>
-                  <p>• 家庭活动：适合全家一起参与的涂色时光</p>
-                </>
+          return (
+            <div className="space-y-12 mb-20">
+              {/* Section 1 - 图片特色 */}
+              {additionalInfo.features && additionalInfo.features.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-black mb-6">🎁 图片特色</h2>
+                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                    {additionalInfo.features.map((feature: string, index: number) => (
+                      <p key={index}>• {feature}</p>
+                    ))}
+                  </div>
+                </section>
               )}
-            </div>
-          </section>
 
-          {/* Section 3 - 涂色建议 */}
-          <section>
-            <h2 className="text-2xl font-bold text-black mb-6">🎨 涂色建议</h2>
-            <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {image.additionalInfo && image.additionalInfo.coloringSuggestions && image.additionalInfo.coloringSuggestions.length > 0 ? (
-                image.additionalInfo.coloringSuggestions.map((suggestion, index) => (
-                  <p key={index}>• {suggestion}</p>
-                ))
-              ) : (
-                <>
-                  <p>• 经典搭配：选择对比鲜明的颜色组合，如红配绿、蓝配橙</p>
-                  <p>• 温馨风格：使用暖色调如粉色、黄色、橙色营造温馨感</p>
-                  <p>• 清新风格：选择冷色调如蓝色、绿色、紫色打造清新感</p>
-                  <p>• 个性创作：根据个人喜好自由搭配，创造独特的色彩风格</p>
-                </>
+              {/* Section 2 - 适合人群 */}
+              {additionalInfo.suitableFor && additionalInfo.suitableFor.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-black mb-6">💖 适合人群</h2>
+                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                    {additionalInfo.suitableFor.map((suitable: string, index: number) => (
+                      <p key={index}>• {suitable}</p>
+                    ))}
+                  </div>
+                </section>
               )}
-            </div>
-          </section>
 
-          {/* Section 4 - 创意用途 */}
-          <section>
-            <h2 className="text-2xl font-bold text-black mb-6">💡 创意用途</h2>
-            <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-              {image.additionalInfo && image.additionalInfo.creativeUses && image.additionalInfo.creativeUses.length > 0 ? (
-                image.additionalInfo.creativeUses.map((use, index) => (
-                  <p key={index}>• {use}</p>
-                ))
-              ) : (
-                <>
-                  <p>• 制作个性化贺卡：将完成的作品制作成节日或生日贺卡</p>
-                  <p>• 装饰房间：裱框后可作为儿童房或学习区的装饰画</p>
-                  <p>• 亲子活动：家长和孩子一起涂色，增进亲子关系</p>
-                  <p>• 教学工具：老师可用作美术课或课外活动的教学材料</p>
-                  <p>• 放松减压：工作学习之余的放松活动，缓解压力</p>
-                  <p>• 分享交流：完成后可在社交媒体分享，与朋友交流创作心得</p>
-                </>
+              {/* Section 3 - 涂色建议 */}
+              {additionalInfo.coloringSuggestions && additionalInfo.coloringSuggestions.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-black mb-6">🎨 涂色建议</h2>
+                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                    {additionalInfo.coloringSuggestions.map((suggestion: string, index: number) => (
+                      <p key={index}>• {suggestion}</p>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Section 4 - 创意用途 */}
+              {additionalInfo.creativeUses && additionalInfo.creativeUses.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-black mb-6">💡 创意用途</h2>
+                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                    {additionalInfo.creativeUses.map((use: string, index: number) => (
+                      <p key={index}>• {use}</p>
+                    ))}
+                  </div>
+                </section>
               )}
             </div>
-          </section>
-        </div>
+          );
+        })()}
 
         {/* You Might Also Like */}
         {relatedImages.length > 0 && (

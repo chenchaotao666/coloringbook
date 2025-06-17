@@ -1,4 +1,5 @@
 import { ApiUtils, ApiError } from '../utils/apiUtils';
+import { UrlUtils } from '../utils/urlUtils';
 
 export interface HomeImage {
   id: string;
@@ -51,40 +52,10 @@ export interface ReportImageRequest {
 
 export class ImageService {
   /**
-   * 确保图片URL是完整的绝对路径
-   */
-  private static ensureAbsoluteUrl(url: string): string {
-    if (!url) return url;
-    
-    // 如果已经是完整URL，直接返回
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    
-    // 获取后端基础URL
-    const baseUrl = process.env.NODE_ENV === 'development' 
-      ? '' // 开发环境使用相对路径
-      : (import.meta as any).env?.VITE_API_BASE_URL || '';
-    
-    if (baseUrl) {
-      // 确保baseUrl不以/结尾，url以/开头
-      const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
-      const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-      return `${cleanBaseUrl}${cleanUrl}`;
-    }
-    
-    return url;
-  }
-
-  /**
    * 处理图片对象，确保所有URL都是绝对路径
    */
   private static processImageUrls(image: HomeImage): HomeImage {
-    return {
-      ...image,
-      defaultUrl: this.ensureAbsoluteUrl(image.defaultUrl),
-      colorUrl: this.ensureAbsoluteUrl(image.colorUrl)
-    };
+    return UrlUtils.processObjectUrls(image, ['defaultUrl', 'colorUrl']);
   }
 
   /**

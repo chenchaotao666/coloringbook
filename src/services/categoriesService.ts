@@ -1,5 +1,6 @@
 import { ApiUtils } from '../utils/apiUtils';
 import { SearchResult, ImageService } from './imageService';
+import { UrlUtils } from '../utils/urlUtils';
 
 // 分类接口
 export interface Category {
@@ -14,11 +15,23 @@ export interface Category {
 
 // 分类服务类
 export class CategoriesService {
+  /**
+   * 处理分类对象，确保缩略图URL是绝对路径
+   */
+  private static processCategoryUrls(category: Category): Category {
+    return UrlUtils.processObjectUrls(category, ['thumbnailUrl']);
+  }
+
   // 获取所有分类
   static async getCategories(): Promise<Category[]> {
     try {
       const data = await ApiUtils.get<{ categories: Category[] }>('/api/categories');
-      return data.categories || [];
+      const rawCategories = data.categories || [];
+      
+      // 处理分类缩略图URL，确保都是绝对路径
+      const categories = rawCategories.map(category => this.processCategoryUrls(category));
+      
+      return categories;
     } catch (error) {
       console.error('Failed to fetch categories:', error);
       // 返回空数组作为降级处理
@@ -29,7 +42,11 @@ export class CategoriesService {
   // 根据名称获取分类
   static async getCategoryByName(categoryName: string): Promise<Category | null> {
     try {
-      const category = await ApiUtils.get<Category>(`/api/categories/${categoryName}`);
+      const rawCategory = await ApiUtils.get<Category>(`/api/categories/${categoryName}`);
+      
+      // 处理分类缩略图URL，确保是绝对路径
+      const category = this.processCategoryUrls(rawCategory);
+      
       return category;
     } catch (error) {
       console.error(`Failed to fetch category ${categoryName}:`, error);
@@ -118,7 +135,8 @@ export class CategoriesService {
 
   // 获取分类的缩略图
   static getCategoryThumbnail(category: Category): string {
-    return category.thumbnailUrl || '/images/default-category.png';
+    const thumbnailUrl = category.thumbnailUrl || '/images/default-category.png';
+    return UrlUtils.ensureAbsoluteUrl(thumbnailUrl);
   }
 
   // 格式化分类显示名称

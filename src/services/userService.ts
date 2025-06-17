@@ -1,4 +1,5 @@
 import { ApiUtils, AuthTokens, ApiError } from '../utils/apiUtils';
+import { UrlUtils } from '../utils/urlUtils';
 
 // 用户接口
 export interface User {
@@ -74,6 +75,14 @@ export interface AvatarUploadResponse {
  */
 export class UserService {
   /**
+   * 处理用户对象，确保头像URL是绝对路径
+   */
+  private static processUserUrls(user: User): User {
+    if (!user.avatar) return user;
+    return UrlUtils.processObjectUrls(user, ['avatar']);
+  }
+
+  /**
    * 用户注册
    */
   static async register(data: RegisterRequest): Promise<User> {
@@ -141,7 +150,11 @@ export class UserService {
       const token = ApiUtils.getAccessToken();
       if (!token) return null;
       
-      const user = await ApiUtils.get<User>('/api/users/profile', {}, true);
+      const rawUser = await ApiUtils.get<User>('/api/users/profile', {}, true);
+      
+      // 处理头像URL，确保是绝对路径
+      const user = this.processUserUrls(rawUser);
+      
       return user;
     } catch (error) {
       if (error instanceof ApiError && error.errorCode === '1010') {

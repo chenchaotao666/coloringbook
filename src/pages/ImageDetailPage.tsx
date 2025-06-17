@@ -25,8 +25,8 @@ const ImageDetailPage: React.FC = () => {
   
   const leftImagesRef = useRef<HTMLDivElement>(null);
 
-  // 解析 tags 字符串为数组
-  const parseTags = (tags: string): string[] => {
+  // 解析 tags 为数组（支持 string 或 string[] 类型）
+  const parseTags = (tags: string | string[]): string[] => {
     try {
       if (Array.isArray(tags)) return tags;
       return typeof tags === 'string' ? JSON.parse(tags) : [];

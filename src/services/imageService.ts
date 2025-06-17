@@ -7,7 +7,7 @@ export interface HomeImage {
   colorUrl: string;
   title: string;
   description: string;
-  tags: string;
+  tags: string[];
   type: 'text2image' | 'image2image';
   ratio: '3:4' | '4:3' | '1:1' | '';
   isPublic: boolean;

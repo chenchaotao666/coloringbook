@@ -8,7 +8,7 @@ export default defineConfig({
         open: true,
         proxy: {
             '/api': {
-                target: 'http://localhost:3001',
+                target: process.env.VITE_API_BASE_URL || 'http://localhost:3001',
                 changeOrigin: true,
                 secure: false,
                 timeout: 10000, // 10秒超时
@@ -25,7 +25,7 @@ export default defineConfig({
                 },
             },
             '/uploads': {
-                target: 'http://localhost:3001',
+                target: process.env.VITE_API_BASE_URL || 'http://localhost:3001',
                 changeOrigin: true,
                 secure: false,
                 timeout: 10000, // 10秒超时

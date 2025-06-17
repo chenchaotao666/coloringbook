@@ -51,6 +51,43 @@ export interface ReportImageRequest {
 
 export class ImageService {
   /**
+   * 确保图片URL是完整的绝对路径
+   */
+  private static ensureAbsoluteUrl(url: string): string {
+    if (!url) return url;
+    
+    // 如果已经是完整URL，直接返回
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // 获取后端基础URL
+    const baseUrl = process.env.NODE_ENV === 'development' 
+      ? '' // 开发环境使用相对路径
+      : (import.meta as any).env?.VITE_API_BASE_URL || '';
+    
+    if (baseUrl) {
+      // 确保baseUrl不以/结尾，url以/开头
+      const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+      const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+      return `${cleanBaseUrl}${cleanUrl}`;
+    }
+    
+    return url;
+  }
+
+  /**
+   * 处理图片对象，确保所有URL都是绝对路径
+   */
+  private static processImageUrls(image: HomeImage): HomeImage {
+    return {
+      ...image,
+      defaultUrl: this.ensureAbsoluteUrl(image.defaultUrl),
+      colorUrl: this.ensureAbsoluteUrl(image.colorUrl)
+    };
+  }
+
+  /**
    * 搜索图片（根据标题、描述、标签）- 核心方法
    */
   static async searchImages(params: SearchParams = {}): Promise<SearchResult> {
@@ -88,8 +125,11 @@ export class ImageService {
       const response = await ApiUtils.get<{images: HomeImage[], total: number}>(`/api/images?${searchParams.toString()}`);
       
       // 处理服务器返回的格式: {images: [...], total: number}
-      const images = response.images || [];
+      const rawImages = response.images || [];
       const totalCount = response.total || 0;
+      
+      // 处理图片URL，确保都是绝对路径
+      const images = rawImages.map(image => this.processImageUrls(image));
       
       // 计算分页信息
       const totalPages = Math.ceil(totalCount / pageSize);

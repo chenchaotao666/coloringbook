@@ -508,10 +508,12 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     poll();
   }, [updateState, loadGeneratedImages, checkUserCredits]);
 
-  // 从所有图片中随机选择3张
+  // 从所有图片中随机选择（移动端1张，桌面端3张）
   const getRandomImages = useCallback((allImages: HomeImage[]): HomeImage[] => {
     const shuffled = [...allImages].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 3);
+    const isMobile = window.innerWidth < 640;
+    const count = isMobile ? 1 : 3;
+    return shuffled.slice(0, count);
   }, []);
 
   // Text to Image 示例图片加载
@@ -800,10 +802,30 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
 
   // 刷新示例（只有点击 Change 按钮时才调用）
   const refreshExamples = useCallback(() => {
+    const isMobile = window.innerWidth < 640;
+    
     if (state.selectedTab === 'text') {
-      // Text to Image 刷新逻辑 - 只从缓存中随机选择
+      // Text to Image 刷新逻辑
       if (textExampleCache.current.allImages.length > 0) {
-        const randomImages = getRandomImages(textExampleCache.current.allImages);
+        let randomImages: HomeImage[];
+        
+        if (isMobile && state.textExampleImages.length > 0) {
+          // 移动端：避免显示相同的图片
+          const currentImageIds = state.textExampleImages.map(img => img.id);
+          const availableImages = textExampleCache.current.allImages.filter(img => !currentImageIds.includes(img.id));
+          
+          if (availableImages.length > 0) {
+            // 从未显示的图片中选择
+            randomImages = getRandomImages(availableImages);
+          } else {
+            // 如果所有图片都显示过了，重新开始
+            randomImages = getRandomImages(textExampleCache.current.allImages);
+          }
+        } else {
+          // 桌面端或首次加载：正常随机选择
+          randomImages = getRandomImages(textExampleCache.current.allImages);
+        }
+        
         setState(prev => ({ 
           ...prev,
           textExampleImages: randomImages
@@ -812,9 +834,27 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         console.warn('Text example cache is empty, cannot refresh');
       }
     } else {
-      // Image to Image 刷新逻辑 - 只从缓存中随机选择
+      // Image to Image 刷新逻辑
       if (imageExampleCache.current.allImages.length > 0) {
-        const randomImages = getRandomImages(imageExampleCache.current.allImages);
+        let randomImages: HomeImage[];
+        
+        if (isMobile && state.imageExampleImages.length > 0) {
+          // 移动端：避免显示相同的图片
+          const currentImageIds = state.imageExampleImages.map(img => img.id);
+          const availableImages = imageExampleCache.current.allImages.filter(img => !currentImageIds.includes(img.id));
+          
+          if (availableImages.length > 0) {
+            // 从未显示的图片中选择
+            randomImages = getRandomImages(availableImages);
+          } else {
+            // 如果所有图片都显示过了，重新开始
+            randomImages = getRandomImages(imageExampleCache.current.allImages);
+          }
+        } else {
+          // 桌面端或首次加载：正常随机选择
+          randomImages = getRandomImages(imageExampleCache.current.allImages);
+        }
+        
         setState(prev => ({ 
           ...prev,
           imageExampleImages: randomImages
@@ -823,7 +863,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         console.warn('Image example cache is empty, cannot refresh');
       }
     }
-  }, [state.selectedTab]);
+  }, [state.selectedTab, state.textExampleImages, state.imageExampleImages]);
 
   // 刷新风格建议
   const refreshStyleSuggestions = useCallback(async () => {

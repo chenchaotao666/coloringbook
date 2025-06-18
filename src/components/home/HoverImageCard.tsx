@@ -99,21 +99,21 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
         </div>
         
         {/* 内容区域 */}
-        <div className="self-stretch px-3 flex flex-col items-start gap-2">
+        <div className="self-stretch px-2 sm:px-3 flex flex-col items-start gap-1.5 sm:gap-2">
         <div className="w-full">
-          <div className="w-full text-[#161616] text-base font-medium capitalize leading-5">
+          <div className="w-full text-[#161616] text-sm sm:text-base font-medium capitalize leading-tight sm:leading-5 line-clamp-2">
             {title}
           </div>
         </div>
         
         {/* 标签 */}
-        <div className="self-stretch flex flex-wrap items-center gap-2">
+        <div className="self-stretch flex flex-wrap items-center gap-1 sm:gap-2">
           {tags.map((tag, index) => (
             <div 
               key={index}
-              className="px-2 py-1 bg-[#F9FAFB] rounded-xl flex justify-center items-center"
+              className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-[#F9FAFB] rounded-lg sm:rounded-xl flex justify-center items-center min-w-0 flex-shrink-0"
             >
-              <div className="text-[#6B7280] text-xs font-normal leading-4">
+              <div className="text-[#6B7280] text-[10px] sm:text-xs font-normal leading-tight sm:leading-4 truncate">
                 {variant === 'category' ? tag : `#${tag}`}
               </div>
             </div>
@@ -139,22 +139,22 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
           </>
         ) : (
           /* 默认：显示下载按钮 */
-          <div className="w-full flex gap-2">
+          <div className="w-full flex gap-1 sm:gap-2">
             <button 
               onClick={(e) => handleDownload('png', e)}
               onMouseEnter={() => setPngHovered(true)}
               onMouseLeave={() => setPngHovered(false)}
               disabled={isDownloadingPng}
-              className={`flex-1 py-1.5 rounded flex justify-center items-center gap-1 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${pngHovered ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'}`}
+              className={`flex-1 py-1 sm:py-1.5 rounded flex justify-center items-center gap-0.5 sm:gap-1 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${pngHovered ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'}`}
             >
-              <div className="w-4 h-4 relative overflow-hidden">
+              <div className="w-3 h-3 sm:w-4 sm:h-4 relative overflow-hidden">
                 <img 
                   src={pngHovered ? downloadColorIcon : downloadIcon} 
                   alt="Download" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className={`text-sm font-normal leading-4 ${pngHovered ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
+              <div className={`text-xs sm:text-sm font-normal leading-3 sm:leading-4 ${pngHovered ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
                 {isDownloadingPng ? '下载中...' : 'PNG'}
               </div>
             </button>
@@ -163,16 +163,16 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
               onMouseEnter={() => setPdfHovered(true)}
               onMouseLeave={() => setPdfHovered(false)}
               disabled={isDownloadingPdf}
-              className={`flex-1 py-1.5 rounded flex justify-center items-center gap-1 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${pdfHovered ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'}`}
+              className={`flex-1 py-1 sm:py-1.5 rounded flex justify-center items-center gap-0.5 sm:gap-1 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${pdfHovered ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'}`}
             >
-              <div className="w-4 h-4 relative overflow-hidden">
+              <div className="w-3 h-3 sm:w-4 sm:h-4 relative overflow-hidden">
                 <img 
                   src={pdfHovered ? downloadColorIcon : downloadIcon} 
                   alt="Download" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className={`text-sm font-normal leading-4 ${pdfHovered ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
+              <div className={`text-xs sm:text-sm font-normal leading-3 sm:leading-4 ${pdfHovered ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
                 {isDownloadingPdf ? '下载中...' : 'PDF'}
               </div>
             </button>

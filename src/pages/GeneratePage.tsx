@@ -238,177 +238,225 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
 
     return (
-      <div className="flex-1 px-10 flex flex-col pb-20">
+      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 lg:pb-20 relative">
+        {/* 移动端右侧浮动历史图片 */}
+        {(() => {
+          const currentImages = mode === 'text' ? textGeneratedImages : imageGeneratedImages;
+          return currentImages.length > 0 && (
+            <div className="lg:hidden absolute -right-2 top-0 bottom-0 w-24 z-30 pointer-events-none">
+              <div className="h-full overflow-y-auto scrollbar-hide pointer-events-auto pt-4 pb-4 flex flex-col items-center">
+                <div className="flex flex-col gap-2 items-center">
+                  {currentImages.slice(0, 10).map((image, index) => {
+                    const isSelected = selectedImage === image.id;
+                    
+                                          return (
+                        <div
+                          key={image.id}
+                          className={`rounded-lg cursor-pointer relative transition-all border-2 bg-white shadow-sm ${
+                            isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          style={{
+                            ...getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions, {
+                              maxWidth: 70,   // 移动端最大宽度64px
+                              maxHeight: 70, // 移动端最大高度120px  
+                              minWidth: 60,   // 移动端最小宽度48px
+                              minHeight: 60   // 移动端最小高度48px
+                            }),
+                            flexShrink: 0
+                          }}
+                          onClick={() => handleImageSelect(image.id)}
+                        >
+                        <img
+                          src={image.defaultUrl}
+                          alt={image.description || `Generated ${index + 1}`}
+                          className="w-full h-full rounded-md object-cover"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* 固定的文字部分 */}
-        <div className="text-center pt-32 pb-8">
-          <h1 className="text-3xl font-bold text-[#161616] capitalize">{config[mode].title}</h1>
-          <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto">
+        <div className="text-center pt-8 sm:pt-16 lg:pt-32 pb-6 lg:pb-8">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#161616] capitalize px-4">{config[mode].title}</h1>
+          <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto px-16">
             {config[mode].description}
           </p>
         </div>
 
-        {/* 图片内容区域 - 固定高度 */}
-        <div className="flex-1 flex flex-col items-center">
-          {selectedImage || isGenerating ? (
-            <div className="flex flex-col items-center">
-              {(() => {
-                const imageSize = getCenterImageSize(mode, isGenerating, selectedImage, generatedImages, dynamicImageDimensions, setDynamicImageDimensions);
-                return (
-                  <div 
-                    className="bg-[#F2F3F5] rounded-2xl border border-[#EDEEF0] relative flex items-center justify-center transition-all duration-300"
-                    style={imageSize.style}
-                  >
-                    {isGenerating ? (
-                      <div className="flex flex-col items-center">
-                        <CircularProgress
-                          progress={generationProgress}
-                          size="large"
-                          showPercentage={false}
-                        />
-                        <div className="mt-6 text-center">
-                          <div className="text-[#161616] font-medium text-lg mb-2">Generating your coloring page...</div>
-                          <div className="text-[#6B7280] text-sm">This may take a few moments</div>
-                        </div>
-                      </div>
-                    ) : selectedImage ? (
-                      <>
-                        <img
-                          src={generatedImages.find(img => img.id === selectedImage)?.defaultUrl}
-                          alt="Generated coloring page"
-                          className="w-full h-full object-contain rounded-2xl"
-                        />
-                      </>
-                    ) : null}
-                  </div>
-                );
-              })()}
-              
-              {/* Download and More Options - 只在有选中图片时显示 */}
-              {selectedImage && (
-                <div className="flex gap-3 mt-6">
-                  {/* Download PNG Button */}
-                  <button 
-                    onClick={() => handleDownload('png')}
-                    className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-4 py-3 flex items-center gap-2 transition-all duration-200"
-                  >
-                    <img src={downloadIcon} alt="Download" className="w-6 h-6" />
-                    <span className="text-[#161616] text-sm font-medium">Download PNG</span>
-                  </button>
-
-                  {/* Download PDF Button */}
-                  <button 
-                    onClick={() => handleDownload('pdf')}
-                    className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-4 py-3 flex items-center gap-2 transition-all duration-200"
-                  >
-                    <img src={downloadIcon} alt="Download" className="w-6 h-6" />
-                    <span className="text-[#161616] text-sm font-medium">Download PDF</span>
-                  </button>
-
-                  {/* More Options Button */}
-                  <div className="relative more-menu-container">
-                    <button 
-                      onClick={handleMoreMenuToggle}
-                      className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg p-3 transition-all duration-200"
+        {/* 图片内容区域 - 移动端固定高度，桌面端flex-1 */}
+        <div className="h-[400px] lg:flex-1 lg:h-auto flex flex-col">
+          {/* 移动端为历史图片预留右侧空间 */}
+          <div className="w-full">
+            {selectedImage || isGenerating ? (
+              <div className="flex flex-col items-center">
+                {(() => {
+                  const imageSize = getCenterImageSize(mode, isGenerating, selectedImage, generatedImages, dynamicImageDimensions, setDynamicImageDimensions);
+                  return (
+                    <div 
+                      className="bg-[#F2F3F5] rounded-2xl border border-[#EDEEF0] relative flex items-center justify-center transition-all duration-300"
+                      style={imageSize.style}
                     >
-                      <img src={moreIcon || refreshIcon} alt="More options" className="w-6 h-6" />
+                      {isGenerating ? (
+                        <div className="flex flex-col items-center">
+                          <CircularProgress
+                            progress={generationProgress}
+                            size="large"
+                            showPercentage={false}
+                          />
+                          <div className="mt-6 text-center">
+                            <div className="text-[#161616] font-medium text-lg mb-2">Generating your coloring page...</div>
+                            <div className="text-[#6B7280] text-sm">This may take a few moments</div>
+                          </div>
+                        </div>
+                      ) : selectedImage ? (
+                        <>
+                          <img
+                            src={generatedImages.find(img => img.id === selectedImage)?.defaultUrl}
+                            alt="Generated coloring page"
+                            className="w-full h-full object-contain rounded-2xl"
+                          />
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                })()}
+                
+                {/* Download and More Options - 只在有选中图片时显示 */}
+                {selectedImage && (
+                  <div className="flex flex-row gap-3 mt-6 mb-6 px-4 sm:px-0">
+                    {/* Download PNG Button */}
+                    <button 
+                      onClick={() => handleDownload('png')}
+                      className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 transition-all duration-200 flex-1 sm:flex-none"
+                    >
+                      <img src={downloadIcon} alt="Download" className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <span className="text-[#161616] text-sm font-medium">PNG</span>
                     </button>
 
-                    {/* 下拉菜单 */}
-                    {showMoreMenu && (
-                      <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
-                        <button
-                          onClick={handleDelete}
-                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                    {/* Download PDF Button */}
+                    <button 
+                      onClick={() => handleDownload('pdf')}
+                      className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 transition-all duration-200 flex-1 sm:flex-none"
+                    >
+                      <img src={downloadIcon} alt="Download" className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <span className="text-[#161616] text-sm font-medium">PDF</span>
+                    </button>
+
+                    {/* More Options Button */}
+                    <div className="relative more-menu-container flex-1 sm:flex-none">
+                      <button 
+                        onClick={handleMoreMenuToggle}
+                        className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg p-2 sm:p-3 transition-all duration-200 w-full sm:w-auto flex items-center justify-center"
+                      >
+                        <img src={moreIcon || refreshIcon} alt="More options" className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </button>
+
+                      {/* 下拉菜单 */}
+                      {showMoreMenu && (
+                        <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
+                          <button
+                            onClick={handleDelete}
+                            className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                          >
+                            <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
+                            <span className="text-sm">Delete</span>
+                          </button>
+                          <button
+                            onClick={handleReport}
+                            className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                          >
+                            <img src={reportIcon} alt="Report" className="w-4 h-4" />
+                            <span className="text-sm">Report</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples) ? null : (
+              // 根据当前模式判断是否显示Example
+              // 只有在初始数据加载完成后才决定是否显示 example 图片
+              // Text to Image 模式：用户没有 text to image 历史时显示 example
+              // Image to Image 模式：用户没有 image to image 历史时显示 example
+              isInitialDataLoaded && ((mode === 'text' && !hasTextToImageHistory) || (mode === 'image' && !hasImageToImageHistory)) && (
+                <div>
+                  {/* Example 标题栏 */}
+                  <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-2 px-4">
+                    <div className="text-[#161616] font-medium text-sm">Example</div>
+                    <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
+                      {currentLoadingState ? 'Loading...' : 'Change'}
+                      <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
+                    </div>
+                  </div>
+
+                  {/* Example Images */}
+                  <div className="flex flex-row justify-center gap-2 sm:gap-6 px-4">
+                    {currentExampleImages.length > 0 ? currentExampleImages.slice(0, window.innerWidth < 640 ? 1 : currentExampleImages.length).map((example) => {
+                      // 使用 getImageSize 替代 getExampleImageSize
+                      // 移动端和桌面端使用不同的尺寸限制
+                      const imageUrl = mode === 'image' ? example.colorUrl : example.defaultUrl;
+                      const isMobile = window.innerWidth < 640;
+                      const maxWidth = isMobile ? 280 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
+                      const maxHeight = isMobile ? 280 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2;
+                      
+                      const imageSize = getImageSize(
+                        example.id, 
+                        imageUrl, 
+                        maxWidth, 
+                        maxHeight,
+                        undefined, 
+                        undefined, 
+                        dynamicImageDimensions, 
+                        setDynamicImageDimensions
+                      );
+                      
+                      return (
+                        <div
+                          key={example.id}
+                          className={`relative bg-white rounded-2xl border border-[#EDEEF0] ${isMobile ? 'example-image-container' : ''}`}
+                          style={{ width: imageSize.width, height: imageSize.height }}
                         >
-                          <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
-                          <span className="text-sm">Delete</span>
-                        </button>
-                        <button
-                          onClick={handleReport}
-                          className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
-                        >
-                          <img src={reportIcon} alt="Report" className="w-4 h-4" />
-                          <span className="text-sm">Report</span>
-                        </button>
+                          <img
+                            src={mode === 'image' ? example.colorUrl : example.defaultUrl}
+                            alt={example.description || `Example ${example.id}`}
+                            className={`w-full h-full object-cover rounded-2xl ${isMobile ? 'example-image' : ''}`}
+                          />
+                          <button
+                            onClick={() => handleRecreateExample(example.id)}
+                            className="absolute top-3 left-3 bg-[#FF5C07] text-white text-xs py-1 px-2 rounded-full hover:bg-[#FF7A47] transition-all duration-300 cursor-pointer"
+                          >
+                            Recreate
+                          </button>
+                        </div>
+                      );
+                    }) : (
+                      // 空状态 - 没有示例图片
+                      <div className="w-full flex flex-col items-center justify-center py-16">
+                        <div className="text-center">
+                          <div className="mb-6">
+                            <img 
+                              src="/images/no-result.svg" 
+                              alt="No example images" 
+                              className="w-[305px] h-[200px] mx-auto"
+                            />
+                          </div>
+                          <p className="text-[#6B7280] text-base font-normal leading-6">
+                            No example images.
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
-              )}
-            </div>
-          ) : (mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples) ? null : (
-            // 根据当前模式判断是否显示Example
-            // 只有在初始数据加载完成后才决定是否显示 example 图片
-            // Text to Image 模式：用户没有 text to image 历史时显示 example
-            // Image to Image 模式：用户没有 image to image 历史时显示 example
-            isInitialDataLoaded && ((mode === 'text' && !hasTextToImageHistory) || (mode === 'image' && !hasImageToImageHistory)) && (
-              <div>
-                {/* Example 标题栏 - 固定宽度 */}
-                <div className="w-[795px] mx-auto flex justify-between items-center mb-2">
-                  <div className="text-[#161616] font-medium text-sm">Example</div>
-                  <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
-                    {currentLoadingState ? 'Loading...' : 'Change'}
-                    <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
-                  </div>
-                </div>
-
-                {/* Example Images */}
-                <div className="flex justify-center gap-6">
-                  {currentExampleImages.length > 0 ? currentExampleImages.map((example) => {
-                    // 使用 getImageSize 替代 getExampleImageSize
-                    // getImageSize 需要 maxWidth 和 maxHeight，我们使用固定宽度作为最大宽度，高度设为较大值让其自适应
-                    const imageUrl = mode === 'image' ? example.colorUrl : example.defaultUrl;
-                    const imageSize = getImageSize(
-                      example.id, 
-                      imageUrl, 
-                      EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH, 
-                      EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2, // 设置一个较大的最大高度
-                      undefined, 
-                      undefined, 
-                      dynamicImageDimensions, 
-                      setDynamicImageDimensions
-                    );
-                    
-                    return (
-                      <div
-                        key={example.id}
-                        className="relative bg-white rounded-2xl border border-[#EDEEF0]"
-                        style={{ width: imageSize.width, height: imageSize.height }}
-                      >
-                        <img
-                          src={mode === 'image' ? example.colorUrl : example.defaultUrl}
-                          alt={example.description || `Example ${example.id}`}
-                          className="w-full h-full object-cover rounded-2xl"
-                        />
-                        <button
-                          onClick={() => handleRecreateExample(example.id)}
-                          className="absolute top-3 left-3 bg-[#FF5C07] text-white text-xs py-1 px-2 rounded-full hover:bg-[#FF7A47] transition-all duration-300 cursor-pointer"
-                        >
-                          Recreate
-                        </button>
-                      </div>
-                    );
-                  }) : (
-                    // 空状态 - 没有示例图片
-                    <div className="w-full flex flex-col items-center justify-center py-16">
-                      <div className="text-center">
-                        <div className="mb-6">
-                          <img 
-                            src="/images/no-result.svg" 
-                            alt="No example images" 
-                            className="w-[305px] h-[200px] mx-auto"
-                          />
-                        </div>
-                        <p className="text-[#6B7280] text-base font-normal leading-6">
-                          No example images.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          )}
+              )
+            )}
+          </div>
         </div>
       </div>
     );
@@ -420,53 +468,53 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       return (
         <>
           {/* Prompt Section */}
-          <div className="mx-5 mt-5">
-            <div className="text-[14px] font-bold text-[#161616] mb-2">Prompt</div>
+          <div className="lg:mx-5 mt-5">
+            <div className="text-sm font-bold text-[#161616] mb-2">Prompt</div>
             <div className="relative">
               <textarea
-                className="w-full h-[180px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 text-sm resize-none focus:outline-none"
+                className="w-full h-[120px] sm:h-[150px] lg:h-[180px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 text-sm resize-none focus:outline-none"
                 placeholder="What do you want to create?"
                 value={prompt}
                 onChange={handlePromptChange}
                 maxLength={1000}
               ></textarea>
 
-              <div className="absolute bottom-2 right-4 text-sm text-[#A4A4A4] flex mb-3 items-center gap-1">
+              <div className="absolute bottom-2 right-3 text-xs sm:text-sm text-[#A4A4A4] flex mb-2 sm:mb-3 items-center gap-1">
                 {prompt.length}/1000
                 <img src={textCountIcon} alt="Text count" className="w-3 h-3" />
               </div>
 
-              <div className="absolute bottom-2 left-3 bg-white rounded-full px-3 py-1 mb-3 flex items-center">
-                <span className="w-4 h-4 mr-2">
-                  <img src={aiGenerateIcon} alt="AI Generate" className="w-4 h-4" />
+              <div className="absolute bottom-2 left-3 bg-white rounded-full px-2 sm:px-3 py-1 mb-2 sm:mb-3 flex items-center">
+                <span className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2">
+                  <img src={aiGenerateIcon} alt="AI Generate" className="w-3 h-3 sm:w-4 sm:h-4" />
                 </span>
-                <span className="text-[#6B7280] text-sm">Generate with AI</span>
+                <span className="text-[#6B7280] text-xs sm:text-sm">Generate with AI</span>
               </div>
             </div>
           </div>
 
           {/* Ideas Section */}
-          <div className="mx-5 mt-5">
-            <div className="text-[#6B7280] text-xs">
-              Ideas：
-              {styleSuggestions.slice(0, 4).map((style, index) => (
+          <div className="lg:mx-5 mt-5">
+            <div className="text-[#6B7280] text-xs flex flex-wrap items-center gap-1">
+              <span>Ideas：</span>
+              {styleSuggestions.slice(0, 4).map((style) => (
                 <span
                   key={style.id}
-                  className={`${index === 0 ? "ml-2" : "ml-3"} cursor-pointer hover:text-[#FF5C07] transition-colors`}
+                  className="cursor-pointer hover:text-[#FF5C07] transition-colors bg-gray-100 px-2 py-1 rounded text-xs"
                   onClick={() => handleStyleSuggestionClick(style.name)}
                 >
                   {style.name}
                 </span>
               ))}
-              <span className="float-right cursor-pointer hover:opacity-70 transition-opacity" onClick={handleRefreshStyleSuggestions}>
+              <span className="cursor-pointer hover:opacity-70 transition-opacity ml-auto" onClick={handleRefreshStyleSuggestions}>
                 <img src={refreshIcon} alt="Refresh" className="w-4 h-4" />
               </span>
             </div>
-            <div className="text-[#6B7280] text-xs mt-2">
-              {styleSuggestions.slice(4, 6).map((style, index) => (
+            <div className="text-[#6B7280] text-xs mt-2 flex flex-wrap gap-1">
+              {styleSuggestions.slice(4, 6).map((style) => (
                 <span
                   key={style.id}
-                  className={`${index === 0 ? "" : "ml-3"} cursor-pointer hover:text-[#FF5C07] transition-colors`}
+                  className="cursor-pointer hover:text-[#FF5C07] transition-colors bg-gray-100 px-2 py-1 rounded text-xs"
                   onClick={() => handleStyleSuggestionClick(style.name)}
                 >
                   {style.name}
@@ -476,32 +524,30 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           </div>
 
           {/* Ratio Selector */}
-          <div className="mx-5 mt-10">
-            <div className="text-[14px] font-bold text-[#161616] mb-2">Ratio</div>
-            <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
+          <div className="lg:mx-5 mt-6 lg:mt-10">
+            <div className="text-sm font-bold text-[#161616] mb-2">Ratio</div>
+            <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
               <div
-                className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedRatio === '3:4' ? 'w-[114px] bg-white left-1' :
-                    selectedRatio === '4:3' ? 'w-[114px] bg-white left-[118px]' :
-                      'w-[114px] bg-white left-[232px]'
-                  }`}
+                className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 ${
+                  selectedRatio === '3:4' ? 'w-[calc(33.33%-4px)] bg-white left-1' :
+                  selectedRatio === '4:3' ? 'w-[calc(33.33%-4px)] bg-white left-[calc(33.33%+2px)]' :
+                  'w-[calc(33.33%-4px)] bg-white right-1'
+                }`}
               ></div>
               <button
-                className={`w-[114px] h-10 z-10 flex items-center justify-center ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
-                  }`}
+                className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-sm ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => setSelectedRatio('3:4')}
               >
                 3:4
               </button>
               <button
-                className={`w-[114px] h-10 z-10 flex items-center justify-center ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
-                  }`}
+                className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-sm ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => setSelectedRatio('4:3')}
               >
                 4:3
               </button>
               <button
-                className={`w-[114px] h-10 z-10 flex items-center justify-center ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
-                  }`}
+                className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-sm ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => setSelectedRatio('1:1')}
               >
                 1:1
@@ -514,10 +560,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       return (
         <>
           {/* Image Upload Section */}
-          <div className="mx-5 mt-[18px]">
-            <div className="text-[14px] font-bold text-[#161616] mb-2">Image</div>
+          <div className="lg:mx-5 mt-5">
+            <div className="text-sm font-bold text-[#161616] mb-2">Image</div>
             <div
-              className="w-full h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"
+              className="w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"
               onClick={() => document.getElementById('imageUpload')?.click()}
             >
               {uploadedFile ? (
@@ -539,10 +585,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 </div>
               ) : (
                 <>
-                  <div className="w-[46px] h-[46px] mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-[46px] lg:h-[46px] mb-3 sm:mb-4">
                     <img src={addImageIcon} alt="Upload" className="w-full h-full" />
                   </div>
-                  <div className="text-[#A4A4A4] text-xs">Click to upload</div>
+                  <div className="text-[#A4A4A4] text-xs sm:text-sm">Click to upload</div>
                 </>
               )}
               <input
@@ -657,9 +703,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
       )}
 
-      <div className="flex h-full bg-[#F9FAFB] relative overflow-hidden">
-        {/* Left Sidebar */}
-        <div className="w-[400px] bg-white pb-[88px] overflow-y-auto h-full">
+      <div className="flex flex-col lg:flex-row h-screen bg-[#F9FAFB] relative">
+        {/* Left Sidebar - 移动端隐藏，桌面端显示 */}
+        <div className="hidden lg:block w-[400px] bg-white pb-[88px] overflow-y-auto h-full">
           {/* Tab Selector */}
           <div className="mx-5 mt-5">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
@@ -713,14 +759,108 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           </div>
         </div>
 
-        {/* Center Content Area - Dynamic based on selected tab */}
-        {renderContent(selectedTab)}
+        {/* 移动端主要内容区域 */}
+        <div className="flex flex-col lg:hidden h-full">
+          {/* 移动端标签选择器 */}
+          <div className="bg-white p-4 border-b border-gray-200 flex-shrink-0">
+            <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative max-w-md mx-auto">
+              <div
+                className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[calc(50%-4px)] bg-white left-1' : 'w-[calc(50%-4px)] bg-white right-1'}`}
+              ></div>
+              <button
+                className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                onClick={() => setSelectedTab('text')}
+              >
+                Text to Image
+              </button>
+              <button
+                className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                onClick={() => setSelectedTab('image')}
+              >
+                Image to Image
+              </button>
+            </div>
+          </div>
 
-        {/* Right Sidebar - Generated Images */}
-        {renderRightSidebar()}
+          {/* 移动端内容 - 可滚动区域 */}
+          <div className="flex-1 overflow-y-auto pb-40">
+            {renderContent(selectedTab)}
+            
+            {/* 移动端控制面板 */}
+            <div className="bg-white border-t border-gray-200 p-4">
+              {renderLeftSidebar()}
+              
+              {/* Public Visibility */}
+              <div className="mt-5 flex items-center justify-between">
+                <div className="text-sm font-bold text-[#161616] flex items-center">
+                  Public Visibility
+                  <span className="ml-2 w-4 h-4">
+                    <img src={tipIcon} alt="Info" className="w-4 h-4" />
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span className="mr-2 w-4 h-4">
+                    <img src={crownIcon} alt="Premium" className="w-4 h-4" />
+                  </span>
+                  <button
+                    className={`w-[30px] h-4 rounded-lg relative ${publicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300'}`}
+                    onClick={() => setPublicVisibility(!publicVisibility)}
+                  >
+                    <div
+                      className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${publicVisibility ? 'right-[1px]' : 'left-[1px]'}`}
+                    ></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        {/* Generate Button - Fixed at the bottom */}
-        <div className="fixed bottom-0 left-0 w-[400px] h-[88px] bg-white flex items-center justify-center">
+          {/* 移动端生成按钮 - 固定在底部 */}
+          <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 p-4 z-50">
+            <button
+              onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
+              disabled={!canGenerate ? false : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
+              className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                !canGenerate
+                  ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
+                  : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                  ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
+                  : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
+                }`}
+            >
+              <img
+                src={!canGenerate
+                  ? subtractColorIcon
+                  : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                  ? subtractIcon
+                  : subtractColorIcon
+                }
+                alt="Subtract"
+                className="w-5 h-5 mr-1"
+              />
+              <span className="font-bold text-lg">20</span>
+              <span className="font-bold text-lg">
+                {!canGenerate ? 'Insufficient Credits' :
+                 isGenerating ? 'Generating...' : 
+                 isCheckingCredits ? 'Checking...' :
+                 'Generate'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* 桌面端中间内容区域 */}
+        <div className="hidden lg:flex lg:flex-1">
+          {renderContent(selectedTab)}
+        </div>
+
+        {/* Right Sidebar - Generated Images - 桌面端显示 */}
+        <div className="hidden lg:block">
+          {renderRightSidebar()}
+        </div>
+
+        {/* 桌面端生成按钮 */}
+        <div className="hidden lg:flex fixed bottom-0 left-0 w-[400px] h-[88px] bg-white items-center justify-center">
           <button
             onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
             disabled={!canGenerate ? false : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}

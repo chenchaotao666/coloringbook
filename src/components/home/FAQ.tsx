@@ -12,24 +12,24 @@ interface FAQItemProps {
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen = false, onClick }) => {
   return (
     <div 
-      className={`w-[970px] bg-[#F9FAFB] p-5 py-7 mb-5 rounded-2xl border border-[#F0F0F0]`}
+      className="w-full max-w-[970px] bg-[#F9FAFB] p-4 sm:p-5 py-5 sm:py-7 mb-4 sm:mb-5 rounded-xl sm:rounded-2xl border border-[#F0F0F0]"
     >
       <div 
-        className="flex justify-between items-center cursor-pointer"
+        className="flex justify-between items-center cursor-pointer gap-4"
         onClick={onClick}
       >
-        <div className={`${isOpen ? 'text-[#FF5C07]' : 'text-[#161616]'} text-xl font-medium`}>
+        <div className={`${isOpen ? 'text-[#FF5C07]' : 'text-[#161616]'} text-base sm:text-lg lg:text-xl font-medium leading-tight`}>
           {question}
         </div>
         <img 
           src={isOpen ? closeIcon : openIcon} 
           alt={isOpen ? "Close" : "Open"} 
-          className="w-6 h-6"
+          className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"
         />
       </div>
       
       {isOpen && (
-        <div className="text-[#6B7280] text-base leading-6 mt-4">
+        <div className="text-[#6B7280] text-sm sm:text-base leading-5 sm:leading-6 mt-3 sm:mt-4 pr-8 sm:pr-10">
           {answer}
         </div>
       )}
@@ -80,11 +80,13 @@ const FAQ = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 my-20 flex flex-col items-center">
-      <h2 className="text-center text-[#161616] text-[46px] font-bold mb-12">
+    <div className="container mx-auto px-4 sm:px-6 my-16 sm:my-20 flex flex-col items-center">
+      {/* 标题 */}
+      <h2 className="text-center text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-0">
         Frequently Asked Questions
       </h2>
       
+      {/* FAQ列表 */}
       <div className="w-full flex flex-col items-center">
         {faqItems.map((item, index) => (
           <FAQItem 

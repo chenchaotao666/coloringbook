@@ -1,4 +1,3 @@
-
 import Layout from '../components/layout/Layout';
 import Hero from '../components/home/Hero';
 import Features from '../components/home/Features';
@@ -10,15 +9,17 @@ import CallToAction from '../components/home/CallToAction';
 
 const HomePage = () => {
   return (
-    <div className="bg-white">
+    <div className="bg-white min-w-0 overflow-hidden">
       <Layout>
-        <Hero />
-        <Features />
-        <Gallery title="Browse our 1,281 free coloring pages; printable in PDF and PNG formats!" />
-        <Testimonials />
-        <HowToCreate />
-        <FAQ />
-        <CallToAction />
+        <div className="w-full min-w-0">
+          <Hero />
+          <Features />
+          <Gallery title="Browse our 1,281 free coloring pages; printable in PDF and PNG formats!" />
+          <Testimonials />
+          <HowToCreate />
+          <FAQ />
+          <CallToAction />
+        </div>
       </Layout>
     </div>
   );

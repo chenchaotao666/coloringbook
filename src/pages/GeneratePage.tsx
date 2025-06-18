@@ -238,11 +238,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
 
     return (
-      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 pt-12 lg:pb-20 relative">
+      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 pt-6 lg:pt-[72px] lg:pb-20 relative">
 
 
         {/* 图片内容区域 - 移动端固定高度，桌面端flex-1 */}
-        <div className="h-[400px] lg:flex-1 lg:h-auto flex flex-col">
+        <div className="h-[390px] lg:flex-1 lg:h-auto flex flex-col">
           {/* 移动端为历史图片预留右侧空间 */}
           <div className="w-full">
             {selectedImage || isGenerating ? (
@@ -561,7 +561,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       return (
         <>
           {/* Image Upload Section */}
-          <div className="lg:mx-5 mt-5">
+          <div className="lg:mx-5 mt-1">
             <div className="text-sm font-bold text-[#161616] mb-2">Image</div>
             <div
               className="w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"

@@ -17,9 +17,9 @@ export class UrlUtils {
     }
     
     // 获取后端基础URL
-    const baseUrl = process.env.NODE_ENV === 'development' 
+    const baseUrl = import.meta.env.MODE === 'development' 
       ? '' // 开发环境使用相对路径（通过Vite代理）
-      : (import.meta as any).env?.VITE_API_BASE_URL || '';
+      : import.meta.env.VITE_API_BASE_URL || '';
     
     if (baseUrl) {
       // 确保baseUrl不以/结尾，url以/开头
@@ -66,9 +66,9 @@ export class UrlUtils {
    * @returns 后端基础URL字符串
    */
   static getBaseUrl(): string {
-    return process.env.NODE_ENV === 'development' 
+    return import.meta.env.MODE === 'development' 
       ? '' // 开发环境使用相对路径
-      : (import.meta as any).env?.VITE_API_BASE_URL || '';
+      : import.meta.env.VITE_API_BASE_URL || '';
   }
 
   /**

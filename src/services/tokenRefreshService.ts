@@ -6,7 +6,7 @@ import { ApiUtils } from '../utils/apiUtils';
  */
 export class TokenRefreshService {
   private static instance: TokenRefreshService;
-  private refreshInterval: NodeJS.Timeout | null = null;
+  private refreshInterval: number | null = null;
   private isRefreshing = false;
   private readonly REFRESH_INTERVAL = 10 * 60 * 1000; // 10分钟
   private readonly TOKEN_EXPIRY_BUFFER = 2 * 60 * 1000; // 2分钟缓冲时间
@@ -38,7 +38,7 @@ export class TokenRefreshService {
     this.checkAndRefreshToken();
 
     // 设置定时器，每10分钟执行一次
-    this.refreshInterval = setInterval(() => {
+    this.refreshInterval = window.setInterval(() => {
       this.checkAndRefreshToken();
     }, this.REFRESH_INTERVAL);
   }
@@ -48,7 +48,7 @@ export class TokenRefreshService {
    */
   stop(): void {
     if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
+      window.clearInterval(this.refreshInterval);
       this.refreshInterval = null;
       console.log('⏹️ Token自动刷新服务已停止');
     }

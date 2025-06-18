@@ -29,7 +29,7 @@ export interface AuthTokens {
 }
 
 // API 配置 - 连接到外部后端服务
-const API_BASE_URL = process.env.NODE_ENV === 'development' 
+const API_BASE_URL = import.meta.env.MODE === 'development' 
   ? '' // 开发环境使用相对路径，通过 Vite 代理
   : import.meta.env.VITE_API_BASE_URL || ''; // 生产环境使用环境变量指向外部后端
 

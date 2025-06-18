@@ -7,18 +7,10 @@
     <title>AI Coloring Pages</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <script>
-      // Single Page App redirect hack for GitHub Pages / Static hosts
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = sessionStorage.redirect || l.search.slice(1);
-          if (decoded) {
-            window.history.replaceState(null, null,
-                l.pathname.slice(0, -1) + decoded
-            );
-          }
-        }
-      }(window.location))
+      // Single Page App hack to redirect 404s to index.html
+      sessionStorage.redirect = location.href;
     </script>
+    <meta http-equiv="refresh" content="0;URL='/'" />
   </head>
   <body>
     <div id="root"></div>

@@ -238,55 +238,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
 
     return (
-      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 lg:pb-20 relative">
-        {/* 移动端右侧浮动历史图片 */}
-        {(() => {
-          const currentImages = mode === 'text' ? textGeneratedImages : imageGeneratedImages;
-          return currentImages.length > 0 && (
-            <div className="lg:hidden absolute -right-2 top-0 bottom-0 w-24 z-30 pointer-events-none">
-              <div className="h-full overflow-y-auto scrollbar-hide pointer-events-auto pt-4 pb-4 flex flex-col items-center">
-                <div className="flex flex-col gap-2 items-center">
-                  {currentImages.slice(0, 10).map((image, index) => {
-                    const isSelected = selectedImage === image.id;
-                    
-                                          return (
-                        <div
-                          key={image.id}
-                          className={`rounded-lg cursor-pointer relative transition-all border-2 bg-white shadow-sm ${
-                            isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                          style={{
-                            ...getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions, {
-                              maxWidth: 70,   // 移动端最大宽度64px
-                              maxHeight: 70, // 移动端最大高度120px  
-                              minWidth: 60,   // 移动端最小宽度48px
-                              minHeight: 60   // 移动端最小高度48px
-                            }),
-                            flexShrink: 0
-                          }}
-                          onClick={() => handleImageSelect(image.id)}
-                        >
-                        <img
-                          src={image.defaultUrl}
-                          alt={image.description || `Generated ${index + 1}`}
-                          className="w-full h-full rounded-md object-cover"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })()}
+      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 pt-12 lg:pb-20 relative">
 
-        {/* 固定的文字部分 */}
-        <div className="text-center pt-8 sm:pt-16 lg:pt-32 pb-6 lg:pb-8">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#161616] capitalize px-4">{config[mode].title}</h1>
-          <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto px-16">
-            {config[mode].description}
-          </p>
-        </div>
 
         {/* 图片内容区域 - 移动端固定高度，桌面端flex-1 */}
         <div className="h-[400px] lg:flex-1 lg:h-auto flex flex-col">
@@ -386,6 +339,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               // Image to Image 模式：用户没有 image to image 历史时显示 example
               isInitialDataLoaded && ((mode === 'text' && !hasTextToImageHistory) || (mode === 'image' && !hasImageToImageHistory)) && (
                 <div>
+                  {/* 固定的文字部分 - 只在显示Example时显示 */}
+                  <div className="text-center pt-8 sm:pt-16 lg:pt-32 pb-6 lg:pb-8">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#161616] capitalize px-4">{config[mode].title}</h1>
+                    <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto px-16">
+                      {config[mode].description}
+                    </p>
+                  </div>
+
                   {/* Example 标题栏 */}
                   <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-2 px-4">
                     <div className="text-[#161616] font-medium text-sm">Example</div>
@@ -457,7 +418,47 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               )
             )}
           </div>
+          
+
         </div>
+        
+        {/* 移动端横向历史图片 - 浮动在外层容器下方 */}
+        {(() => {
+          const currentImages = mode === 'text' ? textGeneratedImages : imageGeneratedImages;
+          return currentImages.length > 0 && (
+            <div className="lg:hidden mt-4 px-4 sm:px-6">
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+                {currentImages.slice(0, 10).map((image, index) => {
+                  const isSelected = selectedImage === image.id;
+                  
+                  return (
+                    <div
+                      key={image.id}
+                      className={`rounded-lg cursor-pointer relative transition-all border-2 bg-white shadow-sm flex-shrink-0 ${
+                        isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      style={{
+                        ...getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions, {
+                          maxWidth: 80,   // 移动端横向最大宽度80px
+                          maxHeight: 80,  // 移动端横向最大高度80px  
+                          minWidth: 60,   // 移动端横向最小宽度60px
+                          minHeight: 60   // 移动端横向最小高度60px
+                        })
+                      }}
+                      onClick={() => handleImageSelect(image.id)}
+                    >
+                      <img
+                        src={image.defaultUrl}
+                        alt={image.description || `Generated ${index + 1}`}
+                        className="w-full h-full rounded-md object-cover"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
       </div>
     );
   };

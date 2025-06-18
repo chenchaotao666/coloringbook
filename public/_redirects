@@ -1,1 +1,10 @@
-/*    /index.html   200 
+# Fallback for SPA routing
+/*    /index.html   200!
+
+# Alternative syntax
+/text-coloring-page    /index.html   200
+/categories    /index.html   200  
+/generate    /index.html   200
+/price    /index.html   200
+/login    /index.html   200
+/register    /index.html   200 

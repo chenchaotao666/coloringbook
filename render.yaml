@@ -9,8 +9,20 @@ services:
         source: /assets/*
         destination: /assets/:splat
       - type: rewrite
-        source: /*
-        destination: /index.html
+        source: /images/*
+        destination: /images/:splat
+      - type: rewrite
+        source: "/*.js"
+        destination: /:splat
+      - type: rewrite
+        source: "/*.css"
+        destination: /:splat
+      - type: rewrite
+        source: "/*.ico"
+        destination: /:splat
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"
     envVars:
       - key: NODE_ENV
         value: production

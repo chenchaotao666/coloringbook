@@ -8,6 +8,7 @@ lerna-debug.log*
 
 # 构建输出
 dist/
+dist-node/
 build/
 out/
 

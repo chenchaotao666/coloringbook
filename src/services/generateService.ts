@@ -43,6 +43,7 @@ export interface TaskStatus {
 export interface StyleSuggestion {
   id: string;
   name: string;
+  content: string;
   category: string;
 }
 

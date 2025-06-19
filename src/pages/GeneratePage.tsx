@@ -47,7 +47,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     prompt,
     selectedTab,
     selectedRatio,
-    publicVisibility,
+    textPublicVisibility,
+    imagePublicVisibility,
     selectedImage,
     uploadedFile,
 
@@ -66,7 +67,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
     // 积分状态
     canGenerate,
-    isCheckingCredits,
 
     // 用户生成历史状态
     hasTextToImageHistory,
@@ -76,7 +76,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setPrompt,
     setSelectedTab,
     setSelectedRatio,
-    setPublicVisibility,
+    setTextPublicVisibility,
+    setImagePublicVisibility,
     setSelectedImage,
     setUploadedImageWithDimensions,
     generateImages,
@@ -174,8 +175,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     await recreateExample(exampleId);
   };
 
-  const handleStyleSuggestionClick = (styleName: string) => {
-    setPrompt(prompt ? `${prompt}, ${styleName}` : styleName);
+  const handleStyleSuggestionClick = (styleContent: string) => {
+    setPrompt(styleContent);
   };
 
   const handleRefreshStyleSuggestions = async () => {
@@ -238,7 +239,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
 
     return (
-      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 pt-6 lg:pt-[72px] lg:pb-20 relative">
+      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 pt-6 lg:pt-48 lg:pb-20 relative bg-[#F9FAFB]">
 
 
         {/* 图片内容区域 - 移动端固定高度，桌面端flex-1 */}
@@ -255,15 +256,20 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       style={imageSize.style}
                     >
                       {isGenerating ? (
-                        <div className="flex flex-col items-center">
-                          <CircularProgress
-                            progress={generationProgress}
-                            size="large"
-                            showPercentage={false}
-                          />
+                        <div className="flex flex-col items-center relative">
+                          <div className="relative">
+                            <CircularProgress
+                              progress={generationProgress}
+                              size="large"
+                              showPercentage={false}
+                            />
+                          </div>
                           <div className="mt-6 text-center">
-                            <div className="text-[#161616] font-medium text-lg mb-2">Generating your coloring page...</div>
-                            <div className="text-[#6B7280] text-sm">This may take a few moments</div>
+                            {/* 进度数值显示 */}
+                            <div className="text-[#161616] text-2xl font-semibold">
+                              {Math.round(generationProgress)}%
+                            </div>
+                            <div className="text-[#6B7280] text-sm">Generating...</div>
                           </div>
                         </div>
                       ) : selectedImage ? (
@@ -340,15 +346,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               isInitialDataLoaded && ((mode === 'text' && !hasTextToImageHistory) || (mode === 'image' && !hasImageToImageHistory)) && (
                 <div>
                   {/* 固定的文字部分 - 只在显示Example时显示 */}
-                  <div className="text-center pt-8 sm:pt-16 lg:pt-32 pb-6 lg:pb-8">
+                  <div className="text-center lg:pb-8">
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#161616] capitalize px-4">{config[mode].title}</h1>
-                    <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto px-16">
+                    <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto">
                       {config[mode].description}
                     </p>
                   </div>
 
                   {/* Example 标题栏 */}
-                  <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-2 px-4">
+                  <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-3">
                     <div className="text-[#161616] font-medium text-sm">Example</div>
                     <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
                       {currentLoadingState ? 'Loading...' : 'Change'}
@@ -357,14 +363,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   </div>
 
                   {/* Example Images */}
-                  <div className="flex flex-row justify-center gap-2 sm:gap-6 px-4">
-                    {currentExampleImages.length > 0 ? currentExampleImages.slice(0, window.innerWidth < 640 ? 1 : currentExampleImages.length).map((example) => {
+                  <div className="flex flex-row justify-center gap-2 sm:gap-6">
+                    {currentExampleImages.length > 0 ? currentExampleImages.slice(0, window.innerWidth < 640 ? 2 : currentExampleImages.length).map((example) => {
                       // 使用 getImageSize 替代 getExampleImageSize
                       // 移动端和桌面端使用不同的尺寸限制
                       const imageUrl = mode === 'image' ? example.colorUrl : example.defaultUrl;
                       const isMobile = window.innerWidth < 640;
-                      const maxWidth = isMobile ? 280 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
-                      const maxHeight = isMobile ? 280 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2;
+                      const maxWidth = isMobile ? 215 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
+                      const maxHeight = isMobile ? 240 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2;
                       
                       const imageSize = getImageSize(
                         example.id, 
@@ -380,13 +386,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       return (
                         <div
                           key={example.id}
-                          className={`relative bg-white rounded-2xl border border-[#EDEEF0] ${isMobile ? 'example-image-container' : ''}`}
+                          className={`relative bg-white rounded-2xl border border-[#EDEEF0]`}
                           style={{ width: imageSize.width, height: imageSize.height }}
                         >
                           <img
                             src={mode === 'image' ? example.colorUrl : example.defaultUrl}
                             alt={example.description || `Example ${example.id}`}
-                            className={`w-full h-full object-cover rounded-2xl ${isMobile ? 'example-image' : ''}`}
+                            className={`w-full h-full object-cover rounded-2xl`}
                           />
                           <button
                             onClick={() => handleRecreateExample(example.id)}
@@ -398,7 +404,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       );
                     }) : (
                       // 空状态 - 没有示例图片
-                      <div className="w-full flex flex-col items-center justify-center py-16">
+                      <div className="w-full flex flex-col items-center justify-center lg:py-16">
                         <div className="text-center">
                           <div className="mb-6">
                             <img 
@@ -435,7 +441,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     <div
                       key={image.id}
                       className={`rounded-lg cursor-pointer relative transition-all border-2 bg-white shadow-sm flex-shrink-0 ${
-                        isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-gray-200 hover:border-gray-300'
+                        isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-transparent hover:border-gray-200'
                       }`}
                       style={{
                         ...getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions, {
@@ -469,7 +475,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       return (
         <>
           {/* Prompt Section */}
-          <div className="lg:mx-5 mt-5">
+          <div className="lg:mx-5 lg:mt-7">
             <div className="text-sm font-bold text-[#161616] mb-2">Prompt</div>
             <div className="relative">
               <textarea
@@ -496,31 +502,22 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
           {/* Ideas Section */}
           <div className="lg:mx-5 mt-5">
-            <div className="text-[#6B7280] text-xs flex flex-wrap items-center gap-1">
-              <span>Ideas：</span>
-              {styleSuggestions.slice(0, 4).map((style) => (
-                <span
-                  key={style.id}
-                  className="cursor-pointer hover:text-[#FF5C07] transition-colors bg-gray-100 px-2 py-1 rounded text-xs"
-                  onClick={() => handleStyleSuggestionClick(style.name)}
-                >
-                  {style.name}
-                </span>
-              ))}
-              <span className="cursor-pointer hover:opacity-70 transition-opacity ml-auto" onClick={handleRefreshStyleSuggestions}>
+            <div className="flex justify-between items-start gap-2">
+              <div className="text-[#6B7280] text-xs flex flex-wrap items-center gap-2 flex-1">
+                <span className="shrink-0">Ideas：</span>
+                {styleSuggestions.map((style) => (
+                  <span
+                    key={style.id}
+                    className="cursor-pointer hover:text-[#FF5C07] transition-colors bg-gray-100 px-2 py-1 rounded text-xs"
+                    onClick={() => handleStyleSuggestionClick(style.content)}
+                  >
+                    {style.name}
+                  </span>
+                ))}
+              </div>
+              <span className="cursor-pointer hover:opacity-70 transition-opacity shrink-0 mt-0.5" onClick={handleRefreshStyleSuggestions}>
                 <img src={refreshIcon} alt="Refresh" className="w-4 h-4" />
               </span>
-            </div>
-            <div className="text-[#6B7280] text-xs mt-2 flex flex-wrap gap-1">
-              {styleSuggestions.slice(4, 6).map((style) => (
-                <span
-                  key={style.id}
-                  className="cursor-pointer hover:text-[#FF5C07] transition-colors bg-gray-100 px-2 py-1 rounded text-xs"
-                  onClick={() => handleStyleSuggestionClick(style.name)}
-                >
-                  {style.name}
-                </span>
-              ))}
             </div>
           </div>
 
@@ -736,7 +733,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {renderLeftSidebar()}
 
           {/* Public Visibility - Common for both tabs */}
-          <div className="mx-5 mt-5 flex items-center justify-between">
+          <div className="mx-5 mt-5 lg:mt-8 flex items-center justify-between">
             <div className="text-[14px] font-bold text-[#161616] flex items-center">
               Public Visibility
               <span className="ml-3 w-[18px] h-[18px]">
@@ -748,12 +745,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <img src={crownIcon} alt="Premium" className="w-[18px] h-[18px]" />
               </span>
               <button
-                className={`w-[30px] h-4 rounded-lg relative ${publicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300'}`}
-                onClick={() => setPublicVisibility(!publicVisibility)}
+                className={`w-[30px] h-4 rounded-lg relative ${selectedTab === 'text' ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')}`}
+                onClick={() => selectedTab === 'text' ? setTextPublicVisibility(!textPublicVisibility) : setImagePublicVisibility(!imagePublicVisibility)}
               >
                 <div
-                  className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${publicVisibility ? 'right-[1px]' : 'left-[1px]'
-                    }`}
+                  className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${selectedTab === 'text' ? (textPublicVisibility ? 'right-[1px]' : 'left-[1px]') : (imagePublicVisibility ? 'right-[1px]' : 'left-[1px]')}`}
                 ></div>
               </button>
             </div>
@@ -761,7 +757,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
 
         {/* 移动端主要内容区域 */}
-        <div className="flex flex-col lg:hidden h-full">
+        <div className="flex flex-col lg:hidden h-full bg-white">
           {/* 移动端标签选择器 */}
           <div className="bg-white p-4 border-b border-gray-200 flex-shrink-0">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative max-w-md mx-auto">
@@ -784,7 +780,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           </div>
 
           {/* 移动端内容 - 可滚动区域 */}
-          <div className="flex-1 overflow-y-auto pb-40">
+          <div className="flex-1 overflow-y-auto">
             {renderContent(selectedTab)}
             
             {/* 移动端控制面板 */}
@@ -804,11 +800,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     <img src={crownIcon} alt="Premium" className="w-4 h-4" />
                   </span>
                   <button
-                    className={`w-[30px] h-4 rounded-lg relative ${publicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300'}`}
-                    onClick={() => setPublicVisibility(!publicVisibility)}
+                    className={`w-[30px] h-4 rounded-lg relative ${selectedTab === 'text' ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')}`}
+                    onClick={() => selectedTab === 'text' ? setTextPublicVisibility(!textPublicVisibility) : setImagePublicVisibility(!imagePublicVisibility)}
                   >
                     <div
-                      className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${publicVisibility ? 'right-[1px]' : 'left-[1px]'}`}
+                      className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${selectedTab === 'text' ? (textPublicVisibility ? 'right-[1px]' : 'left-[1px]') : (imagePublicVisibility ? 'right-[1px]' : 'left-[1px]')}`}
                     ></div>
                   </button>
                 </div>
@@ -820,19 +816,19 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 p-4 z-50">
             <button
               onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
-              disabled={!canGenerate ? false : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
-              className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                !canGenerate
-                  ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
-                  : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
-                  ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
-                  : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
-                }`}
+                            disabled={!canGenerate ? false : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
+                className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                  !canGenerate
+                    ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
+                    : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                    ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
+                    : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
+                  }`}
             >
               <img
                 src={!canGenerate
                   ? subtractColorIcon
-                  : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                  : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
                   ? subtractIcon
                   : subtractColorIcon
                 }
@@ -842,9 +838,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               <span className="font-bold text-lg">20</span>
               <span className="font-bold text-lg">
                 {!canGenerate ? 'Insufficient Credits' :
-                 isGenerating ? 'Generating...' : 
-                 isCheckingCredits ? 'Checking...' :
-                 'Generate'}
+               isGenerating ? 'Generating...' : 
+               'Generate'}
               </span>
             </button>
           </div>
@@ -864,19 +859,19 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         <div className="hidden lg:flex fixed bottom-0 left-0 w-[400px] h-[88px] bg-white items-center justify-center">
           <button
             onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
-            disabled={!canGenerate ? false : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
-            className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-              !canGenerate
-                ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
-                : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
-                ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
-                : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
-              }`}
+                        disabled={!canGenerate ? false : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
+              className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                !canGenerate
+                  ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
+                  : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                  ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
+                  : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
+                }`}
           >
             <img
               src={!canGenerate
                 ? subtractColorIcon
-                : (isGenerating || isCheckingCredits || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
                 ? subtractIcon
                 : subtractColorIcon
               }
@@ -886,9 +881,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <span className="font-bold text-lg">20</span>
             <span className="font-bold text-lg">
               {!canGenerate ? 'Insufficient Credits' :
-               isGenerating ? 'Generating...' : 
-               isCheckingCredits ? 'Checking...' :
-               'Generate'}
+                 isGenerating ? 'Generating...' : 
+                 'Generate'}
             </span>
           </button>
         </div>

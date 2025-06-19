@@ -59,10 +59,10 @@ const PaymentMethodModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full">
         <div className="text-center mb-6">
-          <h3 className="text-xl font-medium text-[#161616] mb-2">Choose Payment Method</h3>
+          <h3 className="text-lg sm:text-xl font-medium text-[#161616] mb-2">Choose Payment Method</h3>
           <p className="text-sm text-[#6B7280]">
             {planTitle} - {price}
           </p>
@@ -87,7 +87,7 @@ const PaymentMethodModal = ({
                 className="sr-only"
                 disabled={isProcessing}
               />
-              <img src={method.icon} alt={method.name} className="w-8 h-8 mr-3" />
+              <img src={method.icon} alt={method.name} className="w-6 h-6 sm:w-8 sm:h-8 mr-3" />
               <span className="text-sm font-medium text-[#161616]">{method.name}</span>
               <div className={`ml-auto w-4 h-4 rounded-full border-2 ${
                 selectedMethod === method.id
@@ -102,18 +102,18 @@ const PaymentMethodModal = ({
           ))}
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1"
+            className="flex-1 order-2 sm:order-1"
             disabled={isProcessing}
           >
             Cancel
           </Button>
           <Button
             onClick={() => onConfirm(selectedMethod)}
-            className="flex-1 bg-[#FF5C07] hover:bg-[#E54A06] text-white"
+            className="flex-1 bg-[#FF5C07] hover:bg-[#E54A06] text-white order-1 sm:order-2"
             disabled={isProcessing}
           >
             {isProcessing ? 'Processing...' : 'Confirm Payment'}
@@ -139,15 +139,15 @@ const SuccessModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="relative">
         {/* 弹窗主体 */}
-        <div className="relative bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 pt-20 max-w-md w-full mx-4 border border-orange-200">
-          {/* credits-big.svg 图片 - 160x160，绝对定位，一半在弹框内，一半在外部 */}
+        <div className="relative bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 sm:p-8 pt-16 sm:pt-20 max-w-md w-full border border-orange-200">
+          {/* credits-big.svg 图片 - 响应式大小，绝对定位，一半在弹框内，一半在外部 */}
           <img 
             src="/images/credits-big.svg" 
             alt="Credits" 
-            className="absolute w-40 h-40 left-1/2 transform -translate-x-1/2 -top-20 z-10"
+            className="absolute w-32 h-32 sm:w-40 sm:h-40 left-1/2 transform -translate-x-1/2 -top-16 sm:-top-20 z-10"
           />
           {/* 关闭按钮 */}
           <button
@@ -160,12 +160,12 @@ const SuccessModal = ({
           </button>
 
           <div className="text-center">
-            <h3 className="text-xl font-medium text-[#161616] mb-2">Subscribe successfully</h3>
+            <h3 className="text-lg sm:text-xl font-medium text-[#161616] mb-2">Subscribe successfully</h3>
             
             {/* 积分显示 */}
-            <div className="text-6xl font-bold text-[#161616] mb-4">+{credits}</div>
+            <div className="text-4xl sm:text-6xl font-bold text-[#161616] mb-4">+{credits}</div>
             
-            <p className="text-sm text-[#6B7280] leading-5 mb-8">
+            <p className="text-sm text-[#6B7280] leading-5 mb-6 sm:mb-8">
               Thank you for your support, now you can start your creative journey!
             </p>
 
@@ -203,34 +203,34 @@ const PricingCard = ({
   onBuyClick?: () => void,
 }) => (
   <div 
-    className={`w-[376px] p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden cursor-pointer transition-all duration-200 border-2 ${highlighted ? 'border-[#FF5C07]' : 'border-[#EDEEF0] hover:border-[#FF5C07]/50'}`}
+    className={`w-full sm:w-[376px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden cursor-pointer transition-all duration-200 border-2 ${highlighted ? 'border-[#FF5C07]' : 'border-[#EDEEF0] hover:border-[#FF5C07]/50'}`}
     onClick={onSelect}
   >
     {popular && (
-      <div className="absolute -top-1 -right-1 px-6 py-2 bg-[#6200E2] text-white font-bold italic text-sm rounded-bl-2xl rounded-tr-2xl">
+      <div className="absolute -top-1 -right-1 px-4 sm:px-6 py-2 bg-[#6200E2] text-white font-bold italic text-xs sm:text-sm rounded-bl-2xl rounded-tr-2xl">
         Popular
       </div>
     )}
-    <div className="flex flex-col items-center gap-8">
-      <div className="flex flex-col items-center gap-6 w-full">
-        <div className="text-center text-[#161616] text-4xl font-bold">
+    <div className="flex flex-col items-center gap-6 sm:gap-8">
+      <div className="flex flex-col items-center gap-4 sm:gap-6 w-full">
+        <div className="text-center text-[#161616] text-2xl sm:text-4xl font-bold">
           {title} {price}
         </div>
         {priceNote && (
           <div className="flex flex-col items-center gap-2">
-            <div className="text-sm text-[#6B7280] text-center whitespace-nowrap">{priceNote}</div>
+            <div className="text-xs sm:text-sm text-[#6B7280] text-center px-2">{priceNote}</div>
             <div className="flex justify-center items-center gap-2">
               <img src={protectIcon} alt="Protect" className="w-3 h-3" />
-              <div className="text-[#FF5C07] text-sm">Cancel anytime</div>
+              <div className="text-[#FF5C07] text-xs sm:text-sm">Cancel anytime</div>
             </div>
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-5 w-full">
+      <div className="flex flex-col gap-4 sm:gap-5 w-full">
         <Button 
           variant={highlighted ? 'gradient' : 'default'}
           disabled={!highlighted}
-          className={`w-full h-[60px] text-xl font-bold !transition-none ${
+          className={`w-full h-12 sm:h-[60px] text-lg sm:text-xl font-bold !transition-none ${
             highlighted 
               ? '!duration-0' 
               : 'border border-[#818181] bg-white text-[#161616]'
@@ -401,35 +401,35 @@ const PricingPage: React.FC = () => {
         </div>
         
         {/* Main Content */}
-        <div className="relative z-10 pt-[60px] flex flex-col items-center">
-          <h1 className="text-5xl font-bold text-[#161616] mb-16">Plans & Pricing</h1>
+        <div className="relative z-10 pt-[60px] flex flex-col items-center px-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#161616] mb-8 sm:mb-12 md:mb-16 text-center">Plans & Pricing</h1>
           
           {/* Toggle for Monthly/Yearly */}
-          <div className="h-12 bg-[#F2F3F5] rounded-3xl inline-flex items-center p-1 mb-16">
+          <div className="h-10 sm:h-12 bg-[#F2F3F5] rounded-3xl inline-flex items-center p-1 mb-8 sm:mb-12 md:mb-16">
             <div 
-              className={`w-[150px] h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
+              className={`w-24 sm:w-[150px] h-8 sm:h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
                 billingPeriod === 'monthly' ? 'bg-white' : 'hover:bg-white/50'
               }`}
               onClick={() => handleBillingPeriodChange('monthly')}
             >
-              <div className={`text-sm font-bold ${billingPeriod === 'monthly' ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
+              <div className={`text-xs sm:text-sm font-bold ${billingPeriod === 'monthly' ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
                 Monthly
               </div>
             </div>
             <div 
-              className={`w-[150px] h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
+              className={`w-32 sm:w-[150px] h-8 sm:h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
                 billingPeriod === 'yearly' ? 'bg-white' : 'hover:bg-white/50'
               }`}
               onClick={() => handleBillingPeriodChange('yearly')}
             >
-              <div className={`text-sm ${billingPeriod === 'yearly' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280] font-medium'}`}>
+              <div className={`text-xs sm:text-sm ${billingPeriod === 'yearly' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280] font-medium'}`}>
                 Yearly(20% off)
               </div>
             </div>
           </div>
           
           {/* Pricing Cards */}
-          <div className="flex gap-5 mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 mb-8 sm:mb-12 md:mb-16 w-full max-w-6xl">
             <PricingCard 
               title="Free" 
               price="" 
@@ -460,34 +460,36 @@ const PricingPage: React.FC = () => {
           </div>
           
           {/* Payment Methods */}
-          <div className="flex items-center gap-4 mb-20">
-            <div className="text-[#6B7280] text-sm">Secure Payment:</div>
-            <img className="h-6" src={payMastercard} alt="Mastercard" />
-            <img className="h-6" src={payVisa} alt="Visa" />
-            <img className="h-6" src={payAmericanExpress} alt="American Express" />
-            <img className="h-6" src={payApplePay} alt="Apple Pay" />
-            <img className="h-6" src={payUnionpay} alt="UnionPay" />
-            <img className="h-6" src={payClicktopay} alt="Click to Pay" />
-            <div className="text-[#6B7280] text-sm">More &gt;&gt;</div>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-12 sm:mb-16 md:mb-20 px-4">
+            <div className="text-[#6B7280] text-xs sm:text-sm mb-2 sm:mb-0">Secure Payment:</div>
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+              <img className="h-4 sm:h-6" src={payMastercard} alt="Mastercard" />
+              <img className="h-4 sm:h-6" src={payVisa} alt="Visa" />
+              <img className="h-4 sm:h-6" src={payAmericanExpress} alt="American Express" />
+              <img className="h-4 sm:h-6" src={payApplePay} alt="Apple Pay" />
+              <img className="h-4 sm:h-6" src={payUnionpay} alt="UnionPay" />
+              <img className="h-4 sm:h-6" src={payClicktopay} alt="Click to Pay" />
+              <div className="text-[#6B7280] text-xs sm:text-sm">More &gt;&gt;</div>
+            </div>
           </div>
           
           {/* FAQ Section */}
           <FAQ />
           
           {/* CTA Section */}
-          <div className="w-full bg-[#F9FAFB] py-24 border-t border-b border-[#F3F4F6]">
-            <div className="max-w-[800px] mx-auto flex flex-col items-center gap-6">
-              <h2 className="text-5xl font-bold text-[#111928] text-center">Get Your Coloring Pages</h2>
-              <p className="text-[#6B7280] text-center">
+          <div className="w-full bg-[#F9FAFB] py-12 sm:py-16 md:py-24 border-t border-b border-[#F3F4F6]">
+            <div className="max-w-[800px] mx-auto flex flex-col items-center gap-4 sm:gap-6 px-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#111928] text-center">Get Your Coloring Pages</h2>
+              <p className="text-[#6B7280] text-center text-sm sm:text-base">
                 One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.
               </p>
               <Button 
                 variant="gradient"
-                className="h-14 px-5 py-2.5 text-xl font-bold flex items-center gap-2"
+                className="h-12 sm:h-14 px-4 sm:px-5 py-2.5 text-lg sm:text-xl font-bold flex items-center gap-2"
                 onClick={() => window.location.href = '/generate'}
               >
                 Try Now
-                <img src={arrowRightIcon} alt="Arrow right" className="w-5 h-5" />
+                <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
           </div>

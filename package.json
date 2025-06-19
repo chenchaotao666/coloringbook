@@ -27,6 +27,7 @@
     "start": "vite",
     "build": "tsc -b && npx vite build",
     "vercel-build": "npm run build",
+    "netlify-build": "npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   }

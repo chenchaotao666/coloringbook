@@ -780,7 +780,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           </div>
 
           {/* 移动端内容 - 可滚动区域 */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto pb-20">
             {renderContent(selectedTab)}
             
             {/* 移动端控制面板 */}

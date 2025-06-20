@@ -9,7 +9,7 @@ import { CategoriesService, Category } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
 const homeIcon = '/images/home.svg';
 const chevronRightIcon = '/images/chevron-right.svg';
-const imageIcon = '/images/image.svg';
+// const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();

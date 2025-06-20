@@ -1,23 +1,36 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-const logo = '/images/logo.svg';
-const intlIcon = '/images/intl.svg';
-const expandIcon = '/images/expand.svg';
-const creditsIcon = '/images/credits.svg';
-const defaultAvatar = '/images/default-avatar.svg';
-import { useLanguage, Language } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage, Language } from '../../contexts/LanguageContext';
+
+// 导入图标
+import logo from '../../../public/images/logo.svg';
+import intlIcon from '../../../public/images/intl.svg';
+import expandIcon from '../../../public/images/expand.svg';
+import creditsIcon from '../../../public/images/credits.svg';
+import defaultAvatar from '../../../public/images/default-avatar.svg';
 
 interface HeaderProps {
   backgroundColor?: 'transparent' | 'white';
 }
 
 const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
-  const { language, setLanguage, t } = useLanguage();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isUserDropdownVisible, setIsUserDropdownVisible] = useState(false);
+  const [isUserDropdownAnimating, setIsUserDropdownAnimating] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);
+  const [isMobileMenuAnimating, setIsMobileMenuAnimating] = useState(false);
+  const [isDesktopLanguageDropdownOpen, setIsDesktopLanguageDropdownOpen] = useState(false);
+  const [isDesktopLanguageVisible, setIsDesktopLanguageVisible] = useState(false);
+  const [isDesktopLanguageAnimating, setIsDesktopLanguageAnimating] = useState(false);
+  const [isMobileLanguageDropdownOpen, setIsMobileLanguageDropdownOpen] = useState(false);
+  const [isMobileLanguageVisible, setIsMobileLanguageVisible] = useState(false);
+  const [isMobileLanguageAnimating, setIsMobileLanguageAnimating] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -25,14 +38,18 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   // 点击外部关闭下拉菜单
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // 桌面端语言选择下拉菜单
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsLanguageDropdownOpen(false);
+        setIsDesktopLanguageDropdownOpen(false);
       }
+      // 用户下拉菜单
       if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
         setIsUserDropdownOpen(false);
       }
+      // 移动端菜单
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
+        setIsMobileLanguageDropdownOpen(false); // 关闭移动端菜单时也关闭语言下拉框
       }
     };
 
@@ -40,25 +57,89 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isMobileMenuOpen, isUserDropdownOpen, isDesktopLanguageDropdownOpen, isMobileLanguageDropdownOpen]);
 
-  // 控制移动端菜单打开时的背景滚动
+  // 控制移动端菜单的显示动画
   useEffect(() => {
     if (isMobileMenuOpen) {
+      // 1. 立即显示DOM
+      setIsMobileMenuVisible(true);
       document.body.classList.add('mobile-menu-open');
+      
+      // 2. 下一帧开始渐入动画
+      const timer = setTimeout(() => {
+        setIsMobileMenuAnimating(true);
+      }, 10);
+      
+      return () => clearTimeout(timer);
     } else {
+      // 1. 立即开始渐出动画
+      setIsMobileMenuAnimating(false);
       document.body.classList.remove('mobile-menu-open');
+      
+      // 2. 延迟隐藏DOM，让退出动画完成
+      const timer = setTimeout(() => {
+        setIsMobileMenuVisible(false);
+      }, 200); // 匹配CSS transition duration
+      
+      return () => clearTimeout(timer);
     }
-
-    // 清理函数
-    return () => {
-      document.body.classList.remove('mobile-menu-open');
-    };
   }, [isMobileMenuOpen]);
+
+  // 控制移动端语言下拉框的显示动画
+  useEffect(() => {
+    if (isMobileLanguageDropdownOpen) {
+      setIsMobileLanguageVisible(true);
+      const timer = setTimeout(() => {
+        setIsMobileLanguageAnimating(true);
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      setIsMobileLanguageAnimating(false);
+      const timer = setTimeout(() => {
+        setIsMobileLanguageVisible(false);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobileLanguageDropdownOpen]);
+
+  // 控制桌面端语言下拉框的显示动画
+  useEffect(() => {
+    if (isDesktopLanguageDropdownOpen) {
+      setIsDesktopLanguageVisible(true);
+      const timer = setTimeout(() => {
+        setIsDesktopLanguageAnimating(true);
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      setIsDesktopLanguageAnimating(false);
+      const timer = setTimeout(() => {
+        setIsDesktopLanguageVisible(false);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isDesktopLanguageDropdownOpen]);
+
+  // 控制用户下拉框的显示动画
+  useEffect(() => {
+    if (isUserDropdownOpen) {
+      setIsUserDropdownVisible(true);
+      const timer = setTimeout(() => {
+        setIsUserDropdownAnimating(true);
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      setIsUserDropdownAnimating(false);
+      const timer = setTimeout(() => {
+        setIsUserDropdownVisible(false);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isUserDropdownOpen]);
 
   const handleLanguageSelect = (lang: Language) => {
     setLanguage(lang);
-    setIsLanguageDropdownOpen(false);
+    setIsDesktopLanguageDropdownOpen(false);
   };
 
   const handleLogout = async () => {
@@ -79,10 +160,22 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
   // 汉堡菜单图标组件
   const HamburgerIcon = () => (
-    <div className="w-6 h-6 flex flex-col justify-center items-center gap-1 cursor-pointer">
-      <div className={`w-5 h-0.5 bg-[#161616] transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-      <div className={`w-5 h-0.5 bg-[#161616] transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
-      <div className={`w-5 h-0.5 bg-[#161616] transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
+    <div className="w-6 h-6 flex justify-center items-center cursor-pointer">
+      {isMobileMenuOpen ? (
+        // 三个竖杆
+        <div className="flex justify-center items-center gap-1">
+          <div className="w-0.5 h-5 bg-[#161616] transition-all duration-300"></div>
+          <div className="w-0.5 h-5 bg-[#161616] transition-all duration-300"></div>
+          <div className="w-0.5 h-5 bg-[#161616] transition-all duration-300"></div>
+        </div>
+      ) : (
+        // 三个横杆
+        <div className="flex flex-col justify-center items-center gap-1">
+          <div className="w-5 h-0.5 bg-[#161616] transition-all duration-300"></div>
+          <div className="w-5 h-0.5 bg-[#161616] transition-all duration-300"></div>
+          <div className="w-5 h-0.5 bg-[#161616] transition-all duration-300"></div>
+        </div>
+      )}
     </div>
   );
 
@@ -117,20 +210,24 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           <div className="relative" ref={dropdownRef}>
             <div 
               className="px-3 py-1.5 rounded-lg flex justify-start items-center gap-1.5 hover:opacity-60 transition-opacity duration-200 cursor-pointer"
-              onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+              onClick={() => setIsDesktopLanguageDropdownOpen(!isDesktopLanguageDropdownOpen)}
             >
               <img src={intlIcon} alt="Language" className="w-5 h-5" />
-              <span className="text-[#161616] text-base font-medium leading-6">{t(`language.${language === 'zh' ? 'chinese' : 'english'}`)}</span>
+              <span className="text-[#161616] text-base font-medium leading-6">{language === 'zh' ? '简体中文' : 'English'}</span>
               <img 
                 src={expandIcon} 
                 alt="Expand" 
-                className={`w-3 h-3 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} 
+                className={`w-3 h-3 transition-transform duration-200 ${isDesktopLanguageDropdownOpen ? 'rotate-180' : ''}`} 
               />
             </div>
 
             {/* 语言下拉菜单 */}
-            {isLanguageDropdownOpen && (
-              <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50">
+            {isDesktopLanguageVisible && (
+              <div className={`absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50 transition-all duration-150 ease-out ${
+                isDesktopLanguageAnimating 
+                  ? 'opacity-100 translate-y-0 scale-100' 
+                  : 'opacity-0 -translate-y-1 scale-95'
+              }`}>
                 <div
                   className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200"
                   onClick={() => handleLanguageSelect('zh')}
@@ -181,8 +278,12 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 </div>
 
                 {/* 用户下拉菜单 */}
-                {isUserDropdownOpen && (
-                  <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[180px] z-50">
+                {isUserDropdownVisible && (
+                  <div className={`absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[180px] z-50 transition-all duration-150 ease-out ${
+                    isUserDropdownAnimating 
+                      ? 'opacity-100 translate-y-0 scale-100' 
+                      : 'opacity-0 -translate-y-1 scale-95'
+                  }`}>
                     <div className="px-4 py-2 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900">{user.username}</p>
                       <p className="text-xs text-gray-500">{user.email}</p>
@@ -238,13 +339,12 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
         {/* 移动端汉堡菜单按钮 */}
         <div className="lg:hidden flex items-center gap-3 pr-4">
-          {/* 移动端用户头像（仅在已登录时显示） */}
+          {/* 移动端积分显示（仅在已登录时显示） */}
           {isAuthenticated && user && (
-            <img
-              className="w-8 h-8 rounded-full object-cover"
-              src={user.avatar || defaultAvatar}
-              alt="头像"
-            />
+            <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg" style={{backgroundColor: '#FAFBFC'}}>
+              <img src={creditsIcon} alt="积分" className="w-4 h-4" />
+              <span className="text-sm font-medium text-orange-600">{user.credits}</span>
+            </div>
           )}
           
           {/* 汉堡菜单按钮 */}
@@ -259,10 +359,14 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
       </div>
 
       {/* 移动端下拉菜单 */}
-      {isMobileMenuOpen && (
+      {isMobileMenuVisible && (
         <div 
           ref={mobileMenuRef}
-          className="lg:hidden fixed top-[70px] right-4 w-72 z-50"
+          className={`lg:hidden fixed top-[60px] right-4 w-60 z-50 transition-all duration-200 ease-out ${
+            isMobileMenuAnimating 
+              ? 'opacity-100 translate-y-0 scale-100' 
+              : 'opacity-0 -translate-y-2 scale-95'
+          }`}
         >
           <div className="bg-white shadow-lg rounded-lg p-1 space-y-0.5 border border-gray-200">
             {/* 用户信息区域 */}
@@ -294,50 +398,53 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               </div>
             ) : null}
             
-            {/* 语言选择 */}
-            <div className="py-2 border-b border-gray-200">
-              <div className="relative inline-flex w-full px-3">
-                <div 
-                  className="w-full inline-flex items-center gap-x-2 py-2 px-3 text-sm font-medium rounded bg-white text-gray-800 hover:bg-gray-50 border border-gray-200 cursor-pointer"
-                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+            {/* 语言选择 - 下拉方式 */}
+            <div className="py-1 border-b border-gray-200">
+              <div className="px-3 relative">
+                <button 
+                  className="flex items-center justify-between w-full py-2 text-sm font-normal text-gray-700 transition-colors duration-200"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsMobileLanguageDropdownOpen(!isMobileLanguageDropdownOpen);
+                  }}
                 >
-                  <span className="whitespace-nowrap text-base font-semibold">{t(`language.${language === 'zh' ? 'chinese' : 'english'}`)}</span>
-                  <svg 
-                    className={`ml-auto size-4 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  >
-                    <path d="m6 9 6 6 6-6"></path>
-                  </svg>
-                </div>
-                {isLanguageDropdownOpen && (
-                  <div className="absolute top-full left-3 right-3 mt-1 bg-white shadow-md rounded-lg border border-gray-200 z-10">
+                  <span>{language === 'zh' ? '简体中文' : 'English'}</span>
+                  <img 
+                    src={expandIcon} 
+                    alt="Expand" 
+                    className={`w-3 h-3 transition-transform duration-200 ${isMobileLanguageDropdownOpen ? 'rotate-180' : ''}`} 
+                  />
+                </button>
+                
+                {/* 下拉菜单 - 浮动样式 */}
+                {isMobileLanguageVisible && (
+                  <div className={`absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 transition-all duration-150 ease-out ${
+                    isMobileLanguageAnimating 
+                      ? 'opacity-100 translate-y-0 scale-100' 
+                      : 'opacity-0 -translate-y-1 scale-95'
+                  }`}>
                     <button
-                      onClick={() => handleLanguageSelect('en')}
-                      className={`block w-full p-2 text-sm text-left transition duration-200 rounded-lg ${
-                        language === 'en' 
-                          ? 'text-[#FF5C07] font-semibold' 
-                          : 'text-gray-900 font-medium hover:bg-gray-50 hover:text-[#FF5C07]'
-                      }`}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setLanguage('zh');
+                        setIsMobileLanguageDropdownOpen(false);
+                      }}
+                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                     >
-                      English
+                      简体中文 {language === 'zh' ? '✓' : ''}
                     </button>
                     <button
-                      onClick={() => handleLanguageSelect('zh')}
-                      className={`block w-full p-2 text-sm text-left transition duration-200 rounded-lg ${
-                        language === 'zh' 
-                          ? 'text-[#FF5C07] font-semibold' 
-                          : 'text-gray-900 font-medium hover:bg-gray-50 hover:text-[#FF5C07]'
-                      }`}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setLanguage('en');
+                        setIsMobileLanguageDropdownOpen(false);
+                      }}
+                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                     >
-                      简体中文
+                      English {language === 'en' ? '✓' : ''}
                     </button>
                   </div>
                 )}
@@ -345,37 +452,37 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             </div>
 
             {/* 导航链接 */}
-            <div className="py-2 border-b border-gray-200">
+            <div className="border-b border-gray-200">
               <Link 
                 to="/categories" 
-                className="inline-block px-3 py-2 text-sm font-normal text-gray-700 hover:text-[#FF5C07] transition-colors duration-200"
+                className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
                 {t('nav.coloringPagesFree')}
               </Link>
             </div>
-            <div className="py-2 border-b border-gray-200">
+            <div className="border-b border-gray-200">
               <Link 
                 to="/image-coloring-page" 
-                className="inline-block px-3 py-2 text-sm font-normal text-gray-700 hover:text-[#FF5C07] transition-colors duration-200"
+                className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
                 {t('nav.imageColoringPage')}
               </Link>
             </div>
-            <div className="py-2 border-b border-gray-200">
+            <div className="border-b border-gray-200">
               <Link 
                 to="/text-coloring-page" 
-                className="inline-block px-3 py-2 text-sm font-normal text-gray-700 hover:text-[#FF5C07] transition-colors duration-200"
+                className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
                 {t('nav.textColoringPage')}
               </Link>
             </div>
-            <div className="py-2 border-b border-gray-200">
+            <div className="border-b border-gray-200">
               <Link 
                 to="/price" 
-                className="inline-block px-3 py-2 text-sm font-normal text-gray-700 hover:text-[#FF5C07] transition-colors duration-200"
+                className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
                 {t('nav.pricing')}
@@ -385,29 +492,29 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             {/* 用户菜单 */}
             {isAuthenticated && user ? (
               <>
-                <div className="py-2 border-b border-gray-200">
+                <div className="border-b border-gray-200">
                   <Link
                     to="/profile"
-                    className="block px-3 py-2 text-sm font-normal text-gray-700 hover:text-[#FF5C07] transition-colors duration-200"
+                    className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
                     个人资料
                   </Link>
                 </div>
-                <div className="py-2">
+                <div>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200 w-full"
+                    className="block w-full text-left px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   >
                     退出登录
                   </button>
                 </div>
               </>
             ) : (
-              <div className="py-2">
+              <div>
                 <Link
                   to="/login"
-                  className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
+                  className="block px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   onClick={handleMobileLinkClick}
                 >
                   登录

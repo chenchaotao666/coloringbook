@@ -38,8 +38,8 @@ const Hero = () => {
             </div>
             
             {/* 统计数据卡片 */}
-            <div className="p-4 sm:p-6 bg-[#F9FAFB] rounded-lg w-full max-w-[350px]">
-              <div className="flex items-center justify-between sm:justify-start sm:gap-10">
+            <div className="p-6 sm:p-6 bg-[#F9FAFB] rounded-lg w-full max-w-[300px] lg:max-w-[350px]">
+              <div className="flex items-center justify-center sm:justify-start gap-8 sm:gap-10">
                 <div className="flex flex-col gap-1 items-center sm:items-start">
                   <div className="text-[#161616] text-xl sm:text-2xl font-bold">1,281</div>
                   <div className="text-[#6B7280] text-xs sm:text-sm text-center sm:text-left">Coloring Pages Free</div>
@@ -71,7 +71,7 @@ const Hero = () => {
           </div>
           
           {/* 右侧图片区域 */}
-          <div className="flex-shrink-0 w-full lg:w-auto flex justify-center mt-6 lg:mt-0">
+          <div className="flex-shrink-0 w-full lg:w-auto flex justify-center mt-2 lg:mt-0">
             <div className="relative w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] lg:max-w-[550px]">
               <div className="w-full aspect-square overflow-hidden rounded-[24px] sm:rounded-[32px] lg:rounded-[46px]">
                 <img 

@@ -110,7 +110,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({ title, description, images, l
 const Features = () => {
   return (
     <div className="bg-white w-full">
-      <div className="bg-white container mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-[100px] xl:py-[120px] flex flex-col items-center gap-12 sm:gap-16 lg:gap-20">
+      <div className="bg-white container mx-auto pt-4 pb-12 sm:px-6 sm:py-20 lg:py-[100px] xl:py-[120px] flex flex-col items-center gap-12 sm:gap-16 lg:gap-20">
         <div className="text-center max-w-[1200px] px-4 sm:px-0">
           <h2 className="text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] xl:text-[52px] font-bold capitalize leading-tight">
             Discover our tools' amazing feats!

@@ -139,9 +139,9 @@ const ImageDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#F9FAFB]">
         <Header backgroundColor="white" />
-        <div className="flex items-center justify-center py-20">
+        <div className="flex items-center justify-center py-12 lg:py-20 px-4">
           <div className="text-center">
-            <div className="text-xl text-[#6B7280]">Loading...</div>
+            <div className="text-lg lg:text-xl text-[#6B7280]">Loading...</div>
           </div>
         </div>
         <Footer />
@@ -153,9 +153,9 @@ const ImageDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#F9FAFB]">
         <Header backgroundColor="white" />
-        <div className="flex items-center justify-center py-20">
+        <div className="flex items-center justify-center py-12 lg:py-20 px-4">
           <div className="text-center">
-            <div className="text-xl text-[#161616] mb-4">Image not found</div>
+            <div className="text-lg lg:text-xl text-[#161616] mb-4">Image not found</div>
             <Button onClick={() => navigate('/')} variant="gradient">
               Go Home
             </Button>
@@ -172,25 +172,25 @@ const ImageDetailPage: React.FC = () => {
     <div className="min-h-screen bg-[#F9FAFB]">
       <Header backgroundColor="white" />
       
-      <main className="max-w-[1170px] mx-auto px-4 py-10">
+      <main className="max-w-[1170px] mx-auto px-4 lg:px-4 py-6 lg:py-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 mb-12">
+        <nav className="flex items-center gap-1 lg:gap-2 mb-4 lg:mb-12 overflow-x-auto scrollbar-hide">
           {breadcrumbPath.map((item, index) => (
             <Fragment key={index}>
               {index > 0 && (
-                <img src={chevronRightIcon} alt=">" className="w-3 h-3" />
+                <img src={chevronRightIcon} alt=">" className="w-3 h-3 flex-shrink-0" />
               )}
               {index === 0 && (
-                <img src={homeIcon} alt="Home" className="w-3 h-3" />
+                <img src={homeIcon} alt="Home" className="w-3 h-3 flex-shrink-0" />
               )}
               {item.current ? (
-                <span className="text-[#6B7280] text-sm font-medium">
+                <span className="text-[#6B7280] text-xs lg:text-sm font-medium whitespace-nowrap">
                   {item.label}
                 </span>
               ) : (
                 <button
                   onClick={() => item.path && navigate(item.path)}
-                  className="text-[#161616] text-sm font-medium hover:text-[#FF5C07] transition-colors"
+                  className="text-[#161616] text-xs lg:text-sm font-medium hover:text-[#FF5C07] transition-colors whitespace-nowrap flex-shrink-0"
                 >
                   {item.label}
                 </button>
@@ -200,34 +200,34 @@ const ImageDetailPage: React.FC = () => {
         </nav>
 
         {/* Main Content */}
-        <div className="flex gap-8 mb-20">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12 lg:mb-20">
           {/* Left Side - Images */}
-          <div ref={leftImagesRef} className="flex gap-4">
+          <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
             {/* Black & White Image */}
-            <div className="max-w-[300px] flex items-start justify-center">
+            <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
               <img
                 src={image.defaultUrl}
                 alt={image.title}
-                className="max-w-full max-h-full object-contain rounded-lg"
+                className="w-full max-w-full h-auto object-contain rounded-lg"
               />
             </div>
             
             {/* Color Image */}
-            <div className="max-w-[300px] flex items-start justify-center">
+            <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
               <img
                 src={image.colorUrl}
                 alt={`${image.title} - Colored`}
-                className="max-w-full max-h-full object-contain rounded-lg"
+                className="w-full max-w-full h-auto object-contain rounded-lg"
               />
             </div>
           </div>
 
           {/* Right Side - Details */}
-          <div className="flex-1 max-w-[524px] flex flex-col">
-            <div className="flex-1 space-y-9">
+          <div className="flex-1 lg:max-w-[524px] flex flex-col">
+            <div className="flex-1 space-y-6 lg:space-y-9">
               {/* Title and Description */}
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold text-[#161616] capitalize leading-5">
+              <div className="space-y-3 lg:space-y-4">
+                <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
                   {image.title}
                 </h1>
                 <p className="text-sm text-[#6B7280] leading-5">
@@ -237,7 +237,7 @@ const ImageDetailPage: React.FC = () => {
 
               {/* Tags */}
               {image.tags && (
-                <div className="space-y-4">
+                <div className="space-y-3 lg:space-y-4">
                   <h3 className="text-base font-medium text-black">Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {parseTags(image.tags).map((tag: string, index: number) => (
@@ -253,32 +253,28 @@ const ImageDetailPage: React.FC = () => {
               )}
             </div>
 
-            {/* Download Buttons - 智能对齐 */}
-            <div 
-              className="flex gap-3 mt-auto"
-              style={{
-                minHeight: '60px',
-                alignSelf: 'stretch'
-              }}
-            >
+            {/* Download Buttons - 响应式布局 */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto">
               <Button
                 onClick={() => handleDownload('png')}
                 disabled={isDownloading.png}
                 variant="gradient"
-                className="flex-1 h-[60px] text-xl font-bold"
+                className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
               >
-                <img src={downloadIcon} alt="Download" className="w-7 h-7 mr-2" />
-                {isDownloading.png ? 'Downloading...' : 'Download PNG'}
+                <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
+                <span className="hidden sm:inline">{isDownloading.png ? 'Downloading...' : 'Download PNG'}</span>
+                <span className="sm:hidden">{isDownloading.png ? 'PNG...' : 'PNG'}</span>
               </Button>
               
               <Button
                 onClick={() => handleDownload('pdf')}
                 disabled={isDownloading.pdf}
                 variant="gradient"
-                className="flex-1 h-[60px] text-xl font-bold"
+                className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
               >
-                <img src={downloadIcon} alt="Download" className="w-7 h-7 mr-2" />
-                {isDownloading.pdf ? 'Downloading...' : 'Download PDF'}
+                <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
+                <span className="hidden sm:inline">{isDownloading.pdf ? 'Downloading...' : 'Download PDF'}</span>
+                <span className="sm:hidden">{isDownloading.pdf ? 'PDF...' : 'PDF'}</span>
               </Button>
             </div>
           </div>
@@ -293,11 +289,11 @@ const ImageDetailPage: React.FC = () => {
           }
 
           return (
-            <div className="space-y-12 mb-20">
+            <div className="space-y-8 lg:space-y-12 mb-4 lg:mb-20">
               {/* Section 1 - 图片特色 */}
               {additionalInfo.features && additionalInfo.features.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-black mb-6">🎁 图片特色</h2>
+                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎁 图片特色</h2>
                   <div className="text-sm text-[#6B7280] leading-5 space-y-2">
                     {additionalInfo.features.map((feature: string, index: number) => (
                       <p key={index}>• {feature}</p>
@@ -309,7 +305,7 @@ const ImageDetailPage: React.FC = () => {
               {/* Section 2 - 适合人群 */}
               {additionalInfo.suitableFor && additionalInfo.suitableFor.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-black mb-6">💖 适合人群</h2>
+                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💖 适合人群</h2>
                   <div className="text-sm text-[#6B7280] leading-5 space-y-2">
                     {additionalInfo.suitableFor.map((suitable: string, index: number) => (
                       <p key={index}>• {suitable}</p>
@@ -321,7 +317,7 @@ const ImageDetailPage: React.FC = () => {
               {/* Section 3 - 涂色建议 */}
               {additionalInfo.coloringSuggestions && additionalInfo.coloringSuggestions.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-black mb-6">🎨 涂色建议</h2>
+                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎨 涂色建议</h2>
                   <div className="text-sm text-[#6B7280] leading-5 space-y-2">
                     {additionalInfo.coloringSuggestions.map((suggestion: string, index: number) => (
                       <p key={index}>• {suggestion}</p>
@@ -333,7 +329,7 @@ const ImageDetailPage: React.FC = () => {
               {/* Section 4 - 创意用途 */}
               {additionalInfo.creativeUses && additionalInfo.creativeUses.length > 0 && (
                 <section>
-                  <h2 className="text-2xl font-bold text-black mb-6">💡 创意用途</h2>
+                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💡 创意用途</h2>
                   <div className="text-sm text-[#6B7280] leading-5 space-y-2">
                     {additionalInfo.creativeUses.map((use: string, index: number) => (
                       <p key={index}>• {use}</p>
@@ -348,12 +344,12 @@ const ImageDetailPage: React.FC = () => {
         {/* You Might Also Like */}
         {relatedImages.length > 0 && (
           <section>
-            <h2 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-12 leading-relaxed lg:leading-[1.6]">
+            <h2 className="text-center text-[#161616] text-2xl lg:text-3xl xl:text-[46px] font-bold capitalize mb-8 lg:mb-12 leading-relaxed lg:leading-[1.6] px-4">
               You Might Also Like
             </h2>
             
             {/* Related Images Grid */}
-            <div className="mb-20">
+            <div className="mb-12 lg:mb-20">
               <MasonryGrid 
                 images={relatedImages}
                 isLoading={false}

@@ -18,8 +18,9 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.imageColoringPage': '图片涂色页',
     'nav.pricing': '价格',
     'nav.login': '登录',
-    'language.chinese': '中文',
+    'language.chinese': '简体中文',
     'language.english': 'English',
+    'language.current': '简体中文',
   },
   en: {
     'nav.coloringPagesFree': 'Coloring Pages Free',
@@ -27,8 +28,9 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.imageColoringPage': 'Image Coloring Page',
     'nav.pricing': 'Pricing',
     'nav.login': 'Login',
-    'language.chinese': '中文',
+    'language.chinese': '简体中文',
     'language.english': 'English',
+    'language.current': 'English',
   },
 };
 
@@ -39,12 +41,22 @@ interface LanguageProviderProps {
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
 
-  const t = (key: string): string => {
-    return translations[language][key] || key;
+  console.log('LanguageProvider render, current language:', language);
+
+  const handleSetLanguage = (lang: Language) => {
+    console.log('🔥 handleSetLanguage called with:', lang);
+    setLanguage(lang);
   };
 
+  const t = (key: string): string => {
+    const translation = translations[language]?.[key];
+    return translation || key;
+  };
+
+  console.log('LanguageProvider returning context with language:', language);
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -200,15 +200,7 @@ class GenerateService {
       return [];
     }
   }
-
-  /**
-   * 轮询任务直到完成
-   */
-  async pollTaskUntilComplete(taskId: string, onProgress?: (status: TaskStatus) => void): Promise<TaskStatus> {
-    const { TaskService } = await import('./taskService');
-    return TaskService.pollTaskUntilComplete(taskId, onProgress);
-  }
-
+  
   /**
    * 检查用户是否可以生成图片（积分检查）
    */

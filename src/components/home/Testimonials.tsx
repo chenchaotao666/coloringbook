@@ -9,7 +9,7 @@ interface TestimonialItemProps {
 
 const TestimonialItem: React.FC<TestimonialItemProps> = ({ content, name, position }) => {
   return (
-    <div className="w-full max-w-[585px] flex flex-col justify-start items-center gap-4 sm:gap-6 p-4 sm:p-6">
+    <div className="w-full max-w-[585px] flex flex-col justify-start items-center gap-4 sm:gap-6 px-4 sm:px-6 sm:py-6">
       <div className="w-full max-w-[500px] text-center text-[#6B7280] text-sm sm:text-base leading-5 sm:leading-6">
         {content}
       </div>
@@ -30,7 +30,7 @@ const TestimonialItem: React.FC<TestimonialItemProps> = ({ content, name, positi
 
 const Testimonials = () => {
   return (
-    <div className="w-full px-4 sm:px-6 my-16 sm:my-20">
+    <div className="w-full px-4 sm:px-6 my-12 sm:my-20 lg:my-24">
       <div className="container mx-auto flex flex-col justify-center items-center gap-6 sm:gap-8">
         <h2 className="w-full text-center text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold capitalize px-4 sm:px-0">
           What Our Users Say

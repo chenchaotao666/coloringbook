@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 
 const   CallToAction = () => {
   return (
-    <div className="w-full py-16 sm:py-20 lg:py-24 bg-[#F9FAFB] border-y border-[#F3F4F6]">
+    <div className="w-full py-12 lg:py-16 sm:py-20 lg:py-24 bg-[#F9FAFB] border-y border-[#F3F4F6]">
       <div className="w-full flex justify-center items-center px-4 sm:px-6">
         <div className="w-full max-w-[800px] flex flex-col justify-start items-center gap-4 sm:gap-6">
           <h2 className="text-center text-[#111928] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold leading-tight sm:leading-[1.25] lg:leading-[57.5px] px-4 sm:px-0">

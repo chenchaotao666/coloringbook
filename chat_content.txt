@@ -47,3 +47,7 @@ JWT_SECRET="5e4471f15927822cb4e9fd50a61567ecd09bd0eacbd5902d575dc45117d333fd"
 JWT_REFRESH_SECRET="0bf2d41026e7512b6ac03adf74c4f8618b0840badb5f9a5ff372c8819cef8484"
 CORS_ORIGIN="https://coloringbook-lake.vercel.app"
 NODE_ENV="production"
+
+调整 Example 图片的框高度，尝试和生成图片一样高
+切换tab的时候，滚动条移动到最上面
+图片的缩放动效有点卡，是否去掉，还是看看别人怎么做的

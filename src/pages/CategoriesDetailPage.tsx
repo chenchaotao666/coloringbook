@@ -168,9 +168,9 @@ const CategoriesDetailPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="w-full bg-[#F9FAFB] pb-16 md:pb-20 relative">
+      <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb */}
-        <div className="container mx-auto px-4 py-10 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
           <div className="flex items-center gap-2.5">
             <button 
               onClick={() => navigate('/')}
@@ -193,22 +193,13 @@ const CategoriesDetailPage: React.FC = () => {
 
         <div className="container mx-auto px-4 max-w-[1200px]">
           {/* Category Title */}
-          <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-10 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
+          <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
             {category.displayName}
           </h1>
 
-          {/* Category Stats */}
-          {totalCount > 0 && (
-            <div className="text-center mb-6">
-              <p className="text-[#6B7280] text-sm">
-                Showing {filteredImages.length} of {totalCount} images
-              </p>
-            </div>
-          )}
-
           {/* Subcategories Tags */}
           {subcategories.length > 0 && (
-            <div className="flex justify-center items-center gap-2 flex-wrap mb-16">
+            <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-16">
               {/* All标签 */}
               <button 
                 onClick={() => handleTagClick('All')}
@@ -242,7 +233,7 @@ const CategoriesDetailPage: React.FC = () => {
           )}
 
           {/* Images Grid */}
-          <div className="mb-20">
+          <div className="mb-8 lg:mb-20">
             {filteredImages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="text-center">

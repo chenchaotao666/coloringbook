@@ -75,9 +75,9 @@ const CategoriesPage: React.FC = () => {
   // 主分类列表页面
   return (
     <Layout>
-      <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
+      <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}
-        <div className="container mx-auto px-4 py-10 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
           <div className="flex items-center gap-2.5">
             <button 
               onClick={() => navigate('/')}
@@ -92,20 +92,20 @@ const CategoriesPage: React.FC = () => {
         </div>
         
         {/* Page Title */}
-        <div className="container mx-auto text-center mb-8">
-          <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-10 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
+        <div className="container mx-auto text-center mb-4 lg:mb-8">
+          <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
             {isLoadingCategories ? 'Loading...' : `${categories.length} categories to explore`}
           </h1>
         </div>
         
         {/* Search Bar */}
-        <div className="container mx-auto flex justify-center mb-20">
+        <div className="container mx-auto flex justify-center mb-8 lg:mb-16">
           <form onSubmit={handleSearchSubmit} className="relative w-full max-w-[630px]">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter the category name you want to search"
+              placeholder="Enter the category name to search"
               className="w-full h-[60px] px-4 py-2 bg-white border border-[#EDEEF0] rounded-lg text-base focus:outline-none focus:border-gray-300 transition-colors"
             />
             <Button 

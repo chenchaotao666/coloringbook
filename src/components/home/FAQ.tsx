@@ -80,7 +80,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 my-16 sm:my-20 flex flex-col items-center">
+    <div className="container mx-auto px-4 sm:px-6 mt-12 lg:mt-16 sm:mt-20 mb-8 lg:mb-16 sm:mb-20 flex flex-col items-center">
       {/* 标题 */}
       <h2 className="text-center text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-0">
         Frequently Asked Questions

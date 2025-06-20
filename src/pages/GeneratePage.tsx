@@ -4,6 +4,7 @@ import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import CircularProgress from '../components/ui/CircularProgress';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
+import BackToTop from '../components/common/BackToTop';
 import {
   getCenterImageSize,
   getImageSize,
@@ -40,6 +41,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // 控制删除确认对话框的显示
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+
+  // 移动端内容滚动容器的引用
+  const mobileContentRef = React.useRef<HTMLDivElement>(null);
 
   // 使用我们创建的 Hook 来管理状态和 API 调用
   const {
@@ -219,6 +223,34 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       console.log('Report image:', selectedImage);
       setShowMoreMenu(false);
     }
+  };
+
+  // 移动端标签切换处理函数 - 添加滚动到顶部功能
+  const handleMobileTabChange = (tab: 'text' | 'image') => {
+    // 检查是否是移动端
+    const isMobile = window.innerWidth < 1024; // lg断点
+    
+    // 如果是移动端且标签发生变化，则滚动到顶部
+    if (isMobile && tab !== selectedTab) {
+      // 使用ref直接访问移动端内容容器
+      if (mobileContentRef.current) {
+        mobileContentRef.current.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        });
+      } else {
+        // 备用方案：滚动整个窗口
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        });
+      }
+    }
+    
+    // 设置选中的标签
+    setSelectedTab(tab);
   };
 
   // 通用内容渲染方法
@@ -759,20 +791,20 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         {/* 移动端主要内容区域 */}
         <div className="flex flex-col lg:hidden h-full bg-white">
           {/* 移动端标签选择器 */}
-          <div className="bg-white p-4 border-b border-gray-200 flex-shrink-0">
+          <div className="bg-white px-4 pb-4 lg:pt-4 border-b border-gray-200 flex-shrink-0">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative max-w-md mx-auto">
               <div
                 className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[calc(50%-4px)] bg-white left-1' : 'w-[calc(50%-4px)] bg-white right-1'}`}
               ></div>
               <button
                 className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                onClick={() => setSelectedTab('text')}
+                onClick={() => handleMobileTabChange('text')}
               >
                 Text to Image
               </button>
               <button
                 className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                onClick={() => setSelectedTab('image')}
+                onClick={() => handleMobileTabChange('image')}
               >
                 Image to Image
               </button>
@@ -780,7 +812,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           </div>
 
           {/* 移动端内容 - 可滚动区域 */}
-          <div className="flex-1 overflow-y-auto pb-56">
+          <div ref={mobileContentRef} className="flex-1 overflow-y-auto pb-52">
             {renderContent(selectedTab)}
             
             {/* 移动端控制面板 */}
@@ -898,6 +930,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         cancelText="Cancel"
         confirmButtonVariant="danger"
       />
+
+      {/* 回到顶部按钮 - 移动端使用专用滚动容器 */}
+      <div className="lg:hidden">
+        <BackToTop scrollContainer={mobileContentRef.current} />
+      </div>
+      {/* 桌面端使用默认的window滚动 */}
+      <div className="hidden lg:block">
+        <BackToTop />
+      </div>
     </LayoutNoFooter>
   );
 };

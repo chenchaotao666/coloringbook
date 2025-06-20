@@ -34,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
 
   // 点击外部关闭下拉菜单
   useEffect(() => {
@@ -46,8 +47,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
       if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
         setIsUserDropdownOpen(false);
       }
-      // 移动端菜单
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+      // 移动端菜单 - 排除汉堡菜单按钮的点击
+      if (mobileMenuRef.current && 
+          !mobileMenuRef.current.contains(event.target as Node) &&
+          hamburgerButtonRef.current &&
+          !hamburgerButtonRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
         setIsMobileLanguageDropdownOpen(false); // 关闭移动端菜单时也关闭语言下拉框
       }
@@ -160,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
   // 汉堡菜单图标组件
   const HamburgerIcon = () => (
-    <div className="w-6 h-6 flex justify-center items-center cursor-pointer">
+    <div className="w-6 h-6 flex justify-center items-center">
       {isMobileMenuOpen ? (
         // 三个竖杆
         <div className="flex justify-center items-center gap-1">
@@ -349,8 +353,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           
           {/* 汉堡菜单按钮 */}
           <button
+            ref={hamburgerButtonRef}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
             aria-label="打开菜单"
           >
             <HamburgerIcon />

@@ -143,27 +143,6 @@ class GenerateService {
   }
 
   /**
-   * 获取用户任务列表
-   */
-  async getUserTasks(options?: {
-    status?: string;
-    type?: string;
-    currentPage?: number;
-    pageSize?: number;
-  }): Promise<UserTasksResponse> {
-    const { TaskService } = await import('./taskService');
-    return TaskService.getUserTasks(options);
-  }
-
-  /**
-   * 取消任务
-   */
-  async cancelTask(taskId: string): Promise<boolean> {
-    const { TaskService } = await import('./taskService');
-    return TaskService.cancelTask(taskId);
-  }
-
-  /**
    * 获取示例图片
    */
   async getExampleImages(category: 'text' | 'image', pageSize: number = 3): Promise<HomeImage[]> {
@@ -200,7 +179,7 @@ class GenerateService {
       return [];
     }
   }
-  
+
   /**
    * 检查用户是否可以生成图片（积分检查）
    */

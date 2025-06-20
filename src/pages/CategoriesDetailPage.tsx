@@ -25,7 +25,6 @@ const CategoriesDetailPage: React.FC = () => {
   const [selectedRatio, setSelectedRatio] = useState<'3:4' | '4:3' | '1:1'>('3:4');
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
 
   // 处理标签过滤
   const handleTagClick = (tag: string) => {
@@ -69,7 +68,6 @@ const CategoriesDetailPage: React.FC = () => {
       }
       
       setHasMore(result.hasMore);
-      setTotalCount(result.totalCount);
       setCurrentPage(page);
     } catch (error) {
       console.error('Failed to load category images:', error);

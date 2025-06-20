@@ -9,7 +9,7 @@ const LayoutNoFooter: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Header />
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden pt-[70px]">
         {children}
       </main>
     </div>

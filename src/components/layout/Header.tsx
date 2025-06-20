@@ -185,7 +185,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
   return (
     <>
-      <div className={`relative w-full h-[70px] py-[15px] ${bgClass} flex justify-between items-center z-20`}>
+      <div className={`fixed top-0 left-0 right-0 w-full h-[70px] py-[15px] ${bgClass} bg-opacity-98 backdrop-blur-sm flex justify-between items-center z-50`}>
         {/* Logo */}
         <Link to="/" className="relative z-10 pl-4 sm:pl-5 flex justify-start items-center gap-1 hover:opacity-80 transition-opacity duration-200">
           <img src={logo} alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
@@ -341,25 +341,29 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           )}
         </div>
 
-        {/* 移动端汉堡菜单按钮 */}
-        <div className="lg:hidden flex items-center gap-3 pr-4">
+        {/* 移动端右侧区域 */}
+        <div className="lg:hidden flex items-center">
           {/* 移动端积分显示（仅在已登录时显示） */}
           {isAuthenticated && user && (
-            <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg" style={{backgroundColor: '#FAFBFC'}}>
-              <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-              <span className="text-sm font-medium text-orange-600">{user.credits}</span>
+            <div className="pr-3">
+              <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg" style={{backgroundColor: '#FAFBFC'}}>
+                <img src={creditsIcon} alt="积分" className="w-4 h-4" />
+                <span className="text-sm font-medium text-orange-600">{user.credits}</span>
+              </div>
             </div>
           )}
-          
+
           {/* 汉堡菜单按钮 */}
-          <button
-            ref={hamburgerButtonRef}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
-            aria-label="打开菜单"
-          >
-            <HamburgerIcon />
-          </button>
+          <div className="pr-4">
+            <button
+              ref={hamburgerButtonRef}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              aria-label="打开菜单"
+            >
+              <HamburgerIcon />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -367,7 +371,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
       {isMobileMenuVisible && (
         <div 
           ref={mobileMenuRef}
-          className={`lg:hidden fixed top-[60px] right-4 w-60 z-50 transition-all duration-200 ease-out ${
+          className={`lg:hidden fixed top-[70px] right-4 w-60 z-50 transition-all duration-200 ease-out ${
             isMobileMenuAnimating 
               ? 'opacity-100 translate-y-0 scale-100' 
               : 'opacity-0 -translate-y-2 scale-95'

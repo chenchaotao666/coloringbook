@@ -291,10 +291,10 @@ const CategoriesDetailPage: React.FC = () => {
                     onChange={handleRatioChange}
                   />
                   
-                  <div className="flex items-center gap-1 px-3 py-2 bg-[#F9FAFB] rounded-lg">
+                  {/* <div className="flex items-center gap-1 px-3 py-2 bg-[#F9FAFB] rounded-lg">
                     <img src={imageIcon} alt="Outputs" className="w-5 h-5" />
                     <span className="text-[#6B7280] text-base font-normal leading-5">1 Outputs</span>
-                  </div>
+                  </div> */}
                 </div>
                 
                 <Button 

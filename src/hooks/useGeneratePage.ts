@@ -351,8 +351,17 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
   // 检查用户积分
   const checkUserCredits = useCallback(async () => {
     try {
-      
       const { UserService } = await import('../services/userService');
+      
+      // 先检查是否已登录
+      if (!UserService.isLoggedIn()) {
+        updateState({ 
+          userCredits: 0, 
+          canGenerate: false
+        });
+        return;
+      }
+      
       const user = await UserService.getCurrentUser();
       
       if (user) {
@@ -392,8 +401,25 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         updateState({ isLoadingImageExamples: true });
       }
       
-      // 获取当前用户ID
       const { UserService } = await import('../services/userService');
+      
+      // 先检查是否已登录
+      if (!UserService.isLoggedIn()) {
+        // 如果用户未登录，清空生成历史
+        updateState({ 
+          generatedImages: [], 
+          textGeneratedImages: [],
+          imageGeneratedImages: [],
+          isLoadingTextExamples: false,
+          isLoadingImageExamples: false,
+          isInitialDataLoaded: true,  // 即使没有用户也标记为加载完成
+          hasTextToImageHistory: false,
+          hasImageToImageHistory: false
+        });
+        return;
+      }
+      
+      // 获取当前用户ID
       const user = await UserService.getCurrentUser();
       
       if (user) {

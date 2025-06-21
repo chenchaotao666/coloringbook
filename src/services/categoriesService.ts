@@ -25,7 +25,7 @@ export class CategoriesService {
   // 获取所有分类
   static async getCategories(): Promise<Category[]> {
     try {
-      const data = await ApiUtils.get<{ categories: Category[] }>('/api/categories');
+      const data = await ApiUtils.get<{ categories: Category[] }>('/api/images/categories');
       const rawCategories = data.categories || [];
       
       // 处理分类缩略图URL，确保都是绝对路径
@@ -42,7 +42,7 @@ export class CategoriesService {
   // 根据名称获取分类
   static async getCategoryByName(categoryName: string): Promise<Category | null> {
     try {
-      const rawCategory = await ApiUtils.get<Category>(`/api/categories/${categoryName}`);
+      const rawCategory = await ApiUtils.get<Category>(`/api/images/categories/${categoryName}`);
       
       // 处理分类缩略图URL，确保是绝对路径
       const category = this.processCategoryUrls(rawCategory);

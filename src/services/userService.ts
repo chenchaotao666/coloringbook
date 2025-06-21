@@ -87,7 +87,7 @@ export class UserService {
    */
   static async register(data: RegisterRequest): Promise<User> {
     try {
-      const response = await ApiUtils.post<User>('/api/users/register', data);
+      const response = await ApiUtils.post<User>('/api/auth/register', data);
       return response;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -102,7 +102,7 @@ export class UserService {
    */
   static async login(data: LoginRequest, rememberMe: boolean = true): Promise<LoginResponse> {
     try {
-      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/users/login', data);
+      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/auth/login', data);
 
       console.log('loginData: ', loginData);
       
@@ -132,11 +132,11 @@ export class UserService {
    */
   static async logout(): Promise<void> {
     try {
+      // 可以调用服务器端登出接口（如果有的话）
+      await ApiUtils.post('/api/auth/logout', {}, true);
+
       // 清除本地令牌
       ApiUtils.clearTokens();
-      
-      // 可以调用服务器端登出接口（如果有的话）
-      // await ApiUtils.post('/api/users/logout', {}, true);
     } catch (error) {
       console.error('Logout error:', error);
       // 即使服务器端登出失败，也要清除本地令牌
@@ -205,7 +205,7 @@ export class UserService {
    */
   static async recharge(data: RechargeRequest): Promise<RechargeResponse> {
     try {
-      return await ApiUtils.post<RechargeResponse>('/api/users/recharge', data, true);
+      return await ApiUtils.post<RechargeResponse>('/api/recharge/recharge', data, true);
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -224,7 +224,7 @@ export class UserService {
         throw new ApiError('1010', '刷新令牌不存在');
       }
 
-      const tokens = await ApiUtils.post<AuthTokens>('/api/users/refresh-token', {
+      const tokens = await ApiUtils.post<AuthTokens>('/api/users/auth/refresh-token', {
         refreshToken,
       });
 

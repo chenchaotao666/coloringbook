@@ -186,6 +186,12 @@ class GenerateService {
   async canUserGenerate(): Promise<{ canGenerate: boolean; reason?: string }> {
     try {
       const { UserService } = await import('./userService');
+      
+      // 先检查是否已登录
+      if (!UserService.isLoggedIn()) {
+        return { canGenerate: false, reason: '请先登录' };
+      }
+      
       const user = await UserService.getCurrentUser();
       
       if (!user) {

@@ -217,17 +217,31 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
             </div>
           ) : (
             <>
-              <MasonryGrid
-                images={images}
-                isLoading={loading}
-                emptyState={{
-                  icon: "🎨",
-                  title: "No creations yet",
-                  description: "Start creating your first coloring page!"
-                }}
-                renderCard={renderCard}
-                className="mb-8"
-              />
+                        <MasonryGrid
+            images={images}
+            isLoading={loading}
+            emptyState={{
+              icon: noResultIcon,
+              title: "No creations yet",
+              description: "Start creating your first coloring page!",
+              actionButton: {
+                text: "Create Now",
+                onClick: () => {
+                  // 根据当前筛选类型跳转到对应页面
+                  if (selectedType === 'text2image') {
+                    navigate('/text-coloring-page');
+                  } else if (selectedType === 'image2image') {
+                    navigate('/image-coloring-page');
+                  } else {
+                    // 默认跳转到text to image页面
+                    navigate('/text-coloring-page');
+                  }
+                }
+              }
+            }}
+            renderCard={renderCard}
+            className="mb-8"
+          />
 
               {/* 加载更多按钮 */}
               {hasMore && images.length > 0 && (
@@ -238,21 +252,6 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loadingMore ? 'Loading...' : 'Load More'}
-                  </button>
-                </div>
-              )}
-
-              {/* 空状态（当没有图片时） */}
-              {images.length === 0 && !loading && (
-                <div className="text-center py-20">
-                  <img src={noResultIcon} alt="No creations" className="w-32 h-32 mx-auto mb-6 opacity-50" />
-                  <h3 className="text-xl font-medium text-gray-900 mb-2">No creations yet</h3>
-                  <p className="text-gray-600 mb-6">Start creating your first coloring page!</p>
-                  <button
-                    onClick={() => navigate('/generate')}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Create Now
                   </button>
                 </div>
               )}

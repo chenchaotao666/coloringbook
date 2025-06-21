@@ -9,6 +9,10 @@ interface MasonryGridProps {
     icon: string;
     title: string;
     description: string;
+    actionButton?: {
+      text: string;
+      onClick: () => void;
+    };
   };
   onImageClick?: (image: HomeImage) => void;
   className?: string;
@@ -35,13 +39,31 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
   if (images.length === 0 && emptyState) {
     return (
-      <div className={`w-full flex flex-col items-center justify-center py-12 sm:py-16 ${className}`}>
-        <div className="text-center px-4">
-          <div className="text-4xl sm:text-6xl mb-4">{emptyState.icon}</div>
-          <h3 className="text-lg sm:text-xl font-semibold text-[#161616] mb-2">{emptyState.title}</h3>
-          <p className="text-[#6B7280] text-sm sm:text-base max-w-md">
+      <div className={`w-full flex flex-col items-center justify-center py-16 ${className}`}>
+        <div className="text-center">
+          {/* 检查icon是否是图片路径（包含.svg, .png, .jpg等）还是emoji */}
+          {emptyState.icon.includes('.') ? (
+            <div className="mb-6">
+              <img 
+                src={emptyState.icon} 
+                alt={emptyState.title} 
+                className="w-[305px] h-[200px] mx-auto"
+              />
+            </div>
+          ) : (
+            <div className="text-6xl mb-4">{emptyState.icon}</div>
+          )}
+          <p className="text-[#6B7280] text-base font-normal leading-6 mb-6">
             {emptyState.description}
           </p>
+          {emptyState.actionButton && (
+            <button
+              onClick={emptyState.actionButton.onClick}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              {emptyState.actionButton.text}
+            </button>
+          )}
         </div>
       </div>
     );

@@ -211,25 +211,53 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
           )}
 
           {/* 元信息 */}
-          <div className="w-full flex items-center justify-between text-xs text-gray-500">
-            <span>{formatDate(image.createdAt)}</span>
-            <div className="flex items-center gap-2">
-              {/* 类型标签 */}
-              <span className={`px-2 py-1 rounded text-xs font-medium ${
-                image.type === 'text2image' 
-                  ? 'bg-blue-100 text-blue-800' 
-                  : 'bg-green-100 text-green-800'
-              }`}>
-                {image.type === 'text2image' ? 'Text' : 'Image'}
-              </span>
-              {/* 公开状态标签 */}
-              <span className={`px-2 py-1 rounded ${
-                image.isPublic 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-gray-100 text-gray-700'
-              }`}>
-                {image.isPublic ? 'Public' : 'Private'}
-              </span>
+          <div className="w-full">
+            {/* 移动端：垂直布局 */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">{formatDate(image.createdAt)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {/* 类型标签 */}
+                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  image.type === 'text2image' 
+                    ? 'bg-blue-100 text-blue-800' 
+                    : 'bg-green-100 text-green-800'
+                }`}>
+                  {image.type === 'text2image' ? 'Text' : 'Image'}
+                </span>
+                {/* 公开状态标签 */}
+                <span className={`px-2 py-1 rounded text-xs ${
+                  image.isPublic 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-gray-100 text-gray-700'
+                }`}>
+                  {image.isPublic ? 'Public' : 'Private'}
+                </span>
+              </div>
+            </div>
+            
+            {/* 桌面端：水平布局 */}
+            <div className="hidden sm:flex items-center justify-between text-xs text-gray-500">
+              <span>{formatDate(image.createdAt)}</span>
+              <div className="flex items-center gap-2">
+                {/* 类型标签 */}
+                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  image.type === 'text2image' 
+                    ? 'bg-blue-100 text-blue-800' 
+                    : 'bg-green-100 text-green-800'
+                }`}>
+                  {image.type === 'text2image' ? 'Text' : 'Image'}
+                </span>
+                {/* 公开状态标签 */}
+                <span className={`px-2 py-1 rounded text-xs ${
+                  image.isPublic 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-gray-100 text-gray-700'
+                }`}>
+                  {image.isPublic ? 'Public' : 'Private'}
+                </span>
+              </div>
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
 import RatioSelector from '../components/ui/RatioSelector';
-import Breadcrumb, { BreadcrumbItem } from '../components/common/Breadcrumb';
+import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
 // const imageIcon = '/images/image.svg';

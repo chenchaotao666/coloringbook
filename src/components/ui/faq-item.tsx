@@ -1,6 +1,6 @@
 import React from 'react';
-const openIcon = '/images/open.svg';
-const closeIcon = '/images/close.svg';
+const expandIcon = '/images/expand.svg';
+const expandColorIcon = '/images/expand-color.svg';
 
 interface FaqItemProps {
   question: string;
@@ -20,9 +20,9 @@ const FaqItem: React.FC<FaqItemProps> = ({ question, answer, isOpen, onToggle })
           {question}
         </div>
         <img 
-          src={isOpen ? closeIcon : openIcon} 
-          alt={isOpen ? "Close" : "Open"} 
-          className="w-6 h-6"
+          src={isOpen ? expandColorIcon : expandIcon} 
+          alt={isOpen ? "Collapse" : "Expand"} 
+          className={`w-6 h-6 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </div>
       {isOpen && answer && (

@@ -348,17 +348,6 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
         {/* 移动端右侧区域 */}
         <div className="lg:hidden flex items-center">
-          {/* 调色板图标 */}
-          <div className="pr-3">
-            <Link 
-              to="/image-coloring-page"
-              className="flex items-center justify-center p-1 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
-              style={{backgroundColor: '#FAFBFC'}}
-            >
-              <img src={colorPaletteIcon} alt="Image Coloring Page" className="w-6 h-6" />
-            </Link>
-          </div>
-
           {/* 移动端积分显示（仅在已登录时显示） */}
           {isAuthenticated && user && (
             <div className="pr-3">
@@ -372,6 +361,16 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               </Link>
             </div>
           )}
+
+          {/* 调色板图标 */}
+          <div className="pr-3">
+            <Link 
+              to="/image-coloring-page"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
+            >
+              <img src={colorPaletteIcon} alt="Image Coloring Page" className="w-6 h-6" />
+            </Link>
+          </div>
 
           {/* 汉堡菜单按钮 */}
           <div className="pr-4">

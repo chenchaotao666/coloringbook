@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-const openIcon = '/images/open.svg';
-const closeIcon = '/images/close.svg';
+const expandDefaultIcon = '/images/expand-default.svg';
+const expandColorIcon = '/images/expand-color.svg';
 
 interface FAQItemProps {
   question: string;
@@ -22,9 +22,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen = false, onC
           {question}
         </div>
         <img 
-          src={isOpen ? closeIcon : openIcon} 
-          alt={isOpen ? "Close" : "Open"} 
-          className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"
+          src={isOpen ? expandColorIcon : expandDefaultIcon} 
+          alt={isOpen ? "Collapse" : "Expand"} 
+          className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 transition-opacity duration-200"
         />
       </div>
       

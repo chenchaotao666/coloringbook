@@ -21,7 +21,7 @@ const BackToTop: React.FC<BackToTopProps> = ({ scrollContainer }) => {
       }
       
       // 当滚动超过300px时显示按钮
-      if (scrollTop > 300) {
+      if (scrollTop > 500) {
         setIsVisible(true);
       } else {
         setIsVisible(false);

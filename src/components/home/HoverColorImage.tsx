@@ -74,34 +74,25 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
         onError={handleImageError}
       />
       
-                   {/* 移动端切换按钮 - 只对 image2image 类型显示 */}
+      {/* 移动端切换按钮 - 只对 image2image 类型显示 */}
       {isMobile && homeImage?.type === 'image2image' && (
-        <button
+        <div
            onClick={handleToggleClick}
-           className="absolute top-1 right-1 w-8 h-8 bg-white/60 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-white/70 transition-all duration-200 z-10 opacity-80 hover:opacity-90"
+           className="absolute bottom-1 right-1 max-w-16 max-h-16 rounded-lg shadow-md overflow-hidden transition-all duration-200 z-10 opacity-90 hover:opacity-100 border-2 border-white cursor-pointer"
            style={{ 
              WebkitTapHighlightColor: 'transparent',
              touchAction: 'manipulation'
            }}
            aria-label="切换彩色效果"
          >
-          {/* 调色板图标 */}
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-            className={`transition-colors duration-200 ${
-              mobileShowColor ? 'text-orange-500' : 'text-gray-600'
-            }`}
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.69-.76 1.69-1.69 0-.46-.19-.86-.49-1.16-.3-.3-.49-.7-.49-1.16C12.71 17.24 13.24 16.71 14 16.71h1.46C17.1 16.71 18.5 15.31 18.5 13.57 18.5 7.29 15.71 2 12 2zM6.5 9C5.67 9 5 8.33 5 7.5S5.67 6 6.5 6 8 6.67 8 7.5 7.33 9 6.5 9zM9.5 6C8.67 6 8 5.33 8 4.5S8.67 3 9.5 3s1.5.67 1.5 1.5S10.33 6 9.5 6zM14.5 6c-.83 0-1.5-.67-1.5-1.5S13.67 3 14.5 3 16 3.67 16 4.5 15.33 6 14.5 6zM17.5 9c-.83 0-1.5-.67-1.5-1.5S16.67 6 17.5 6s1.5.67 1.5 1.5S18.33 9 17.5 9z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
+          {/* 小的colorUrl图片 */}
+          <img
+            src={homeImage?.colorUrl}
+            alt="Color preview"
+            className="block max-w-16 max-h-16 w-auto h-auto object-contain"
+            onError={handleImageError}
+          />
+        </div>
       )}
     </div>
   );

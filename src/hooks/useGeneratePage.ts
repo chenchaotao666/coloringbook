@@ -111,6 +111,47 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     const ratio = searchParams.get('ratio');
     return (ratio === '3:4' || ratio === '4:3' || ratio === '1:1') ? ratio : '3:4';
   };
+  const getInitialIsPublic = (): boolean => {
+    const isPublic = searchParams.get('isPublic');
+    return isPublic === 'true';
+  };
+  const getSourceImageUrl = (): string | null => {
+    return searchParams.get('sourceImageUrl');
+  };
+
+  // 从URL下载图片并转换为File对象
+  const downloadImageAsFile = async (imageUrl: string): Promise<File | null> => {
+    try {
+      // 处理相对路径，转换为绝对路径
+      const absoluteUrl = imageUrl.startsWith('/') 
+        ? `${window.location.origin}${imageUrl}`
+        : imageUrl;
+      
+      console.log('Starting to fetch image from:', absoluteUrl);
+      const response = await fetch(absoluteUrl);
+      console.log('Fetch response status:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      console.log('Blob created:', blob.size, 'bytes, type:', blob.type);
+      
+      // 从URL中提取文件名，如果没有则使用默认名称
+      const urlPath = imageUrl.includes('/') ? imageUrl : absoluteUrl;
+      const fileName = urlPath.split('/').pop() || 'recreated-image.jpg';
+      console.log('Generated filename:', fileName);
+      
+      // 创建File对象
+      const file = new File([blob], fileName, { type: blob.type });
+      console.log('File created:', file.name, file.size, 'bytes, type:', file.type);
+      return file;
+    } catch (error) {
+      console.error('Error downloading image as file:', error);
+      return null;
+    }
+  };
   
   // 预设的50种常用图片生成建议
   const STYLE_SUGGESTIONS = {
@@ -251,8 +292,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     prompt: getInitialPrompt(),
     selectedTab: initialTab,
     selectedRatio: getInitialRatio(),
-    textPublicVisibility: true,
-    imagePublicVisibility: true,
+    textPublicVisibility: searchParams.get('isPublic') ? getInitialIsPublic() : true,
+    imagePublicVisibility: searchParams.get('isPublic') ? getInitialIsPublic() : true,
     selectedImage: null,
     uploadedFile: null,
     
@@ -1022,6 +1063,49 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     const randomSuggestions = getRandomSuggestions(STYLE_SUGGESTIONS, 6, language);
     updateState({ styleSuggestions: randomSuggestions });
   }, [language, updateState]);
+
+  // 处理从URL参数中获取的源图片
+  useEffect(() => {
+    const sourceImageUrl = getSourceImageUrl();
+    console.log('Source image URL from params:', sourceImageUrl);
+    console.log('Initial tab:', initialTab);
+    
+    if (sourceImageUrl && initialTab === 'image') {
+      console.log('Loading source image for Image to Image mode...');
+      // 只有当前是Image to Image模式且有源图片URL时才处理
+      const loadSourceImage = async () => {
+        try {
+          console.log('Downloading image from URL:', sourceImageUrl);
+          const file = await downloadImageAsFile(sourceImageUrl);
+          console.log('Downloaded file:', file);
+          
+          if (file) {
+            // 获取图片尺寸
+            const img = new Image();
+            img.onload = () => {
+              console.log('Image loaded successfully, dimensions:', img.width, 'x', img.height);
+              setUploadedImageWithDimensions(file, {
+                width: img.width,
+                height: img.height
+              });
+            };
+            img.onerror = () => {
+              console.log('Failed to get image dimensions, setting file without dimensions');
+              // 如果无法获取尺寸，仍然设置文件但不设置尺寸
+              setUploadedImageWithDimensions(file, null);
+            };
+            img.src = URL.createObjectURL(file);
+          } else {
+            console.log('Failed to download image file');
+          }
+        } catch (error) {
+          console.error('Failed to load source image:', error);
+        }
+      };
+      
+      loadSourceImage();
+    }
+  }, [initialTab, setUploadedImageWithDimensions]); // 只在初始化时执行一次
 
   // 手动加载示例图片的函数（用于外部调用）
   const loadExampleImages = useCallback(async () => {

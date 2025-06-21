@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
 import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
@@ -32,8 +33,11 @@ interface GeneratePageProps {
 }
 
 const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
+  // 获取导航函数
+  const navigate = useNavigate();
+  
   // 获取用户认证状态和刷新函数
-  const { refreshUser } = useAuth();
+  const { user, isAuthenticated, refreshUser } = useAuth();
   
   // 状态：存储动态获取的图片尺寸（用于Text to Image和Image to Image模式）
   const [dynamicImageDimensions, setDynamicImageDimensions] = React.useState<{ [key: string]: { width: number; height: number } }>({});
@@ -71,9 +75,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     error,
     generationProgress,
 
-    // 积分状态
-    canGenerate,
-
     // 用户生成历史状态
     hasTextToImageHistory,
     hasImageToImageHistory,
@@ -93,7 +94,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     refreshExamples,
     refreshStyleSuggestions,
     deleteImage,
-    handleInsufficientCredits,
   } = useGeneratePage(initialTab, refreshUser);
 
   // 当initialTab变化时更新selectedTab
@@ -137,6 +137,48 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   }, [textGeneratedImages, imageGeneratedImages, selectedTab, isGenerating, selectedImage, setSelectedImage, isInitialDataLoaded]);
 
+  // 回填图片属性的辅助函数
+  const fillImageAttributes = (imageId: string) => {
+    const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
+    const selectedImageData = currentImages.find(img => img.id === imageId);
+    
+    console.log('Filling attributes for tab:', selectedTab);
+    console.log('Selected image data:', selectedImageData);
+    console.log('Image prompt:', selectedImageData?.prompt);
+    
+    if (selectedImageData) {
+      // 回填 prompt（仅对 text to image 有效）
+      if (selectedTab === 'text') {
+        console.log('Setting prompt to:', selectedImageData.prompt || '');
+        setPrompt(selectedImageData.prompt || '');
+      }
+      
+      // 回填 ratio
+      if (selectedImageData.ratio && ['3:4', '4:3', '1:1'].includes(selectedImageData.ratio)) {
+        console.log('Setting ratio to:', selectedImageData.ratio);
+        setSelectedRatio(selectedImageData.ratio as '3:4' | '4:3' | '1:1');
+      }
+      
+      // 回填 isPublic
+      if (selectedTab === 'text') {
+        console.log('Setting text public visibility to:', selectedImageData.isPublic);
+        setTextPublicVisibility(selectedImageData.isPublic);
+      } else {
+        console.log('Setting image public visibility to:', selectedImageData.isPublic);
+        setImagePublicVisibility(selectedImageData.isPublic);
+      }
+      
+      // 对于 Image to Image 模式，清空当前上传的文件
+      // 但如果URL参数中有sourceImageUrl，说明是recreate操作，不要清空
+      const sourceImageUrl = new URLSearchParams(window.location.search).get('sourceImageUrl');
+      if (selectedTab === 'image' && uploadedFile && !sourceImageUrl) {
+        setUploadedImageWithDimensions(null, null);
+      }
+    } else {
+      console.log('Selected image data not found for ID:', imageId);
+    }
+  };
+
   // 标签页切换时的图片选择逻辑
   useEffect(() => {
     if (selectedImage) {
@@ -148,11 +190,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         // 当前选中的图片不属于当前标签页类型，需要重新选择
         if (currentImages.length > 0) {
           // 选择该类型的第一张图片
-          setSelectedImage(currentImages[0].id);
+          const firstImageId = currentImages[0].id;
+          setSelectedImage(firstImageId);
+          fillImageAttributes(firstImageId);
         } else {
           // 该类型没有图片，清空选择
           setSelectedImage(null);
         }
+      } else {
+        // 当前选中的图片属于当前标签页，回填其属性
+        fillImageAttributes(selectedImage);
       }
     }
   }, [selectedTab, textGeneratedImages, imageGeneratedImages, selectedImage, setSelectedImage]);
@@ -162,15 +209,37 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setPrompt(e.target.value);
   };
 
+  const handleClearPrompt = () => {
+    setPrompt('');
+  };
+
   const handleImageSelect = (imageId: string) => {
     // 如果有错误，先清除错误状态
     if (error) {
       clearError();
     }
+    
+    // 设置选中的图片
     setSelectedImage(imageId);
+    
+    // 回填图片属性到表单
+    fillImageAttributes(imageId);
   };
 
   const handleGenerate = async () => {
+    // 1. 检查用户是否已登录
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    // 2. 检查用户是否有足够积分
+    if (user && user.credits < 20) {
+      navigate('/price');
+      return;
+    }
+
+    // 3. 执行生成逻辑
     // 清除之前的错误状态
     if (error) {
       clearError();
@@ -532,12 +601,23 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <div className="text-sm font-bold text-[#161616] mb-2">Prompt</div>
             <div className="relative">
               <textarea
-                className="w-full h-[120px] sm:h-[150px] lg:h-[180px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 text-sm resize-none focus:outline-none"
+                className="w-full h-[120px] sm:h-[150px] lg:h-[180px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none"
                 placeholder="What do you want to create?"
                 value={prompt}
                 onChange={handlePromptChange}
                 maxLength={1000}
               ></textarea>
+
+              {/* Clear button - 只在有内容时显示 */}
+              {prompt && (
+                <button
+                  onClick={handleClearPrompt}
+                  className="absolute top-3 right-3 w-5 h-5 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
+                  title="Clear prompt"
+                >
+                  <img src="/images/close-x.svg" alt="Clear" className="w-3 h-3" />
+                </button>
+              )}
 
               <div className="absolute bottom-2 right-3 text-xs sm:text-sm text-[#A4A4A4] flex mb-2 sm:mb-3 items-center gap-1">
                 {prompt.length}/1000
@@ -880,20 +960,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* 移动端生成按钮 - 固定在底部 */}
           <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 p-4 z-50">
             <button
-              onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
-                            disabled={!canGenerate ? false : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
-                className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                  !canGenerate
-                    ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
-                    : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
-                    ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
-                    : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
-                  }`}
+              onClick={handleGenerate}
+              disabled={isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)}
+              className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                  ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
+                  : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
+                }`}
             >
               <img
-                src={!canGenerate
-                  ? subtractColorIcon
-                  : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                src={(isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
                   ? subtractIcon
                   : subtractColorIcon
                 }
@@ -902,10 +978,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               />
               <span className="font-bold text-lg">20</span>
               <span className="font-bold text-lg">
-                {!canGenerate ? 'Insufficient Credits' :
-               isGenerating ? 'Generating...' : 
-               error ? 'Regenerate' :
-               'Generate'}
+                {isGenerating ? 'Generating...' : 
+                 error ? 'Regenerate' :
+                 'Generate'}
               </span>
             </button>
           </div>
@@ -924,20 +999,16 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         {/* 桌面端生成按钮 */}
         <div className="hidden lg:flex fixed bottom-0 left-0 w-[400px] h-[88px] bg-white items-center justify-center">
           <button
-            onClick={canGenerate ? handleGenerate : handleInsufficientCredits}
-                        disabled={!canGenerate ? false : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))}
-              className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                !canGenerate
-                  ? 'bg-[#FF5C07] text-white hover:bg-[#FF7A47] cursor-pointer'
-                  : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
-                  ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
-                  : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
-                }`}
+            onClick={handleGenerate}
+            disabled={isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)}
+            className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+              (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
+                : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
+              }`}
           >
             <img
-              src={!canGenerate
-                ? subtractColorIcon
-                : (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+              src={(isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
                 ? subtractIcon
                 : subtractColorIcon
               }
@@ -946,10 +1017,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             />
             <span className="font-bold text-lg">20</span>
             <span className="font-bold text-lg">
-              {!canGenerate ? 'Insufficient Credits' :
-                 isGenerating ? 'Generating...' : 
-                 error ? 'Regenerate' :
-                 'Generate'}
+              {isGenerating ? 'Generating...' : 
+               error ? 'Regenerate' :
+               'Generate'}
             </span>
           </button>
         </div>

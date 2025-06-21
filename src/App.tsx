@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
+import CreationsPage from './pages/CreationsPage';
 import TestAuthPage from './pages/TestAuthPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -36,6 +37,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/creations" element={<CreationsPage />} />
             <Route path="/test-auth" element={<TestAuthPage />} />
             {/* Add more routes as needed */}
           </Routes>

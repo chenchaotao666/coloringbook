@@ -15,7 +15,8 @@ const ImageDetailPage: React.FC = () => {
   
   const [image, setImage] = useState<HomeImage | null>(null);
   const [relatedImages, setRelatedImages] = useState<HomeImage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [isRelatedImagesLoading, setIsRelatedImagesLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState<{ png: boolean; pdf: boolean }>({
     png: false,
     pdf: false
@@ -56,29 +57,31 @@ const ImageDetailPage: React.FC = () => {
       if (!imageId) return;
 
       try {
-        setIsLoading(true);
+        setIsImageLoading(true);
         
-        // 尝试从ImageService中查找
+        // 尝试从ImageService中查找主图片
         let foundImage: HomeImage | null = await ImageService.getImageById(imageId);
 
         if (foundImage) {
           setImage(foundImage);
+          setIsImageLoading(false); // 主图片加载完成，立即显示
           
-          // 加载相关图片 - 优先使用ImageService
-          let relatedImages: HomeImage[] = [];
-          
+          // 异步加载相关图片，不阻塞主内容显示
+          setIsRelatedImagesLoading(true);
           try {
-            relatedImages = await ImageService.getRelatedImages(foundImage.id, 5);
+            const relatedImages = await ImageService.getRelatedImages(foundImage.id, 5);
+            setRelatedImages(relatedImages);
           } catch (error) {
             console.error('Failed to load related images from ImageService:', error);
+          } finally {
+            setIsRelatedImagesLoading(false);
           }
-          
-          setRelatedImages(relatedImages);
+        } else {
+          setIsImageLoading(false);
         }
       } catch (error) {
         console.error('Failed to load image:', error);
-      } finally {
-        setIsLoading(false);
+        setIsImageLoading(false);
       }
     };
 
@@ -107,9 +110,10 @@ const ImageDetailPage: React.FC = () => {
     }
   };
 
-  const getBreadcrumbPath = (): BreadcrumbItem[] => {
-    if (!image) return [];
-    
+
+
+  // 获取面包屑路径（即使图片还在加载也可以显示基础面包屑）
+  const getBreadcrumbPathEarly = (): BreadcrumbItem[] => {
     // 检查是否从分类页面跳转过来
     const urlParams = new URLSearchParams(window.location.search);
     const fromCategory = urlParams.get('from') === 'category';
@@ -122,35 +126,32 @@ const ImageDetailPage: React.FC = () => {
         { label: 'Home', path: '/' },
         { label: 'Coloring Pages Free', path: '/categories' },
         { label: decodeURIComponent(categoryName), path: `/categories/${categoryId}` },
-        { label: image.title, current: true }
+        { label: image?.title || 'Loading...', current: true }
       ];
     } else {
       // 默认2层面包屑：Home > 图片名字
       return [
         { label: 'Home', path: '/' },
-        { label: image.title, current: true }
+        { label: image?.title || 'Loading...', current: true }
       ];
     }
   };
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
-          <div className="container mx-auto px-4 max-w-[1200px]">
-            <div className="flex justify-center items-center py-20">
-              <div className="text-lg text-[#6B7280]">Loading...</div>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  const breadcrumbPath = getBreadcrumbPathEarly();
 
-  if (!image) {
+  // 如果图片加载失败且没有找到图片
+  if (!isImageLoading && !image) {
     return (
       <Layout>
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
+          {/* Breadcrumb - 即使出错也显示 */}
+          <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+            <Breadcrumb items={[
+              { label: 'Home', path: '/' },
+              { label: 'Image not found', current: true }
+            ]} />
+          </div>
+          
           <div className="container mx-auto px-4 max-w-[1200px]">
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
@@ -166,100 +167,106 @@ const ImageDetailPage: React.FC = () => {
     );
   }
 
-  const breadcrumbPath = getBreadcrumbPath();
-
   return (
     <Layout>
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
-        {/* Breadcrumb */}
+        {/* Breadcrumb - 始终显示 */}
         <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
           <Breadcrumb items={breadcrumbPath} />
         </div>
 
         {/* Main Content */}
         <div className="container mx-auto px-4 max-w-[1200px]">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12 lg:mb-20">
-            {/* Left Side - Images */}
-            <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
-              {/* Black & White Image */}
-              <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
-                <img
-                  src={image.defaultUrl}
-                  alt={image.title}
-                  className="w-full max-w-full h-auto object-contain rounded-lg"
-                />
-              </div>
-              
-              {/* Color Image */}
-              <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
-                <img
-                  src={image.colorUrl}
-                  alt={`${image.title} - Colored`}
-                  className="w-full max-w-full h-auto object-contain rounded-lg"
-                />
-              </div>
+          {isImageLoading ? (
+            /* 加载状态 */
+            <div className="flex justify-center items-center py-20">
+              <div className="text-lg text-[#6B7280]">Loading image details...</div>
             </div>
+          ) : image ? (
+            /* 图片内容 */
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12 lg:mb-20">
+              {/* Left Side - Images */}
+              <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
+                {/* Black & White Image */}
+                <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
+                  <img
+                    src={image.defaultUrl}
+                    alt={image.title}
+                    className="w-full max-w-full h-auto object-contain rounded-lg"
+                  />
+                </div>
+                
+                {/* Color Image */}
+                <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
+                  <img
+                    src={image.colorUrl}
+                    alt={`${image.title} - Colored`}
+                    className="w-full max-w-full h-auto object-contain rounded-lg"
+                  />
+                </div>
+              </div>
 
-            {/* Right Side - Details */}
-            <div className="flex-1 lg:max-w-[524px] flex flex-col">
-              <div className="flex-1 space-y-6 lg:space-y-9">
-                {/* Title and Description */}
-                <div className="space-y-3 lg:space-y-4">
-                  <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
-                    {image.title}
-                  </h1>
-                  <p className="text-sm text-[#6B7280] leading-5">
-                    {image.description || `This picture depicts ${image.title}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
-                  </p>
+              {/* Right Side - Details */}
+              <div className="flex-1 lg:max-w-[524px] flex flex-col">
+                <div className="flex-1 space-y-6 lg:space-y-9">
+                  {/* Title and Description */}
+                  <div className="space-y-3 lg:space-y-4">
+                    <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
+                      {image.title}
+                    </h1>
+                    <p className="text-sm text-[#6B7280] leading-5">
+                      {image.description || `This picture depicts ${image.title}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
+                    </p>
+                  </div>
+
+                  {/* Tags */}
+                  {image.tags && (
+                    <div className="space-y-3 lg:space-y-4">
+                      <h3 className="text-base font-medium text-black">Tags</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {parseTags(image.tags).map((tag: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-3 py-2 bg-white border border-[#EDEEF0] rounded-2xl text-sm text-[#161616]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Tags */}
-                {image.tags && (
-                  <div className="space-y-3 lg:space-y-4">
-                    <h3 className="text-base font-medium text-black">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {parseTags(image.tags).map((tag: string, index: number) => (
-                        <span
-                          key={index}
-                          className="px-3 py-2 bg-white border border-[#EDEEF0] rounded-2xl text-sm text-[#161616]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Download Buttons - 响应式布局 */}
-              <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto">
-                <Button
-                  onClick={() => handleDownload('png')}
-                  disabled={isDownloading.png}
-                  variant="gradient"
-                  className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
-                >
-                  <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
-                  <span className="hidden sm:inline">{isDownloading.png ? 'Downloading...' : 'Download PNG'}</span>
-                  <span className="sm:hidden">{isDownloading.png ? 'PNG...' : 'PNG'}</span>
-                </Button>
-                
-                <Button
-                  onClick={() => handleDownload('pdf')}
-                  disabled={isDownloading.pdf}
-                  variant="gradient"
-                  className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
-                >
-                  <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
-                  <span className="hidden sm:inline">{isDownloading.pdf ? 'Downloading...' : 'Download PDF'}</span>
-                  <span className="sm:hidden">{isDownloading.pdf ? 'PDF...' : 'PDF'}</span>
-                </Button>
+                {/* Download Buttons - 响应式布局 */}
+                <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto">
+                  <Button
+                    onClick={() => handleDownload('png')}
+                    disabled={isDownloading.png}
+                    variant="gradient"
+                    className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
+                  >
+                    <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
+                    <span className="hidden sm:inline">{isDownloading.png ? 'Downloading...' : 'Download PNG'}</span>
+                    <span className="sm:hidden">{isDownloading.png ? 'PNG...' : 'PNG'}</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleDownload('pdf')}
+                    disabled={isDownloading.pdf}
+                    variant="gradient"
+                    className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
+                  >
+                    <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
+                    <span className="hidden sm:inline">{isDownloading.pdf ? 'Downloading...' : 'Download PDF'}</span>
+                    <span className="sm:hidden">{isDownloading.pdf ? 'PDF...' : 'PDF'}</span>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : null}
 
-          {/* Detailed Description Sections */}
-          {(() => {
+          {/* Detailed Description Sections - 只在图片加载完成后显示 */}
+          {!isImageLoading && image && (() => {
             const additionalInfo = parseAdditionalInfo(image.additionalInfo);
             
             if (!additionalInfo) {
@@ -319,22 +326,30 @@ const ImageDetailPage: React.FC = () => {
             );
           })()}
 
-          {/* You Might Also Like */}
-          {relatedImages.length > 0 && (
-            <section>
-              <h2 className="text-center text-[#161616] text-2xl lg:text-3xl xl:text-[46px] font-bold capitalize mb-8 lg:mb-12 leading-relaxed lg:leading-[1.6] px-4">
-                You Might Also Like
-              </h2>
-              
-              {/* Related Images Grid */}
-              <div className="mb-12 lg:mb-20">
+          {/* You Might Also Like - 独立显示相关图片加载状态 */}
+          <section>
+            <h2 className="text-center text-[#161616] text-2xl lg:text-3xl xl:text-[46px] font-bold capitalize mb-8 lg:mb-12 leading-relaxed lg:leading-[1.6] px-4">
+              You Might Also Like
+            </h2>
+            
+            {/* Related Images Grid */}
+            <div className="mb-12 lg:mb-20">
+              {isRelatedImagesLoading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="text-lg text-[#6B7280]">Loading related images...</div>
+                </div>
+              ) : relatedImages.length > 0 ? (
                 <MasonryGrid 
                   images={relatedImages}
                   isLoading={false}
                 />
-              </div>
-            </section>
-          )}
+              ) : (
+                <div className="flex justify-center items-center py-12">
+                  <div className="text-sm text-[#6B7280]">No related images found</div>
+                </div>
+              )}
+            </div>
+          </section>
         </div>
       </div>
     </Layout>

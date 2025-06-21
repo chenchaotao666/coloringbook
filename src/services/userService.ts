@@ -103,6 +103,8 @@ export class UserService {
   static async login(data: LoginRequest, rememberMe: boolean = true): Promise<LoginResponse> {
     try {
       const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/users/login', data);
+
+      console.log('loginData: ', loginData);
       
       // 保存令牌，根据rememberMe决定存储方式
       ApiUtils.setTokens({

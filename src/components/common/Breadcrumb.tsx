@@ -25,7 +25,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
   };
 
   return (
-    <nav className={`flex items-center gap-2 overflow-x-auto scrollbar-hide ${className}`}>
+    <nav className={`flex items-center gap-2 max-w-full md:overflow-x-auto md:scrollbar-hide flex-wrap md:flex-nowrap ${className}`}>
       {items.map((item, index) => (
         <Fragment key={index}>
           {index > 0 && (
@@ -43,13 +43,13 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
             />
           )}
           {item.current ? (
-            <span className="text-[#6B7280] text-sm font-medium whitespace-nowrap">
+            <span className="text-[#6B7280] text-sm font-medium max-w-[150px] md:max-w-none truncate md:whitespace-nowrap">
               {item.label}
             </span>
           ) : (
             <button
               onClick={() => handleItemClick(item)}
-              className="text-[#161616] text-sm font-medium hover:text-[#FF5C07] transition-colors whitespace-nowrap flex-shrink-0"
+              className="text-[#161616] text-sm font-medium hover:text-[#FF5C07] transition-colors flex-shrink-0 max-w-[150px] md:max-w-none truncate md:whitespace-nowrap"
             >
               {item.label}
             </button>

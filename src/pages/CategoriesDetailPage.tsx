@@ -12,7 +12,7 @@ import { HomeImage } from '../services/imageService';
 const CategoriesDetailPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
-  
+
   const [category, setCategory] = useState<Category | null>(null);
   const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
   const [filteredImages, setFilteredImages] = useState<HomeImage[]>([]);
@@ -43,7 +43,7 @@ const CategoriesDetailPage: React.FC = () => {
   // 加载分类图片数据
   const loadCategoryImages = async (page: number = 1, search?: string) => {
     if (!categoryId) return;
-    
+
     try {
       // 使用新的 getImagesByCategory 方法
       const result = await CategoriesService.getImagesByCategoryId(categoryId, {
@@ -51,12 +51,12 @@ const CategoriesDetailPage: React.FC = () => {
         pageSize: 20,
         query: search
       });
-      
+
       if (page === 1) {
         // 第一页，替换现有数据
         setCategoryImages(result.images);
         setFilteredImages(result.images);
-        
+
         // 生成子分类列表（从图片标签中提取）
         const allTags = result.images.flatMap((img: HomeImage) => img.tags);
         const uniqueTags = Array.from(new Set(allTags)) as string[];
@@ -66,7 +66,7 @@ const CategoriesDetailPage: React.FC = () => {
         setCategoryImages(prev => [...prev, ...result.images]);
         setFilteredImages(prev => [...prev, ...result.images]);
       }
-      
+
       setHasMore(result.hasMore);
       setCurrentPage(page);
     } catch (error) {
@@ -77,17 +77,17 @@ const CategoriesDetailPage: React.FC = () => {
   useEffect(() => {
     const loadCategoryData = async () => {
       if (!categoryId) return;
-      
+
       try {
         // 先加载分类信息
         setIsCategoryLoading(true);
         const categories = await CategoriesService.getCategories();
         const foundCategory = categories.find((cat: Category) => cat.id === categoryId);
-        
+
         if (foundCategory) {
           setCategory(foundCategory);
           setIsCategoryLoading(false); // 分类信息加载完成，立即显示
-          
+
           // 异步加载分类图片，不阻塞分类信息显示
           setIsImagesLoading(true);
           await loadCategoryImages(1);
@@ -148,7 +148,7 @@ const CategoriesDetailPage: React.FC = () => {
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
           <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
-            <Breadcrumb 
+            <Breadcrumb
               items={[
                 { label: 'Home', path: '/' },
                 { label: 'Coloring Pages Free', path: '/categories' },
@@ -156,7 +156,7 @@ const CategoriesDetailPage: React.FC = () => {
               ]}
             />
           </div>
-          
+
           <div className="container mx-auto px-4 max-w-[1200px]">
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
@@ -202,28 +202,26 @@ const CategoriesDetailPage: React.FC = () => {
               {!isImagesLoading && subcategories.length > 0 && (
                 <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-16">
                   {/* All标签 */}
-                  <button 
+                  <button
                     onClick={() => handleTagClick('All')}
-                    className={`px-3 py-2 rounded-2xl border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${
-                      selectedTag === null 
-                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]' 
+                    className={`px-3 py-2 rounded-2xl border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
+                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
                         : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                    }`}
+                      }`}
                   >
                     <span className="text-sm font-normal leading-4">
                       All ({categoryImages.length})
                     </span>
                   </button>
-                  
+
                   {subcategories.map((tag, index) => (
-                    <button 
+                    <button
                       key={index}
                       onClick={() => handleTagClick(tag)}
-                      className={`px-3 py-2 rounded-2xl border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${
-                        selectedTag === tag 
-                          ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]' 
+                      className={`px-3 py-2 rounded-2xl border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
+                          ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
                           : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                      }`}
+                        }`}
                     >
                       <span className="text-sm font-normal leading-4">
                         {tag} ({categoryImages.filter(img => img.tags.includes(tag)).length})
@@ -253,7 +251,7 @@ const CategoriesDetailPage: React.FC = () => {
                 ) : (
                   /* 图片网格 */
                   <>
-                    <MasonryGrid 
+                    <MasonryGrid
                       images={filteredImages}
                       isLoading={false}
                       onImageClick={(image) => {
@@ -261,11 +259,11 @@ const CategoriesDetailPage: React.FC = () => {
                         navigate(`/image/${image.id}?from=category&categoryId=${categoryId}&categoryName=${encodeURIComponent(category.displayName)}`);
                       }}
                     />
-                    
+
                     {/* Load More Button */}
                     {hasMore && selectedTag === null && (
                       <div className="flex justify-center mt-12">
-                        <Button 
+                        <Button
                           onClick={handleLoadMore}
                           variant="outline"
                           disabled={isLoadingMore}
@@ -279,11 +277,14 @@ const CategoriesDetailPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Generate Section - 只在分类加载完成后显示 */}
-              <div className="max-w-[920px] mx-auto">
-                <h2 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
-                  Create your personalized AI {category.displayName} coloring page
-                </h2>
+            </>
+          ) : null}
+
+          {/* Generate Section - 独立显示，不等待分类加载 */}
+          <div className="max-w-[920px] mx-auto">
+            <h2 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
+              Create your personalized AI {category?.displayName || 'Custom'} coloring page
+            </h2>
             
             <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-8">
               <textarea
@@ -293,28 +294,26 @@ const CategoriesDetailPage: React.FC = () => {
                 className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
               />
               
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex gap-2">
-                    {/* Ratio 选择器组件 */}
-                    <RatioSelector
-                      value={selectedRatio}
-                      onChange={handleRatioChange}
-                    />
-                  </div>
-                  
-                  <Button 
-                    onClick={handleGenerateClick}
-                    variant="gradient"
-                    disabled={!generatePrompt.trim()}
-                    className="px-6 py-2 text-base font-bold"
-                  >
-                    Create
-                  </Button>
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex gap-2">
+                  {/* Ratio 选择器组件 */}
+                  <RatioSelector
+                    value={selectedRatio}
+                    onChange={handleRatioChange}
+                  />
                 </div>
+                
+                <Button 
+                  onClick={handleGenerateClick}
+                  variant="gradient"
+                  disabled={!generatePrompt.trim()}
+                  className="px-6 py-2 text-base font-bold"
+                >
+                  Create
+                </Button>
               </div>
-              </div>
-            </>
-          ) : null}
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

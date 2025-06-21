@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
+import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
+import Breadcrumb, { BreadcrumbItem } from '../components/common/Breadcrumb';
 import { ImageService } from '../services/imageService';
 import { HomeImage } from '../services/imageService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
-const homeIcon = '/images/home.svg';
-const chevronRightIcon = '/images/chevron-right.svg';
 const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
@@ -109,7 +107,7 @@ const ImageDetailPage: React.FC = () => {
     }
   };
 
-  const getBreadcrumbPath = () => {
+  const getBreadcrumbPath = (): BreadcrumbItem[] => {
     if (!image) return [];
     
     // 检查是否从分类页面跳转过来
@@ -124,243 +122,222 @@ const ImageDetailPage: React.FC = () => {
         { label: 'Home', path: '/' },
         { label: 'Coloring Pages Free', path: '/categories' },
         { label: decodeURIComponent(categoryName), path: `/categories/${categoryId}` },
-        { label: image.title, path: '', current: true }
+        { label: image.title, current: true }
       ];
     } else {
       // 默认2层面包屑：Home > 图片名字
       return [
         { label: 'Home', path: '/' },
-        { label: image.title, path: '', current: true }
+        { label: image.title, current: true }
       ];
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB]">
-        <Header backgroundColor="white" />
-        <div className="flex items-center justify-center py-12 lg:py-20 px-4">
-          <div className="text-center">
-            <div className="text-lg lg:text-xl text-[#6B7280]">Loading...</div>
+      <Layout>
+        <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
+          <div className="container mx-auto px-4 max-w-[1200px]">
+            <div className="flex justify-center items-center py-20">
+              <div className="text-lg text-[#6B7280]">Loading...</div>
+            </div>
           </div>
         </div>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   if (!image) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB]">
-        <Header backgroundColor="white" />
-        <div className="flex items-center justify-center py-12 lg:py-20 px-4">
-          <div className="text-center">
-            <div className="text-lg lg:text-xl text-[#161616] mb-4">Image not found</div>
-            <Button onClick={() => navigate('/')} variant="gradient">
-              Go Home
-            </Button>
+      <Layout>
+        <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
+          <div className="container mx-auto px-4 max-w-[1200px]">
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="text-center">
+                <div className="text-lg lg:text-xl text-[#161616] mb-4">Image not found</div>
+                <Button onClick={() => navigate('/')} variant="gradient">
+                  Go Home
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   const breadcrumbPath = getBreadcrumbPath();
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
-      <Header backgroundColor="white" />
-      
-      <main className="max-w-[1170px] mx-auto px-4 lg:px-4 py-6 lg:py-10">
+    <Layout>
+      <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 lg:gap-2 mb-4 lg:mb-12 overflow-x-auto scrollbar-hide">
-          {breadcrumbPath.map((item, index) => (
-            <Fragment key={index}>
-              {index > 0 && (
-                <img src={chevronRightIcon} alt=">" className="w-3 h-3 flex-shrink-0" />
-              )}
-              {index === 0 && (
-                <img src={homeIcon} alt="Home" className="w-3 h-3 flex-shrink-0" />
-              )}
-              {item.current ? (
-                <span className="text-[#6B7280] text-xs lg:text-sm font-medium whitespace-nowrap">
-                  {item.label}
-                </span>
-              ) : (
-                <button
-                  onClick={() => item.path && navigate(item.path)}
-                  className="text-[#161616] text-xs lg:text-sm font-medium hover:text-[#FF5C07] transition-colors whitespace-nowrap flex-shrink-0"
-                >
-                  {item.label}
-                </button>
-              )}
-            </Fragment>
-          ))}
-        </nav>
-
-        {/* Main Content */}
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12 lg:mb-20">
-          {/* Left Side - Images */}
-          <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
-            {/* Black & White Image */}
-            <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
-              <img
-                src={image.defaultUrl}
-                alt={image.title}
-                className="w-full max-w-full h-auto object-contain rounded-lg"
-              />
-            </div>
-            
-            {/* Color Image */}
-            <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
-              <img
-                src={image.colorUrl}
-                alt={`${image.title} - Colored`}
-                className="w-full max-w-full h-auto object-contain rounded-lg"
-              />
-            </div>
-          </div>
-
-          {/* Right Side - Details */}
-          <div className="flex-1 lg:max-w-[524px] flex flex-col">
-            <div className="flex-1 space-y-6 lg:space-y-9">
-              {/* Title and Description */}
-              <div className="space-y-3 lg:space-y-4">
-                <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
-                  {image.title}
-                </h1>
-                <p className="text-sm text-[#6B7280] leading-5">
-                  {image.description || `This picture depicts ${image.title}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
-                </p>
-              </div>
-
-              {/* Tags */}
-              {image.tags && (
-                <div className="space-y-3 lg:space-y-4">
-                  <h3 className="text-base font-medium text-black">Tags</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {parseTags(image.tags).map((tag: string, index: number) => (
-                      <span
-                        key={index}
-                        className="px-3 py-2 bg-white border border-[#EDEEF0] rounded-2xl text-sm text-[#161616]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Download Buttons - 响应式布局 */}
-            <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto">
-              <Button
-                onClick={() => handleDownload('png')}
-                disabled={isDownloading.png}
-                variant="gradient"
-                className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
-              >
-                <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
-                <span className="hidden sm:inline">{isDownloading.png ? 'Downloading...' : 'Download PNG'}</span>
-                <span className="sm:hidden">{isDownloading.png ? 'PNG...' : 'PNG'}</span>
-              </Button>
-              
-              <Button
-                onClick={() => handleDownload('pdf')}
-                disabled={isDownloading.pdf}
-                variant="gradient"
-                className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
-              >
-                <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
-                <span className="hidden sm:inline">{isDownloading.pdf ? 'Downloading...' : 'Download PDF'}</span>
-                <span className="sm:hidden">{isDownloading.pdf ? 'PDF...' : 'PDF'}</span>
-              </Button>
-            </div>
-          </div>
+        <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+          <Breadcrumb items={breadcrumbPath} />
         </div>
 
-        {/* Detailed Description Sections */}
-        {(() => {
-          const additionalInfo = parseAdditionalInfo(image.additionalInfo);
-          
-          if (!additionalInfo) {
-            return null;
-          }
-
-          return (
-            <div className="space-y-8 lg:space-y-12 mb-4 lg:mb-20">
-              {/* Section 1 - 图片特色 */}
-              {additionalInfo.features && additionalInfo.features.length > 0 && (
-                <section>
-                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎁 图片特色</h2>
-                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                    {additionalInfo.features.map((feature: string, index: number) => (
-                      <p key={index}>• {feature}</p>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Section 2 - 适合人群 */}
-              {additionalInfo.suitableFor && additionalInfo.suitableFor.length > 0 && (
-                <section>
-                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💖 适合人群</h2>
-                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                    {additionalInfo.suitableFor.map((suitable: string, index: number) => (
-                      <p key={index}>• {suitable}</p>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Section 3 - 涂色建议 */}
-              {additionalInfo.coloringSuggestions && additionalInfo.coloringSuggestions.length > 0 && (
-                <section>
-                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎨 涂色建议</h2>
-                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                    {additionalInfo.coloringSuggestions.map((suggestion: string, index: number) => (
-                      <p key={index}>• {suggestion}</p>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Section 4 - 创意用途 */}
-              {additionalInfo.creativeUses && additionalInfo.creativeUses.length > 0 && (
-                <section>
-                  <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💡 创意用途</h2>
-                  <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                    {additionalInfo.creativeUses.map((use: string, index: number) => (
-                      <p key={index}>• {use}</p>
-                    ))}
-                  </div>
-                </section>
-              )}
+        {/* Main Content */}
+        <div className="container mx-auto px-4 max-w-[1200px]">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12 lg:mb-20">
+            {/* Left Side - Images */}
+            <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
+              {/* Black & White Image */}
+              <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
+                <img
+                  src={image.defaultUrl}
+                  alt={image.title}
+                  className="w-full max-w-full h-auto object-contain rounded-lg"
+                />
+              </div>
+              
+              {/* Color Image */}
+              <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
+                <img
+                  src={image.colorUrl}
+                  alt={`${image.title} - Colored`}
+                  className="w-full max-w-full h-auto object-contain rounded-lg"
+                />
+              </div>
             </div>
-          );
-        })()}
 
-        {/* You Might Also Like */}
-        {relatedImages.length > 0 && (
-          <section>
-            <h2 className="text-center text-[#161616] text-2xl lg:text-3xl xl:text-[46px] font-bold capitalize mb-8 lg:mb-12 leading-relaxed lg:leading-[1.6] px-4">
-              You Might Also Like
-            </h2>
+            {/* Right Side - Details */}
+            <div className="flex-1 lg:max-w-[524px] flex flex-col">
+              <div className="flex-1 space-y-6 lg:space-y-9">
+                {/* Title and Description */}
+                <div className="space-y-3 lg:space-y-4">
+                  <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
+                    {image.title}
+                  </h1>
+                  <p className="text-sm text-[#6B7280] leading-5">
+                    {image.description || `This picture depicts ${image.title}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
+                  </p>
+                </div>
+
+                {/* Tags */}
+                {image.tags && (
+                  <div className="space-y-3 lg:space-y-4">
+                    <h3 className="text-base font-medium text-black">Tags</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {parseTags(image.tags).map((tag: string, index: number) => (
+                        <span
+                          key={index}
+                          className="px-3 py-2 bg-white border border-[#EDEEF0] rounded-2xl text-sm text-[#161616]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Download Buttons - 响应式布局 */}
+              <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto">
+                <Button
+                  onClick={() => handleDownload('png')}
+                  disabled={isDownloading.png}
+                  variant="gradient"
+                  className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
+                >
+                  <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
+                  <span className="hidden sm:inline">{isDownloading.png ? 'Downloading...' : 'Download PNG'}</span>
+                  <span className="sm:hidden">{isDownloading.png ? 'PNG...' : 'PNG'}</span>
+                </Button>
+                
+                <Button
+                  onClick={() => handleDownload('pdf')}
+                  disabled={isDownloading.pdf}
+                  variant="gradient"
+                  className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
+                >
+                  <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
+                  <span className="hidden sm:inline">{isDownloading.pdf ? 'Downloading...' : 'Download PDF'}</span>
+                  <span className="sm:hidden">{isDownloading.pdf ? 'PDF...' : 'PDF'}</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Description Sections */}
+          {(() => {
+            const additionalInfo = parseAdditionalInfo(image.additionalInfo);
             
-            {/* Related Images Grid */}
-            <div className="mb-12 lg:mb-20">
-              <MasonryGrid 
-                images={relatedImages}
-                isLoading={false}
-              />
-            </div>
-          </section>
-        )}
-      </main>
+            if (!additionalInfo) {
+              return null;
+            }
 
-      <Footer />
-    </div>
+            return (
+              <div className="space-y-8 lg:space-y-12 mb-4 lg:mb-20">
+                {/* Section 1 - 图片特色 */}
+                {additionalInfo.features && additionalInfo.features.length > 0 && (
+                  <section>
+                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎁 图片特色</h2>
+                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                      {additionalInfo.features.map((feature: string, index: number) => (
+                        <p key={index}>• {feature}</p>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Section 2 - 适合人群 */}
+                {additionalInfo.suitableFor && additionalInfo.suitableFor.length > 0 && (
+                  <section>
+                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💖 适合人群</h2>
+                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                      {additionalInfo.suitableFor.map((suitable: string, index: number) => (
+                        <p key={index}>• {suitable}</p>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Section 3 - 涂色建议 */}
+                {additionalInfo.coloringSuggestions && additionalInfo.coloringSuggestions.length > 0 && (
+                  <section>
+                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎨 涂色建议</h2>
+                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                      {additionalInfo.coloringSuggestions.map((suggestion: string, index: number) => (
+                        <p key={index}>• {suggestion}</p>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Section 4 - 创意用途 */}
+                {additionalInfo.creativeUses && additionalInfo.creativeUses.length > 0 && (
+                  <section>
+                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💡 创意用途</h2>
+                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
+                      {additionalInfo.creativeUses.map((use: string, index: number) => (
+                        <p key={index}>• {use}</p>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* You Might Also Like */}
+          {relatedImages.length > 0 && (
+            <section>
+              <h2 className="text-center text-[#161616] text-2xl lg:text-3xl xl:text-[46px] font-bold capitalize mb-8 lg:mb-12 leading-relaxed lg:leading-[1.6] px-4">
+                You Might Also Like
+              </h2>
+              
+              {/* Related Images Grid */}
+              <div className="mb-12 lg:mb-20">
+                <MasonryGrid 
+                  images={relatedImages}
+                  isLoading={false}
+                />
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+    </Layout>
   );
 };
 

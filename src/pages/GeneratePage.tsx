@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
+import Breadcrumb from '../components/common/Breadcrumb';
 import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import CircularProgress from '../components/ui/CircularProgress';
@@ -736,8 +737,18 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       <div className="flex flex-col lg:flex-row h-screen bg-[#F9FAFB] relative">
         {/* Left Sidebar - 移动端隐藏，桌面端显示 */}
         <div className="hidden lg:block w-[400px] bg-white pb-[88px] overflow-y-auto h-full">
+          {/* Breadcrumb - 桌面端 */}
+          <div className="mx-5 mt-5 mb-3">
+            <Breadcrumb 
+              items={[
+                { label: 'Home', path: '/' },
+                { label: 'Generate', current: true }
+              ]}
+            />
+          </div>
+          
           {/* Tab Selector */}
-          <div className="mx-5 mt-5">
+          <div className="mx-5">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
               <div
                 className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[174px] bg-white left-1' :
@@ -790,8 +801,18 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
         {/* 移动端主要内容区域 */}
         <div className="flex flex-col lg:hidden h-full bg-white">
+          {/* Breadcrumb - 移动端 */}
+          <div className="px-4 pt-4 pb-2">
+            <Breadcrumb 
+              items={[
+                { label: 'Home', path: '/' },
+                { label: 'Generate', current: true }
+              ]}
+            />
+          </div>
+          
           {/* 移动端标签选择器 */}
-          <div className="bg-white px-4 pb-4 lg:pt-4 border-b border-gray-200 flex-shrink-0">
+          <div className="bg-white px-4 pb-4 border-b border-gray-200 flex-shrink-0">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative max-w-md mx-auto">
               <div
                 className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[calc(50%-4px)] bg-white left-1' : 'w-[calc(50%-4px)] bg-white right-1'}`}

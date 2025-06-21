@@ -54,9 +54,10 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         {/* 图片区域 */}
         <div className="w-full px-[1px] rounded-t-2xl overflow-hidden">
           <img 
-            className="w-full h-auto object-cover rounded-t-2xl"
+            className="w-full h-auto object-cover rounded-t-2xl cursor-pointer hover:opacity-90 transition-opacity duration-200"
             src={displayCategory.thumbnailUrl}
             alt={displayCategory.displayName}
+            onClick={handleClick}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = 'https://placehold.co/276x386?text=' + encodeURIComponent(displayCategory.displayName);

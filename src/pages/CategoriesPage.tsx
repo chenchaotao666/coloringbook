@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
+import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
 import CategoryCard from '../components/categories/CategoryCard';
-const homeIcon = '/images/home.svg';
-const chevronRightIcon = '/images/chevron-right.svg';
 const noResultIcon = '/images/no-result.svg';
 
 
@@ -78,17 +77,12 @@ const CategoriesPage: React.FC = () => {
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}
         <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
-          <div className="flex items-center gap-2.5">
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-[#161616] text-sm font-medium hover:text-[#FF5907] transition-colors"
-            >
-              <img src={homeIcon} alt="Home" className="w-3 h-3" />
-              <span>Home</span>
-            </button>
-            <img src={chevronRightIcon} alt=">" className="w-1.5 h-3" />
-            <span className="text-[#6B7280] text-sm font-medium">Coloring Pages Free</span>
-          </div>
+          <Breadcrumb 
+            items={[
+              { label: 'Home', path: '/' },
+              { label: 'Coloring Pages Free', current: true }
+            ]}
+          />
         </div>
         
         {/* Page Title */}

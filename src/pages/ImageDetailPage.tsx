@@ -274,7 +274,7 @@ const ImageDetailPage: React.FC = () => {
             }
 
             return (
-              <div className="space-y-8 lg:space-y-12 mb-4 lg:mb-20">
+              <div className="space-y-8 lg:space-y-12 mb-8 lg:mb-20">
                 {/* Section 1 - 图片特色 */}
                 {additionalInfo.features && additionalInfo.features.length > 0 && (
                   <section>
@@ -333,7 +333,7 @@ const ImageDetailPage: React.FC = () => {
             </h2>
             
             {/* Related Images Grid */}
-            <div className="mb-12 lg:mb-20">
+            <div className="mb-8 lg:mb-20">
               {isRelatedImagesLoading ? (
                 <div className="flex justify-center items-center py-12">
                   <div className="text-lg text-[#6B7280]">Loading related images...</div>

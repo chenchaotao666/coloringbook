@@ -189,8 +189,6 @@ const PricingCard = ({
   popular = false, 
   priceNote, 
   features, 
-  highlighted = false,
-  onSelect,
   onBuyClick,
 }: { 
   title: string, 
@@ -198,13 +196,12 @@ const PricingCard = ({
   popular?: boolean,
   priceNote?: string, 
   features: string[],
-  highlighted?: boolean,
-  onSelect?: () => void,
   onBuyClick?: () => void,
 }) => (
   <div 
-    className={`w-full sm:w-[376px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden cursor-pointer transition-all duration-200 border-2 ${highlighted ? 'border-[#FF5C07]' : 'border-[#EDEEF0] hover:border-[#FF5C07]/50'}`}
-    onClick={onSelect}
+    className={`w-full sm:w-[376px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden transition-all duration-200 border-2 ${
+      popular ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'
+    }`}
   >
     {popular && (
       <div className="absolute -top-1 -right-1 px-4 sm:px-6 py-2 bg-[#6200E2] text-white font-bold italic text-xs sm:text-sm rounded-bl-2xl rounded-tr-2xl">
@@ -228,12 +225,9 @@ const PricingCard = ({
       </div>
       <div className="flex flex-col gap-4 sm:gap-5 w-full">
         <Button 
-          variant={highlighted ? 'gradient' : 'default'}
-          disabled={!highlighted}
-          className={`w-full h-12 sm:h-[60px] text-lg sm:text-xl font-bold !transition-none ${
-            highlighted 
-              ? '!duration-0' 
-              : 'border border-[#818181] bg-white text-[#161616]'
+          variant={popular ? 'gradient' : 'default'}
+          className={`w-full h-12 sm:h-[60px] text-lg sm:text-xl font-bold ${
+            !popular ? 'border border-[#818181] bg-white text-[#161616] hover:bg-gray-200' : ''
           }`}
           onClick={(e) => {
             e.stopPropagation(); // 阻止事件冒泡
@@ -260,9 +254,6 @@ const PricingPage: React.FC = () => {
   const { isAuthenticated, refreshUser } = useAuth();
   const navigate = useNavigate();
   
-  // State to manage selected pricing plan
-  const [selectedPlan, setSelectedPlan] = useState<string>('Lite'); // 默认选中Lite
-  
   // State to manage billing period
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly'); // 默认月付
 
@@ -271,11 +262,7 @@ const PricingPage: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [successCredits, setSuccessCredits] = useState(0);
-
-  // Function to handle plan selection
-  const handlePlanSelect = (planTitle: string) => {
-    setSelectedPlan(planTitle);
-  };
+  const [currentPlan, setCurrentPlan] = useState<string>(''); // 当前要购买的计划
 
   // Function to handle billing period change
   const handleBillingPeriodChange = (period: 'monthly' | 'yearly') => {
@@ -296,8 +283,8 @@ const PricingPage: React.FC = () => {
       return;
     }
 
-    // 设置选中的计划并显示支付方式选择弹窗
-    setSelectedPlan(planTitle);
+    // 设置当前要购买的计划并显示支付方式选择弹窗
+    setCurrentPlan(planTitle);
     setShowPaymentModal(true);
   };
 
@@ -308,7 +295,7 @@ const PricingPage: React.FC = () => {
 
       const rechargeData: RechargeRequest = {
         type: billingPeriod,
-        level: selectedPlan.toLowerCase() as 'lite' | 'pro',
+        level: currentPlan.toLowerCase() as 'lite' | 'pro',
         payType: paymentMethod as 'master' | 'visa' | 'americanexpress' | 'applepay' | 'unionpay'
       };
 
@@ -316,9 +303,9 @@ const PricingPage: React.FC = () => {
       
       // 充值成功，根据计划和周期计算积分
       let credits = 0;
-      if (selectedPlan === 'Lite') {
+      if (currentPlan === 'Lite') {
         credits = billingPeriod === 'monthly' ? 300 : 3600; // 月付300，年付3600
-      } else if (selectedPlan === 'Pro') {
+      } else if (currentPlan === 'Pro') {
         credits = billingPeriod === 'monthly' ? 600 : 7200; // 月付600，年付7200
       }
       
@@ -341,11 +328,11 @@ const PricingPage: React.FC = () => {
     }
   };
 
-  // 获取当前选中计划的价格
+  // 获取当前计划的价格
   const getCurrentPrice = () => {
-    if (selectedPlan === 'Lite') {
+    if (currentPlan === 'Lite') {
       return billingPeriod === 'monthly' ? '$9.99' : '$99.99';
-    } else if (selectedPlan === 'Pro') {
+    } else if (currentPlan === 'Pro') {
       return billingPeriod === 'monthly' ? '$19.99' : '$199.99';
     }
     return '';
@@ -401,8 +388,8 @@ const PricingPage: React.FC = () => {
         </div>
         
         {/* Main Content */}
-        <div className="relative z-10 pt-[60px] flex flex-col items-center px-4">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#161616] mb-8 sm:mb-12 md:mb-16 text-center">Plans & Pricing</h1>
+        <div className="relative z-10 pt-4 lg:pt-16 flex flex-col items-center px-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#161616] mb-4 sm:mb-12 md:mb-16 text-center">Plans & Pricing</h1>
           
           {/* Toggle for Monthly/Yearly */}
           <div className="h-10 sm:h-12 bg-[#F2F3F5] rounded-3xl inline-flex items-center p-1 mb-8 sm:mb-12 md:mb-16">
@@ -429,23 +416,19 @@ const PricingPage: React.FC = () => {
           </div>
           
           {/* Pricing Cards */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 mb-8 sm:mb-12 md:mb-16 w-full max-w-6xl">
+          <div className="flex flex-col sm:flex-row gap-6 mb-8 sm:mb-12 md:mb-16 w-full max-w-6xl">
             <PricingCard 
               title="Free" 
               price="" 
               features={freePlanFeatures}
-              highlighted={selectedPlan === 'Free'}
-              onSelect={() => handlePlanSelect('Free')}
               onBuyClick={() => handleBuyClick('Free')}
             />
             <PricingCard 
               title="Lite" 
               price={billingPeriod === 'monthly' ? '$9.99' : '$99.99'} 
               priceNote={billingPeriod === 'monthly' ? 'For first time, then $10/month' : 'For first time, then $60/year (Save 20%)'} 
-              features={litePlanFeatures} 
-              highlighted={selectedPlan === 'Lite'}
+              features={litePlanFeatures}
               popular={true}
-              onSelect={() => handlePlanSelect('Lite')}
               onBuyClick={() => handleBuyClick('Lite')}
             />
             <PricingCard 
@@ -453,14 +436,12 @@ const PricingPage: React.FC = () => {
               price={billingPeriod === 'monthly' ? '$19.99' : '$199.99'} 
               priceNote={billingPeriod === 'monthly' ? 'For first time, then $20/month' : 'For first time, then $144/year (Save 20%)'} 
               features={proPlanFeatures}
-              highlighted={selectedPlan === 'Pro'}
-              onSelect={() => handlePlanSelect('Pro')}
               onBuyClick={() => handleBuyClick('Pro')}
             />
           </div>
           
           {/* Payment Methods */}
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-12 sm:mb-16 md:mb-20 px-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-4 sm:mb-16 md:mb-20 px-4">
             <div className="text-[#6B7280] text-xs sm:text-sm mb-2 sm:mb-0">Secure Payment:</div>
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
               <img className="h-4 sm:h-6" src={payMastercard} alt="Mastercard" />
@@ -501,7 +482,7 @@ const PricingPage: React.FC = () => {
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         onConfirm={handlePaymentConfirm}
-        planTitle={selectedPlan}
+        planTitle={currentPlan}
         price={getCurrentPrice()}
         isProcessing={isProcessing}
       />

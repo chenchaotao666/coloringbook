@@ -9,6 +9,7 @@ import intlIcon from '../../../public/images/intl.svg';
 import expandIcon from '../../../public/images/expand.svg';
 import creditsIcon from '../../../public/images/credits.svg';
 import defaultAvatar from '../../../public/images/default-avatar.svg';
+import colorPaletteIcon from '../../../public/images/color-palette.png';
 
 interface HeaderProps {
   backgroundColor?: 'transparent' | 'white';
@@ -258,10 +259,14 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           ) : isAuthenticated && user ? (
             <div className="flex items-center gap-4">
               {/* 积分显示 */}
-              <div className="flex items-center justify-center gap-1.5 px-5 py-1.5 rounded-lg" style={{backgroundColor: '#F9FAFB'}}>
+              <Link 
+                to="/price"
+                className="flex items-center justify-center gap-1.5 px-5 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
+                style={{backgroundColor: '#F9FAFB'}}
+              >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
                 <span className="text-sm font-medium text-orange-600">{user.credits}</span>
-              </div>
+              </Link>
 
               {/* 用户头像和下拉菜单 */}
               <div className="relative" ref={userDropdownRef}>
@@ -343,13 +348,28 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
         {/* 移动端右侧区域 */}
         <div className="lg:hidden flex items-center">
+          {/* 调色板图标 */}
+          <div className="pr-3">
+            <Link 
+              to="/image-coloring-page"
+              className="flex items-center justify-center p-1 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
+              style={{backgroundColor: '#FAFBFC'}}
+            >
+              <img src={colorPaletteIcon} alt="Image Coloring Page" className="w-6 h-6" />
+            </Link>
+          </div>
+
           {/* 移动端积分显示（仅在已登录时显示） */}
           {isAuthenticated && user && (
             <div className="pr-3">
-              <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg" style={{backgroundColor: '#FAFBFC'}}>
+              <Link 
+                to="/price"
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
+                style={{backgroundColor: '#FAFBFC'}}
+              >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
                 <span className="text-sm font-medium text-orange-600">{user.credits}</span>
-              </div>
+              </Link>
             </div>
           )}
 
@@ -398,10 +418,14 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="flex items-center gap-2">
+                    <Link 
+                      to="/price"
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200 cursor-pointer inline-flex"
+                      onClick={handleMobileLinkClick}
+                    >
                       <img src={creditsIcon} alt="积分" className="w-4 h-4" />
                       <span className="text-sm font-medium text-orange-600">{user.credits}</span>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>

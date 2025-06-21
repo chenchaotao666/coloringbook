@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
-import Breadcrumb from '../components/common/Breadcrumb';
 import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import CircularProgress from '../components/ui/CircularProgress';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
+import Tooltip from '../components/ui/Tooltip';
 import {
   getCenterImageSize,
   getImageSize,
@@ -25,6 +25,7 @@ const moreIcon = '/images/more.svg';
 const deleteIcon = '/images/delete.svg';
 const reportIcon = '/images/report.svg';
 const textCountIcon = '/images/text-count.svg';
+const generateFailIcon = '/images/generate-fail.svg';
 
 interface GeneratePageProps {
   initialTab?: 'text' | 'image';
@@ -162,10 +163,18 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   };
 
   const handleImageSelect = (imageId: string) => {
+    // 如果有错误，先清除错误状态
+    if (error) {
+      clearError();
+    }
     setSelectedImage(imageId);
   };
 
   const handleGenerate = async () => {
+    // 清除之前的错误状态
+    if (error) {
+      clearError();
+    }
     await generateImages();
   };
 
@@ -272,14 +281,23 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
 
     return (
-      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pb-0 pt-6 lg:pt-48 lg:pb-20 relative bg-[#F9FAFB]">
-
-
+      <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pt-4 lg:pb-56 relative bg-[#F9FAFB]">
         {/* 图片内容区域 - 移动端固定高度，桌面端flex-1 */}
-        <div className="h-[390px] lg:flex-1 lg:h-auto flex flex-col">
+        <div className="h-[390px] lg:flex-1 lg:h-auto flex flex-col justify-center">
           {/* 移动端为历史图片预留右侧空间 */}
           <div className="w-full">
-            {selectedImage || isGenerating ? (
+            {error ? (
+              // 生成失败状态 - 独立显示，居中，不在图片框中
+              <div className="flex flex-col items-center text-center pt-8 pb-16">
+                <div className="w-20 h-20 mb-6">
+                  <img src={generateFailIcon} alt="Generation failed" className="w-full h-full" />
+                </div>
+                <div className="text-[#6B7280] text-sm leading-relaxed max-w-md">
+                  The generation failed. Please regenerate it.<br />
+                  If you encounter any problems, please provide feedback to us.
+                </div>
+              </div>
+            ) : selectedImage || isGenerating ? (
               <div className="flex flex-col items-center">
                 {(() => {
                   const imageSize = getCenterImageSize(mode, isGenerating, selectedImage, generatedImages, dynamicImageDimensions, setDynamicImageDimensions);
@@ -320,7 +338,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 
                 {/* Download and More Options - 只在有选中图片时显示 */}
                 {selectedImage && (
-                  <div className="flex flex-row gap-3 mt-6 mb-6 px-4 sm:px-0">
+                  <div className="flex flex-row gap-3 mt-6 px-4 sm:px-0">
                     {/* Download PNG Button */}
                     <button 
                       onClick={() => handleDownload('png')}
@@ -370,6 +388,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     </div>
                   </div>
                 )}
+
               </div>
             ) : (mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples) ? null : (
               // 根据当前模式判断是否显示Example
@@ -468,7 +487,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <div className="lg:hidden mt-4 px-4 sm:px-6">
               <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
                 {currentImages.slice(0, 10).map((image, index) => {
-                  const isSelected = selectedImage === image.id;
+                  // 如果有错误则不选中任何图片
+                  const isSelected = !error && selectedImage === image.id;
                   
                   return (
                     <div
@@ -689,8 +709,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         {currentImages.length > 0 ? (
           currentImages
             .map((image, index) => {
-              // 使用图片的 id 进行选中状态判断
-              const isSelected = selectedImage === image.id;
+              // 使用图片的 id 进行选中状态判断，但如果有错误则不选中任何图片
+              const isSelected = !error && selectedImage === image.id;
               return (
                 <div
                   key={image.id}
@@ -720,7 +740,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   return (
     <LayoutNoFooter>
       {/* 错误提示 */}
-      {error && (
+      {/* {error && (
         <div className="fixed top-4 right-4 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg max-w-md">
           <div className="flex items-center justify-between">
             <span className="text-sm">{error}</span>
@@ -732,21 +752,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="flex flex-col lg:flex-row h-screen bg-[#F9FAFB] relative">
         {/* Left Sidebar - 移动端隐藏，桌面端显示 */}
         <div className="hidden lg:block w-[400px] bg-white pb-[88px] overflow-y-auto h-full">
-          {/* Breadcrumb - 桌面端 */}
-          <div className="mx-5 mt-5 mb-3">
-            <Breadcrumb 
-              items={[
-                { label: 'Home', path: '/' },
-                { label: 'Generate', current: true }
-              ]}
-            />
-          </div>
-          
           {/* Tab Selector */}
           <div className="mx-5">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
@@ -779,9 +789,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="mx-5 mt-5 lg:mt-8 flex items-center justify-between">
             <div className="text-[14px] font-bold text-[#161616] flex items-center">
               Public Visibility
-              <span className="ml-3 w-[18px] h-[18px]">
-                <img src={tipIcon} alt="Info" className="w-[18px] h-[18px]" />
-              </span>
+              <Tooltip 
+                content="When enabled, your generated images will be visible to other users in the public gallery. When disabled, only you can see your generated images."
+                side="top"
+                className="ml-3"
+              >
+                <span className="w-[18px] h-[18px] cursor-help inline-block">
+                  <img src={tipIcon} alt="Info" className="w-[18px] h-[18px]" />
+                </span>
+              </Tooltip>
             </div>
             <div className="flex items-center">
               <span className="mr-2 w-[18px] h-[18px]">
@@ -800,17 +816,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
 
         {/* 移动端主要内容区域 */}
-        <div className="flex flex-col lg:hidden h-full bg-white">
-          {/* Breadcrumb - 移动端 */}
-          <div className="px-4 pt-4 pb-2">
-            <Breadcrumb 
-              items={[
-                { label: 'Home', path: '/' },
-                { label: 'Generate', current: true }
-              ]}
-            />
-          </div>
-          
+        <div className="flex flex-col lg:hidden h-full bg-white">          
           {/* 移动端标签选择器 */}
           <div className="bg-white px-4 pb-4 border-b border-gray-200 flex-shrink-0">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative max-w-md mx-auto">
@@ -844,9 +850,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               <div className="mt-5 flex items-center justify-between">
                 <div className="text-sm font-bold text-[#161616] flex items-center">
                   Public Visibility
-                  <span className="ml-2 w-4 h-4">
-                    <img src={tipIcon} alt="Info" className="w-4 h-4" />
-                  </span>
+                  <Tooltip 
+                    content="When enabled, your generated images will be visible to other users in the public gallery. When disabled, only you can see your generated images."
+                    side="top"
+                    className="ml-2"
+                  >
+                    <span className="w-4 h-4 cursor-help inline-block">
+                      <img src={tipIcon} alt="Info" className="w-4 h-4" />
+                    </span>
+                  </Tooltip>
                 </div>
                 <div className="flex items-center">
                   <span className="mr-2 w-4 h-4">
@@ -892,6 +904,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               <span className="font-bold text-lg">
                 {!canGenerate ? 'Insufficient Credits' :
                isGenerating ? 'Generating...' : 
+               error ? 'Regenerate' :
                'Generate'}
               </span>
             </button>
@@ -935,6 +948,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <span className="font-bold text-lg">
               {!canGenerate ? 'Insufficient Credits' :
                  isGenerating ? 'Generating...' : 
+                 error ? 'Regenerate' :
                  'Generate'}
             </span>
           </button>

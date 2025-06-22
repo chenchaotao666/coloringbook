@@ -58,7 +58,7 @@ export class TaskService {
    */
   static async getTaskStatus(taskId: string): Promise<TaskStatus> {
     try {
-      const response = await ApiUtils.get<TaskStatus>(`/api/images/tasks/${taskId}`, {}, true);
+      const response = await ApiUtils.get<TaskStatus>('/api/images/tasks', { taskId }, true);
       return response;
     } catch (error) {
       console.error('Get task status error:', error);

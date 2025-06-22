@@ -1,5 +1,5 @@
 import React from 'react';
-import { Category, CategoriesService } from '../../services/categoriesService';
+import { Category } from '../../services/categoriesService';
 import { HomeImage } from '../../services/imageService';
 
 interface CategoryCardProps {

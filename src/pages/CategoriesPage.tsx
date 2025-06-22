@@ -5,12 +5,14 @@ import { Button } from '../components/ui/button';
 import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
 import CategoryCard from '../components/categories/CategoryCard';
+import { useLanguage } from '../contexts/LanguageContext';
 const noResultIcon = '/images/no-result.svg';
 
 
 
 const CategoriesPage: React.FC = () => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   
   // 状态管理
   const [categories, setCategories] = useState<Category[]>([]);
@@ -24,7 +26,7 @@ const CategoriesPage: React.FC = () => {
     const loadCategories = async () => {
       try {
         setIsLoadingCategories(true);
-        const categoriesData = await CategoriesService.getCategories();
+        const categoriesData = await CategoriesService.getCategories(language);
         setCategories(categoriesData);
         setFilteredCategories(categoriesData);
       } catch (error) {
@@ -35,7 +37,7 @@ const CategoriesPage: React.FC = () => {
     };
 
     loadCategories();
-  }, []);
+  }, [language]);
 
   // 当分类数据加载完成时，重置过滤结果
   useEffect(() => {

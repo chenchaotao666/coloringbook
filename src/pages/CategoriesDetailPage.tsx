@@ -7,11 +7,13 @@ import RatioSelector from '../components/ui/RatioSelector';
 import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
+import { useLanguage } from '../contexts/LanguageContext';
 // const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
+  const { language } = useLanguage();
 
   const [category, setCategory] = useState<Category | null>(null);
   const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
@@ -81,7 +83,7 @@ const CategoriesDetailPage: React.FC = () => {
       try {
         // 先加载分类信息
         setIsCategoryLoading(true);
-        const categories = await CategoriesService.getCategories();
+        const categories = await CategoriesService.getCategories(language);
         const foundCategory = categories.find((cat: Category) => cat.id === categoryId);
 
         if (foundCategory) {
@@ -103,7 +105,7 @@ const CategoriesDetailPage: React.FC = () => {
     };
 
     loadCategoryData();
-  }, [categoryId]);
+  }, [categoryId, language]);
 
   // 加载更多图片
   const handleLoadMore = async () => {

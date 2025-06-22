@@ -1,5 +1,5 @@
 import React from 'react';
-import { Category } from '../../services/categoriesService';
+import { Category, CategoriesService } from '../../services/categoriesService';
 import { HomeImage } from '../../services/imageService';
 
 interface CategoryCardProps {
@@ -21,22 +21,22 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     name: homeImage.name.toLowerCase(),
     displayName: homeImage.title,
     description: homeImage.description,
-    tagCounts: {}, // 空的标签统计
+    tagCounts: [], // 空的标签统计数组
     thumbnailUrl: homeImage.defaultUrl
   } : null);
 
   if (!displayCategory) return null;
 
   // 从后台数据获取标签统计，并格式化为显示用的标签数组
-  const getTagsFromBackend = (tagCounts: { [key: string]: number }) => {
+  const getTagsFromBackend = (category: Category) => {
     // 将标签按数量排序，取前5个
-    return Object.entries(tagCounts)
-      .sort(([, a], [, b]) => b - a) // 按数量降序排序
+    return category.tagCounts
+      .sort((a, b) => b.count - a.count) // 按数量降序排序
       .slice(0, 5) // 只取前5个
-      .map(([tag, count]) => `${tag} (${count})`);
+      .map(tagCount => `${tagCount.tagDisplayName || tagCount.tagName} (${tagCount.count})`);
   };
 
-  const subCategories = getTagsFromBackend(displayCategory.tagCounts);
+  const subCategories = getTagsFromBackend(displayCategory);
 
   const handleClick = () => {
     if (onClick) {

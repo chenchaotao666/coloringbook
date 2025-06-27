@@ -56,9 +56,9 @@ export class TaskService {
   /**
    * 获取任务状态
    */
-  static async getTaskStatus(taskId: string): Promise<TaskStatus> {
+  static async getTaskStatus(taskId: string, type: 'text2image' | 'image2image' | 'image2coloring'): Promise<TaskStatus> {
     try {
-      const response = await ApiUtils.get<TaskStatus>('/api/images/tasks', { taskId }, true);
+      const response = await ApiUtils.get<TaskStatus>('/api/images/tasks', { taskId, type }, true);
       return response;
     } catch (error) {
       console.error('Get task status error:', error);

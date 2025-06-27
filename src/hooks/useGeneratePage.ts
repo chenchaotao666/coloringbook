@@ -557,7 +557,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         });
         
         // 开始轮询任务状态
-        pollTaskStatus(response.data.taskId);
+        const taskType = state.selectedTab === 'text' ? 'text2image' : 'image2image';
+        pollTaskStatus(response.data.taskId, taskType);
       } else {
         throw new Error(response.message || 'Generation failed');
       }
@@ -570,14 +571,14 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
   }, [state.isGenerating, state.selectedTab, state.prompt, state.selectedRatio, state.textPublicVisibility, state.imagePublicVisibility, state.uploadedFile, state.canGenerate, updateState, handleInsufficientCredits]);
 
   // 轮询任务状态完成后刷新积分
-  const pollTaskStatus = useCallback(async (taskId: string) => {
+  const pollTaskStatus = useCallback(async (taskId: string, type: 'text2image' | 'image2image' | 'image2coloring') => {
     const maxAttempts = 60; // 最多轮询60次（5分钟）
     let attempts = 0;
 
     const poll = async () => {
       try {
         attempts++;
-        const taskStatus = await GenerateServiceInstance.getTaskStatus(taskId);
+        const taskStatus = await GenerateServiceInstance.getTaskStatus(taskId, type);
         
         updateState({
           generationProgress: taskStatus.progress || 0,

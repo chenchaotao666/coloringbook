@@ -137,9 +137,9 @@ class GenerateService {
   /**
    * 获取任务状态
    */
-  async getTaskStatus(taskId: string): Promise<TaskStatus> {
+  async getTaskStatus(taskId: string, type: 'text2image' | 'image2image' | 'image2coloring'): Promise<TaskStatus> {
     const { TaskService } = await import('./taskService');
-    return TaskService.getTaskStatus(taskId);
+    return TaskService.getTaskStatus(taskId, type);
   }
 
   /**

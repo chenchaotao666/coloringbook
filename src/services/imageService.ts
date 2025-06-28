@@ -6,16 +6,19 @@ export interface HomeImage {
   name: string;
   defaultUrl: string;
   colorUrl: string;
+  coloringUrl?: string;
   title: string;
   description: string;
   tags: string[];
-  type: 'text2image' | 'image2image';
-  ratio: '3:4' | '4:3' | '1:1' | '';
+  type: 'text2image' | 'image2image' | 'image2coloring';
+  ratio: '3:4' | '4:3' | '1:1' | '16:9' | '';
   isPublic: boolean;
+  hotness: number; // 热度值
   createdAt: string;
   prompt: string;
   userId: string;
   category: string;
+  categoryId: string;
   size: string;
   additionalInfo: string;
 }
@@ -35,8 +38,8 @@ export interface SearchParams {
   query?: string;
   categoryId?: string;
   tags?: string;
-  ratio?: '1:1' | '3:4' | '4:3';
-  type?: 'text2image' | 'image2image';
+  ratio?: '1:1' | '3:4' | '4:3' | '16:9';
+  type?: 'text2image' | 'image2image' | 'image2coloring';
   userId?: string;
   isPublic?: boolean;
   currentPage?: number;
@@ -55,7 +58,7 @@ export class ImageService {
    * 处理图片对象，确保所有URL都是绝对路径
    */
   private static processImageUrls(image: HomeImage): HomeImage {
-    return UrlUtils.processObjectUrls(image, ['defaultUrl', 'colorUrl']);
+    return UrlUtils.processObjectUrls(image, ['defaultUrl', 'colorUrl', 'coloringUrl']);
   }
 
   /**
@@ -255,7 +258,7 @@ export class ImageService {
    */
   static async getUserImages(
     userId: string, 
-    params: { currentPage?: number; pageSize?: number; type?: 'text2image' | 'image2image' } = {}
+    params: { currentPage?: number; pageSize?: number; type?: 'text2image' | 'image2image' | 'image2coloring' } = {}
   ): Promise<SearchResult> {
     return this.searchImages({
       userId,

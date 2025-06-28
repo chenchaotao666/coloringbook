@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
-import CategoryCard from '../components/categories/CategoryCard';
+import CategoryGrid from '../components/layout/CategoryGrid';
 import { useLanguage } from '../contexts/LanguageContext';
 const noResultIcon = '/images/no-result.svg';
 
@@ -114,78 +114,28 @@ const CategoriesPage: React.FC = () => {
           </form>
         </div>
         
-        {/* Category Grid - 4 columns layout */}
+        {/* Category Grid */}
         <div className="container mx-auto px-4 max-w-[1200px]">
-          {isLoadingCategories ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="text-lg text-[#6B7280]">Loading categories...</div>
-            </div>
-          ) : filteredCategories.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="text-center">
-                {isSearchActive ? (
-                  <>
-                    {/* No Search Results */}
-                    <div className="mb-6">
-                      <img 
-                        src={noResultIcon} 
-                        alt="No results found" 
-                        className="w-[305px] h-[200px] mx-auto"
-                      />
-                    </div>
-                    <p className="text-[#6B7280] text-base font-normal leading-6">
-                      No categories found matching your search.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    {/* No Categories Loaded */}
-                    <div className="text-6xl mb-4">📂</div>
-                    <h3 className="text-xl font-semibold text-[#161616] mb-2">No categories found</h3>
-                    <p className="text-[#6B7280] text-sm max-w-md">
-                      Categories are being loaded. Please wait a moment.
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* 瀑布流布局 - 桌面端 */}
-              <div className="hidden lg:block">
-                <div className="columns-4 gap-6 max-w-[1200px] mx-auto">
-                  {filteredCategories.map((category, index) => (
-                    <div 
-                      key={`${category.id}-desktop-${index}`}
-                      className="break-inside-avoid mb-6 w-full"
-                    >
-                      <CategoryCard
-                        category={category}
-                        onCategoryClick={handleCategoryClick}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* 瀑布流布局 - 移动端 */}
-              <div className="lg:hidden">
-                <div className="columns-2 md:columns-3 gap-4">
-                  {filteredCategories.map((category, index) => (
-                    <div 
-                      key={`${category.id}-mobile-${index}`}
-                      className="break-inside-avoid mb-4 w-full"
-                    >
-                      <CategoryCard
-                        category={category}
-                        onCategoryClick={handleCategoryClick}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+          <CategoryGrid
+            categories={filteredCategories}
+            isLoading={isLoadingCategories}
+            emptyState={
+              filteredCategories.length === 0
+                ? isSearchActive
+                  ? {
+                      icon: noResultIcon,
+                      title: "No results found",
+                      description: "No categories found matching your search."
+                    }
+                  : {
+                      icon: "📂",
+                      title: "No categories found",
+                      description: "Categories are being loaded. Please wait a moment."
+                    }
+                : undefined
+            }
+            onCategoryClick={handleCategoryClick}
+          />
         </div>
       </div>
     </Layout>

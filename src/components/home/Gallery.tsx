@@ -1,34 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { ImageService, HomeImage } from '../../services/imageService';
-import MasonryGrid from '../layout/MasonryGrid';
+import { CategoriesService, Category } from '../../services/categoriesService';
+import CategoryGrid from '../layout/CategoryGrid';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface GalleryProps {
   title: string;
 }
 
 const Gallery: React.FC<GalleryProps> = ({ title }) => {
-  const [homeImages, setHomeImages] = useState<HomeImage[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { language } = useLanguage();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadImages = async () => {
+    const loadCategories = async () => {
       try {
         setIsLoading(true);
-        const images = await ImageService.fetchAllHomeImages();
-        setHomeImages(images);
+        const categoriesData = await CategoriesService.getCategories(language);
+        // 按热度排序，热度高的在前
+        const sortedCategories = categoriesData.sort((a, b) => b.hotness - a.hotness);
+        setCategories(sortedCategories);
       } catch (error) {
-        console.error('Failed to load home images:', error);
+        console.error('Failed to load categories:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadImages();
-  }, []);
+    loadCategories();
+  }, [language]);
 
-  const displayImages = homeImages.slice(0, 16);
+  const displayCategories = categories.slice(0, 8); // 显示前8个分类
+
+  const handleCategoryClick = (category: Category) => {
+    navigate(`/categories/${category.id}`);
+  };
 
   return (
     <div className="w-full bg-[#F9FAFB] pb-12 sm:pb-16 md:pb-20 lg:pb-[120px] pt-12 sm:pt-16 md:pt-20 lg:pt-[120px]">
@@ -37,9 +46,11 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
           {title}
         </h2>
         
-        <MasonryGrid 
-          images={displayImages}
+        <CategoryGrid 
+          categories={displayCategories}
           isLoading={isLoading}
+          onCategoryClick={handleCategoryClick}
+          maxColumns={{ desktop: 4, tablet: 3, mobile: 2 }}
         />
         
         <div className="flex justify-center mt-12 sm:mt-16 md:mt-20 px-4 sm:px-0">
@@ -48,7 +59,7 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
               variant="gradient"
               className="h-[50px] sm:h-[60px] px-4 sm:px-5 py-3 rounded-lg overflow-hidden text-lg sm:text-xl font-bold capitalize w-full sm:w-auto min-w-[280px] sm:min-w-0"
             >
-              View more free coloring pages
+              View all categories
             </Button>
           </Link>
         </div>

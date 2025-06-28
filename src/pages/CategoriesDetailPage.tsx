@@ -47,7 +47,7 @@ const CategoriesDetailPage: React.FC = () => {
     if (!categoryId) return;
 
     try {
-      // 使用新的 getImagesByCategory 方法
+      // 使用新的 getImagesByCategory 方法，传递语言参数
       const result = await CategoriesService.getImagesByCategoryId(categoryId, {
         currentPage: page,
         pageSize: 20,

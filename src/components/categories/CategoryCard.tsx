@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Category } from '../../services/categoriesService';
 import { HomeImage } from '../../services/imageService';
 
@@ -15,14 +15,33 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   onCategoryClick, 
   onClick 
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileShowColor, setMobileShowColor] = useState(false);
+
+  // 检测是否为移动端
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg断点
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   // 如果传入的是HomeImage，从中提取分类信息
   const displayCategory = category || (homeImage ? {
     id: homeImage.id,
     name: homeImage.name.toLowerCase(),
     displayName: homeImage.title,
     description: homeImage.description,
+    hotness: homeImage.hotness || 0,
     tagCounts: [], // 空的标签统计数组
-    thumbnailUrl: homeImage.defaultUrl
+    thumbnailUrl: homeImage.defaultUrl,
+    defaultUrl: homeImage.defaultUrl,
+    colorUrl: homeImage.colorUrl || '',
+    coloringUrl: homeImage.coloringUrl || ''
   } : null);
 
   if (!displayCategory) return null;
@@ -46,23 +65,82 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     }
   };
 
+  // 移动端点击切换颜色效果
+  const handleToggleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 防止触发父元素的点击事件
+    setMobileShowColor(prev => !prev);
+  };
+
+  // 根据设备类型决定显示状态，只有当存在coloringUrl时才显示彩色效果
+  const shouldShowColor = displayCategory.coloringUrl ? (isMobile ? mobileShowColor : isHovered) : false;
+
+  // 图片错误处理
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = 'https://placehold.co/276x386?text=' + encodeURIComponent(displayCategory.displayName);
+  };
+
   return (
     <div 
       className="pt-[1px] pb-3 bg-white rounded-2xl border border-[#EDEEF0] w-full max-w-[278px] mx-auto"
     >
       <div className="w-full flex flex-col justify-start items-center gap-4">
         {/* 图片区域 */}
-        <div className="w-full px-[1px] rounded-t-2xl overflow-hidden">
+        <div 
+          className="w-full px-[1px] rounded-t-2xl overflow-hidden relative cursor-pointer"
+          style={{
+            WebkitTapHighlightColor: 'transparent'
+          }}
+          {...(displayCategory.coloringUrl ? {
+            onMouseEnter: () => !isMobile && setIsHovered(true),
+            onMouseLeave: () => !isMobile && setIsHovered(false)
+          } : {})}
+          onClick={handleClick}
+        >
+          {/* 黑白图片 - defaultUrl (默认显示) */}
           <img 
-            className="w-full h-auto object-cover rounded-t-2xl cursor-pointer hover:opacity-90 transition-opacity duration-200"
-            src={displayCategory.thumbnailUrl}
+            className={`w-full h-auto object-cover rounded-t-2xl ${
+              displayCategory.coloringUrl 
+                ? `transition-opacity duration-500 ease-in-out ${shouldShowColor ? 'opacity-0' : 'opacity-100'}` 
+                : ''
+            }`}
+            src={displayCategory.defaultUrl}
             alt={displayCategory.displayName}
-            onClick={handleClick}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = 'https://placehold.co/276x386?text=' + encodeURIComponent(displayCategory.displayName);
-            }}
+            onError={handleImageError}
           />
+          
+          {/* 彩色图片 - coloringUrl (悬停或点击时显示) */}
+          {displayCategory.coloringUrl && (
+            <img 
+              className={`absolute inset-0 w-full h-full object-cover rounded-t-2xl transition-opacity duration-500 ease-in-out ${
+                shouldShowColor ? 'opacity-100' : 'opacity-0'
+              }`}
+              src={displayCategory.coloringUrl}
+              alt={`${displayCategory.displayName} colored`}
+              onError={handleImageError}
+            />
+          )}
+          
+          {/* 移动端切换按钮 - 显示小图片效果 */}
+          {isMobile && displayCategory.coloringUrl && (
+            <div
+              onClick={handleToggleClick}
+              className="absolute bottom-2 right-2 max-w-12 max-h-12 rounded-lg shadow-md overflow-hidden transition-all duration-200 z-10 opacity-90 hover:opacity-100 border-2 border-white cursor-pointer"
+              style={{ 
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation'
+              }}
+              aria-label="切换彩色效果"
+            >
+              {/* 小的coloringUrl图片 */}
+              <img
+                src={displayCategory.coloringUrl}
+                alt="Color preview"
+                className="block max-w-12 max-h-12 w-auto h-auto object-contain"
+                onError={handleImageError}
+              />
+            </div>
+          )}
         </div>
         
         {/* 内容区域 */}

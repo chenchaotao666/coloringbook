@@ -5,7 +5,7 @@ import { HomeImage } from './imageService';
 // 接口类型定义
 export interface GenerateTextToImageRequest {
   prompt: string;
-  ratio: '3:4' | '4:3' | '1:1';
+  ratio: '3:4' | '4:3' | '1:1' | '16:9';
   isPublic: boolean;
   style?: string;
   userId?: string;
@@ -13,7 +13,7 @@ export interface GenerateTextToImageRequest {
 
 export interface GenerateImageToImageRequest {
   imageFile: File;
-  ratio?: '3:4' | '4:3' | '1:1';
+  ratio?: '3:4' | '4:3' | '1:1' | '16:9';
   isPublic: boolean;
   userId?: string;
 }
@@ -137,7 +137,7 @@ class GenerateService {
   /**
    * 获取任务状态
    */
-  async getTaskStatus(taskId: string, type: 'text2image' | 'image2image' | 'image2coloring'): Promise<TaskStatus> {
+  async getTaskStatus(taskId: string, type: 'text2image' | 'image2image' | 'image2coloring' = 'text2image'): Promise<TaskStatus> {
     const { TaskService } = await import('./taskService');
     return TaskService.getTaskStatus(taskId, type);
   }

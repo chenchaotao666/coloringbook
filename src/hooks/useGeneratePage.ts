@@ -471,6 +471,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         const textImages = images.filter(img => img.type === 'text2image');
         const imageImages = images.filter(img => img.type === 'image2image');
         
+
+        
         // 检查用户是否有不同类型的生成历史
         const hasTextToImageHistory = textImages.length > 0;
         const hasImageToImageHistory = imageImages.length > 0;
@@ -585,27 +587,58 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         });
 
         if (taskStatus.status === 'completed') {
-          // 任务完成，刷新生成历史和积分
-          await loadGeneratedImages();
-          await checkUserCredits(); // 刷新本地积分状态
-          
-          // 刷新全局用户状态（更新Header中的积分显示）
-          if (refreshUser) {
-            try {
-              await refreshUser();
-            } catch (error) {
-              console.error('Failed to refresh global user state:', error);
-            }
-          }
-          
-          // 设置选中的图片
+          // 任务完成，立即将新图片添加到状态中
           if (taskStatus.result || taskStatus.image) {
             const completedImage = taskStatus.result || taskStatus.image;
-            updateState({
-              selectedImage: completedImage?.id,
-              isGenerating: false,
-              currentTaskId: null,
-              generationProgress: 100,
+
+            
+            // 立即将新图片添加到对应的数组中，并设置为选中状态
+            setState(prevState => {
+              // 确保 completedImage 不为 undefined
+              if (!completedImage) {
+                return {
+                  ...prevState,
+                  isGenerating: false,
+                  currentTaskId: null,
+                  generationProgress: 100,
+                };
+              }
+              
+              const newImage = completedImage;
+              let newTextImages = [...prevState.textGeneratedImages];
+              let newImageImages = [...prevState.imageGeneratedImages];
+              let newGeneratedImages = [...prevState.generatedImages];
+              
+              // 根据当前标签页添加到对应的数组中
+              if (prevState.selectedTab === 'text') {
+                // 检查是否已经存在，避免重复添加
+                if (!newTextImages.some(img => img.id === newImage.id)) {
+                  newTextImages.unshift(newImage); // 添加到数组开头
+                }
+              } else {
+                // 检查是否已经存在，避免重复添加
+                if (!newImageImages.some(img => img.id === newImage.id)) {
+                  newImageImages.unshift(newImage); // 添加到数组开头
+                }
+              }
+              
+              // 也添加到总数组中
+              if (!newGeneratedImages.some(img => img.id === newImage.id)) {
+                newGeneratedImages.unshift(newImage);
+              }
+              
+              return {
+                ...prevState,
+                generatedImages: newGeneratedImages,
+                textGeneratedImages: newTextImages,
+                imageGeneratedImages: newImageImages,
+                hasTextToImageHistory: newTextImages.length > 0,
+                hasImageToImageHistory: newImageImages.length > 0,
+                selectedImage: newImage.id,
+                isGenerating: false,
+                currentTaskId: null,
+                generationProgress: 100,
+              };
             });
           } else {
             updateState({
@@ -613,6 +646,16 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
               currentTaskId: null,
               generationProgress: 100,
             });
+          }
+          
+          // 后台刷新积分和全局状态
+          checkUserCredits();
+          if (refreshUser) {
+            try {
+              await refreshUser();
+            } catch (error) {
+              console.error('Failed to refresh global user state:', error);
+            }
           }
         } else if (taskStatus.status === 'failed') {
           updateState({
@@ -886,8 +929,9 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     try {
       updateState({ error: null }); // 清除之前的错误
       
-      // 查找图片信息
-      const imageData = state.generatedImages.find(img => img.id === imageId);
+      // 根据当前标签页选择对应的图片数组查找图片信息
+      const currentImages = state.selectedTab === 'text' ? state.textGeneratedImages : state.imageGeneratedImages;
+      const imageData = currentImages.find(img => img.id === imageId);
       if (!imageData) {
         throw new Error('Image not found');
       }
@@ -912,7 +956,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         error: error instanceof Error ? error.message : 'Download failed',
       });
     }
-  }, [updateState, state.generatedImages]);
+  }, [updateState, state.selectedTab, state.textGeneratedImages, state.imageGeneratedImages]);
 
   // 清除错误
   const clearError = useCallback(() => {

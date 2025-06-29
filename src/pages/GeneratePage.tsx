@@ -62,7 +62,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     selectedImage,
     uploadedFile,
 
-    generatedImages,
     textGeneratedImages,    // Text to Image 生成的图片
     imageGeneratedImages,   // Image to Image 生成的图片
     textExampleImages,      // 直接使用分离的变量
@@ -142,31 +141,31 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
     const selectedImageData = currentImages.find(img => img.id === imageId);
     
-    console.log('Filling attributes for tab:', selectedTab);
-    console.log('Selected image data:', selectedImageData);
-    console.log('Image prompt:', selectedImageData?.prompt);
+
     
     if (selectedImageData) {
       // 回填 prompt（仅对 text to image 有效）
       if (selectedTab === 'text') {
-        console.log('Setting prompt to:', selectedImageData.prompt || '');
-        setPrompt(selectedImageData.prompt || '');
+        const promptValue = typeof selectedImageData.prompt === 'string' 
+          ? selectedImageData.prompt 
+          : (selectedImageData.prompt && typeof selectedImageData.prompt === 'object' 
+              ? ((selectedImageData.prompt as any).zh || (selectedImageData.prompt as any).en || '') 
+              : '');
+
+        setPrompt(promptValue);
       }
       
-      // 回填 ratio
-      if (selectedImageData.ratio && ['3:4', '4:3', '1:1'].includes(selectedImageData.ratio)) {
-        console.log('Setting ratio to:', selectedImageData.ratio);
-        setSelectedRatio(selectedImageData.ratio as '3:4' | '4:3' | '1:1');
-      }
+              // 回填 ratio
+        if (selectedImageData.ratio && ['3:4', '4:3', '1:1'].includes(selectedImageData.ratio)) {
+          setSelectedRatio(selectedImageData.ratio as '3:4' | '4:3' | '1:1');
+        }
       
-      // 回填 isPublic
-      if (selectedTab === 'text') {
-        console.log('Setting text public visibility to:', selectedImageData.isPublic);
-        setTextPublicVisibility(selectedImageData.isPublic);
-      } else {
-        console.log('Setting image public visibility to:', selectedImageData.isPublic);
-        setImagePublicVisibility(selectedImageData.isPublic);
-      }
+              // 回填 isPublic
+        if (selectedTab === 'text') {
+          setTextPublicVisibility(selectedImageData.isPublic);
+        } else {
+          setImagePublicVisibility(selectedImageData.isPublic);
+        }
       
       // 对于 Image to Image 模式，清空当前上传的文件
       // 但如果URL参数中有sourceImageUrl，说明是recreate操作，不要清空
@@ -174,9 +173,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       if (selectedTab === 'image' && uploadedFile && !sourceImageUrl) {
         setUploadedImageWithDimensions(null, null);
       }
-    } else {
-      console.log('Selected image data not found for ID:', imageId);
-    }
+          }
   };
 
   // 标签页切换时的图片选择逻辑
@@ -369,7 +366,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             ) : selectedImage || isGenerating ? (
               <div className="flex flex-col items-center">
                 {(() => {
-                  const imageSize = getCenterImageSize(mode, isGenerating, selectedImage, generatedImages, dynamicImageDimensions, setDynamicImageDimensions);
+                  // 根据当前标签页选择对应的图片数组
+                  const currentImages = mode === 'text' ? textGeneratedImages : imageGeneratedImages;
+                  const imageSize = getCenterImageSize(mode, isGenerating, selectedImage, currentImages, dynamicImageDimensions, setDynamicImageDimensions);
                   return (
                     <div 
                       className="bg-[#F2F3F5] rounded-2xl border border-[#EDEEF0] relative flex items-center justify-center transition-all duration-300"
@@ -395,7 +394,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       ) : selectedImage ? (
                         <>
                           <img
-                            src={generatedImages.find(img => img.id === selectedImage)?.defaultUrl}
+                            src={(() => {
+                              // 根据当前标签页选择对应的图片数组
+                              const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
+                              return currentImages.find(img => img.id === selectedImage)?.defaultUrl;
+                            })()}
                             alt="Generated coloring page"
                             className="w-full h-full object-contain rounded-2xl"
                           />
@@ -961,15 +964,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 p-4 z-50">
             <button
               onClick={handleGenerate}
-              disabled={isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)}
+              disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
               className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
                   ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
                   : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
                 }`}
             >
               <img
-                src={(isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+                src={(isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
                   ? subtractIcon
                   : subtractColorIcon
                 }
@@ -1000,15 +1003,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         <div className="hidden lg:flex fixed bottom-0 left-0 w-[400px] h-[88px] bg-white items-center justify-center">
           <button
             onClick={handleGenerate}
-            disabled={isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile)}
+            disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
             className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-              (isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+              (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
                 ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
                 : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
               }`}
           >
             <img
-              src={(isGenerating || (selectedTab === 'text' && !prompt.trim()) || (selectedTab === 'image' && !uploadedFile))
+              src={(isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
                 ? subtractIcon
                 : subtractColorIcon
               }

@@ -18,7 +18,7 @@ export class UrlUtils {
     
     // 获取后端基础URL
     const baseUrl = import.meta.env.MODE === 'development' 
-      ? '' // 开发环境使用相对路径（通过Vite代理）
+      ? import.meta.env.VITE_API_BASE_URL // 开发环境使用相对路径（通过Vite代理）
       : import.meta.env.VITE_API_BASE_URL || '';
     
     if (baseUrl) {
@@ -67,7 +67,7 @@ export class UrlUtils {
    */
   static getBaseUrl(): string {
     return import.meta.env.MODE === 'development' 
-      ? '' // 开发环境使用相对路径
+      ? import.meta.env.VITE_API_BASE_URL // 开发环境使用相对路径
       : import.meta.env.VITE_API_BASE_URL || '';
   }
 

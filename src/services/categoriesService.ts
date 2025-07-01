@@ -4,8 +4,9 @@ import { UrlUtils } from '../utils/urlUtils';
 
 // 标签统计接口
 export interface TagCount {
-  tagName: string;
-  tagDisplayName: string;
+  tagId: string;
+  displayName: string;
+  description: string;
   count: number;
 }
 
@@ -14,6 +15,7 @@ export interface Category {
   id: string;
   name: string;
   displayName: string;
+  display_name: string;
   description: string;
   hotness: number; // 热度值
   imageCount?: number; // 可选，为了向后兼容
@@ -36,8 +38,8 @@ export class CategoriesService {
   // 获取所有分类
   static async getCategories(lang: 'zh' | 'en' = 'zh'): Promise<Category[]> {
     try {
-      const data = await ApiUtils.get<{ categories: Category[] }>('/api/images/categories', { lang });
-      const rawCategories = data.categories || [];
+      const data = await ApiUtils.get<Category[]>('/api/images/categories', { lang });
+      const rawCategories = data || [];
       
       // 处理分类缩略图URL，确保都是绝对路径
       const categories = rawCategories.map(category => this.processCategoryUrls(category));

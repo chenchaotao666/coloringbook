@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Category } from '../../services/categoriesService';
 import { HomeImage } from '../../services/imageService';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface CategoryCardProps {
   category?: Category;
@@ -18,6 +19,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileShowColor, setMobileShowColor] = useState(false);
+  const { language } = useLanguage();
 
   // 检测是否为移动端
   useEffect(() => {
@@ -35,6 +37,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     id: homeImage.id,
     name: homeImage.name.toLowerCase(),
     displayName: homeImage.title,
+    display_name: homeImage.title,
     description: homeImage.description,
     hotness: homeImage.hotness || 0,
     tagCounts: [], // 空的标签统计数组
@@ -46,13 +49,29 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 
   if (!displayCategory) return null;
 
+  // 获取国际化文本的辅助函数
+  const getLocalizedText = (textObj: any): string => {
+    if (typeof textObj === 'string') {
+      return textObj;
+    } else if (typeof textObj === 'object' && textObj) {
+      return textObj[language] || textObj['en'] || textObj['zh'] || '';
+    }
+    return '';
+  };
+
   // 从后台数据获取标签统计，并格式化为显示用的标签数组
-  const getTagsFromBackend = (category: Category) => {
+  const getTagsFromBackend = (category: any) => {
     // 将标签按数量排序，取前5个
     return category.tagCounts
-      .sort((a, b) => b.count - a.count) // 按数量降序排序
+      .sort((a: any, b: any) => b.count - a.count) // 按数量降序排序
       .slice(0, 5) // 只取前5个
-      .map(tagCount => `${tagCount.tagDisplayName || tagCount.tagName} (${tagCount.count})`);
+      .map((tagCount: any) => {
+        // 处理多语言displayName对象
+        const displayName = getLocalizedText(tagCount.displayName);
+        // 如果需要也可以处理description
+        // const description = getLocalizedText(tagCount.description);
+        return `${displayName} (${tagCount.count})`;
+      });
   };
 
   const subCategories = getTagsFromBackend(displayCategory);
@@ -77,7 +96,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   // 图片错误处理
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
-    target.src = 'https://placehold.co/276x386?text=' + encodeURIComponent(displayCategory.displayName);
+    // 处理displayName和display_name的多语言对象
+    const nameToUse = displayCategory.displayName || displayCategory.display_name;
+    const fallbackText = getLocalizedText(nameToUse) || 'Image';
+    
+    target.src = 'https://placehold.co/276x386?text=' + encodeURIComponent(fallbackText);
   };
 
   return (
@@ -148,13 +171,13 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           {/* 标题 */}
           <div className="w-[254px] flex justify-start items-start">
             <div className="w-[254px] text-[#161616] text-base font-medium capitalize leading-5 break-words">
-              {displayCategory.displayName}
+              {getLocalizedText(displayCategory.displayName || displayCategory.display_name)}
             </div>
           </div>
           
           {/* 子分类标签 */}
           <div className="self-stretch flex justify-start items-center gap-2 flex-wrap">
-            {subCategories.map((subCategory, index) => (
+            {subCategories.map((subCategory: string, index: number) => (
               <div 
                 key={index}
                 className="px-2 py-1 bg-[#F9FAFB] rounded-xl flex justify-center items-center gap-2.5"

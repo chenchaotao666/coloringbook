@@ -193,7 +193,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
           {image.description && (
             <div className="w-full">
               <div className="text-[#6B7280] text-xs sm:text-sm leading-4">
-                {image.description}
+                {getLocalizedText(image.description, language)}
               </div>
             </div>
           )}

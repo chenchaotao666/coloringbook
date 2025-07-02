@@ -7,11 +7,14 @@ import Breadcrumb, { BreadcrumbItem } from '../components/common/Breadcrumb';
 import { ImageService } from '../services/imageService';
 import { HomeImage } from '../services/imageService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedText } from '../utils/textUtils';
 const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
   const { imageId } = useParams<{ imageId: string }>();
   const navigate = useNavigate();
+  const { language } = useLanguage();
   
   const [image, setImage] = useState<HomeImage | null>(null);
   const [relatedImages, setRelatedImages] = useState<HomeImage[]>([]);
@@ -95,7 +98,8 @@ const ImageDetailPage: React.FC = () => {
       setIsDownloading(prev => ({ ...prev, [format]: true }));
       
       // 生成文件名
-      const fileName = `coloring-page-${image.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
+      const titleText = getLocalizedText(image.title, language) || 'image';
+      const fileName = `coloring-page-${titleText.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
       
       // 根据格式选择不同的下载方式
       if (format === 'png') {
@@ -126,13 +130,13 @@ const ImageDetailPage: React.FC = () => {
         { label: 'Home', path: '/' },
         { label: 'Coloring Pages Free', path: '/categories' },
         { label: decodeURIComponent(categoryName), path: `/categories/${categoryId}` },
-        { label: image?.title || 'Loading...', current: true }
+        { label: image ? getLocalizedText(image.title, language) || 'Loading...' : 'Loading...', current: true }
       ];
     } else {
       // 默认2层面包屑：Home > 图片名字
       return [
         { label: 'Home', path: '/' },
-        { label: image?.title || 'Loading...', current: true }
+        { label: image ? getLocalizedText(image.title, language) || 'Loading...' : 'Loading...', current: true }
       ];
     }
   };
@@ -191,7 +195,7 @@ const ImageDetailPage: React.FC = () => {
                 <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
                   <img
                     src={image.defaultUrl}
-                    alt={image.title}
+                    alt={getLocalizedText(image.title, language)}
                     className="w-full max-w-full h-auto object-contain rounded-lg"
                   />
                 </div>

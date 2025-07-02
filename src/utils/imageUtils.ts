@@ -9,11 +9,11 @@
  */
 export const CENTER_IMAGE_DIMENSIONS = {
   // Text to Image 模式的最大尺寸
-  TEXT_MAX_WIDTH: 800,
+  TEXT_MAX_WIDTH: 600,
   TEXT_MAX_HEIGHT: 600,
   // Image to Image 模式的最大尺寸
-  IMAGE_MAX_WIDTH: 800,
-  IMAGE_MAX_HEIGHT: 800,
+  IMAGE_MAX_WIDTH: 600,
+  IMAGE_MAX_HEIGHT: 600,
   // 生成中的默认尺寸
   GENERATING_WIDTH: 460,
   GENERATING_HEIGHT: 460,
@@ -128,34 +128,51 @@ export const getImageSize = (
   dimensionsCache?: ImageDimensionsCache,
   setDimensionsCache?: SetImageDimensionsFunction
 ) => {
-  // 如果已经获取到了图片尺寸，使用实际尺寸计算
-  if (imageId && dimensionsCache && dimensionsCache[imageId]) {
-    const { width, height } = dimensionsCache[imageId];
-    const scaledDimensions = calculateScaledDimensions(width, height, maxWidth, maxHeight);
+  // 创建缓存键，包含所有尺寸参数，确保不同尺寸约束下的图片有独立的缓存
+  const cacheKey = `${imageId}_${maxWidth}_${maxHeight}_${minWidth || 0}_${minHeight || 0}`;
+  
+  // 如果已经获取到了处理后的图片尺寸，直接使用
+  if (imageId && dimensionsCache && dimensionsCache[cacheKey]) {
+    const { width, height } = dimensionsCache[cacheKey];
     return {
-      width: minWidth ? `${Math.max(minWidth, scaledDimensions.width)}px` : `${scaledDimensions.width}px`,
-      height: minHeight ? `${Math.max(minHeight, scaledDimensions.height)}px` : `${scaledDimensions.height}px`
+      width: `${width}px`,
+      height: `${height}px`
     };
   }
   
   // 如果还没有获取到图片尺寸，异步获取
   // 检查是否已经失败过，避免重复尝试失败的图片
   if (imageId && imageUrl && dimensionsCache && setDimensionsCache && 
-      !dimensionsCache[imageId] && 
-      !dimensionsCache[`loading_${imageId}`] && 
-      !dimensionsCache[`failed_${imageId}`]) {
+      !dimensionsCache[cacheKey] && 
+      !dimensionsCache[`loading_${cacheKey}`] && 
+      !dimensionsCache[`failed_${cacheKey}`]) {
     
     setDimensionsCache(prev => ({
       ...prev,
-      [`loading_${imageId}`]: { width: 0, height: 0 }
+      [`loading_${cacheKey}`]: { width: 0, height: 0 }
     }));
 
     getImageDimensionsFromUrl(imageUrl)
-      .then((dimensions) => {
+      .then((originalDimensions) => {
+        // 应用尺寸约束，计算最终显示尺寸
+        const scaledDimensions = calculateScaledDimensions(
+          originalDimensions.width, 
+          originalDimensions.height, 
+          maxWidth, 
+          maxHeight
+        );
+        
+        // 应用最小尺寸约束
+        const finalDimensions = {
+          width: minWidth ? Math.max(minWidth, scaledDimensions.width) : scaledDimensions.width,
+          height: minHeight ? Math.max(minHeight, scaledDimensions.height) : scaledDimensions.height
+        };
+        
         setDimensionsCache(prev => {
           const newState = { ...prev };
-          delete newState[`loading_${imageId}`];
-          newState[imageId] = dimensions;
+          delete newState[`loading_${cacheKey}`];
+          // 存储处理后的尺寸，而不是原始尺寸
+          newState[cacheKey] = finalDimensions;
           return newState;
         });
       })
@@ -163,9 +180,9 @@ export const getImageSize = (
         console.error('Failed to get image dimensions:', error);
         setDimensionsCache(prev => {
           const newState = { ...prev };
-          delete newState[`loading_${imageId}`];
+          delete newState[`loading_${cacheKey}`];
           // 设置失败标记，防止重复尝试
-          newState[`failed_${imageId}`] = { width: 0, height: 0 };
+          newState[`failed_${cacheKey}`] = { width: 0, height: 0 };
           return newState;
         });
       });
@@ -214,36 +231,25 @@ export const getCenterImageSize = (
   if (selectedImage) {
     const currentImage = generatedImages.find(img => img.id === selectedImage);
     if (currentImage && currentImage.defaultUrl) {
-      let maxWidth: number, maxHeight: number;
+      let maxWidth: number, maxHeight: number, minWidth: number, minHeight: number;
       
       if (isMobile) {
-        // 移动端：只有超过限制时才缩放，否则使用原始尺寸
+        // 移动端尺寸限制
         maxWidth = CENTER_IMAGE_DIMENSIONS.MOBILE_MAX_WIDTH;
         maxHeight = CENTER_IMAGE_DIMENSIONS.MOBILE_MAX_HEIGHT;
-        
-        // 如果已经获取到了图片的原始尺寸
-        if (currentImage.id && dimensionsCache && dimensionsCache[currentImage.id]) {
-          const { width: originalWidth, height: originalHeight } = dimensionsCache[currentImage.id];
-          
-          // 检查是否超过移动端限制
-          if (originalWidth <= maxWidth && originalHeight <= maxHeight) {
-            // 没有超过限制，使用原始尺寸
-            return {
-              style: {
-                width: `${originalWidth}px`,
-                height: `${originalHeight}px`
-              }
-            };
-          }
-          // 超过限制时会继续执行下面的缩放逻辑
-        }
+        // 设置合理的移动端最小尺寸
+        minWidth = Math.min(200, maxWidth);
+        minHeight = Math.min(200, maxHeight);
       } else {
         // 桌面端根据模式使用不同的最大尺寸
         maxWidth = mode === 'text' ? CENTER_IMAGE_DIMENSIONS.TEXT_MAX_WIDTH : CENTER_IMAGE_DIMENSIONS.IMAGE_MAX_WIDTH;
         maxHeight = mode === 'text' ? CENTER_IMAGE_DIMENSIONS.TEXT_MAX_HEIGHT : CENTER_IMAGE_DIMENSIONS.IMAGE_MAX_HEIGHT;
+        // 设置合理的桌面端最小尺寸
+        minWidth = Math.min(300, maxWidth);
+        minHeight = Math.min(300, maxHeight);
       }
       
-      const size = getImageSize(currentImage.id, currentImage.defaultUrl, maxWidth, maxHeight, undefined, undefined, dimensionsCache, setDimensionsCache);
+      const size = getImageSize(currentImage.id, currentImage.defaultUrl, maxWidth, maxHeight, minWidth, minHeight, dimensionsCache, setDimensionsCache);
       return {
         style: {
           width: size.width,
@@ -263,8 +269,6 @@ export const getCenterImageSize = (
     }
   };
 };
-
-
 
 /**
  * 计算生成中容器的大小（右侧边栏）

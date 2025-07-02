@@ -149,9 +149,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
   const handleLogout = async () => {
     try {
-      await logout();
       setIsUserDropdownOpen(false);
       setIsMobileMenuOpen(false);
+      await logout(); // 这里会自动跳转到首页
     } catch (error) {
       console.error('Logout failed:', error);
     }

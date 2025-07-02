@@ -1,21 +1,24 @@
 import { ApiUtils } from '../utils/apiUtils';
 import { SearchResult, ImageService } from './imageService';
 import { UrlUtils } from '../utils/urlUtils';
+import { LocalizedText } from '../utils/textUtils';
 
 // 标签统计接口
 export interface TagCount {
   tagId: string;
-  displayName: string;
+  displayName: LocalizedText | string;
   description: string;
   count: number;
 }
 
+
+
 // 分类接口
 export interface Category {
-  id: string;
+  categoryId: string;
   name: string;
-  displayName: string;
-  display_name: string;
+  displayName: LocalizedText | string;
+  display_name: LocalizedText | string;
   description: string;
   hotness: number; // 热度值
   imageCount?: number; // 可选，为了向后兼容

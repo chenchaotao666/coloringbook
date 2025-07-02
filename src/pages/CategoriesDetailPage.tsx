@@ -8,6 +8,7 @@ import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedText } from '../utils/textUtils';
 // const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
@@ -37,7 +38,7 @@ const CategoriesDetailPage: React.FC = () => {
     } else {
       // 过滤包含该标签的图片
       setSelectedTag(tag);
-      const filtered = categoryImages.filter(img => img.tags.includes(tag));
+      const filtered = categoryImages.filter(img => img.tags && img.tags.includes(tag));
       setFilteredImages(filtered);
     }
   };
@@ -60,7 +61,7 @@ const CategoriesDetailPage: React.FC = () => {
         setFilteredImages(result.images);
 
         // 生成子分类列表（从图片标签中提取）
-        const allTags = result.images.flatMap((img: HomeImage) => img.tags);
+        const allTags = result.images.flatMap((img: HomeImage) => img.tags || []);
         const uniqueTags = Array.from(new Set(allTags)) as string[];
         setSubcategories(uniqueTags);
       } else {
@@ -84,7 +85,7 @@ const CategoriesDetailPage: React.FC = () => {
         // 先加载分类信息
         setIsCategoryLoading(true);
         const categories = await CategoriesService.getCategories(language);
-        const foundCategory = categories.find((cat: Category) => cat.id === categoryId);
+        const foundCategory = categories.find((cat: Category) => cat.categoryId === categoryId);
 
         if (foundCategory) {
           setCategory(foundCategory);
@@ -134,12 +135,14 @@ const CategoriesDetailPage: React.FC = () => {
     setSelectedRatio(ratio);
   };
 
+
+
   // 获取基础面包屑（即使分类还在加载也可以显示）
   const getBreadcrumbPathEarly = () => {
     return [
       { label: 'Home', path: '/' },
       { label: 'Coloring Pages Free', path: '/categories' },
-      { label: category?.displayName || 'Loading...', current: true }
+      { label: category ? getLocalizedText(category.displayName, language) : 'Loading...', current: true }
     ];
   };
 
@@ -197,7 +200,7 @@ const CategoriesDetailPage: React.FC = () => {
             <>
               {/* Category Title */}
               <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
-                {category.displayName}
+                {getLocalizedText(category.displayName, language)}
               </h1>
 
               {/* Subcategories Tags - 只在图片加载完成后显示 */}
@@ -226,7 +229,7 @@ const CategoriesDetailPage: React.FC = () => {
                         }`}
                     >
                       <span className="text-sm font-normal leading-4">
-                        {tag} ({categoryImages.filter(img => img.tags.includes(tag)).length})
+                        {tag} ({categoryImages.filter(img => img.tags && img.tags.includes(tag)).length})
                       </span>
                     </button>
                   ))}
@@ -258,7 +261,7 @@ const CategoriesDetailPage: React.FC = () => {
                       isLoading={false}
                       onImageClick={(image) => {
                         // 导航到图片详情页，传递分类信息用于面包屑
-                        navigate(`/image/${image.id}?from=category&categoryId=${categoryId}&categoryName=${encodeURIComponent(category.displayName)}`);
+                        navigate(`/image/${image.id}?from=category&categoryId=${categoryId}&categoryName=${encodeURIComponent(getLocalizedText(category.displayName, language))}`);
                       }}
                     />
 
@@ -285,7 +288,7 @@ const CategoriesDetailPage: React.FC = () => {
           {/* Generate Section - 独立显示，不等待分类加载 */}
           <div className="max-w-[920px] mx-auto">
             <h2 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
-              Create your personalized AI {category?.displayName || 'Custom'} coloring page
+              Create your personalized AI {category ? getLocalizedText(category.displayName, language) : 'Custom'} coloring page
             </h2>
             
             <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-8">

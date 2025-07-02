@@ -28,6 +28,8 @@ export interface AuthTokens {
   expiresIn: string;
 }
 
+import { redirectToHomeIfNeeded } from './navigationUtils';
+
 // API 配置 - 连接到外部后端服务
 const API_BASE_URL = import.meta.env.MODE === 'development' 
   ? import.meta.env.VITE_API_BASE_URL // 开发环境使用相对路径，通过 Vite 代理
@@ -39,6 +41,21 @@ const API_BASE_URL = import.meta.env.MODE === 'development'
 export class ApiUtils {
   private static accessToken: string | null = null;
   private static refreshToken: string | null = null;
+
+  /**
+   * 处理认证失败时的跳转逻辑
+   */
+  private static handleAuthFailure(message: string = '登录已过期，请重新登录'): never {
+    this.clearTokens();
+    
+    // 跳转到首页（只有在非公开页面时）
+    const redirected = redirectToHomeIfNeeded();
+    if (redirected) {
+      throw new ApiError('1010', '登录已过期，正在跳转到首页');
+    }
+    
+    throw new ApiError('1010', message);
+  }
 
   /**
    * 设置认证令牌
@@ -194,9 +211,8 @@ export class ApiUtils {
           }
         }
         
-        // 刷新失败，清除令牌并抛出错误
-        this.clearTokens();
-        throw new ApiError('1010', '登录已过期，请重新登录');
+        // 刷新失败，处理认证失败
+        this.handleAuthFailure('登录已过期，请重新登录');
       }
 
       if (data.status === 'success') {
@@ -301,8 +317,7 @@ export class ApiUtils {
           }
         }
         
-        this.clearTokens();
-        throw new ApiError('1010', '登录已过期，请重新登录');
+        this.handleAuthFailure('登录已过期，请重新登录');
       }
 
       if (data.status === 'success') {

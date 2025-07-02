@@ -6,6 +6,7 @@ import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
 import CategoryGrid from '../components/layout/CategoryGrid';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedText } from '../utils/textUtils';
 const noResultIcon = '/images/no-result.svg';
 
 
@@ -48,18 +49,22 @@ const CategoriesPage: React.FC = () => {
 
   // 处理分类点击 - 导航到详情页面
   const handleCategoryClick = (category: Category) => {
-    navigate(`/categories/${category.id}`);
+    navigate(`/categories/${category.categoryId}`);
   };
+
+
 
   // 执行搜索
   const handleSearch = () => {
     if (searchQuery.trim()) {
       setIsSearchActive(true);
       // 手动执行搜索过滤
-      const filtered = categories.filter(category => 
-        category.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        category.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const filtered = categories.filter(category => {
+        const displayName = getLocalizedText(category.displayName, language);
+        const name = category.name || '';
+        return displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+               name.toLowerCase().includes(searchQuery.toLowerCase());
+      });
       setFilteredCategories(filtered);
     } else {
       setIsSearchActive(false);

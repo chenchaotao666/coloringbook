@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import HoverColorImage from '../home/HoverColorImage';
 import { HomeImage } from '../../services/imageService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../../utils/downloadUtils';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { getLocalizedText } from '../../utils/textUtils';
 
 const downloadIcon = '/images/download.svg';
 const downloadColorIcon = '/images/download-hover.svg';
@@ -24,6 +26,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
   onReport
 }) => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const [isDownloadingPng, setIsDownloadingPng] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pngHovered, setPngHovered] = useState(false);
@@ -44,7 +47,8 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
       }
 
       // 生成文件名
-      const fileName = `coloring-page-${(image.title || 'untitled').replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
+      const imageTitle = getLocalizedText(image.title, language) || 'untitled';
+      const fileName = `coloring-page-${imageTitle.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
       
       // 根据格式选择不同的下载方式
       if (format === 'png') {
@@ -151,7 +155,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
           <HoverColorImage 
             homeImage={image}
             className="w-full h-auto"
-            alt={image.title || image.description}
+            alt={getLocalizedText(image.title, language) || getLocalizedText(image.description, language)}
           />
           
           {/* Recreate按钮 */}
@@ -180,7 +184,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
           {image.title && (
             <div className="w-full">
               <div className="w-full text-[#161616] text-sm sm:text-base font-medium leading-tight sm:leading-5">
-                {image.title}
+                {getLocalizedText(image.title, language)}
               </div>
             </div>
           )}

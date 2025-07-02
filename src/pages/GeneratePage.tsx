@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
 import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
+import { getLocalizedText } from '../utils/textUtils';
 import CircularProgress from '../components/ui/CircularProgress';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
@@ -496,13 +497,17 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       const maxWidth = isMobile ? 215 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
                       const maxHeight = isMobile ? 240 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2;
                       
+                      // 设置合理的最小尺寸
+                      const minWidth = isMobile ? 100 : 150;
+                      const minHeight = isMobile ? 120 : 150;
+                      
                       const imageSize = getImageSize(
                         example.id, 
                         imageUrl, 
                         maxWidth, 
                         maxHeight,
-                        undefined, 
-                        undefined, 
+                        minWidth, 
+                        minHeight, 
                         dynamicImageDimensions, 
                         setDynamicImageDimensions
                       );
@@ -515,7 +520,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                         >
                           <img
                             src={mode === 'image' ? example.colorUrl : example.defaultUrl}
-                            alt={example.description || `Example ${example.id}`}
+                            alt={getLocalizedText(example.description, 'zh') || `Example ${example.id}`}
                             className={`w-full h-full object-cover rounded-2xl`}
                           />
                           <button
@@ -580,7 +585,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     >
                       <img
                         src={image.defaultUrl}
-                        alt={image.description || `Generated ${index + 1}`}
+                        alt={getLocalizedText(image.description, 'zh') || `Generated ${index + 1}`}
                         className="w-full h-full rounded-md object-cover"
                       />
                     </div>
@@ -804,7 +809,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 >
                   <img
                     src={image.defaultUrl}
-                    alt={image.description || `Generated ${index + 1}`}
+                    alt={getLocalizedText(image.description, 'zh') || `Generated ${index + 1}`}
                     className="w-full h-full rounded-lg object-cover"
                   />
                 </div>

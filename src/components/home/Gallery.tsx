@@ -36,7 +36,7 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
   const displayCategories = categories.slice(0, 8); // 显示前8个分类
 
   const handleCategoryClick = (category: Category) => {
-    navigate(`/categories/${category.id}`);
+    navigate(`/categories/${category.categoryId}`);
   };
 
   return (

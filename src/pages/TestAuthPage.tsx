@@ -11,7 +11,7 @@ const TestAuthPage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await logout(); // 这里会自动跳转到首页
       alert('退出登录成功');
     } catch (error) {
       console.error('Logout failed:', error);

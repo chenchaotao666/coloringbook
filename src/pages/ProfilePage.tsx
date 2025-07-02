@@ -237,10 +237,7 @@ const ProfilePage: React.FC = () => {
   // 退出登录
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate('/login', { 
-        state: { message: '您已成功退出登录' }
-      });
+      await logout(); // 这里会自动跳转到首页
     } catch (error) {
       console.error('Logout failed:', error);
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Category } from '../../services/categoriesService';
 import { HomeImage } from '../../services/imageService';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { getLocalizedText } from '../../utils/textUtils';
 
 interface CategoryCardProps {
   category?: Category;
@@ -34,11 +35,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   }, []);
   // 如果传入的是HomeImage，从中提取分类信息
   const displayCategory = category || (homeImage ? {
-    id: homeImage.id,
+    categoryId: homeImage.id,
     name: homeImage.name.toLowerCase(),
-    displayName: homeImage.title,
-    display_name: homeImage.title,
-    description: homeImage.description,
+            displayName: getLocalizedText(homeImage.title, language),
+        display_name: getLocalizedText(homeImage.title, language),
+        description: getLocalizedText(homeImage.description, language),
     hotness: homeImage.hotness || 0,
     tagCounts: [], // 空的标签统计数组
     thumbnailUrl: homeImage.defaultUrl,
@@ -49,15 +50,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 
   if (!displayCategory) return null;
 
-  // 获取国际化文本的辅助函数
-  const getLocalizedText = (textObj: any): string => {
-    if (typeof textObj === 'string') {
-      return textObj;
-    } else if (typeof textObj === 'object' && textObj) {
-      return textObj[language] || textObj['en'] || textObj['zh'] || '';
-    }
-    return '';
-  };
+
 
   // 从后台数据获取标签统计，并格式化为显示用的标签数组
   const getTagsFromBackend = (category: any) => {
@@ -67,7 +60,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       .slice(0, 5) // 只取前5个
       .map((tagCount: any) => {
         // 处理多语言displayName对象
-        const displayName = getLocalizedText(tagCount.displayName);
+        const displayName = getLocalizedText(tagCount.displayName, language);
         // 如果需要也可以处理description
         // const description = getLocalizedText(tagCount.description);
         return `${displayName} (${tagCount.count})`;
@@ -98,7 +91,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     const target = e.target as HTMLImageElement;
     // 处理displayName和display_name的多语言对象
     const nameToUse = displayCategory.displayName || displayCategory.display_name;
-    const fallbackText = getLocalizedText(nameToUse) || 'Image';
+    const fallbackText = getLocalizedText(nameToUse, language) || 'Image';
     
     target.src = 'https://placehold.co/276x386?text=' + encodeURIComponent(fallbackText);
   };
@@ -128,7 +121,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 : ''
             }`}
             src={displayCategory.defaultUrl}
-            alt={displayCategory.displayName}
+            alt={getLocalizedText(displayCategory.displayName, language)}
             onError={handleImageError}
           />
           
@@ -139,7 +132,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 shouldShowColor ? 'opacity-100' : 'opacity-0'
               }`}
               src={displayCategory.coloringUrl}
-              alt={`${displayCategory.displayName} colored`}
+              alt={`${getLocalizedText(displayCategory.displayName, language)} colored`}
               onError={handleImageError}
             />
           )}
@@ -171,7 +164,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           {/* 标题 */}
           <div className="w-[254px] flex justify-start items-start">
             <div className="w-[254px] text-[#161616] text-base font-medium capitalize leading-5 break-words">
-              {getLocalizedText(displayCategory.displayName || displayCategory.display_name)}
+              {getLocalizedText(displayCategory.displayName || displayCategory.display_name, language)}
             </div>
           </div>
           

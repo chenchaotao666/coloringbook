@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import HoverColorImage from './HoverColorImage';
 import { HomeImage } from '../../services/imageService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../../utils/downloadUtils';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { getLocalizedText } from '../../utils/textUtils';
 const downloadIcon = '/images/download.svg';
 const downloadColorIcon = '/images/download-hover.svg';
 
@@ -22,6 +24,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   variant = 'default'
 }) => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const [isDownloadingPng, setIsDownloadingPng] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pngHovered, setPngHovered] = useState(false);
@@ -41,7 +44,8 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
       }
 
       // 生成文件名
-      const fileName = `coloring-page-${image.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
+      const imageTitle = getLocalizedText(image.title, language);
+      const fileName = `coloring-page-${imageTitle.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${image.id.slice(-8)}.${format}`;
       
       // 根据格式选择不同的下载方式
       if (format === 'png') {
@@ -127,7 +131,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
             {image.description && (
               <div className="w-full">
                 <div className="text-[#6B7280] text-sm leading-4">
-                  {image.description}
+                  {getLocalizedText(image.description, language)}
                 </div>
               </div>
             )}

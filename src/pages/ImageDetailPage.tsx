@@ -200,7 +200,7 @@ const ImageDetailPage: React.FC = () => {
                 <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
                   <img
                     src={image.colorUrl}
-                    alt={`${image.title} - Colored`}
+                    alt={`${getLocalizedText(image.title, language)} - Colored`}
                     className="w-full max-w-full h-auto object-contain rounded-lg"
                   />
                 </div>
@@ -212,10 +212,10 @@ const ImageDetailPage: React.FC = () => {
                   {/* Title and Description */}
                   <div className="space-y-3 lg:space-y-4">
                     <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
-                      {image.title}
+                      {getLocalizedText(image.title, language)}
                     </h1>
                     <p className="text-sm text-[#6B7280] leading-5">
-                      {image.description || `This picture depicts ${image.title}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
+                      {getLocalizedText(image.description, language) || `This picture depicts ${getLocalizedText(image.title, language)}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
                     </p>
                   </div>
 

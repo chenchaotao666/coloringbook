@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserService, User } from '../services/userService';
 import { tokenRefreshService } from '../services/tokenRefreshService';
+import { redirectToHomeIfNeeded } from '../utils/navigationUtils';
 
 interface AuthContextType {
   user: User | null;
@@ -40,6 +41,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Token过期，清除用户状态并可能需要重新登录
       setUser(null);
       tokenRefreshService.stop();
+      
+      // 跳转到首页
+      redirectToHomeIfNeeded();
     };
 
     // 添加事件监听器
@@ -68,6 +72,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(null);
       // 认证失败，停止token刷新服务
       tokenRefreshService.stop();
+      
+      // 只有在当前路径不是公开页面时才跳转到首页
+      redirectToHomeIfNeeded();
     } finally {
       setIsLoading(false);
     }
@@ -96,6 +103,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // 登出时停止token自动刷新服务
     tokenRefreshService.stop();
+    
+    // 退出登录时总是跳转到首页
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   };
 
   const updateUser = (userData: Partial<User>) => {
@@ -111,6 +123,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Failed to refresh user:', error);
       setUser(null);
+      
+      // 刷新用户信息失败，可能是token过期，跳转到首页
+      redirectToHomeIfNeeded();
     }
   };
 

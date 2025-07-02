@@ -1,6 +1,8 @@
 import React from 'react';
 import { HomeImage } from '../../services/imageService';
 import HoverImageCard from '../home/HoverImageCard';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { getLocalizedText } from '../../utils/textUtils';
 
 interface MasonryGridProps {
   images: HomeImage[];
@@ -27,6 +29,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
   className = '',
   renderCard
 }) => {
+  const { language } = useLanguage();
   if (isLoading) {
     return (
       <div className={`w-full ${className}`}>
@@ -82,7 +85,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
     >
       <HoverImageCard
         image={image}
-        title={image.title}
+        title={getLocalizedText(image.title, language)}
         tags={image.tags ? image.tags.map(tag => tag.trim()) : []}
         className="w-full"
       />

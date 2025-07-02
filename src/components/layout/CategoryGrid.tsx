@@ -153,7 +153,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
               className="space-y-4 xl:space-y-6 flex-1 max-w-[273px]"
             >
               {columnCategories.map((category, categoryIndex) => (
-                <div key={`${category.id}-desktop-${columnIndex}-${categoryIndex}`} className="w-full">
+                <div key={`${category.categoryId}-desktop-${columnIndex}-${categoryIndex}`} className="w-full">
                   <CategoryCard
                     category={category}
                     onCategoryClick={handleCategoryClick}
@@ -174,7 +174,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
               className="space-y-3 flex-1 max-w-[240px]"
             >
               {columnCategories.map((category, categoryIndex) => (
-                <div key={`${category.id}-tablet-${columnIndex}-${categoryIndex}`} className="w-full">
+                <div key={`${category.categoryId}-tablet-${columnIndex}-${categoryIndex}`} className="w-full">
                   <CategoryCard
                     category={category}
                     onCategoryClick={handleCategoryClick}
@@ -196,7 +196,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
               style={{ maxWidth: '180px' }}
             >
               {columnCategories.map((category, categoryIndex) => (
-                <div key={`${category.id}-mobile-${columnIndex}-${categoryIndex}`} className="w-full">
+                <div key={`${category.categoryId}-mobile-${columnIndex}-${categoryIndex}`} className="w-full">
                   <CategoryCard
                     category={category}
                     onCategoryClick={handleCategoryClick}

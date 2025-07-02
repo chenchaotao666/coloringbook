@@ -1,5 +1,6 @@
 import { ApiUtils, ApiError } from '../utils/apiUtils';
 import { UrlUtils } from '../utils/urlUtils';
+import { LocalizedText } from '../utils/textUtils';
 
 export interface HomeImage {
   id: string;
@@ -7,9 +8,9 @@ export interface HomeImage {
   defaultUrl: string;
   colorUrl: string;
   coloringUrl?: string;
-  title: string;
-  description: string;
-  tags: string[];
+  title: LocalizedText | string;
+  description: LocalizedText | string;
+  tags?: string[];
   type: 'text2image' | 'image2image' | 'image2coloring';
   ratio: '3:4' | '4:3' | '1:1' | '16:9' | '';
   isPublic: boolean;

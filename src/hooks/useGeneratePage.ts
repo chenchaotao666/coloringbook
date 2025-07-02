@@ -852,7 +852,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       
       if (state.selectedTab === 'text') {
         // Text to Image: 回填示例图片的信息到界面
-        const promptToUse = exampleImage.prompt || exampleImage.title || exampleImage.description || '';
+        const promptToUse = exampleImage.prompt || (typeof exampleImage.title === 'string' ? exampleImage.title : '') || (typeof exampleImage.description === 'string' ? exampleImage.description : '') || '';
         
         if (!promptToUse.trim()) {
           throw new Error('No prompt information available for this example');
@@ -886,7 +886,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           
           // 创建 File 对象
           const fileExtension = blob.type.split('/')[1] || 'jpg';
-          const fileName = `example-${exampleImage.title || exampleImage.id}.${fileExtension}`;
+          const fileName = `example-${(typeof exampleImage.title === 'string' ? exampleImage.title : exampleImage.id)}.${fileExtension}`;
           const file = new File([blob], fileName, { type: blob.type });
           
           // 创建图片对象来获取尺寸
@@ -937,7 +937,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       }
       
       // 生成文件名
-      const fileName = `coloring-page-${imageData.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${imageId.slice(-8)}.${format}`;
+      const imageTitle = (typeof imageData.title === 'string' ? imageData.title : 'untitled');
+      const fileName = `coloring-page-${imageTitle.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${imageId.slice(-8)}.${format}`;
       
       // 根据格式选择不同的下载方式
       if (format === 'png') {

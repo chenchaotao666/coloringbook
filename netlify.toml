@@ -11,6 +11,7 @@
   NODE_ENV = "production"
   VITE_API_BASE_URL = ""
 
+
 # API 代理规则（需要放在前面，优先级更高）
 [[redirects]]
   from = "/api/*"

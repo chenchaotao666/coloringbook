@@ -9,7 +9,7 @@
   NODE_VERSION = "18"
   CI = "true"
   NODE_ENV = "production"
-  VITE_API_BASE_URL = "http://117.72.222.222:3005"
+  VITE_API_BASE_URL = ""
 
 # SPA 路由重定向规则
 [[redirects]]

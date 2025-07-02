@@ -27,7 +27,7 @@
 # 上传文件代理规则
 [[redirects]]
   from = "/uploads/*"
-  to = "https://coloringbook-backend-n6f5.onrender.com/uploads/:splat"
+  to = "http://117.72.222.222:3005/uploads/:splat"
   status = 200
   force = true
 

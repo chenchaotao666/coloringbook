@@ -9,7 +9,7 @@
   NODE_VERSION = "18"
   CI = "true"
   NODE_ENV = "production"
-  VITE_API_BASE_URL = "https://coloringbook-backend-n6f5.onrender.com"
+  VITE_API_BASE_URL = "http://117.72.222.222:3005"
 
 # SPA 路由重定向规则
 [[redirects]]
@@ -20,7 +20,7 @@
 # API 代理规则（如果需要代理到后端 API）
 [[redirects]]
   from = "/api/*"
-  to = "https://coloringbook-backend-n6f5.onrender.com/api/:splat"
+  to = "http://117.72.222.222:3005/api/:splat"
   status = 200
   force = true
 

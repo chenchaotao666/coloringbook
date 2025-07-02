@@ -102,7 +102,7 @@ export class UserService {
    */
   static async login(data: LoginRequest, rememberMe: boolean = true): Promise<LoginResponse> {
     try {
-      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/v1/auth/login', data);
+      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/auth/login', data);
 
       console.log('loginData: ', loginData);
       

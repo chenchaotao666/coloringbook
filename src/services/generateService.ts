@@ -87,12 +87,19 @@ class GenerateService {
    */
   async generateTextToImage(data: GenerateTextToImageRequest): Promise<GenerateResponse> {
     try {
-      const responseData = await ApiUtils.post<{ taskId: string }>('/api/images/text2imggenerate', {
+      const requestBody: any = {
         prompt: data.prompt,
         ratio: data.ratio,
         isPublic: data.isPublic,
         style: data.style
-      }, true);
+      };
+      
+      // 如果提供了userId，则添加到请求中
+      if (data.userId) {
+        requestBody.userId = data.userId;
+      }
+      
+      const responseData = await ApiUtils.post<{ taskId: string }>('/api/images/text2imggenerate', requestBody, true);
       
       return {
         status: 'success',
@@ -117,6 +124,11 @@ class GenerateService {
       formData.append('file', data.imageFile);
       if (data.ratio) formData.append('ratio', data.ratio);
       formData.append('isPublic', data.isPublic.toString());
+      
+      // 如果提供了userId，则添加到请求中
+      if (data.userId) {
+        formData.append('userId', data.userId);
+      }
 
       const responseData = await ApiUtils.uploadFile<{ taskId: string }>('/api/images/img2imggenerate', formData, true);
       

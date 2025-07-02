@@ -528,6 +528,14 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     try {
       updateState({ isGenerating: true, error: null, generationProgress: 0 });
       
+      // 获取当前用户ID
+      const { UserService } = await import('../services/userService');
+      const user = await UserService.getCurrentUser();
+      
+      if (!user) {
+        throw new Error('请先登录');
+      }
+      
       let response;
       
       if (state.selectedTab === 'text') {
@@ -539,7 +547,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           prompt: state.prompt,
           ratio: state.selectedRatio,
           isPublic: state.textPublicVisibility,
-          userId: 'demo-user', // 添加默认用户ID
+          userId: user.id, // 使用真实用户ID
         });
       } else {
         if (!state.uploadedFile) {
@@ -549,7 +557,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         response = await GenerateServiceInstance.generateImageToImage({
           imageFile: state.uploadedFile,
           isPublic: state.imagePublicVisibility,
-          userId: 'demo-user', // 添加默认用户ID
+          userId: user.id, // 使用真实用户ID
         });
       }
       

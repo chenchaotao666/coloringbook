@@ -87,7 +87,7 @@ export class UserService {
    */
   static async register(data: RegisterRequest): Promise<User> {
     try {
-      const response = await ApiUtils.post<User>('/api/auth/register', data);
+      const response = await ApiUtils.post<User>('/api/v1/auth/register', data);
       return response;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -102,7 +102,7 @@ export class UserService {
    */
   static async login(data: LoginRequest, rememberMe: boolean = true): Promise<LoginResponse> {
     try {
-      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/auth/login', data);
+      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/v1/auth/login', data);
 
       console.log('loginData: ', loginData);
       
@@ -133,7 +133,7 @@ export class UserService {
   static async logout(): Promise<void> {
     try {
       // 可以调用服务器端登出接口（如果有的话）
-      await ApiUtils.post('/api/auth/logout', {}, true);
+      await ApiUtils.post('/api/v1/auth/logout', {}, true);
 
       // 清除本地令牌
       ApiUtils.clearTokens();

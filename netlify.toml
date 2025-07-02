@@ -11,8 +11,14 @@
   NODE_ENV = "production"
   VITE_API_BASE_URL = ""
 
+# API v1 代理规则（匹配后台实际路径 /api/v1）
+[[redirects]]
+  from = "/api/v1/*"
+  to = "http://117.72.222.222:3005/api/v1/:splat"
+  status = 200
+  force = true
 
-# API 代理规则（需要放在前面，优先级更高）
+# API 通用代理规则（向后兼容）
 [[redirects]]
   from = "/api/*"
   to = "http://117.72.222.222:3005/api/:splat"

@@ -1,1 +1,13 @@
-/* /index.html 200 
+# 测试后台连接 - 登录API
+/api/v1/auth/login  http://117.72.222.222:3005/api/v1/auth/login  200
+/api/auth/login     http://117.72.222.222:3005/api/auth/login     200
+
+# 通用API代理规则
+/api/v1/*  http://117.72.222.222:3005/api/v1/:splat  200
+/api/*     http://117.72.222.222:3005/api/:splat     200
+
+# 上传文件代理规则
+/uploads/* http://117.72.222.222:3005/uploads/:splat 200
+
+# SPA 路由规则 - 必须放在最后
+/*         /index.html                                200 

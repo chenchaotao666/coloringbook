@@ -10,7 +10,7 @@
   CI = "true"
   NODE_ENV = "production"
   # 使用空值，通过 Netlify 代理避免混合内容问题
-  VITE_API_BASE_URL = ""
+  VITE_API_BASE_URL = "http://117.72.222.222:3005"
 
 # API v1 代理规则（匹配后台实际路径 /api/v1）
 [[redirects]]

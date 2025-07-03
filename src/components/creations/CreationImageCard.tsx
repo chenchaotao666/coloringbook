@@ -79,7 +79,8 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
     if (image.type === 'text2image') {
       // 构建查询参数
       const params = new URLSearchParams();
-      if (image.prompt) params.set('prompt', image.prompt);
+      const promptText = getLocalizedText(image.prompt, language);
+      if (promptText) params.set('prompt', promptText);
       if (image.ratio) params.set('ratio', image.ratio);
       if (image.isPublic !== undefined) params.set('isPublic', image.isPublic.toString());
       
@@ -181,31 +182,37 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
         {/* 内容区域 */}
         <div className="self-stretch px-2 sm:px-3 flex flex-col items-start gap-1.5 sm:gap-2">
           {/* 标题 */}
-          {image.title && (
+          {getLocalizedText(image.title, language) && (
             <div className="w-full">
-              <div className="w-full text-[#161616] text-sm sm:text-base font-medium leading-tight sm:leading-5">
+              <div 
+                className="w-full text-[#161616] text-sm sm:text-base font-medium leading-tight sm:leading-5 break-words line-clamp-2"
+                title={getLocalizedText(image.title, language)}
+              >
                 {getLocalizedText(image.title, language)}
               </div>
             </div>
           )}
 
           {/* 描述 */}
-          {image.description && (
+          {getLocalizedText(image.description, language) && (
             <div className="w-full">
-              <div className="text-[#6B7280] text-xs sm:text-sm leading-4">
+              <div 
+                className="text-[#6B7280] text-xs sm:text-sm leading-4 break-words line-clamp-3"
+                title={getLocalizedText(image.description, language)}
+              >
                 {getLocalizedText(image.description, language)}
               </div>
             </div>
           )}
 
           {/* Prompt（仅对text2image显示） */}
-          {image.type === 'text2image' && image.prompt && (
+          {image.type === 'text2image' && getLocalizedText(image.prompt, language) && (
             <div className="w-full">
               <div className="text-[#6B7280] text-xs bg-gray-50 rounded p-2">
                 <div className="line-clamp-3 group-hover:line-clamp-none transition-all duration-200">
-                  {image.prompt}
+                  {getLocalizedText(image.prompt, language)}
                 </div>
-                {image.prompt.length > 100 && (
+                {getLocalizedText(image.prompt, language).length > 100 && (
                   <div className="text-[10px] text-gray-400 mt-1 text-right">
                     悬停查看完整内容
                   </div>

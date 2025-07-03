@@ -60,6 +60,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       setIsLoading(true);
+      
+      // 先检查是否有访问令牌，避免不必要的API请求
+      if (!UserService.isLoggedIn()) {
+        setUser(null);
+        return;
+      }
+      
       const userData = await UserService.getCurrentUser();
       setUser(userData);
       
@@ -118,6 +125,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshUser = async () => {
     try {
+      // 先检查是否有访问令牌，避免不必要的API请求
+      if (!UserService.isLoggedIn()) {
+        setUser(null);
+        return;
+      }
+      
       const userData = await UserService.getCurrentUser();
       setUser(userData);
     } catch (error) {

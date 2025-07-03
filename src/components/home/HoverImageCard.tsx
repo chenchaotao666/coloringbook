@@ -128,7 +128,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
         {variant === 'category' ? (
           /* 分类卡片：显示描述和查看按钮 */
           <>
-            {image.description && (
+            {getLocalizedText(image.description, language) && (
               <div className="w-full">
                 <div className="text-[#6B7280] text-sm leading-4">
                   {getLocalizedText(image.description, language)}

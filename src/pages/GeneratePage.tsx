@@ -147,12 +147,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     if (selectedImageData) {
       // 回填 prompt（仅对 text to image 有效）
       if (selectedTab === 'text') {
-        const promptValue = typeof selectedImageData.prompt === 'string' 
-          ? selectedImageData.prompt 
-          : (selectedImageData.prompt && typeof selectedImageData.prompt === 'object' 
-              ? ((selectedImageData.prompt as any).zh || (selectedImageData.prompt as any).en || '') 
-              : '');
-
+        const promptValue = getLocalizedText(selectedImageData.prompt, 'zh');
         setPrompt(promptValue);
       }
       
@@ -495,7 +490,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       const imageUrl = mode === 'image' ? example.colorUrl : example.defaultUrl;
                       const isMobile = window.innerWidth < 640;
                       const maxWidth = isMobile ? 215 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
-                      const maxHeight = isMobile ? 240 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH * 2;
+                      const maxHeight = isMobile ? 240 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
                       
                       // 设置合理的最小尺寸
                       const minWidth = isMobile ? 100 : 150;

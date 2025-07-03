@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import GenerateServiceInstance, { StyleSuggestion } from '../services/generateService';
 import { HomeImage } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedText } from '../utils/textUtils';
 
 export interface UseGeneratePageState {
   // 基础状态
@@ -465,7 +466,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       
       if (user) {
         // 获取所有生成的图片
-        const images = await GenerateServiceInstance.getUserGeneratedImages(user.id);
+        const images = await GenerateServiceInstance.getUserGeneratedImages(user.userId);
         
         // 按类型分离图片
         const textImages = images.filter(img => img.type === 'text2image');
@@ -530,6 +531,12 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       
       // 获取当前用户ID
       const { UserService } = await import('../services/userService');
+      
+      // 先检查是否已登录
+      if (!UserService.isLoggedIn()) {
+        throw new Error('请先登录');
+      }
+      
       const user = await UserService.getCurrentUser();
       
       if (!user) {
@@ -547,7 +554,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           prompt: state.prompt,
           ratio: state.selectedRatio,
           isPublic: state.textPublicVisibility,
-          userId: user.id, // 使用真实用户ID
+          userId: user.userId, // 使用真实用户ID
         });
       } else {
         if (!state.uploadedFile) {
@@ -557,7 +564,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         response = await GenerateServiceInstance.generateImageToImage({
           imageFile: state.uploadedFile,
           isPublic: state.imagePublicVisibility,
-          userId: user.id, // 使用真实用户ID
+          userId: user.userId, // 使用真实用户ID
         });
       }
       
@@ -860,7 +867,9 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       
       if (state.selectedTab === 'text') {
         // Text to Image: 回填示例图片的信息到界面
-        const promptToUse = exampleImage.prompt || (typeof exampleImage.title === 'string' ? exampleImage.title : '') || (typeof exampleImage.description === 'string' ? exampleImage.description : '') || '';
+        const promptToUse = getLocalizedText(exampleImage.prompt, language) || 
+                           getLocalizedText(exampleImage.title, language) || 
+                           getLocalizedText(exampleImage.description, language) || '';
         
         if (!promptToUse.trim()) {
           throw new Error('No prompt information available for this example');
@@ -894,7 +903,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           
           // 创建 File 对象
           const fileExtension = blob.type.split('/')[1] || 'jpg';
-          const fileName = `example-${(typeof exampleImage.title === 'string' ? exampleImage.title : exampleImage.id)}.${fileExtension}`;
+          const titleText = getLocalizedText(exampleImage.title, language) || exampleImage.id;
+          const fileName = `example-${titleText}.${fileExtension}`;
           const file = new File([blob], fileName, { type: blob.type });
           
           // 创建图片对象来获取尺寸
@@ -945,7 +955,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       }
       
       // 生成文件名
-      const imageTitle = (typeof imageData.title === 'string' ? imageData.title : 'untitled');
+      const imageTitle = getLocalizedText(imageData.title, language) || 'untitled';
       const fileName = `coloring-page-${imageTitle.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20)}-${imageId.slice(-8)}.${format}`;
       
       // 根据格式选择不同的下载方式

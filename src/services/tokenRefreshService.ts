@@ -8,8 +8,8 @@ export class TokenRefreshService {
   private static instance: TokenRefreshService;
   private refreshInterval: number | null = null;
   private isRefreshing = false;
-  private readonly REFRESH_INTERVAL = 10 * 60 * 1000; // 10分钟
-  private readonly TOKEN_EXPIRY_BUFFER = 2 * 60 * 1000; // 2分钟缓冲时间
+  private readonly REFRESH_INTERVAL = 5 * 60 * 1000; // 5分钟 (更频繁检查)
+  private readonly TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000; // 5分钟缓冲时间 (更早刷新)
 
   private constructor() {}
 
@@ -32,7 +32,7 @@ export class TokenRefreshService {
       this.stop();
     }
 
-    console.log('🔄 Token自动刷新服务已启动，每10分钟刷新一次');
+    console.log('🔄 Token自动刷新服务已启动，每5分钟检查一次');
 
     // 立即检查一次token状态
     this.checkAndRefreshToken();

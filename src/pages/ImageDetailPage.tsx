@@ -37,18 +37,23 @@ const ImageDetailPage: React.FC = () => {
     }
   };
 
-  // 解析 additionalInfo 字符串为对象
-  const parseAdditionalInfo = (additionalInfo: string) => {
+  // 解析 additionalInfo，直接从多语言对象中获取本地化文本
+  const parseAdditionalInfo = (additionalInfo: any) => {
     try {
-      // 如果已经是对象，直接返回
-      if (typeof additionalInfo === 'object' && additionalInfo !== null) {
-        return additionalInfo;
-      }
+      let infoObj = additionalInfo;
+      
       // 如果是字符串，尝试解析 JSON
       if (typeof additionalInfo === 'string' && additionalInfo.trim()) {
-        return JSON.parse(additionalInfo);
+        infoObj = JSON.parse(additionalInfo);
       }
-      return null;
+      
+      // 如果不是对象，返回 null
+      if (typeof infoObj !== 'object' || infoObj === null) {
+        return null;
+      }
+      
+      // 直接从多语言对象中获取本地化文本并返回
+      return getLocalizedText(infoObj, language);
     } catch (error) {
       console.error('Failed to parse additionalInfo:', error, additionalInfo);
       return null;
@@ -72,7 +77,7 @@ const ImageDetailPage: React.FC = () => {
           // 异步加载相关图片，不阻塞主内容显示
           setIsRelatedImagesLoading(true);
           try {
-            const relatedImages = await ImageService.getRelatedImages(foundImage.id, 5);
+            const relatedImages = await ImageService.getRelatedImages(foundImage.categoryId, foundImage.id);
             setRelatedImages(relatedImages);
           } catch (error) {
             console.error('Failed to load related images from ImageService:', error);
@@ -273,59 +278,22 @@ const ImageDetailPage: React.FC = () => {
           {!isImageLoading && image && (() => {
             const additionalInfo = parseAdditionalInfo(image.additionalInfo);
             
-            if (!additionalInfo) {
+            if (!additionalInfo || !additionalInfo.trim()) {
               return null;
             }
 
             return (
               <div className="space-y-8 lg:space-y-12 mb-8 lg:mb-20">
-                {/* Section 1 - 图片特色 */}
-                {additionalInfo.features && additionalInfo.features.length > 0 && (
-                  <section>
-                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎁 图片特色</h2>
-                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                      {additionalInfo.features.map((feature: string, index: number) => (
-                        <p key={index}>• {feature}</p>
-                      ))}
-                    </div>
-                  </section>
-                )}
-
-                {/* Section 2 - 适合人群 */}
-                {additionalInfo.suitableFor && additionalInfo.suitableFor.length > 0 && (
-                  <section>
-                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💖 适合人群</h2>
-                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                      {additionalInfo.suitableFor.map((suitable: string, index: number) => (
-                        <p key={index}>• {suitable}</p>
-                      ))}
-                    </div>
-                  </section>
-                )}
-
-                {/* Section 3 - 涂色建议 */}
-                {additionalInfo.coloringSuggestions && additionalInfo.coloringSuggestions.length > 0 && (
-                  <section>
-                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">🎨 涂色建议</h2>
-                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                      {additionalInfo.coloringSuggestions.map((suggestion: string, index: number) => (
-                        <p key={index}>• {suggestion}</p>
-                      ))}
-                    </div>
-                  </section>
-                )}
-
-                {/* Section 4 - 创意用途 */}
-                {additionalInfo.creativeUses && additionalInfo.creativeUses.length > 0 && (
-                  <section>
-                    <h2 className="text-xl lg:text-2xl font-bold text-black mb-4 lg:mb-6">💡 创意用途</h2>
-                    <div className="text-sm text-[#6B7280] leading-5 space-y-2">
-                      {additionalInfo.creativeUses.map((use: string, index: number) => (
-                        <p key={index}>• {use}</p>
-                      ))}
-                    </div>
-                  </section>
-                )}
+                <section>
+                  <h2 className="text-xl font-bold text-black mb-4 lg:mb-6">📝 详细信息</h2>
+                  <div className="text-sm text-[#6B7280] leading-7 space-y-3">
+                    {additionalInfo.split('\n').filter(line => line.trim()).map((paragraph: string, index: number) => (
+                      <p key={index} className="text-sm text-[#6B7280] leading-7">
+                        {paragraph.trim()}
+                      </p>
+                    ))}
+                  </div>
+                </section>
               </div>
             );
           })()}

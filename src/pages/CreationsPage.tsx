@@ -56,7 +56,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
       }
 
       const searchParams: any = {
-        userId: user.id,
+        userId: user.userId,
         currentPage: page,
         pageSize: pageSize
       };

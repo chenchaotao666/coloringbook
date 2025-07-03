@@ -3,7 +3,7 @@ import { UrlUtils } from '../utils/urlUtils';
 
 // 用户接口
 export interface User {
-  id: string;
+  userId: string;
   username: string;
   email: string;
   avatar: string | null;
@@ -87,7 +87,7 @@ export class UserService {
    */
   static async register(data: RegisterRequest): Promise<User> {
     try {
-      const response = await ApiUtils.post<User>('/api/v1/auth/register', data);
+      const response = await ApiUtils.post<User>('/api/auth/register', data);
       return response;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -133,7 +133,7 @@ export class UserService {
   static async logout(): Promise<void> {
     try {
       // 可以调用服务器端登出接口（如果有的话）
-      await ApiUtils.post('/api/v1/auth/logout', {}, true);
+      await ApiUtils.post('/api/auth/logout', {}, true);
 
       // 清除本地令牌
       ApiUtils.clearTokens();

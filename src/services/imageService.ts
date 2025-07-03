@@ -16,7 +16,7 @@ export interface HomeImage {
   isPublic: boolean;
   hotness: number; // 热度值
   createdAt: string;
-  prompt: string;
+  prompt: LocalizedText | string;
   userId: string;
   category: string;
   categoryId: string;
@@ -163,22 +163,29 @@ export class ImageService {
   }
 
   /**
-   * 获取相关图片（基于当前图片信息）
-   * @param imageId 当前图片ID
+   * 获取相关图片（基于分类ID）
+   * @param categoryId 分类ID
+   * @param currentImageId 当前图片ID，用于过滤掉自己
    * @param limit 返回图片数量限制，默认4张
    * @returns 相关图片数组
    */
-  static async getRelatedImages(imageId: string, limit: number = 4): Promise<HomeImage[]> {
+  static async getRelatedImages(categoryId: string, currentImageId: string, limit: number = 4): Promise<HomeImage[]> {
     try {
+      // 查询比需要的数量多一些，以防过滤掉自己后数量不够
       const result = await this.searchImages({ 
-        imageId, 
-        isRelated: true, 
-        pageSize: limit 
+        categoryId, 
+        isPublic: true, // 只返回公开的图片
+        pageSize: limit + 1 // 多查询1张，以防过滤后不够
       });
       
-      return result.images;
+      // 过滤掉当前图片，然后取前limit张
+      const filteredImages = result.images
+        .filter(image => image.id !== currentImageId)
+        .slice(0, limit);
+      
+      return filteredImages;
     } catch (error) {
-      console.error(`Failed to get related images for ${imageId}:`, error);
+      console.error(`Failed to get related images for category ${categoryId}:`, error);
       return [];
     }
   }

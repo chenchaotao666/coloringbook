@@ -1,0 +1,62 @@
+{
+  "title": "{count} categories to explore",
+  "loading": "Loading...",
+  "viewAllCategories": "View all categories",
+  "breadcrumb": {
+    "home": "Home",
+    "categories": "Coloring Pages Free"
+  },
+  "search": {
+    "placeholder": "Enter the category to search",
+    "button": "Search"
+  },
+  "emptyState": {
+    "noResults": {
+      "title": "No results found",
+      "description": "No categories found matching your search."
+    },
+    "noCategories": {
+      "title": "No categories found",
+      "description": "Categories are being loaded. Please wait a moment."
+    }
+  },
+  "detail": {
+    "loading": "Loading category details...",
+    "notFound": {
+      "title": "Category not found",
+      "description": "The category you're looking for doesn't exist or has been removed.",
+      "backButton": "Back to Categories"
+    },
+    "backToCategories": "Back to Categories",
+    "allTags": "All",
+    "generatePrompt": {
+      "placeholder": "Enter the coloring book you want to search",
+      "button": "Create"
+    },
+    "generateSection": {
+      "title": "Create your personalized AI {category} coloring page",
+      "customCategory": "Custom"
+    },
+    "ratio": "Aspect Ratio",
+    "loadMore": "Load More",
+    "noImages": {
+      "title": "No images in this category",
+      "description": "There are no images in this category yet. Please try other categories."
+    }
+  },
+  "imageDetail": {
+    "notFound": {
+      "title": "Image not found",
+      "breadcrumb": "Image not found",
+      "goHome": "Go Home"
+    },
+    "tags": "Tags",
+    "downloadPng": "Download PNG",
+    "downloadPdf": "Download PDF",
+    "png": "PNG",
+    "pdf": "PDF",
+    "detailsTitle": "Details",
+    "relatedImages": "You Might Also Like",
+    "noRelatedImages": "No related images found"
+  }
+} 

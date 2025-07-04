@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { UserService } from '../services/userService';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
 
 const ResetPasswordPage: React.FC = () => {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   
@@ -43,18 +45,18 @@ const ResetPasswordPage: React.FC = () => {
 
     // 密码验证
     if (!formData.password) {
-      newErrors.password = '请输入新密码';
+      newErrors.password = t('forms.validation.newPasswordRequired');
     } else if (formData.password.length < 6) {
-      newErrors.password = '密码至少需要6个字符';
+      newErrors.password = t('forms.validation.passwordTooShort', undefined, { min: 6 });
     } else if (formData.password.length > 50) {
-      newErrors.password = '密码不能超过50个字符';
+      newErrors.password = t('forms.validation.passwordMaxLength', undefined, { max: 50 });
     }
 
     // 确认密码验证
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = '请确认新密码';
+      newErrors.confirmPassword = t('forms.validation.confirmNewPasswordRequired');
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = '两次输入的密码不一致';
+      newErrors.confirmPassword = t('forms.validation.newPasswordMismatch');
     }
 
     setErrors(newErrors);
@@ -97,16 +99,16 @@ const ResetPasswordPage: React.FC = () => {
       if (error instanceof ApiError) {
         switch (error.errorCode) {
           case '1019':
-            setErrors({ general: '重置链接已过期，请重新申请' });
+            setErrors({ general: t('errors.auth.tokenExpired') });
             break;
           case '1020':
-            setErrors({ general: '重置链接无效' });
+            setErrors({ general: t('errors.auth.tokenInvalid') });
             break;
           default:
-            setErrors({ general: error.message || '重置密码失败，请稍后重试' });
+            setErrors({ general: error.message || t('errors.auth.resetFailed') });
         }
       } else {
-        setErrors({ general: '网络错误，请检查网络连接后重试' });
+        setErrors({ general: t('errors.network.connectionFailed') });
       }
     } finally {
       setIsLoading(false);
@@ -126,10 +128,10 @@ const ResetPasswordPage: React.FC = () => {
                 </svg>
               </div>
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                链接无效
+                {t('forms.auth.linkInvalid')}
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
-                重置密码链接无效或已过期
+                {t('forms.auth.linkInvalidDesc')}
               </p>
             </div>
 
@@ -138,14 +140,14 @@ const ResetPasswordPage: React.FC = () => {
                 to="/forgot-password"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                重新申请重置密码
+                {t('forms.auth.requestNewReset')}
               </Link>
               
               <Link
                 to="/login"
                 className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                返回登录
+                {t('forms.auth.backToLogin')}
               </Link>
             </div>
           </div>
@@ -167,10 +169,10 @@ const ResetPasswordPage: React.FC = () => {
                 </svg>
               </div>
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                密码重置成功
+                {t('forms.auth.resetSuccess')}
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
-                您的密码已成功重置，现在可以使用新密码登录
+                {t('forms.auth.resetSuccessDesc')}
               </p>
             </div>
 
@@ -179,7 +181,7 @@ const ResetPasswordPage: React.FC = () => {
                 to="/login"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                立即登录
+                {t('forms.auth.goToLogin')}
               </Link>
             </div>
           </div>
@@ -194,7 +196,7 @@ const ResetPasswordPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">验证重置链接...</p>
+          {/* 加载时不显示文本 */}
         </div>
       </div>
     );
@@ -212,10 +214,10 @@ const ResetPasswordPage: React.FC = () => {
               </svg>
             </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              重置密码
+              {t('forms.auth.resetPasswordTitle')}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              请输入您的新密码
+              {t('forms.auth.resetPasswordDesc')}
             </p>
           </div>
 
@@ -230,7 +232,7 @@ const ResetPasswordPage: React.FC = () => {
               {/* 新密码输入 */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  新密码
+                  {t('forms.auth.newPassword')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -244,7 +246,7 @@ const ResetPasswordPage: React.FC = () => {
                     className={`appearance-none relative block w-full px-3 py-2 border ${
                       errors.password ? 'border-red-300' : 'border-gray-300'
                     } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="请输入新密码"
+                    placeholder={t('forms.placeholders.password')}
                   />
                   {errors.password && (
                     <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -255,7 +257,7 @@ const ResetPasswordPage: React.FC = () => {
               {/* 确认密码输入 */}
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  确认新密码
+                  {t('forms.auth.confirmNewPassword')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -269,7 +271,7 @@ const ResetPasswordPage: React.FC = () => {
                     className={`appearance-none relative block w-full px-3 py-2 border ${
                       errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                     } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="请再次输入新密码"
+                    placeholder={t('forms.placeholders.confirmPassword')}
                   />
                   {errors.confirmPassword && (
                     <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
@@ -290,7 +292,7 @@ const ResetPasswordPage: React.FC = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    重置中...
+                    {/* 移除loading文本，只显示加载图标 */}
                   </div>
                 ) : (
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -299,7 +301,7 @@ const ResetPasswordPage: React.FC = () => {
                     </svg>
                   </span>
                 )}
-                {!isLoading && '重置密码'}
+                {!isLoading && t('forms.auth.resetPassword')}
               </button>
             </div>
 
@@ -308,7 +310,7 @@ const ResetPasswordPage: React.FC = () => {
                 to="/login"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
-                返回登录
+                {t('forms.auth.backToLogin')}
               </Link>
             </div>
           </form>

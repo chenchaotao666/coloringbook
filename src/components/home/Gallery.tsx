@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { CategoriesService, Category } from '../../services/categoriesService';
 import CategoryGrid from '../layout/CategoryGrid';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage, useAsyncTranslation } from '../../contexts/LanguageContext';
 
 interface GalleryProps {
   title: string;
@@ -13,6 +13,7 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { language } = useLanguage();
+  const { t } = useAsyncTranslation('home');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
               variant="gradient"
               className="h-[50px] sm:h-[60px] px-4 sm:px-5 py-3 rounded-lg overflow-hidden text-lg sm:text-xl font-bold capitalize w-full sm:w-auto min-w-[280px] sm:min-w-0"
             >
-              View all categories
+              {t('gallery.viewAll', 'View all categories')}
             </Button>
           </Link>
         </div>

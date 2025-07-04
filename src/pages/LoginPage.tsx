@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -39,14 +41,14 @@ const LoginPage: React.FC = () => {
 
     // 邮箱验证
     if (!formData.email.trim()) {
-      newErrors.email = '请输入邮箱';
+      newErrors.email = t('forms.validation.emailRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '请输入有效的邮箱地址';
+      newErrors.email = t('forms.validation.emailInvalid');
     }
 
     // 密码验证
     if (!formData.password) {
-      newErrors.password = '请输入密码';
+      newErrors.password = t('forms.validation.passwordRequired');
     }
 
     setErrors(newErrors);
@@ -104,22 +106,22 @@ const LoginPage: React.FC = () => {
         // 处理特定的API错误
         switch (error.errorCode) {
           case '1004':
-            setErrors({ email: '该邮箱未注册' });
+            setErrors({ email: t('errors.auth.emailNotRegistered') });
             break;
           case '1005':
-            setErrors({ password: '密码错误' });
+            setErrors({ password: t('errors.auth.passwordIncorrect') });
             break;
           case '1006':
-            setErrors({ general: '账户已被禁用，请联系客服' });
+            setErrors({ general: t('errors.auth.accountDisabled') });
             break;
           case '1003':
-            setErrors({ general: '输入信息格式不正确，请检查后重试' });
+            setErrors({ general: t('errors.validation.invalidFormat') });
             break;
           default:
-            setErrors({ general: error.message || '登录失败，请稍后重试' });
+            setErrors({ general: error.message || t('errors.auth.invalidCredentials') });
         }
       } else {
-        setErrors({ general: '网络错误，请检查网络连接后重试' });
+        setErrors({ general: t('errors.network.connectionFailed') });
       }
     } finally {
       setIsLoading(false);
@@ -137,12 +139,12 @@ const LoginPage: React.FC = () => {
               </svg>
             </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              登录您的账户
+              {t('forms.auth.loginTitle')}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              还没有账户？{' '}
+              {t('forms.auth.noAccount')}{' '}
               <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
-                立即注册
+                {t('forms.auth.createAccount')}
               </Link>
             </p>
           </div>
@@ -164,7 +166,7 @@ const LoginPage: React.FC = () => {
               {/* 邮箱输入 */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  邮箱地址
+                  {t('forms.fields.email')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -178,7 +180,7 @@ const LoginPage: React.FC = () => {
                     className={`appearance-none relative block w-full px-3 py-2 border ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
                     } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="请输入邮箱地址"
+                    placeholder={t('forms.placeholders.email')}
                   />
                   {errors.email && (
                     <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -189,7 +191,7 @@ const LoginPage: React.FC = () => {
               {/* 密码输入 */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  密码
+                  {t('forms.fields.password')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -203,7 +205,7 @@ const LoginPage: React.FC = () => {
                     className={`appearance-none relative block w-full px-3 py-2 border ${
                       errors.password ? 'border-red-300' : 'border-gray-300'
                     } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="请输入密码"
+                    placeholder={t('forms.placeholders.password')}
                   />
                   {errors.password && (
                     <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -223,13 +225,13 @@ const LoginPage: React.FC = () => {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  记住我
+                  {t('forms.auth.rememberMe')}
                 </label>
               </div>
 
               <div className="text-sm">
                 <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
-                  忘记密码？
+                  {t('forms.auth.forgotPassword')}
                 </Link>
               </div>
             </div>
@@ -246,7 +248,7 @@ const LoginPage: React.FC = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    登录中...
+                    {/* 移除loading文本，只显示加载图标 */}
                   </div>
                 ) : (
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -255,7 +257,7 @@ const LoginPage: React.FC = () => {
                     </svg>
                   </span>
                 )}
-                {!isLoading && '登录'}
+                {!isLoading && t('forms.auth.loginTitle')}
               </button>
             </div>
           </form>

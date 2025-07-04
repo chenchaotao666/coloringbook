@@ -1,9 +1,12 @@
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
 const arrowRightIcon = '/images/arrow-right-outline-default.svg';
-const heroImage = '/images/color-cat.svg';
+const heroImage = '/images/color-cat.png';
 
 const Hero = () => {
+  const { t } = useAsyncTranslation('home');
+  
   return (
     <div className="relative bg-white">
       {/* 渐变背景 - 覆盖菜单和Hero区域，从上到下浅黄渐变 */}
@@ -27,26 +30,26 @@ const Hero = () => {
           <div className="w-full lg:w-auto flex flex-col items-center lg:items-start gap-6 sm:gap-9">
             <div className="flex flex-col gap-4 sm:gap-6 text-center lg:text-left">
               <h1 className="mt-6 sm:mt-0 text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-bold capitalize leading-tight">
-                <span className="text-[#161616]">AI </span>
-                <span className="text-[#6200E2]">Coloring Pages</span>
+                <span className="text-[#161616]">{t('hero.aiTitle', 'AI ')} </span>
+                <span className="text-[#6200E2]">{t('hero.coloringPages', 'Coloring Pages')}</span>
                 <span className="text-[#FF9C01]"> </span><br />
-                <span className="text-[#161616] block mt-5 sm:mt-5">Free Your Colorful World</span>
+                <span className="text-[#161616] block mt-5 sm:mt-5">{t('hero.subtitle', 'Free Your Colorful World')}</span>
               </h1>
               <p className="max-w-[750px] text-[#6B7280] text-base sm:text-lg leading-relaxed px-4 sm:px-0">
-                One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.
+                {t('hero.description', 'One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.')}
               </p>
             </div>
             
             {/* 统计数据卡片 */}
-            <div className="p-6 sm:p-6 bg-[#F9FAFB] rounded-lg w-full max-w-[300px] lg:max-w-[350px]">
+            <div className="p-6 sm:p-6 pl-12 sm:pl-12 pr-12 sm:pr-12 bg-[#F9FAFB] rounded-lg max-w-[300px] lg:max-w-[400px]">
               <div className="flex items-center justify-center sm:justify-start gap-8 sm:gap-10">
                 <div className="flex flex-col gap-1 items-center sm:items-start">
                   <div className="text-[#161616] text-xl sm:text-2xl font-bold">1,281</div>
-                  <div className="text-[#6B7280] text-xs sm:text-sm text-center sm:text-left">Coloring Pages Free</div>
+                  <div className="text-[#6B7280] text-xs sm:text-sm text-center sm:text-left">{t('hero.freePages', 'Coloring Pages Free')}</div>
                 </div>
                 <div className="flex flex-col gap-1 items-center sm:items-start">
-                  <div className="text-[#161616] text-xl sm:text-2xl font-bold">Free</div>
-                  <div className="text-[#6B7280] text-xs sm:text-sm text-center sm:text-left">Coloring Generate</div>
+                  <div className="text-[#161616] text-xl sm:text-2xl font-bold">{t('hero.free', 'Free')}</div>
+                  <div className="text-[#6B7280] text-xs sm:text-sm text-center sm:text-left">{t('hero.coloringGenerate', 'Coloring Generate')}</div>
                 </div>
               </div>
             </div>
@@ -58,12 +61,12 @@ const Hero = () => {
                   variant="gradient"
                   className="w-[280px] sm:w-[220px] md:w-[240px] h-[55px] sm:h-[65px] px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold"
                 >
-                  Coloring Pages Generate
+                  {t('hero.generateButton', 'Coloring Pages Generate')}
                 </Button>
               </Link>
               <Link to="/categories" className="w-auto">
-                <Button variant="outline" className="w-[280px] sm:w-[220px] md:w-[240px] h-[55px] sm:h-[65px] px-4 sm:px-6 py-3 sm:py-4 bg-white border border-[#E5E7EB] rounded-lg text-base sm:text-lg font-semibold flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors">
-                  <span className="text-[#111928]">Coloring Pages Free</span>
+                <Button variant="outline" className="w-[280px] sm:w-[220px] md:w-[240px] h-[55px] sm:h-[65px] px-4 sm:px-6 py-3 sm:py-4 bg-white border border-[#E5E7EB] rounded-lg text-base sm:text-lg text-[#111928] flex items-center justify-center gap-1">
+                  <span className="text-[#111928]">{t('hero.freeButton', 'Coloring Pages Free')}</span>
                   <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4" />
                 </Button>
               </Link>
@@ -76,7 +79,7 @@ const Hero = () => {
               <div className="w-full aspect-square overflow-hidden rounded-[24px] sm:rounded-[32px] lg:rounded-[46px]">
                 <img 
                   src={heroImage}
-                  alt="AI生成涂色页示例"
+                  alt={t('hero.imageAlt', 'AI生成涂色页示例')}
                   className="w-full h-full object-cover cursor-pointer"
                 />
               </div>

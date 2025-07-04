@@ -1,0 +1,76 @@
+{
+  "menu": {
+    "coloringPagesFree": "免费涂色页",
+    "textColoringPage": "文字涂色页",
+    "imageColoringPage": "图片涂色页",
+    "pricing": "价格",
+    "login": "登录",
+    "register": "注册",
+    "profile": "个人中心",
+    "logout": "退出登录",
+    "myCreations": "我的作品",
+    "categories": "分类",
+    "gallery": "图库",
+    "home": "首页"
+  },
+  "breadcrumb": {
+    "home": "首页",
+    "categories": "分类",
+    "pricing": "价格方案",
+    "profile": "个人中心",
+    "login": "登录",
+    "register": "注册",
+    "creations": "我的作品",
+    "generate": "创作",
+    "textToImage": "文字生图",
+    "imageToImage": "图片生图"
+  },
+  "footer": {
+    "sections": {
+      "tools": "工具",
+      "disney": "迪士尼",
+      "star": "明星",
+      "animal": "动物",
+      "company": "公司"
+    },
+    "links": {
+      "textToColoringPage": "文字涂色页",
+      "imageToColoringPage": "图片涂色页",
+      "coloringPagesFree": "免费涂色页",
+      "mickeyMouse": "米老鼠",
+      "minnieMouse": "米妮老鼠",
+      "donaldDuck": "唐老鸭",
+      "daisyDuck": "黛丝鸭",
+      "goofy": "高飞",
+      "snowWhite": "白雪公主",
+      "cinderella": "灰姑娘",
+      "taylorSwift": "泰勒·斯威夫特",
+      "billieEilish": "比莉·艾利什",
+      "scarlettJohansson": "斯嘉丽·约翰逊",
+      "galGadot": "盖尔·加朵",
+      "bradPitt": "布拉德·皮特",
+      "zendaya": "赞达亚",
+      "timotheeChalamet": "提莫西·查拉梅",
+      "dog": "狗",
+      "cat": "猫",
+      "tiger": "老虎",
+      "butterfly": "蝴蝶",
+      "bird": "鸟",
+      "giraffe": "长颈鹿",
+      "horse": "马",
+      "privacyPolicy": "隐私政策",
+      "termsOfService": "服务条款",
+      "refundPolicy": "退款政策"
+    },
+    "contact": {
+      "title": "如有使用问题请联系我们：",
+      "email": "congcong@mail.xinsulv.com"
+    },
+    "copyright": "© 2021 - Present Flowrift. All rights reserved."
+  },
+  "language": {
+    "chinese": "简体中文",
+    "english": "English",
+    "selectLanguage": "选择语言"
+  }
+} 

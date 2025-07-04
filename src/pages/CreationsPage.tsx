@@ -8,6 +8,7 @@ import { ImageService, HomeImage } from '../services/imageService';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import CircularProgress from '../components/ui/CircularProgress';
 import BackToTop from '../components/common/BackToTop';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 
 // 图标导入
 const noResultIcon = '/images/no-result.svg';
@@ -15,6 +16,7 @@ const noResultIcon = '/images/no-result.svg';
 interface CreationsPageProps {}
 
 const CreationsPage: React.FC<CreationsPageProps> = () => {
+  const { t } = useAsyncTranslation('creations');
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   
@@ -163,8 +165,8 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* 页面标题 */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Creations</h1>
-            <p className="text-gray-600">View and manage all your generated coloring pages</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title', 'My Creations')}</h1>
+            <p className="text-gray-600">{t('description', 'View and manage all your generated coloring pages')}</p>
           </div>
 
           {/* 筛选标签 */}
@@ -178,7 +180,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                All ({images.length})
+{t('filters.all', 'All')} ({images.length})
               </button>
               <button
                 onClick={() => setSelectedType('text2image')}
@@ -188,7 +190,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                Text to Image
+{t('filters.textToImage', 'Text to Image')}
               </button>
               <button
                 onClick={() => setSelectedType('image2image')}
@@ -251,7 +253,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     disabled={loadingMore}
                     className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loadingMore ? 'Loading...' : 'Load More'}
+                    Load More
                   </button>
                 </div>
               )}
@@ -301,7 +303,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                 disabled={!reportContent.trim() || submittingReport}
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submittingReport ? 'Submitting...' : 'Report'}
+                Report
               </button>
             </div>
           </div>

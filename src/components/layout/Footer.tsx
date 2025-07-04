@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
+
 const logo = '/images/logo.svg';
 const socialIcon1 = '/images/Link → SVG-1.svg';
 const socialIcon2 = '/images/Link → SVG-2.svg';
@@ -38,57 +40,59 @@ const FooterSection: React.FC<FooterSectionProps> = ({ title, links }) => {
 };
 
 const Footer = () => {
+  const { t } = useAsyncTranslation('navigation');
+
   const sections = [
     {
-      title: 'Tools',
+      title: t('footer.sections.tools', 'Tools'),
       links: [
-        { label: 'Text to coloring page', url: '/text-coloring-page' },
-        { label: 'Image to coloring page', url: '/image-coloring-page' },
-        { label: 'Coloring Pages Free', url: '/categories' },
+        { label: t('footer.links.textToColoringPage', 'Text to coloring page'), url: '/text-coloring-page' },
+        { label: t('footer.links.imageToColoringPage', 'Image to coloring page'), url: '/image-coloring-page' },
+        { label: t('footer.links.coloringPagesFree', 'Coloring Pages Free'), url: '/categories' },
       ],
     },
     {
-      title: 'Disney',
+      title: t('footer.sections.disney', 'Disney'),
       links: [
-        { label: 'Mickey Mouse', url: '/category/mickey-mouse' },
-        { label: 'Minnie Mouse', url: '/category/minnie-mouse' },
-        { label: 'Donald Duck', url: '/category/donald-duck' },
-        { label: 'Daisy Duck', url: '/category/daisy-duck' },
-        { label: 'Goofy', url: '/category/goofy' },
-        { label: 'Snow White', url: '/category/snow-white' },
-        { label: 'Cinderella', url: '/category/cinderella' },
+        { label: t('footer.links.mickeyMouse', 'Mickey Mouse'), url: '/category/mickey-mouse' },
+        { label: t('footer.links.minnieMouse', 'Minnie Mouse'), url: '/category/minnie-mouse' },
+        { label: t('footer.links.donaldDuck', 'Donald Duck'), url: '/category/donald-duck' },
+        { label: t('footer.links.daisyDuck', 'Daisy Duck'), url: '/category/daisy-duck' },
+        { label: t('footer.links.goofy', 'Goofy'), url: '/category/goofy' },
+        { label: t('footer.links.snowWhite', 'Snow White'), url: '/category/snow-white' },
+        { label: t('footer.links.cinderella', 'Cinderella'), url: '/category/cinderella' },
       ],
     },
     {
-      title: 'Star',
+      title: t('footer.sections.star', 'Star'),
       links: [
-        { label: 'Taylor Swift', url: '/category/taylor-swift' },
-        { label: 'Billie Eilish', url: '/category/billie-eilish' },
-        { label: 'Scarlett Johansson', url: '/category/scarlett-johansson' },
-        { label: 'Gal Gadot', url: '/category/gal-gadot' },
-        { label: 'Brad Pitt', url: '/category/brad-pitt' },
-        { label: 'Zendaya', url: '/category/zendaya' },
-        { label: 'Timothée Chalamet', url: '/category/timothee-chalamet' },
+        { label: t('footer.links.taylorSwift', 'Taylor Swift'), url: '/category/taylor-swift' },
+        { label: t('footer.links.billieEilish', 'Billie Eilish'), url: '/category/billie-eilish' },
+        { label: t('footer.links.scarlettJohansson', 'Scarlett Johansson'), url: '/category/scarlett-johansson' },
+        { label: t('footer.links.galGadot', 'Gal Gadot'), url: '/category/gal-gadot' },
+        { label: t('footer.links.bradPitt', 'Brad Pitt'), url: '/category/brad-pitt' },
+        { label: t('footer.links.zendaya', 'Zendaya'), url: '/category/zendaya' },
+        { label: t('footer.links.timotheeChalamet', 'Timothée Chalamet'), url: '/category/timothee-chalamet' },
       ],
     },
     {
-      title: 'Animal',
+      title: t('footer.sections.animal', 'Animal'),
       links: [
-        { label: 'Dog', url: '/category/dog' },
-        { label: 'Cat', url: '/category/cat' },
-        { label: 'Tiger', url: '/category/tiger' },
-        { label: 'Butterfly', url: '/category/butterfly' },
-        { label: 'Bird', url: '/category/bird' },
-        { label: 'Giraffe', url: '/category/giraffe' },
-        { label: 'Horse', url: '/category/horse' },
+        { label: t('footer.links.dog', 'Dog'), url: '/category/dog' },
+        { label: t('footer.links.cat', 'Cat'), url: '/category/cat' },
+        { label: t('footer.links.tiger', 'Tiger'), url: '/category/tiger' },
+        { label: t('footer.links.butterfly', 'Butterfly'), url: '/category/butterfly' },
+        { label: t('footer.links.bird', 'Bird'), url: '/category/bird' },
+        { label: t('footer.links.giraffe', 'Giraffe'), url: '/category/giraffe' },
+        { label: t('footer.links.horse', 'Horse'), url: '/category/horse' },
       ],
     },
     {
-      title: 'Company',
+      title: t('footer.sections.company', 'Company'),
       links: [
-        { label: 'Privacy Policy', url: '/privacy-policy' },
-        { label: 'Terms of Service', url: '/terms' },
-        { label: 'Refund Policy', url: '/refund-policy' },
+        { label: t('footer.links.privacyPolicy', 'Privacy Policy'), url: '/privacy-policy' },
+        { label: t('footer.links.termsOfService', 'Terms of Service'), url: '/terms' },
+        { label: t('footer.links.refundPolicy', 'Refund Policy'), url: '/refund-policy' },
       ],
     },
   ];
@@ -114,13 +118,13 @@ const Footer = () => {
             </div>
             <div>
               <span className="text-[#6B7280] text-sm leading-6">
-                Please contact us for use questions：<br />
+                {t('footer.contact.title', 'Please contact us for use questions：')}<br />
               </span>
               <a 
                 href="mailto:congcong@mail.xinsulv.com" 
                 className="text-[#006FFF] text-sm underline leading-6 hover:text-[#FF5C07] transition-colors duration-200"
               >
-                congcong@mail.xinsulv.com
+                {t('footer.contact.email', 'congcong@mail.xinsulv.com')}
               </a>
             </div>
             <div className="flex items-center gap-4">
@@ -156,13 +160,13 @@ const Footer = () => {
             </div>
             <div>
               <span className="text-[#6B7280] text-sm leading-6">
-                Please contact us for use questions：<br />
+                {t('footer.contact.title', 'Please contact us for use questions：')}<br />
               </span>
               <a 
                 href="mailto:congcong@mail.xinsulv.com" 
                 className="text-[#006FFF] text-sm underline leading-6 hover:text-[#FF5C07] transition-colors duration-200"
               >
-                congcong@mail.xinsulv.com
+                {t('footer.contact.email', 'congcong@mail.xinsulv.com')}
               </a>
             </div>
             <div className="flex items-center gap-5">
@@ -190,7 +194,7 @@ const Footer = () => {
 
         <div className="w-full h-[0px] my-6 lg:my-9 border-t border-[#F0F0F0]"></div>
         <div className="text-[#6B7280] text-sm text-center lg:text-left">
-          © 2021 - Present Flowrift. All rights reserved.
+          {t('footer.copyright', '© 2021 - Present Flowrift. All rights reserved.')}
         </div>
       </div>
     </div>

@@ -41,6 +41,15 @@ export type {
   UserTasksResponse 
 } from './taskService';
 
+// 定价服务
+export { PricingService, pricingService } from './pricingService';
+export type { 
+  CreateOrderRequest, 
+  CreateOrderResponse, 
+  CaptureOrderRequest, 
+  CaptureOrderResponse 
+} from './pricingService';
+
 // API 工具和错误处理
 export { ApiUtils, ApiError } from '../utils/apiUtils';
 export type { 

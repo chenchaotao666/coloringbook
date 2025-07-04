@@ -1,0 +1,142 @@
+{
+  "hero": {
+    "aiTitle": "AI",
+    "coloringPages": "Coloring Pages",
+    "subtitle": "Free Your Colorful World",
+    "description": "One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.",
+    "freePages": "Coloring Pages Free",
+    "free": "Free",
+    "coloringGenerate": "Coloring Generate",
+    "generateButton": "Coloring Pages Generate",
+    "freeButton": "Coloring Pages Free",
+    "imageAlt": "AI-generated coloring page example",
+    "createNow": "Create Now",
+    "learnMore": "Learn More",
+    "watchDemo": "Watch Demo"
+  },
+  "features": {
+    "title": "Discover our tools' amazing feats!",
+    "tryNow": "Try Now",
+    "textToImage": {
+      "title": "Generate high-quality coloring pages from text",
+      "description": "Enter words like 'Dinosaur', 'Mickey', or 'SpongeBob', and the AI will instantly turn them into art."
+    },
+    "imageToColoring": {
+      "title": "Convert images to coloring pages",
+      "description": "Upload any photo or image, and our AI will transform it into a beautiful coloring page outline."
+    }
+  },
+  "gallery": {
+    "title": "Browse our 1,281 free coloring pages; printable in PDF and PNG formats!",
+    "viewAll": "View all categories"
+  },
+  "howItWorks": {
+    "title": "How to make coloring pages",
+    "step1": {
+      "number": "Step 1",
+      "title": "Type your prompts",
+      "description": "Simply input simple prompts such as 'Pikachu', 'Dinosaur', and so on."
+    },
+    "step2": {
+      "number": "Step 2",
+      "title": "Click 'generate' button",
+      "description": "Click our generate button and wait a few seconds."
+    },
+    "step3": {
+      "number": "Step 3",
+      "title": "Wait for generation",
+      "description": "Our AI will transform your text into amazing coloring pages in just a few seconds."
+    }
+  },
+  "testimonials": {
+    "title": "What Our Users Say",
+    "user1": {
+      "name": "Ms. Li",
+      "position": "Parent",
+      "content": "Children love using this tool to create their own coloring pages, it's both fun and educational."
+    },
+    "user2": {
+      "name": "Teacher Zhang",
+      "position": "Art Teacher",
+      "content": "This tool provides unlimited creative possibilities for my classroom, and students are very excited."
+    },
+    "user3": {
+      "name": "Student Wang",
+      "position": "Art Enthusiast",
+      "content": "The generated coloring pages are of high quality, with clear lines and rich details, perfect for coloring."
+    },
+    "user4": {
+      "name": "Ms. Chen",
+      "position": "Kindergarten Teacher",
+      "content": "This is a wonderful tool that helps children unleash their creativity while learning new skills."
+    }
+  },
+  "pricing": {
+    "title": "Choose Your Plan",
+    "subtitle": "Flexible pricing to meet different needs",
+    "free": {
+      "title": "Free Trial",
+      "price": "Free",
+      "description": "Experience basic features",
+      "features": [
+        "3 free generations per day",
+        "Basic resolution",
+        "Standard generation speed"
+      ]
+    },
+    "pro": {
+      "title": "Professional",
+      "price": "$2.99/month",
+      "description": "For individual users",
+      "features": [
+        "Unlimited generations",
+        "High-definition resolution",
+        "Priority generation queue",
+        "Multiple export formats"
+      ]
+    },
+    "business": {
+      "title": "Business",
+      "price": "$14.99/month",
+      "description": "For teams and institutions",
+      "features": [
+        "All Professional features included",
+        "Commercial use license",
+        "API access",
+        "Dedicated customer support"
+      ]
+    }
+  },
+  "cta": {
+    "title": "Get Your Coloring Pages",
+    "description": "One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.",
+    "tryNow": "Try Now"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "question1": {
+      "q": "How long does it take to clear image?",
+      "a": "Our AI-powered tool is fast and efficient, processing your uploaded images in a matter of seconds. You don't have to worry about long wait times, so you can confidently rely on it to help you clear photos in bulk without any delays."
+    },
+    "question2": {
+      "q": "Is this AI tool free to use?",
+      "a": "Yes, we offer a free tier with basic features. However, for advanced features and higher usage limits, we have premium plans available."
+    },
+    "question3": {
+      "q": "Will using our tool compromise the quality of the original text?",
+      "a": "No, our AI is designed to maintain the quality and meaning of the original text while making it more natural."
+    },
+    "question4": {
+      "q": "Can this AI tool create high-quality coloring pages?",
+      "a": "Our AI coloring page generator creates unique, high-quality images that are designed to be original and creative."
+    },
+    "question5": {
+      "q": "Will the rewritten text lose its SEO value?",
+      "a": "No, our AI is designed to maintain the SEO value while making the content more engaging and natural."
+    },
+    "question6": {
+      "q": "How many languages does our AI tool support?",
+      "a": "Currently, we support Chinese and English, but we're working on adding more languages in the future."
+    }
+  }
+} 

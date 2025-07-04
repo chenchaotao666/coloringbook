@@ -1,0 +1,88 @@
+{
+  "network": {
+    "connectionFailed": "Network connection failed, please check your connection and try again",
+    "timeout": "Request timeout, please try again later",
+    "serverError": "Server error, please try again later",
+    "badRequest": "Bad request format",
+    "unauthorized": "Session expired, please login again",
+    "forbidden": "You do not have permission to perform this action",
+    "notFound": "The requested resource was not found",
+    "methodNotAllowed": "Request method not allowed",
+    "tooManyRequests": "Too many requests, please try again later",
+    "internalServerError": "Internal server error",
+    "serviceUnavailable": "Service temporarily unavailable"
+  },
+  "auth": {
+    "invalidCredentials": "Invalid email or password",
+    "emailNotRegistered": "This email is not registered",
+    "passwordIncorrect": "Incorrect password",
+    "accountDisabled": "Account has been disabled, please contact support",
+    "emailAlreadyExists": "This email is already registered",
+    "usernameAlreadyExists": "This username is already taken",
+    "tokenExpired": "Verification token has expired",
+    "tokenInvalid": "Invalid verification token",
+    "passwordResetFailed": "Password reset failed",
+    "emailVerificationRequired": "Please verify your email first",
+    "loginRequired": "Please login first",
+    "sessionExpired": "Session has expired, please login again"
+  },
+  "validation": {
+    "invalidFormat": "Invalid input format",
+    "fieldRequired": "This field is required",
+    "emailInvalid": "Invalid email format",
+    "passwordTooShort": "Password is too short",
+    "passwordTooWeak": "Password is too weak",
+    "passwordMismatch": "Passwords do not match",
+    "usernameTooShort": "Username is too short",
+    "usernameInvalid": "Invalid username format",
+    "phoneInvalid": "Invalid phone number format",
+    "urlInvalid": "Invalid URL format",
+    "fileTooLarge": "File size exceeds limit",
+    "fileFormatNotSupported": "Unsupported file format",
+    "imageRequired": "Please upload an image file",
+    "textTooLong": "Text is too long",
+    "invalidCharacters": "Contains invalid characters"
+  },
+  "payment": {
+    "paymentFailed": "Payment failed",
+    "cardDeclined": "Card was declined",
+    "insufficientFunds": "Insufficient funds",
+    "cardExpired": "Card has expired",
+    "invalidCard": "Invalid card information",
+    "paymentCancelled": "Payment was cancelled",
+    "paymentTimeout": "Payment timeout",
+    "refundFailed": "Refund failed",
+    "subscriptionFailed": "Subscription failed",
+    "subscriptionCancelled": "Subscription was cancelled"
+  },
+  "generation": {
+    "generationFailed": "Generation failed, please try again",
+    "insufficientCredits": "Insufficient credits, please top up",
+    "promptTooLong": "Prompt is too long",
+    "promptEmpty": "Please enter a prompt",
+    "imageTooLarge": "Image file is too large",
+    "imageFormatNotSupported": "Unsupported image format",
+    "processingTimeout": "Processing timeout, please try again",
+    "queueFull": "Generation queue is full, please try again later",
+    "modelUnavailable": "Generation model is temporarily unavailable",
+    "contentFiltered": "Content was filtered, please modify your prompt"
+  },
+  "file": {
+    "uploadFailed": "File upload failed",
+    "downloadFailed": "File download failed",
+    "fileNotFound": "File not found",
+    "fileCorrupted": "File is corrupted",
+    "storageQuotaExceeded": "Storage quota exceeded",
+    "accessDenied": "File access denied"
+  },
+  "general": {
+    "unknownError": "Unknown error, please try again later",
+    "operationFailed": "Operation failed",
+    "systemMaintenance": "System under maintenance, please visit later",
+    "featureUnavailable": "Feature temporarily unavailable",
+    "dataLoadFailed": "Failed to load data",
+    "saveFailed": "Save failed",
+    "deleteFailed": "Delete failed",
+    "updateFailed": "Update failed"
+  }
+} 

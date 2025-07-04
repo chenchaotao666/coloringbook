@@ -9,9 +9,11 @@ import { HomeImage } from '../services/imageService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
+  const { t } = useAsyncTranslation('categories');
   const { imageId } = useParams<{ imageId: string }>();
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -132,16 +134,16 @@ const ImageDetailPage: React.FC = () => {
     if (fromCategory && categoryId && categoryName) {
       // 4层面包屑：Home > Coloring Pages Free > xxx category > 图片名字
       return [
-        { label: 'Home', path: '/' },
-        { label: 'Coloring Pages Free', path: '/categories' },
+        { label: t('breadcrumb.home', 'Home'), path: '/' },
+        { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
         { label: decodeURIComponent(categoryName), path: `/categories/${categoryId}` },
-        { label: image ? getLocalizedText(image.title, language) || 'Loading...' : 'Loading...', current: true }
+        { label: image ? getLocalizedText(image.title, language) || '' : '', current: true }
       ];
     } else {
       // 默认2层面包屑：Home > 图片名字
       return [
-        { label: 'Home', path: '/' },
-        { label: image ? getLocalizedText(image.title, language) || 'Loading...' : 'Loading...', current: true }
+        { label: t('breadcrumb.home', 'Home'), path: '/' },
+        { label: image ? getLocalizedText(image.title, language) || '' : '', current: true }
       ];
     }
   };
@@ -156,17 +158,17 @@ const ImageDetailPage: React.FC = () => {
           {/* Breadcrumb - 即使出错也显示 */}
           <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
             <Breadcrumb items={[
-              { label: 'Home', path: '/' },
-              { label: 'Image not found', current: true }
+              { label: t('breadcrumb.home', 'Home'), path: '/' },
+              { label: t('imageDetail.notFound.breadcrumb', 'Image not found'), current: true }
             ]} />
           </div>
           
           <div className="container mx-auto px-4 max-w-[1200px]">
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
-                <div className="text-lg lg:text-xl text-[#161616] mb-4">Image not found</div>
+                <div className="text-lg lg:text-xl text-[#161616] mb-4">{t('imageDetail.notFound.title', 'Image not found')}</div>
                 <Button onClick={() => navigate('/')} variant="gradient">
-                  Go Home
+                  {t('imageDetail.notFound.goHome', 'Go Home')}
                 </Button>
               </div>
             </div>
@@ -187,9 +189,9 @@ const ImageDetailPage: React.FC = () => {
         {/* Main Content */}
         <div className="container mx-auto px-4 max-w-[1200px]">
           {isImageLoading ? (
-            /* 加载状态 */
+            /* 加载状态 - 不显示任何文本 */
             <div className="flex justify-center items-center py-20">
-              <div className="text-lg text-[#6B7280]">Loading image details...</div>
+              {/* 加载时不显示任何内容 */}
             </div>
           ) : image ? (
             /* 图片内容 */
@@ -231,7 +233,7 @@ const ImageDetailPage: React.FC = () => {
                   {/* Tags */}
                   {image.tags && (
                     <div className="space-y-3 lg:space-y-4">
-                      <h3 className="text-base font-medium text-black">Tags</h3>
+                      <h3 className="text-base font-medium text-black">{t('imageDetail.tags', 'Tags')}</h3>
                       <div className="flex flex-wrap gap-2">
                         {parseTags(image.tags).map((tag: string, index: number) => (
                           <span
@@ -255,8 +257,8 @@ const ImageDetailPage: React.FC = () => {
                     className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
                   >
                     <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
-                    <span className="hidden sm:inline">{isDownloading.png ? 'Downloading...' : 'Download PNG'}</span>
-                    <span className="sm:hidden">{isDownloading.png ? 'PNG...' : 'PNG'}</span>
+                                      <span className="hidden sm:inline">{t('imageDetail.downloadPng', 'Download PNG')}</span>
+                  <span className="sm:hidden">{t('imageDetail.png', 'PNG')}</span>
                   </Button>
                   
                   <Button
@@ -266,8 +268,8 @@ const ImageDetailPage: React.FC = () => {
                     className="flex-1 h-12 lg:h-[60px] text-base lg:text-xl font-bold"
                   >
                     <img src={downloadIcon} alt="Download" className="w-5 h-5 lg:w-7 lg:h-7 mr-2" />
-                    <span className="hidden sm:inline">{isDownloading.pdf ? 'Downloading...' : 'Download PDF'}</span>
-                    <span className="sm:hidden">{isDownloading.pdf ? 'PDF...' : 'PDF'}</span>
+                                      <span className="hidden sm:inline">{t('imageDetail.downloadPdf', 'Download PDF')}</span>
+                  <span className="sm:hidden">{t('imageDetail.pdf', 'PDF')}</span>
                   </Button>
                 </div>
               </div>
@@ -285,7 +287,7 @@ const ImageDetailPage: React.FC = () => {
             return (
               <div className="space-y-8 lg:space-y-12 mb-8 lg:mb-20">
                 <section>
-                  <h2 className="text-xl font-bold text-black mb-4 lg:mb-6">📝 详细信息</h2>
+                  <h2 className="text-xl font-bold text-black mb-4 lg:mb-6">📝 {t('imageDetail.detailsTitle', '详细信息')}</h2>
                   <div className="text-sm text-[#6B7280] leading-7 space-y-3">
                     {additionalInfo.split('\n').filter(line => line.trim()).map((paragraph: string, index: number) => (
                       <p key={index} className="text-sm text-[#6B7280] leading-7">
@@ -301,14 +303,14 @@ const ImageDetailPage: React.FC = () => {
           {/* You Might Also Like - 独立显示相关图片加载状态 */}
           <section>
             <h2 className="text-center text-[#161616] text-2xl lg:text-3xl xl:text-[46px] font-bold capitalize mb-8 lg:mb-12 leading-relaxed lg:leading-[1.6] px-4">
-              You Might Also Like
+              {t('imageDetail.relatedImages', 'You Might Also Like')}
             </h2>
             
             {/* Related Images Grid */}
             <div className="mb-8 lg:mb-20">
               {isRelatedImagesLoading ? (
                 <div className="flex justify-center items-center py-12">
-                  <div className="text-lg text-[#6B7280]">Loading related images...</div>
+                  {/* 加载时不显示任何内容 */}
                 </div>
               ) : relatedImages.length > 0 ? (
                 <MasonryGrid 
@@ -317,7 +319,7 @@ const ImageDetailPage: React.FC = () => {
                 />
               ) : (
                 <div className="flex justify-center items-center py-12">
-                  <div className="text-sm text-[#6B7280]">No related images found</div>
+                  <div className="text-sm text-[#6B7280]">{t('imageDetail.noRelatedImages', 'No related images found')}</div>
                 </div>
               )}
             </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
 const expandDefaultIcon = '/images/expand-default.svg';
 const expandColorIcon = '/images/expand-color.svg';
 
@@ -38,32 +39,33 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen = false, onC
 };
 
 const FAQ = () => {
+  const { t } = useAsyncTranslation('home');
   const [openItems, setOpenItems] = useState<number[]>([0]); // 默认打开第一个
   
   const faqItems = [
     {
-      question: "How long does it take to clear image?",
-      answer: "Upscale.Pro is a fast and efficient Al-powered tool that can process your uploaded images in a matter of seconds. You don't have to worry about long wait times, so you can confidently rely on it to help you clear photos in bulk without any delays."
+      question: t('faq.question1.q', 'How long does it take to clear image?'),
+      answer: t('faq.question1.a', 'Upscale.Pro is a fast and efficient Al-powered tool that can process your uploaded images in a matter of seconds. You don\'t have to worry about long wait times, so you can confidently rely on it to help you clear photos in bulk without any delays.')
     },
     {
-      question: "Is this undetectable AI writer free to use?",
-      answer: "Yes, we offer a free tier with basic features. However, for advanced features and higher usage limits, we have premium plans available."
+      question: t('faq.question2.q', 'Is this undetectable AI writer free to use?'),
+      answer: t('faq.question2.a', 'Yes, we offer a free tier with basic features. However, for advanced features and higher usage limits, we have premium plans available.')
     },
     {
-      question: "Will using a humanizer compromise the quality of the original text?",
-      answer: "No, our AI is designed to maintain the quality and meaning of the original text while making it more natural."
+      question: t('faq.question3.q', 'Will using a humanizer compromise the quality of the original text?'),
+      answer: t('faq.question3.a', 'No, our AI is designed to maintain the quality and meaning of the original text while making it more natural.')
     },
     {
-      question: "Can I really bypass AI detectors with this AI humanizer?",
-      answer: "Our AI coloring page generator creates unique, high-quality images that are designed to be original and creative."
+      question: t('faq.question4.q', 'Can I really bypass AI detectors with this AI humanizer?'),
+      answer: t('faq.question4.a', 'Our AI coloring page generator creates unique, high-quality images that are designed to be original and creative.')
     },
     {
-      question: "Will the rewritten text by this AI humanizer lose its SEO value?",
-      answer: "No, our AI is designed to maintain the SEO value while making the content more engaging and natural."
+      question: t('faq.question5.q', 'Will the rewritten text by this AI humanizer lose its SEO value?'),
+      answer: t('faq.question5.a', 'No, our AI is designed to maintain the SEO value while making the content more engaging and natural.')
     },
     {
-      question: "How many languages does our undetectable AI tool support?",
-      answer: "Currently, we support English, but we're working on adding more languages in the future."
+      question: t('faq.question6.q', 'How many languages does our undetectable AI tool support?'),
+      answer: t('faq.question6.a', 'Currently, we support English, but we\'re working on adding more languages in the future.')
     }
   ];
 
@@ -83,7 +85,7 @@ const FAQ = () => {
     <div className="container mx-auto px-4 sm:px-6 mt-12 lg:mt-16 sm:mt-20 mb-8 lg:mb-16 sm:mb-20 flex flex-col items-center">
       {/* 标题 */}
       <h2 className="text-center text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-0">
-        Frequently Asked Questions
+        {t('faq.title', 'Frequently Asked Questions')}
       </h2>
       
       {/* FAQ列表 */}

@@ -1,0 +1,106 @@
+{
+  "title": "价格套餐",
+  "subtitle": "选择最适合您的套餐",
+  "billing": {
+    "monthly": "月付",
+    "yearly": "年付",
+    "discount": "(节省20%)"
+  },
+  "plans": {
+    "free": {
+      "title": "免费",
+      "features": [
+        "每月50积分",
+        "基础图片生成",
+        "标准质量",
+        "社区支持"
+      ]
+    },
+    "lite": {
+      "title": "Lite",
+      "price": {
+        "monthly": "$9.99/月",
+        "yearly": "$99.99/年"
+      },
+      "credits": {
+        "monthly": "300积分/月",
+        "yearly": "3600积分/年"
+      },
+      "features": [
+        "每月300积分",
+        "高质量生成",
+        "优先处理",
+        "邮件支持",
+        "商业许可"
+      ],
+      "popular": "最受欢迎",
+      "priceNote": {
+        "monthly": "首次优惠，之后$10/月",
+        "yearly": "首次优惠，之后$120/年 (节省20%)"
+      }
+    },
+    "pro": {
+      "title": "Pro",
+      "price": {
+        "monthly": "$19.99/月",
+        "yearly": "$199.99/年"  
+      },
+      "credits": {
+        "monthly": "600积分/月",
+        "yearly": "7200积分/年"
+      },
+      "features": [
+        "每月600积分",
+        "高级质量",
+        "最快处理",
+        "优先支持",
+        "高级功能",
+        "商业许可"
+      ],
+      "priceNote": {
+        "monthly": "首次优惠，之后$20/月",
+        "yearly": "首次优惠，之后$240/年 (节省20%)"
+      }
+    }
+  },
+  "buttons": {
+    "choosePlan": "选择套餐",
+    "buyNow": "立即购买",
+    "tryNow": "立即尝试",
+    "cancel": "取消",
+    "startCreating": "开始创作"
+  },
+  "cancelAnytime": "随时取消",
+  "features": {
+    "unlimitedUse": "无限使用",
+    "highQuality": "高质量输出",
+    "fastProcessing": "快速处理",
+    "customerSupport": "客户支持",
+    "commercialUse": "商业使用",
+    "batchDownload": "批量下载"
+  },
+  "payment": {
+    "title": "PayPal支付",
+    "processing": "处理中，请稍候...",
+    "success": {
+      "title": "充值成功！",
+      "message": "恭喜！您已成功充值 {credits} 积分",
+      "description": "现在您可以开始创作精彩的涂色页了！"
+    },
+    "errors": {
+      "createOrderFailed": "创建订单失败",
+      "paymentFailed": "支付失败",
+      "paypalError": "PayPal支付过程中发生错误",
+      "tryAgainLater": "请稍后重试"
+    }
+  },
+  "security": {
+    "title": "通过PayPal安全支付",
+    "description": "SSL加密保护"
+  },
+  "cta": {
+    "title": "获取您的涂色页",
+    "description": "一键生成涂色页—打印即玩！通过色彩讲述亲子故事，无屏幕亲子体验。",
+    "button": "立即尝试"
+  }
+} 

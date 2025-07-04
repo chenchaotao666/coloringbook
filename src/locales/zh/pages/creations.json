@@ -1,0 +1,45 @@
+{
+  "title": "我的作品",
+  "description": "查看和管理您生成的所有涂色页",
+  "filters": {
+    "all": "全部",
+    "textToImage": "文字转图片",
+    "imageToImage": "图片转图片"
+  },
+  "emptyState": {
+    "title": "暂无作品",
+    "description": "您还没有创建任何涂色页",
+    "createButton": "创建第一个作品"
+  },
+  "actions": {
+    "delete": "删除",
+    "report": "举报",
+    "download": "下载"
+  },
+  "dialogs": {
+    "deleteConfirm": {
+      "title": "确认删除",
+      "message": "确定要删除这个作品吗？删除后无法恢复。",
+      "confirm": "确认删除",
+      "cancel": "取消"
+    },
+    "report": {
+      "title": "举报内容",
+      "placeholder": "请描述举报原因...",
+      "submit": "提交举报",
+      "cancel": "取消"
+    }
+  },
+  "messages": {
+    "deleteSuccess": "删除成功",
+    "deleteFailed": "删除失败，请稍后重试",
+    "reportSuccess": "举报已提交",
+    "reportFailed": "举报失败，请稍后重试",
+    "reportContentRequired": "请输入举报内容",
+    "loadFailed": "加载图片失败，请稍后重试"
+  },
+  "loading": {
+    "initial": "加载中...",
+    "more": "加载更多..."
+  }
+} 

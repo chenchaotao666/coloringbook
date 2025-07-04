@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserService } from '../services/userService';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
 
 const ForgotPasswordPage: React.FC = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
@@ -19,12 +21,12 @@ const ForgotPasswordPage: React.FC = () => {
     e.preventDefault();
     
     if (!email.trim()) {
-      setError('请输入邮箱地址');
+      setError(t('forms.validation.emailRequired'));
       return;
     }
     
     if (!validateEmail(email)) {
-      setError('请输入有效的邮箱地址');
+      setError(t('forms.validation.emailInvalid'));
       return;
     }
 
@@ -40,16 +42,16 @@ const ForgotPasswordPage: React.FC = () => {
       if (error instanceof ApiError) {
         switch (error.errorCode) {
           case '1004':
-            setError('该邮箱未注册');
+            setError(t('errors.auth.emailNotRegistered2'));
             break;
           case '1018':
-            setError('发送邮件失败，请稍后重试');
+            setError(t('errors.auth.sendEmailFailed'));
             break;
           default:
-            setError(error.message || '发送重置邮件失败，请稍后重试');
+            setError(error.message || t('errors.auth.resetEmailFailed'));
         }
       } else {
-        setError('网络错误，请检查网络连接后重试');
+        setError(t('errors.network.connectionFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -76,13 +78,16 @@ const ForgotPasswordPage: React.FC = () => {
                 </svg>
               </div>
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                邮件已发送
+                {t('forms.auth.emailSentTitle')}
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
-                我们已向 <span className="font-medium text-blue-600">{email}</span> 发送了密码重置邮件
+                {t('forms.auth.emailSentDesc')}
+              </p>
+              <p className="mt-1 text-center text-sm font-medium text-blue-600">
+                {email}
               </p>
               <p className="mt-2 text-center text-sm text-gray-600">
-                请检查您的邮箱并点击邮件中的链接来重置密码
+                {t('forms.auth.emailSentInstructions')}
               </p>
             </div>
 
@@ -96,7 +101,7 @@ const ForgotPasswordPage: React.FC = () => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-blue-700">
-                      如果您没有收到邮件，请检查垃圾邮件文件夹，或者等待几分钟后重试
+                      {t('forms.auth.emailNotReceivedTip')}
                     </p>
                   </div>
                 </div>
@@ -110,14 +115,14 @@ const ForgotPasswordPage: React.FC = () => {
                   }}
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  重新发送邮件
+                  {t('forms.auth.resendEmail')}
                 </button>
                 
                 <Link
                   to="/login"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  返回登录
+                  {t('forms.auth.backToLogin')}
                 </Link>
               </div>
             </div>
@@ -138,10 +143,10 @@ const ForgotPasswordPage: React.FC = () => {
               </svg>
             </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              忘记密码
+              {t('forms.auth.forgotPasswordTitle')}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              输入您的邮箱地址，我们将发送密码重置链接给您
+              {t('forms.auth.forgotPasswordDesc')}
             </p>
           </div>
 
@@ -154,7 +159,7 @@ const ForgotPasswordPage: React.FC = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                邮箱地址
+                {t('forms.fields.emailAddress')}
               </label>
               <div className="mt-1">
                 <input
@@ -168,7 +173,7 @@ const ForgotPasswordPage: React.FC = () => {
                   className={`appearance-none relative block w-full px-3 py-2 border ${
                     error ? 'border-red-300' : 'border-gray-300'
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                  placeholder="请输入您的邮箱地址"
+                  placeholder={t('forms.placeholders.email')}
                 />
               </div>
             </div>
@@ -185,7 +190,7 @@ const ForgotPasswordPage: React.FC = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    发送中...
+                    {/* 移除loading文本，只显示加载图标 */}
                   </div>
                 ) : (
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -195,7 +200,7 @@ const ForgotPasswordPage: React.FC = () => {
                     </svg>
                   </span>
                 )}
-                {!isLoading && '发送重置邮件'}
+                {!isLoading && t('forms.auth.sendResetEmail')}
               </button>
             </div>
 
@@ -204,7 +209,7 @@ const ForgotPasswordPage: React.FC = () => {
                 to="/login"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
-                返回登录
+                {t('forms.auth.backToLogin')}
               </Link>
             </div>
           </form>

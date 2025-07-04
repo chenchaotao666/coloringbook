@@ -1,6 +1,7 @@
 import React from 'react';
 import { Category } from '../../services/categoriesService';
 import CategoryCard from '../categories/CategoryCard';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
 
 interface CategoryGridProps {
   categories: Category[];
@@ -31,13 +32,13 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   className = '',
   maxColumns = { desktop: 4, tablet: 3, mobile: 2 }
 }) => {
-
+  const { t } = useAsyncTranslation('categories');
 
   if (isLoading) {
     return (
       <div className={`w-full ${className}`}>
         <div className="flex justify-center items-center h-[300px] sm:h-[400px]">
-          <div className="text-lg sm:text-xl text-gray-600">Loading categories...</div>
+          {/* 加载时不显示任何文本 */}
         </div>
       </div>
     );

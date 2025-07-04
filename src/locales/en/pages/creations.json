@@ -1,0 +1,45 @@
+{
+  "title": "My Creations",
+  "description": "View and manage all your generated coloring pages",
+  "filters": {
+    "all": "All",
+    "textToImage": "Text to Image",
+    "imageToImage": "Image to Image"
+  },
+  "emptyState": {
+    "title": "No creations yet",
+    "description": "You haven't created any coloring pages yet",
+    "createButton": "Create your first creation"
+  },
+  "actions": {
+    "delete": "Delete",
+    "report": "Report",
+    "download": "Download"
+  },
+  "dialogs": {
+    "deleteConfirm": {
+      "title": "Confirm Delete",
+      "message": "Are you sure you want to delete this creation? This action cannot be undone.",
+      "confirm": "Confirm Delete",
+      "cancel": "Cancel"
+    },
+    "report": {
+      "title": "Report Content",
+      "placeholder": "Please describe the reason for reporting...",
+      "submit": "Submit Report",
+      "cancel": "Cancel"
+    }
+  },
+  "messages": {
+    "deleteSuccess": "Delete successful",
+    "deleteFailed": "Delete failed, please try again later",
+    "reportSuccess": "Report submitted",
+    "reportFailed": "Report failed, please try again later",
+    "reportContentRequired": "Please enter report content",
+    "loadFailed": "Failed to load images, please try again later"
+  },
+  "loading": {
+    "initial": "Loading...",
+    "more": "Load more..."
+  }
+} 

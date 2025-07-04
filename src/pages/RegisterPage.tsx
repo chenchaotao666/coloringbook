@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -21,34 +23,34 @@ const RegisterPage: React.FC = () => {
 
     // 用户名验证
     if (!formData.username.trim()) {
-      newErrors.username = '请输入用户名';
+      newErrors.username = t('forms.validation.usernameRequired');
     } else if (formData.username.length < 2) {
-      newErrors.username = '用户名至少需要2个字符';
+      newErrors.username = t('forms.validation.usernameMinLength', undefined, { min: 2 });
     } else if (formData.username.length > 20) {
-      newErrors.username = '用户名不能超过20个字符';
+      newErrors.username = t('forms.validation.usernameMaxLength', undefined, { max: 20 });
     }
 
     // 邮箱验证
     if (!formData.email.trim()) {
-      newErrors.email = '请输入邮箱';
+      newErrors.email = t('forms.validation.emailRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '请输入有效的邮箱地址';
+      newErrors.email = t('forms.validation.emailInvalid');
     }
 
     // 密码验证
     if (!formData.password) {
-      newErrors.password = '请输入密码';
+      newErrors.password = t('forms.validation.passwordRequired');
     } else if (formData.password.length < 6) {
-      newErrors.password = '密码至少需要6个字符';
+      newErrors.password = t('forms.validation.passwordTooShort', undefined, { min: 6 });
     } else if (formData.password.length > 50) {
-      newErrors.password = '密码不能超过50个字符';
+      newErrors.password = t('forms.validation.passwordMaxLength', undefined, { max: 50 });
     }
 
     // 确认密码验证
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = '请确认密码';
+      newErrors.confirmPassword = t('forms.validation.confirmPasswordRequired');
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = '两次输入的密码不一致';
+      newErrors.confirmPassword = t('forms.validation.passwordMismatch');
     }
 
     setErrors(newErrors);
@@ -91,7 +93,7 @@ const RegisterPage: React.FC = () => {
       // 注册成功，跳转到登录页面
       navigate('/login', { 
         state: { 
-          message: '注册成功！请登录您的账户。',
+          message: t('forms.auth.registerSuccess'),
           email: formData.email.trim()
         }
       });
@@ -102,19 +104,19 @@ const RegisterPage: React.FC = () => {
         // 处理特定的API错误
         switch (error.errorCode) {
           case '1001':
-            setErrors({ email: '该邮箱已被注册' });
+            setErrors({ email: t('errors.auth.emailAlreadyRegistered') });
             break;
           case '1002':
-            setErrors({ username: '该用户名已被使用' });
+            setErrors({ username: t('errors.auth.usernameAlreadyTaken') });
             break;
           case '1003':
-            setErrors({ general: '输入信息格式不正确，请检查后重试' });
+            setErrors({ general: t('errors.auth.invalidInputFormat') });
             break;
           default:
-            setErrors({ general: error.message || '注册失败，请稍后重试' });
+            setErrors({ general: error.message || t('errors.auth.registrationFailed') });
         }
       } else {
-        setErrors({ general: '网络错误，请检查网络连接后重试' });
+        setErrors({ general: t('errors.network.connectionFailed') });
       }
     } finally {
       setIsLoading(false);
@@ -131,12 +133,12 @@ const RegisterPage: React.FC = () => {
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            创建新账户
+            {t('forms.auth.registerTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            已有账户？{' '}
+            {t('forms.auth.hasAccount')}{' '}
             <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
-              立即登录
+              {t('forms.auth.loginNow')}
             </Link>
           </p>
         </div>
@@ -152,7 +154,7 @@ const RegisterPage: React.FC = () => {
             {/* 用户名输入 */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                用户名
+                {t('forms.fields.username')}
               </label>
               <div className="mt-1">
                 <input
@@ -166,7 +168,7 @@ const RegisterPage: React.FC = () => {
                   className={`appearance-none relative block w-full px-3 py-2 border ${
                     errors.username ? 'border-red-300' : 'border-gray-300'
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder="请输入用户名"
+                  placeholder={t('forms.placeholders.username')}
                 />
                 {errors.username && (
                   <p className="mt-1 text-sm text-red-600">{errors.username}</p>
@@ -177,7 +179,7 @@ const RegisterPage: React.FC = () => {
             {/* 邮箱输入 */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                邮箱地址
+                {t('forms.fields.emailAddress')}
               </label>
               <div className="mt-1">
                 <input
@@ -191,7 +193,7 @@ const RegisterPage: React.FC = () => {
                   className={`appearance-none relative block w-full px-3 py-2 border ${
                     errors.email ? 'border-red-300' : 'border-gray-300'
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder="请输入邮箱地址"
+                  placeholder={t('forms.placeholders.email')}
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -202,7 +204,7 @@ const RegisterPage: React.FC = () => {
             {/* 密码输入 */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                密码
+                {t('forms.fields.password')}
               </label>
               <div className="mt-1">
                 <input
@@ -216,7 +218,7 @@ const RegisterPage: React.FC = () => {
                   className={`appearance-none relative block w-full px-3 py-2 border ${
                     errors.password ? 'border-red-300' : 'border-gray-300'
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder="请输入密码（至少6个字符）"
+                  placeholder={t('forms.placeholders.passwordHint')}
                 />
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -227,7 +229,7 @@ const RegisterPage: React.FC = () => {
             {/* 确认密码输入 */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                确认密码
+                {t('forms.fields.confirmPassword')}
               </label>
               <div className="mt-1">
                 <input
@@ -241,7 +243,7 @@ const RegisterPage: React.FC = () => {
                   className={`appearance-none relative block w-full px-3 py-2 border ${
                     errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder="请再次输入密码"
+                  placeholder={t('forms.placeholders.confirmPassword')}
                 />
                 {errors.confirmPassword && (
                   <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
@@ -262,20 +264,20 @@ const RegisterPage: React.FC = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  注册中...
+                  {/* 移除loading文本，只显示加载图标 */}
                 </div>
               ) : (
-                '创建账户'
+                t('forms.auth.createAccount')
               )}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-xs text-gray-500">
-              点击"创建账户"即表示您同意我们的{' '}
-              <a href="#" className="text-purple-600 hover:text-purple-500">服务条款</a>
-              {' '}和{' '}
-              <a href="#" className="text-purple-600 hover:text-purple-500">隐私政策</a>
+              {t('forms.auth.agreeTerms')}{' '}
+              <a href="#" className="text-purple-600 hover:text-purple-500">{t('forms.auth.termsOfService')}</a>
+              {' '}{t('forms.auth.and')}{' '}
+              <a href="#" className="text-purple-600 hover:text-purple-500">{t('forms.auth.privacyPolicy')}</a>
             </p>
           </div>
         </form>

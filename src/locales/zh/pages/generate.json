@@ -1,0 +1,89 @@
+{
+  "textToImage": {
+    "title": "文字转涂色页",
+    "description": "使用免费涂色页生成器创建高质量涂色页。用AI设计的涂色页激发孩子们的创造力。"
+  },
+  "imageToImage": {
+    "title": "图片转涂色页", 
+    "description": "上传您的图片，几秒钟内将您的照片转换为令人惊叹的涂色页，释放您的想象力。"
+  },
+  "tabs": {
+    "textToImage": "文字转图片",
+    "imageToImage": "图片转图片"
+  },
+  "generating": {
+    "title": "生成中...",
+    "description": "正在生成...",
+    "pleaseWait": "请稍等，AI正在为您生成涂色页"
+  },
+  "error": {
+    "generationFailed": "生成失败，请重试",
+    "tryAgain": "请重试"
+  },
+  "actions": {
+    "generate": "生成",
+    "regenerate": "重新生成",
+    "download": "下载",
+    "delete": "删除",
+    "report": "举报",
+    "clear": "清空",
+    "upload": "上传图片",
+    "moreOptions": "更多选项"
+  },
+  "formats": {
+    "png": "PNG",
+    "pdf": "PDF"
+  },
+  "examples": {
+    "title": "示例",
+    "change": "换一批",
+    "loading": "加载中...",
+    "noExamples": "暂无示例图片",
+    "recreate": "重新生成"
+  },
+  "prompt": {
+    "title": "提示词",
+    "placeholder": "您想创建什么？",
+    "suggestions": "风格建议",
+    "refreshSuggestions": "刷新建议",
+    "clear": "清空提示词",
+    "generateWithAI": "AI生成",
+    "ideas": "创意"
+  },
+  "upload": {
+    "title": "图片",
+    "dragDrop": "拖拽图片到此处，或点击上传",
+    "selectFile": "选择文件",
+    "supportedFormats": "支持 JPG、PNG、WEBP 格式",
+    "clickToUpload": "点击上传"
+  },
+  "settings": {
+    "ratio": "画面比例",
+    "visibility": "公开可见",
+    "private": "仅自己可见",
+    "public": "所有人可见"
+  },
+  "history": {
+    "title": "生成历史",
+    "noHistory": "暂无生成记录",
+    "loadMore": "加载更多"
+  },
+  "dialogs": {
+    "deleteConfirm": {
+      "title": "确认删除",
+      "message": "确定要删除这张图片吗？删除后无法恢复。",
+      "confirm": "确认删除",
+      "cancel": "取消"
+    }
+  },
+  "credits": {
+    "remaining": "剩余积分",
+    "required": "需要积分",
+    "insufficient": "积分不足",
+    "recharge": "充值积分"
+  },
+  "states": {
+    "noTextToImageYet": "还没有文字转图片记录",
+    "noImageToImageYet": "还没有图片转图片记录"
+  }
+} 

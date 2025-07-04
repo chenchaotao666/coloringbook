@@ -196,16 +196,16 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
         {/* 桌面端导航菜单 */}
         <div className="hidden lg:flex relative z-10 max-h-6 justify-start items-start gap-10 flex-wrap">
           <Link to="/categories" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
-            {t('nav.coloringPagesFree')}
+            {t('navigation.menu.coloringPagesFree')}
           </Link>
           <Link to="/text-coloring-page" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
-            {t('nav.textColoringPage')}
+            {t('navigation.menu.textColoringPage')}
           </Link>
           <Link to="/image-coloring-page" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
-            {t('nav.imageColoringPage')}
+            {t('navigation.menu.imageColoringPage')}
           </Link>
           <Link to="/price" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
-            {t('nav.pricing')}
+            {t('navigation.menu.pricing')}
           </Link>
         </div>
 
@@ -218,7 +218,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               onClick={() => setIsDesktopLanguageDropdownOpen(!isDesktopLanguageDropdownOpen)}
             >
               <img src={intlIcon} alt="Language" className="w-5 h-5" />
-              <span className="text-[#161616] text-base font-medium leading-6">{language === 'zh' ? '简体中文' : 'English'}</span>
+              <span className="text-[#161616] text-base font-medium leading-6 whitespace-nowrap">{language === 'zh' ? t('navigation.language.chinese') : t('navigation.language.english')}</span>
               <img 
                 src={expandIcon} 
                 alt="Expand" 
@@ -234,16 +234,16 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   : 'opacity-0 -translate-y-1 scale-95'
               }`}>
                 <div
-                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('zh')}
                 >
-                  {t('language.chinese')}
+                  {t('navigation.language.chinese')}
                 </div>
                 <div
-                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200"
+                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('en')}
                 >
-                  {t('language.english')}
+                  {t('navigation.language.english')}
                 </div>
               </div>
             )}
@@ -306,7 +306,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span>个人资料</span>
+                      <span>{t('navigation.menu.profile')}</span>
                     </Link>
                     
                     <Link
@@ -317,10 +317,10 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span>我的作品</span>
+                      <span>{t('navigation.menu.myCreations')}</span>
                     </Link>
                     
-                    <Link
+                    {/* <Link
                       to="/generate"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                       onClick={() => setIsUserDropdownOpen(false)}
@@ -328,8 +328,8 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
                       </svg>
-                      <span>生成图片</span>
-                    </Link>
+                      <span>{t('buttons.generate', '生成')}</span>
+                    </Link> */}
                     
                     <div className="border-t border-gray-100 mt-1">
                       <button
@@ -339,7 +339,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>退出登录</span>
+                        <span>{t('navigation.menu.logout')}</span>
                       </button>
                     </div>
                   </div>
@@ -352,7 +352,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               to="/login"
               className="inline-flex items-center px-4 py-1 border border-black text-sm font-medium rounded-md text-black hover:bg-gray-50 transition-colors duration-200"
             >
-              登录
+              {t('navigation.menu.login')}
             </Link>
           )}
         </div>
@@ -389,7 +389,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               ref={hamburgerButtonRef}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
-              aria-label="打开菜单"
+              aria-label={t('common.buttons.openMenu', '打开菜单')}
             >
               <HamburgerIcon />
             </button>
@@ -452,7 +452,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     setIsMobileLanguageDropdownOpen(!isMobileLanguageDropdownOpen);
                   }}
                 >
-                  <span>{language === 'zh' ? '简体中文' : 'English'}</span>
+                  <span className="whitespace-nowrap">{language === 'zh' ? t('navigation.language.chinese') : t('navigation.language.english')}</span>
                   <img 
                     src={expandIcon} 
                     alt="Expand" 
@@ -474,9 +474,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                         setLanguage('zh');
                         setIsMobileLanguageDropdownOpen(false);
                       }}
-                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
                     >
-                      简体中文 {language === 'zh' ? '✓' : ''}
+                      {t('navigation.language.chinese')} {language === 'zh' ? '✓' : ''}
                     </button>
                     <button
                       onMouseDown={(e) => {
@@ -485,9 +485,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                         setLanguage('en');
                         setIsMobileLanguageDropdownOpen(false);
                       }}
-                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
                     >
-                      English {language === 'en' ? '✓' : ''}
+                      {t('navigation.language.english')} {language === 'en' ? '✓' : ''}
                     </button>
                   </div>
                 )}
@@ -501,7 +501,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('nav.coloringPagesFree')}
+                {t('navigation.menu.coloringPagesFree')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -510,7 +510,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('nav.imageColoringPage')}
+                {t('navigation.menu.imageColoringPage')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -519,7 +519,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('nav.textColoringPage')}
+                {t('navigation.menu.textColoringPage')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -528,7 +528,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('nav.pricing')}
+                {t('navigation.menu.pricing')}
               </Link>
             </div>
 
@@ -541,7 +541,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
-                    个人资料
+                    {t('navigation.menu.profile')}
                   </Link>
                 </div>
                 <div className="border-b border-gray-200">
@@ -550,7 +550,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
-                    我的作品
+                    {t('navigation.menu.myCreations')}
                   </Link>
                 </div>
                 <div>
@@ -558,7 +558,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     onClick={handleLogout}
                     className="block w-full text-left px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   >
-                    退出登录
+                    {t('navigation.menu.logout')}
                   </button>
                 </div>
               </>
@@ -569,7 +569,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   className="block px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   onClick={handleMobileLinkClick}
                 >
-                  登录
+                  {t('navigation.menu.login')}
                 </Link>
               </div>
             )}

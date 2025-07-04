@@ -8,6 +8,7 @@ import CircularProgress from '../components/ui/CircularProgress';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 import {
   getCenterImageSize,
   getImageSize,
@@ -34,6 +35,9 @@ interface GeneratePageProps {
 }
 
 const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
+  // 获取翻译函数
+  const { t } = useAsyncTranslation('generate');
+  
   // 获取导航函数
   const navigate = useNavigate();
   
@@ -327,20 +331,19 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // 通用内容渲染方法
   const renderContent = (mode: 'text' | 'image') => {
-    const config = {
+        const config = {
       text: {
-        title: 'Text to coloring page',
-        description: 'Create high-quality coloring sheets for free with coloring page generator. Spark your kids\' creativity with AI-designed coloring pages.'
+        title: t('textToImage.title', 'Text to coloring page'),
+        description: t('textToImage.description', 'Create high-quality coloring sheets for free with coloring page generator. Spark your kids\' creativity with AI-designed coloring pages.')
       },
       image: {
-        title: 'Image to coloring page', 
-        description: 'Upload your image and transform your photo into an amazing coloring page in just seconds, unleashing your imagination.'
+        title: t('imageToImage.title', 'Image to coloring page'),
+        description: t('imageToImage.description', 'Upload your image and transform your photo into an amazing coloring page in just seconds, unleashing your imagination.')
       }
     };
 
     // 根据模式选择对应的示例图片和加载状态
     const currentExampleImages = mode === 'text' ? textExampleImages : imageExampleImages;
-    const currentLoadingState = mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples;
 
     return (
       <div className="flex-1 px-4 sm:px-6 lg:px-10 flex flex-col pt-4 lg:pb-56 relative bg-[#F9FAFB]">
@@ -355,8 +358,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   <img src={generateFailIcon} alt="Generation failed" className="w-full h-full" />
                 </div>
                 <div className="text-[#6B7280] text-sm leading-relaxed max-w-md">
-                  The generation failed. Please regenerate it.<br />
-                  If you encounter any problems, please provide feedback to us.
+                  {t('error.generationFailed', 'The generation failed. Please regenerate it.')}<br />
+                  {t('error.tryAgain', 'If you encounter any problems, please provide feedback to us.')}
                 </div>
               </div>
             ) : selectedImage || isGenerating ? (
@@ -384,7 +387,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             <div className="text-[#161616] text-2xl font-semibold">
                               {Math.round(generationProgress)}%
                             </div>
-                            <div className="text-[#6B7280] text-sm">Generating...</div>
+                            <div className="text-[#6B7280] text-sm">{t('generating.description', 'Generating...')}</div>
                           </div>
                         </div>
                       ) : selectedImage ? (
@@ -413,7 +416,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 transition-all duration-200 flex-1 sm:flex-none"
                     >
                       <img src={downloadIcon} alt="Download" className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span className="text-[#161616] text-sm font-medium">PNG</span>
+                      <span className="text-[#161616] text-sm font-medium">{t('formats.png', 'PNG')}</span>
                     </button>
 
                     {/* Download PDF Button */}
@@ -422,7 +425,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 transition-all duration-200 flex-1 sm:flex-none"
                     >
                       <img src={downloadIcon} alt="Download" className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span className="text-[#161616] text-sm font-medium">PDF</span>
+                      <span className="text-[#161616] text-sm font-medium">{t('formats.pdf', 'PDF')}</span>
                     </button>
 
                     {/* More Options Button */}
@@ -442,14 +445,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
                           >
                             <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
-                            <span className="text-sm">Delete</span>
+                            <span className="text-sm">{t('actions.delete', 'Delete')}</span>
                           </button>
                           <button
                             onClick={handleReport}
                             className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
                           >
                             <img src={reportIcon} alt="Report" className="w-4 h-4" />
-                            <span className="text-sm">Report</span>
+                            <span className="text-sm">{t('actions.report', 'Report')}</span>
                           </button>
                         </div>
                       )}
@@ -475,9 +478,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
                   {/* Example 标题栏 */}
                   <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-3">
-                    <div className="text-[#161616] font-medium text-sm">Example</div>
+                    <div className="text-[#161616] font-medium text-sm">{t('examples.title', 'Example')}</div>
                     <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
-                      {currentLoadingState ? 'Loading...' : 'Change'}
+                      {t('examples.change', 'Change')}
                       <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
                     </div>
                   </div>
@@ -522,7 +525,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             onClick={() => handleRecreateExample(example.id)}
                             className="absolute top-3 left-3 bg-[#FF5C07] text-white text-xs py-1 px-2 rounded-full hover:bg-[#FF7A47] transition-all duration-300 cursor-pointer"
                           >
-                            Recreate
+{t('examples.recreate', 'Recreate')}
                           </button>
                         </div>
                       );
@@ -538,7 +541,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             />
                           </div>
                           <p className="text-[#6B7280] text-base font-normal leading-6">
-                            No example images.
+                            {t('examples.noExamples', 'No example images.')}
                           </p>
                         </div>
                       </div>
@@ -601,11 +604,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         <>
           {/* Prompt Section */}
           <div className="lg:mx-5 lg:mt-7">
-            <div className="text-sm font-bold text-[#161616] mb-2">Prompt</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('prompt.title', 'Prompt')}</div>
             <div className="relative">
               <textarea
                 className="w-full h-[120px] sm:h-[150px] lg:h-[180px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none"
-                placeholder="What do you want to create?"
+                placeholder={t('prompt.placeholder', 'What do you want to create?')}
                 value={prompt}
                 onChange={handlePromptChange}
                 maxLength={1000}
@@ -616,7 +619,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <button
                   onClick={handleClearPrompt}
                   className="absolute top-3 right-3 w-5 h-5 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
-                  title="Clear prompt"
+                  title={t('prompt.clear', 'Clear prompt')}
                 >
                   <img src="/images/close-x.svg" alt="Clear" className="w-3 h-3" />
                 </button>
@@ -631,7 +634,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <span className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2">
                   <img src={aiGenerateIcon} alt="AI Generate" className="w-3 h-3 sm:w-4 sm:h-4" />
                 </span>
-                <span className="text-[#6B7280] text-xs sm:text-sm">Generate with AI</span>
+                <span className="text-[#6B7280] text-xs sm:text-sm">{t('prompt.generateWithAI', 'Generate with AI')}</span>
               </div>
             </div>
           </div>
@@ -640,7 +643,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="lg:mx-5 mt-5">
             <div className="flex justify-between items-start gap-2">
               <div className="text-[#6B7280] text-xs flex flex-wrap items-center gap-2 flex-1">
-                <span className="shrink-0">Ideas：</span>
+                <span className="shrink-0">{t('prompt.ideas', 'Ideas')}：</span>
                 {styleSuggestions.map((style) => (
                   <span
                     key={style.id}
@@ -659,7 +662,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
           {/* Ratio Selector */}
           <div className="lg:mx-5 mt-6 lg:mt-10">
-            <div className="text-sm font-bold text-[#161616] mb-2">Ratio</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.ratio', 'Ratio')}</div>
             <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
               <div
                 className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 ${
@@ -695,7 +698,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         <>
           {/* Image Upload Section */}
           <div className="lg:mx-5 mt-1">
-            <div className="text-sm font-bold text-[#161616] mb-2">Image</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('upload.title', 'Image')}</div>
             <div
               className="w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"
               onClick={() => document.getElementById('imageUpload')?.click()}
@@ -722,7 +725,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-[46px] lg:h-[46px] mb-3 sm:mb-4">
                     <img src={addImageIcon} alt="Upload" className="w-full h-full" />
                   </div>
-                  <div className="text-[#A4A4A4] text-xs sm:text-sm">Click to upload</div>
+                  <div className="text-[#A4A4A4] text-xs sm:text-sm">{t('upload.clickToUpload', 'Click to upload')}</div>
                 </>
               )}
               <input
@@ -813,7 +816,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         ) : !isGenerating ? (
           // 空状态 - 根据当前标签页显示不同的提示
           <div className="text-center text-[#A4A4A4] text-xs mt-8">
-            {selectedTab === 'text' ? 'No text to image yet' : 'No image to image yet'}
+            {selectedTab === 'text' ? t('states.noTextToImageYet', 'No text to image yet') : t('states.noImageToImageYet', 'No image to image yet')}
           </div>
         ) : null}
       </div>
@@ -853,14 +856,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   }`}
                 onClick={() => setSelectedTab('text')}
               >
-                Text to Image
+                {t('tabs.textToImage', 'Text to Image')}
               </button>
               <button
                 className={`w-[174px] h-10 z-10 flex items-center justify-center ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
                   }`}
                 onClick={() => setSelectedTab('image')}
               >
-                Image to Image
+                {t('tabs.imageToImage', 'Image to Image')}
               </button>
             </div>
           </div>
@@ -871,7 +874,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* Public Visibility - Common for both tabs */}
           <div className="mx-5 mt-5 lg:mt-8 flex items-center justify-between">
             <div className="text-[14px] font-bold text-[#161616] flex items-center">
-              Public Visibility
+              {t('settings.visibility', 'Public Visibility')}
               <Tooltip 
                 content="When enabled, your generated images will be visible to other users in the public gallery. When disabled, only you can see your generated images."
                 side="top"
@@ -910,13 +913,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => handleMobileTabChange('text')}
               >
-                Text to Image
+{t('tabs.textToImage', 'Text to Image')}
               </button>
               <button
                 className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => handleMobileTabChange('image')}
               >
-                Image to Image
+{t('tabs.imageToImage', 'Image to Image')}
               </button>
             </div>
           </div>
@@ -932,7 +935,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               {/* Public Visibility */}
               <div className="mt-5 flex items-center justify-between">
                 <div className="text-sm font-bold text-[#161616] flex items-center">
-                  Public Visibility
+                  {t('settings.visibility', 'Public Visibility')}
                   <Tooltip 
                     content="When enabled, your generated images will be visible to other users in the public gallery. When disabled, only you can see your generated images."
                     side="top"
@@ -981,9 +984,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               />
               <span className="font-bold text-lg">20</span>
               <span className="font-bold text-lg">
-                {isGenerating ? 'Generating...' : 
-                 error ? 'Regenerate' :
-                 'Generate'}
+                {isGenerating ? t('generating.title', 'Generating...') : 
+                 error ? t('actions.regenerate', 'Regenerate') :
+                 t('actions.generate', 'Generate')}
               </span>
             </button>
           </div>
@@ -1020,9 +1023,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             />
             <span className="font-bold text-lg">20</span>
             <span className="font-bold text-lg">
-              {isGenerating ? 'Generating...' : 
-               error ? 'Regenerate' :
-               'Generate'}
+              {isGenerating ? t('generating.title', 'Generating...') : 
+               error ? t('actions.regenerate', 'Regenerate') :
+               t('actions.generate', 'Generate')}
             </span>
           </button>
         </div>
@@ -1033,9 +1036,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete this item?"
-        confirmText="Delete"
-        cancelText="Cancel"
+        message={t('dialogs.deleteConfirm.message', 'Are you sure you want to delete this item?')}
+        confirmText={t('dialogs.deleteConfirm.confirm', 'Delete')}
+        cancelText={t('dialogs.deleteConfirm.cancel', 'Cancel')}
         confirmButtonVariant="danger"
       />
 

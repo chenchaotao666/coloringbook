@@ -1,0 +1,62 @@
+{
+  "title": "{count} 个分类等您探索",
+  "loading": "加载中...",
+  "viewAllCategories": "查看所有分类",
+  "breadcrumb": {
+    "home": "首页",
+    "categories": "免费涂色页"
+  },
+  "search": {
+    "placeholder": "输入要搜索的分类",
+    "button": "搜索"
+  },
+  "emptyState": {
+    "noResults": {
+      "title": "未找到结果",
+      "description": "没有找到与您搜索相关的分类。"
+    },
+    "noCategories": {
+      "title": "未找到分类",
+      "description": "分类正在加载中，请稍等片刻。"
+    }
+  },
+  "detail": {
+    "loading": "加载分类详情中...",
+    "notFound": {
+      "title": "分类未找到",
+      "description": "您要查找的分类不存在或已被移除。",
+      "backButton": "返回分类"
+    },
+    "backToCategories": "返回分类",
+    "allTags": "全部",
+    "generatePrompt": {
+      "placeholder": "输入您想要搜索的涂色书内容",
+      "button": "创建"
+    },
+    "generateSection": {
+      "title": "创建您的个性化AI {category} 涂色页",
+      "customCategory": "自定义"
+    },
+    "ratio": "画面比例",
+    "loadMore": "加载更多",
+    "noImages": {
+      "title": "该分类暂无图片",
+      "description": "该分类下还没有图片，请尝试其他分类。"
+    }
+  },
+  "imageDetail": {
+    "notFound": {
+      "title": "图片未找到",
+      "breadcrumb": "图片未找到",
+      "goHome": "返回首页"
+    },
+    "tags": "标签",
+    "downloadPng": "下载PNG",
+    "downloadPdf": "下载PDF",
+    "png": "PNG",
+    "pdf": "PDF",
+    "detailsTitle": "详细信息",
+    "relatedImages": "您可能也喜欢",
+    "noRelatedImages": "暂无相关图片"
+  }
+} 

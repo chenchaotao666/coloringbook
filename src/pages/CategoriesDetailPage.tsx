@@ -9,9 +9,11 @@ import { CategoriesService, Category } from '../services/categoriesService';
 import { HomeImage } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 // const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
+  const { t } = useAsyncTranslation('categories');
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -140,9 +142,9 @@ const CategoriesDetailPage: React.FC = () => {
   // 获取基础面包屑（即使分类还在加载也可以显示）
   const getBreadcrumbPathEarly = () => {
     return [
-      { label: 'Home', path: '/' },
-      { label: 'Coloring Pages Free', path: '/categories' },
-      { label: category ? getLocalizedText(category.displayName, language) : 'Loading...', current: true }
+      { label: t('breadcrumb.home', 'Home'), path: '/' },
+      { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
+      { label: category ? getLocalizedText(category.displayName, language) : '', current: true }
     ];
   };
 
@@ -155,9 +157,9 @@ const CategoriesDetailPage: React.FC = () => {
           <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
             <Breadcrumb
               items={[
-                { label: 'Home', path: '/' },
-                { label: 'Coloring Pages Free', path: '/categories' },
-                { label: 'Category not found', current: true }
+                { label: t('breadcrumb.home', 'Home'), path: '/' },
+                { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
+                { label: t('detail.notFound.title', 'Category not found'), current: true }
               ]}
             />
           </div>
@@ -166,12 +168,12 @@ const CategoriesDetailPage: React.FC = () => {
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
                 <div className="text-6xl mb-4">❌</div>
-                <h3 className="text-xl font-semibold text-[#161616] mb-2">Category not found</h3>
+                <h3 className="text-xl font-semibold text-[#161616] mb-2">{t('detail.notFound.title', 'Category not found')}</h3>
                 <p className="text-[#6B7280] text-sm max-w-md mb-6">
-                  The category you're looking for doesn't exist or has been removed.
+                  {t('detail.notFound.description', "The category you're looking for doesn't exist or has been removed.")}
                 </p>
                 <Button onClick={handleBackToCategories} variant="gradient">
-                  Back to Categories
+                  {t('detail.notFound.backButton', 'Back to Categories')}
                 </Button>
               </div>
             </div>
@@ -190,10 +192,10 @@ const CategoriesDetailPage: React.FC = () => {
         </div>
 
         <div className="container mx-auto px-4 max-w-[1200px]">
-          {isCategoryLoading ? (
-            /* 分类信息加载中 */
+          {isCategoryLoading || isImagesLoading ? (
+            /* 加载中 - 不显示任何文本 */
             <div className="flex justify-center items-center py-20">
-              <div className="text-lg text-[#6B7280]">Loading category details...</div>
+              {/* 加载时不显示任何内容 */}
             </div>
           ) : category ? (
             /* 分类内容 */
@@ -203,8 +205,8 @@ const CategoriesDetailPage: React.FC = () => {
                 {getLocalizedText(category.displayName, language)}
               </h1>
 
-              {/* Subcategories Tags - 只在图片加载完成后显示 */}
-              {!isImagesLoading && subcategories.length > 0 && (
+              {/* Subcategories Tags */}
+              {subcategories.length > 0 && (
                 <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-16">
                   {/* All标签 */}
                   <button
@@ -237,13 +239,8 @@ const CategoriesDetailPage: React.FC = () => {
               )}
 
               {/* Images Grid */}
-              <div className="mb-8 lg:mb-20">
-                {isImagesLoading ? (
-                  /* 图片加载中 */
-                  <div className="flex justify-center items-center py-20">
-                    <div className="text-lg text-[#6B7280]">Loading images...</div>
-                  </div>
-                ) : filteredImages.length === 0 ? (
+              <div className="mb-8 lg:mb-20 min-h-[500px]">
+                {filteredImages.length === 0 ? (
                   /* 无图片状态 */
                   <div className="flex flex-col items-center justify-center py-16">
                     <div className="text-center">
@@ -274,7 +271,7 @@ const CategoriesDetailPage: React.FC = () => {
                           disabled={isLoadingMore}
                           className="px-8 py-3"
                         >
-                          {isLoadingMore ? 'Loading...' : 'Load More Images'}
+                          Load More Images
                         </Button>
                       </div>
                     )}
@@ -285,17 +282,20 @@ const CategoriesDetailPage: React.FC = () => {
             </>
           ) : null}
 
-          {/* Generate Section - 独立显示，不等待分类加载 */}
-          <div className="max-w-[920px] mx-auto">
+          {/* Generate Section - 等待加载完成后显示 */}
+          {!isCategoryLoading && !isImagesLoading && (
+            <div className="max-w-[920px] mx-auto">
             <h2 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
-              Create your personalized AI {category ? getLocalizedText(category.displayName, language) : 'Custom'} coloring page
+              {t('detail.generateSection.title', 'Create your personalized AI {category} coloring page', {
+                category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '自定义')
+              })}
             </h2>
             
             <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-8">
               <textarea
                 value={generatePrompt}
                 onChange={(e) => setGeneratePrompt(e.target.value)}
-                placeholder="Enter the coloring book you want to search"
+                placeholder={t('detail.generatePrompt.placeholder', 'Enter the coloring book you want to search')}
                 className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
               />
               
@@ -314,11 +314,12 @@ const CategoriesDetailPage: React.FC = () => {
                   disabled={!generatePrompt.trim()}
                   className="px-6 py-2 text-base font-bold"
                 >
-                  Create
+                  {t('detail.generatePrompt.button', 'Create')}
                 </Button>
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
     </Layout>

@@ -7,11 +7,13 @@ import { CategoriesService, Category } from '../services/categoriesService';
 import CategoryGrid from '../components/layout/CategoryGrid';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 const noResultIcon = '/images/no-result.svg';
 
 
 
 const CategoriesPage: React.FC = () => {
+  const { t } = useAsyncTranslation('categories');
   const navigate = useNavigate();
   const { language } = useLanguage();
   
@@ -86,8 +88,8 @@ const CategoriesPage: React.FC = () => {
         <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
           <Breadcrumb 
             items={[
-              { label: 'Home', path: '/' },
-              { label: 'Coloring Pages Free', current: true }
+              { label: t('breadcrumb.home', 'Home'), path: '/' },
+              { label: t('breadcrumb.categories', 'Coloring Pages Free'), current: true }
             ]}
           />
         </div>
@@ -95,7 +97,7 @@ const CategoriesPage: React.FC = () => {
         {/* Page Title */}
         <div className="container mx-auto text-center mb-4 lg:mb-8">
           <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
-            {isLoadingCategories ? 'Loading...' : `${categories.length} categories to explore`}
+{isLoadingCategories ? <div>&nbsp;</div> : t('title', `${categories.length} categories to explore`, { count: categories.length })}
           </h1>
         </div>
         
@@ -106,7 +108,7 @@ const CategoriesPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter the category to search"
+              placeholder={t('search.placeholder', 'Enter the category to search')}
               className="w-full h-[60px] px-4 py-2 bg-white border border-[#EDEEF0] rounded-lg text-base focus:outline-none focus:border-gray-300 transition-colors"
             />
             <Button 
@@ -114,7 +116,7 @@ const CategoriesPage: React.FC = () => {
               variant="gradient"
               className="absolute right-0 top-0 h-[60px] w-[122px] font-bold text-xl rounded-r-lg"
             >
-              Search
+{t('search.button', 'Search')}
             </Button>
           </form>
         </div>
@@ -129,13 +131,13 @@ const CategoriesPage: React.FC = () => {
                 ? isSearchActive
                   ? {
                       icon: noResultIcon,
-                      title: "No results found",
-                      description: "No categories found matching your search."
+                      title: t('emptyState.noResults.title', 'No results found'),
+                      description: t('emptyState.noResults.description', 'No categories found matching your search.')
                     }
                   : {
                       icon: "📂",
-                      title: "No categories found",
-                      description: "Categories are being loaded. Please wait a moment."
+                      title: t('emptyState.noCategories.title', 'No categories found'),
+                      description: t('emptyState.noCategories.description', 'Categories are being loaded. Please wait a moment.')
                     }
                 : undefined
             }

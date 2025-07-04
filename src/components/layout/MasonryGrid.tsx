@@ -34,7 +34,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
     return (
       <div className={`w-full ${className}`}>
         <div className="flex justify-center items-center h-[300px] sm:h-[400px]">
-          <div className="text-lg sm:text-xl text-gray-600">加载中...</div>
+          {/* 加载时不显示任何文本 */}
         </div>
       </div>
     );

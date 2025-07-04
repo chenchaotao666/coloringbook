@@ -1,0 +1,76 @@
+{
+  "menu": {
+    "coloringPagesFree": "Coloring Pages Free",
+    "textColoringPage": "Text Coloring Page",
+    "imageColoringPage": "Image Coloring Page",
+    "pricing": "Pricing",
+    "login": "Login",
+    "register": "Register",
+    "profile": "Profile",
+    "logout": "Logout",
+    "myCreations": "My Creations",
+    "categories": "Categories",
+    "gallery": "Gallery",
+    "home": "Home"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "categories": "Categories",
+    "pricing": "Pricing Plans",
+    "profile": "Profile",
+    "login": "Login",
+    "register": "Register",
+    "creations": "My Creations",
+    "generate": "Create",
+    "textToImage": "Text to Image",
+    "imageToImage": "Image to Image"
+  },
+  "footer": {
+    "sections": {
+      "tools": "Tools",
+      "disney": "Disney",
+      "star": "Star",
+      "animal": "Animal",
+      "company": "Company"
+    },
+    "links": {
+      "textToColoringPage": "Text to coloring page",
+      "imageToColoringPage": "Image to coloring page",
+      "coloringPagesFree": "Coloring Pages Free",
+      "mickeyMouse": "Mickey Mouse",
+      "minnieMouse": "Minnie Mouse",
+      "donaldDuck": "Donald Duck",
+      "daisyDuck": "Daisy Duck",
+      "goofy": "Goofy",
+      "snowWhite": "Snow White",
+      "cinderella": "Cinderella",
+      "taylorSwift": "Taylor Swift",
+      "billieEilish": "Billie Eilish",
+      "scarlettJohansson": "Scarlett Johansson",
+      "galGadot": "Gal Gadot",
+      "bradPitt": "Brad Pitt",
+      "zendaya": "Zendaya",
+      "timotheeChalamet": "Timothée Chalamet",
+      "dog": "Dog",
+      "cat": "Cat",
+      "tiger": "Tiger",
+      "butterfly": "Butterfly",
+      "bird": "Bird",
+      "giraffe": "Giraffe",
+      "horse": "Horse",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "refundPolicy": "Refund Policy"
+    },
+    "contact": {
+      "title": "Please contact us for use questions：",
+      "email": "congcong@mail.xinsulv.com"
+    },
+    "copyright": "© 2021 - Present Flowrift. All rights reserved."
+  },
+  "language": {
+    "chinese": "简体中文",
+    "english": "English",
+    "selectLanguage": "Select Language"
+  }
+} 

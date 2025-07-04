@@ -1,0 +1,106 @@
+{
+  "title": "Pricing Plans",
+  "subtitle": "Choose the plan that's right for you",
+  "billing": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "discount": "(Save 20%)"
+  },
+  "plans": {
+    "free": {
+      "title": "Free",
+      "features": [
+        "50 credits per month",
+        "Basic image generation",
+        "Standard quality",
+        "Community support"
+      ]
+    },
+    "lite": {
+      "title": "Lite",
+      "price": {
+        "monthly": "$9.99/month",
+        "yearly": "$99.99/year"
+      },
+      "credits": {
+        "monthly": "300 credits/month",
+        "yearly": "3600 credits/year"
+      },
+      "features": [
+        "300 credits per month",
+        "High-quality generation",
+        "Priority processing",
+        "Email support",
+        "Commercial license"
+      ],
+      "popular": "Most Popular",
+      "priceNote": {
+        "monthly": "For first time, then $10/month",
+        "yearly": "For first time, then $120/year (Save 20%)"
+      }
+    },
+    "pro": {
+      "title": "Pro",
+      "price": {
+        "monthly": "$19.99/month",
+        "yearly": "$199.99/year"  
+      },
+      "credits": {
+        "monthly": "600 credits/month",
+        "yearly": "7200 credits/year"
+      },
+      "features": [
+        "600 credits per month",
+        "Premium quality",
+        "Fastest processing",
+        "Priority support",
+        "Advanced features",
+        "Commercial license"
+      ],
+      "priceNote": {
+        "monthly": "For first time, then $20/month",
+        "yearly": "For first time, then $240/year (Save 20%)"
+      }
+    }
+  },
+  "buttons": {
+    "choosePlan": "Choose Plan",
+    "buyNow": "Buy Now",
+    "tryNow": "Try Now",
+    "cancel": "Cancel",
+    "startCreating": "Start Creating"
+  },
+  "cancelAnytime": "Cancel anytime",
+  "features": {
+    "unlimitedUse": "Unlimited Use",
+    "highQuality": "High Quality Output",
+    "fastProcessing": "Fast Processing",
+    "customerSupport": "Customer Support",
+    "commercialUse": "Commercial Use",
+    "batchDownload": "Batch Download"
+  },
+  "payment": {
+    "title": "PayPal Payment",
+    "processing": "Processing, please wait...",
+    "success": {
+      "title": "Top-up Successful!",
+      "message": "Congratulations! You have successfully recharged {credits} credits",
+      "description": "Now you can start creating amazing coloring pages!"
+    },
+    "errors": {
+      "createOrderFailed": "Failed to create order",
+      "paymentFailed": "Payment failed",
+      "paypalError": "An error occurred during PayPal payment",
+      "tryAgainLater": "Please try again later"
+    }
+  },
+  "security": {
+    "title": "Secure Payment via PayPal", 
+    "description": "SSL Encrypted"
+  },
+  "cta": {
+    "title": "Get Your Coloring Pages",
+    "description": "One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.",
+    "button": "Try Now"
+  }
+} 

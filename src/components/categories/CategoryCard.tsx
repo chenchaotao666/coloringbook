@@ -3,6 +3,7 @@ import { Category } from '../../services/categoriesService';
 import { HomeImage } from '../../services/imageService';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { getLocalizedText } from '../../utils/textUtils';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
 
 interface CategoryCardProps {
   category?: Category;
@@ -21,6 +22,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const [mobileShowColor, setMobileShowColor] = useState(false);
   const { language } = useLanguage();
+  const { t } = useAsyncTranslation('categories');
 
   // 检测是否为移动端
   useEffect(() => {
@@ -190,7 +192,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             onClick={handleClick}
           >
             <div className="text-[#6B7280] group-hover:text-[#FF5C07] text-sm font-normal leading-4 break-words transition-colors duration-200">
-              View all categories
+              {t('viewAllCategories', 'View all categories')}
             </div>
           </button>
         </div>

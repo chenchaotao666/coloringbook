@@ -308,8 +308,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     
     // 加载状态
     isGenerating: false,
-    isLoadingTextExamples: false,
-    isLoadingImageExamples: false,
+    isLoadingTextExamples: initialTab === 'text',  // 只有当前标签页设为true，避免显示空状态
+    isLoadingImageExamples: initialTab === 'image', // 只有当前标签页设为true，避免显示空状态
     isLoadingStyles: false,
     isInitialDataLoaded: false,
     
@@ -436,24 +436,15 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
   // 加载生成历史
   const loadGeneratedImages = useCallback(async () => {
     try {
-      // 根据当前标签页设置对应的加载状态
-      if (state.selectedTab === 'text') {
-        updateState({ isLoadingTextExamples: true });
-      } else {
-        updateState({ isLoadingImageExamples: true });
-      }
-      
       const { UserService } = await import('../services/userService');
       
       // 先检查是否已登录
       if (!UserService.isLoggedIn()) {
-        // 如果用户未登录，清空生成历史
+        // 如果用户未登录，清空生成历史，但不影响示例图片的加载状态
         updateState({ 
           generatedImages: [], 
           textGeneratedImages: [],
           imageGeneratedImages: [],
-          isLoadingTextExamples: false,
-          isLoadingImageExamples: false,
           isInitialDataLoaded: true,  // 即使没有用户也标记为加载完成
           hasTextToImageHistory: false,
           hasImageToImageHistory: false
@@ -482,20 +473,16 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           generatedImages: images,  // 保留所有图片用于兼容性
           textGeneratedImages: textImages,
           imageGeneratedImages: imageImages,
-          isLoadingTextExamples: false,
-          isLoadingImageExamples: false,
           isInitialDataLoaded: true,  // 标记初始数据加载完成
           hasTextToImageHistory,
           hasImageToImageHistory
         });
       } else {
-        // 如果用户未登录，清空生成历史
+        // 如果用户未登录，清空生成历史，但不影响示例图片的加载状态
         updateState({ 
           generatedImages: [], 
           textGeneratedImages: [],
           imageGeneratedImages: [],
-          isLoadingTextExamples: false,
-          isLoadingImageExamples: false,
           isInitialDataLoaded: true,  // 即使没有用户也标记为加载完成
           hasTextToImageHistory: false,
           hasImageToImageHistory: false
@@ -507,14 +494,12 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         generatedImages: [], 
         textGeneratedImages: [],
         imageGeneratedImages: [],
-        isLoadingTextExamples: false,
-        isLoadingImageExamples: false,
         isInitialDataLoaded: true,  // 即使出错也标记为加载完成
         hasTextToImageHistory: false,
         hasImageToImageHistory: false
       });
     }
-  }, [updateState, state.selectedTab]);
+  }, [updateState]);
 
   // 生成图片
   const generateImages = useCallback(async () => {

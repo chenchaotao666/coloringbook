@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
 
 interface StepProps {
   step: string;
@@ -21,34 +22,36 @@ const Step: React.FC<StepProps> = ({ step, title, description }) => {
 };
 
 const HowToCreate = () => {
+  const { t } = useAsyncTranslation('home');
+  
   return (
     <div className="w-full container mx-auto px-4 sm:px-6">
       <h2 className="text-center text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold capitalize mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-0">
-        How to make coloring pages
+        {t('howItWorks.title', 'How to make coloring pages')}
       </h2>
       
       <div className="w-full flex flex-col sm:flex-row flex-wrap justify-center items-stretch gap-4 sm:gap-6 lg:gap-[21px]">
         <div className="w-full sm:w-auto sm:flex-1 sm:max-w-[376px]">
           <Step 
-            step="Step 1"
-            title="Type your prompts"
-            description="Simply input simple prompts such as 'Pikachu', 'Dinosaur', and so on."
+            step={t('howItWorks.step1.number', 'Step 1')}
+            title={t('howItWorks.step1.title', 'Type your prompts')}
+            description={t('howItWorks.step1.description', 'Simply input simple prompts such as \'Pikachu\', \'Dinosaur\', and so on.')}
           />
         </div>
         
         <div className="w-full sm:w-auto sm:flex-1 sm:max-w-[376px]">
           <Step 
-            step="Step 2"
-            title="Click 'generate' button"
-            description="Click our generate button and wait a few seconds."
+            step={t('howItWorks.step2.number', 'Step 2')}
+            title={t('howItWorks.step2.title', 'Click \'generate\' button')}
+            description={t('howItWorks.step2.description', 'Click our generate button and wait a few seconds.')}
           />
         </div>
         
         <div className="w-full sm:w-auto sm:flex-1 sm:max-w-[376px]">
           <Step 
-            step="Step 3"
-            title="Wait for generation"
-            description="Our AI will transform your text into amazing coloring pages in just a few seconds."
+            step={t('howItWorks.step3.number', 'Step 3')}
+            title={t('howItWorks.step3.title', 'Wait for generation')}
+            description={t('howItWorks.step3.description', 'Our AI will transform your text into amazing coloring pages in just a few seconds.')}
           />
         </div>
       </div>

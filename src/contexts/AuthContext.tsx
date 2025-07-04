@@ -37,13 +37,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const handleTokenExpired = (event: CustomEvent) => {
-      console.log('❌ Token已过期:', event.detail);
+      console.log('❌ AuthContext: Token已过期事件触发:', event.detail);
       // Token过期，清除用户状态并可能需要重新登录
       setUser(null);
       tokenRefreshService.stop();
       
       // 跳转到首页
-      redirectToHomeIfNeeded();
+      const redirected = redirectToHomeIfNeeded();
+      console.log('🔄 AuthContext: Token过期时尝试跳转:', redirected);
     };
 
     // 添加事件监听器
@@ -62,26 +63,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       
       // 先检查是否有访问令牌，避免不必要的API请求
-      if (!UserService.isLoggedIn()) {
+      const hasToken = UserService.isLoggedIn();
+      
+      if (!hasToken) {
+        console.log('✅ AuthContext: 无token，用户未登录状态正常');
         setUser(null);
+        setIsLoading(false);
         return;
       }
       
+      // 有token，尝试获取用户信息
       const userData = await UserService.getCurrentUser();
-      setUser(userData);
       
       // 如果用户已登录，启动token自动刷新服务
       if (userData) {
+        setUser(userData);
         tokenRefreshService.start();
+      } else {
+        // 有token但获取用户信息失败，说明token无效（可能已被getCurrentUser清除）
+        console.log('❌ AuthContext: 有token但获取用户信息失败，token可能已过期');
+        setUser(null);
+        tokenRefreshService.stop();
+        // 这种情况表示token过期，需要跳转
+        const redirected = redirectToHomeIfNeeded();
+        console.log('🔄 AuthContext: token过期，尝试跳转:', redirected);
       }
     } catch (error) {
-      console.error('Failed to check auth status:', error);
+      console.error('❌ AuthContext: 检查认证状态异常:', error);
       setUser(null);
       // 认证失败，停止token刷新服务
       tokenRefreshService.stop();
       
-      // 只有在当前路径不是公开页面时才跳转到首页
-      redirectToHomeIfNeeded();
+      // catch到异常说明有严重问题，也需要跳转
+      const redirected = redirectToHomeIfNeeded();
+      console.log('🔄 AuthContext: 异常时尝试跳转:', redirected);
     } finally {
       setIsLoading(false);
     }
@@ -126,19 +141,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const refreshUser = async () => {
     try {
       // 先检查是否有访问令牌，避免不必要的API请求
-      if (!UserService.isLoggedIn()) {
+      const hasToken = UserService.isLoggedIn();
+      
+      if (!hasToken) {
         setUser(null);
         return;
       }
       
       const userData = await UserService.getCurrentUser();
       setUser(userData);
+      
+      // 如果有token但获取用户信息失败，说明token可能无效
+      if (!userData) {
+        console.log('❌ AuthContext: refreshUser - 有token但刷新用户信息失败');
+        const redirected = redirectToHomeIfNeeded();
+        console.log('🔄 AuthContext: refreshUser - 尝试跳转:', redirected);
+      }
     } catch (error) {
-      console.error('Failed to refresh user:', error);
+      console.error('❌ AuthContext: refreshUser - 异常:', error);
       setUser(null);
       
       // 刷新用户信息失败，可能是token过期，跳转到首页
-      redirectToHomeIfNeeded();
+      const redirected = redirectToHomeIfNeeded();
+      console.log('🔄 AuthContext: refreshUser - 异常时尝试跳转:', redirected);
     }
   };
 

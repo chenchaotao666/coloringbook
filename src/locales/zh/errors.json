@@ -1,0 +1,88 @@
+{
+  "network": {
+    "connectionFailed": "网络连接失败，请检查网络后重试",
+    "timeout": "请求超时，请稍后重试",
+    "serverError": "服务器错误，请稍后重试",
+    "badRequest": "请求格式错误",
+    "unauthorized": "登录已过期，请重新登录",
+    "forbidden": "没有权限执行此操作",
+    "notFound": "请求的资源不存在",
+    "methodNotAllowed": "不支持的请求方法",
+    "tooManyRequests": "请求过于频繁，请稍后重试",
+    "internalServerError": "服务器内部错误",
+    "serviceUnavailable": "服务暂时不可用"
+  },
+  "auth": {
+    "invalidCredentials": "邮箱或密码错误",
+    "emailNotRegistered": "该邮箱未注册",
+    "passwordIncorrect": "密码错误",
+    "accountDisabled": "账户已被禁用，请联系客服",
+    "emailAlreadyExists": "该邮箱已被注册",
+    "usernameAlreadyExists": "该用户名已被使用",
+    "tokenExpired": "验证令牌已过期",
+    "tokenInvalid": "验证令牌无效",
+    "passwordResetFailed": "密码重置失败",
+    "emailVerificationRequired": "请先验证邮箱",
+    "loginRequired": "请先登录",
+    "sessionExpired": "会话已过期，请重新登录"
+  },
+  "validation": {
+    "invalidFormat": "输入格式不正确",
+    "fieldRequired": "此字段为必填项",
+    "emailInvalid": "邮箱格式不正确",
+    "passwordTooShort": "密码长度不足",
+    "passwordTooWeak": "密码强度太弱",
+    "passwordMismatch": "两次输入的密码不一致",
+    "usernameTooShort": "用户名长度不足",
+    "usernameInvalid": "用户名格式不正确",
+    "phoneInvalid": "电话号码格式不正确",
+    "urlInvalid": "URL格式不正确",
+    "fileTooLarge": "文件大小超出限制",
+    "fileFormatNotSupported": "不支持的文件格式",
+    "imageRequired": "请上传图片文件",
+    "textTooLong": "文本长度超出限制",
+    "invalidCharacters": "包含无效字符"
+  },
+  "payment": {
+    "paymentFailed": "支付失败",
+    "cardDeclined": "银行卡被拒绝",
+    "insufficientFunds": "余额不足",
+    "cardExpired": "银行卡已过期",
+    "invalidCard": "银行卡信息无效",
+    "paymentCancelled": "支付已取消",
+    "paymentTimeout": "支付超时",
+    "refundFailed": "退款失败",
+    "subscriptionFailed": "订阅失败",
+    "subscriptionCancelled": "订阅已取消"
+  },
+  "generation": {
+    "generationFailed": "生成失败，请重试",
+    "insufficientCredits": "积分不足，请充值",
+    "promptTooLong": "提示词过长",
+    "promptEmpty": "请输入提示词",
+    "imageTooLarge": "图片文件过大",
+    "imageFormatNotSupported": "不支持的图片格式",
+    "processingTimeout": "处理超时，请重试",
+    "queueFull": "生成队列已满，请稍后重试",
+    "modelUnavailable": "生成模型暂时不可用",
+    "contentFiltered": "内容被过滤，请修改提示词"
+  },
+  "file": {
+    "uploadFailed": "文件上传失败",
+    "downloadFailed": "文件下载失败",
+    "fileNotFound": "文件不存在",
+    "fileCorrupted": "文件已损坏",
+    "storageQuotaExceeded": "存储空间不足",
+    "accessDenied": "文件访问被拒绝"
+  },
+  "general": {
+    "unknownError": "未知错误，请稍后重试",
+    "operationFailed": "操作失败",
+    "systemMaintenance": "系统维护中，请稍后访问",
+    "featureUnavailable": "功能暂时不可用",
+    "dataLoadFailed": "数据加载失败",
+    "saveFailed": "保存失败",
+    "deleteFailed": "删除失败",
+    "updateFailed": "更新失败"
+  }
+} 

@@ -32,8 +32,6 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   className = '',
   maxColumns = { desktop: 4, tablet: 3, mobile: 2 }
 }) => {
-  const { t } = useAsyncTranslation('categories');
-
   if (isLoading) {
     return (
       <div className={`w-full ${className}`}>

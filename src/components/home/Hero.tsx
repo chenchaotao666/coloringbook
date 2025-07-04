@@ -30,7 +30,7 @@ const Hero = () => {
                 <span className="text-[#161616]">AI </span>
                 <span className="text-[#6200E2]">Coloring Pages</span>
                 <span className="text-[#FF9C01]"> </span><br />
-                <span className="text-[#161616]">Free Your Colorful World</span>
+                <span className="text-[#161616] block mt-5 sm:mt-5">Free Your Colorful World</span>
               </h1>
               <p className="max-w-[750px] text-[#6B7280] text-base sm:text-lg leading-relaxed px-4 sm:px-0">
                 One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.

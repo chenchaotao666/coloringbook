@@ -1,7 +1,6 @@
 import React from 'react';
 import { Category } from '../../services/categoriesService';
 import CategoryCard from '../categories/CategoryCard';
-import { useAsyncTranslation } from '../../contexts/LanguageContext';
 
 interface CategoryGridProps {
   categories: Category[];

@@ -86,14 +86,14 @@ const PayPalModal = ({
             try {
               setIsProcessing(true);
               
-              // 从planCode解析membership和chargetype
-              const membership = planTitle.toLowerCase() as 'lite' | 'pro';
-              const chargetype = planCode.includes('MONTHLY') ? 'monthly' as const : 'yearly' as const;
+              // 从planCode解析planCode和chargeType
+              const planCodeValue = planTitle.toUpperCase() as 'LITE' | 'PRO';
+              const chargeType = planCode.includes('MONTHLY') ? 'Monthly' as const : 'Yearly' as const;
               
               const response = await PricingService.createOrder({
                 method: 'paypal',
-                membership,
-                chargetype
+                planCode: planCodeValue,
+                chargeType
               });
               return response.orderId;
             } catch (error) {

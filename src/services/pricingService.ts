@@ -3,8 +3,8 @@ import { ApiUtils, ApiError } from '../utils/apiUtils';
 // PayPal订单创建请求接口
 export interface CreateOrderRequest {
   method: 'paypal';
-  membership: 'lite' | 'pro';
-  chargetype: 'monthly' | 'yearly';
+  planCode: 'FREE' | 'LITE' | 'PRO';
+  chargeType: 'Monthly' | 'Yearly';
 }
 
 // PayPal订单创建响应接口

@@ -66,7 +66,7 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
       
       {/* 彩色图片 - 悬停或点击时显示 */}
       <img
-        src={homeImage?.colorUrl}
+        src={homeImage?.coloringUrl}
         alt={alt}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
           shouldShowColor ? 'opacity-100' : 'opacity-0'
@@ -87,7 +87,7 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
          >
           {/* 小的colorUrl图片 */}
           <img
-            src={homeImage?.colorUrl}
+            src={homeImage?.coloringUrl}
             alt="Color preview"
             className="block max-w-16 max-h-16 w-auto h-auto object-contain"
             onError={handleImageError}

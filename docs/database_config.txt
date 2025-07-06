@@ -95,23 +95,43 @@ CREATE TABLE users (
 );
 
 -- 创建 recharges 表
-CREATE TABLE recharges (
-  rechargeId VARCHAR(36) PRIMARY KEY,          -- 业务内部唯一流水（UUID）
-  userId VARCHAR(36) NOT NULL,                 -- 对应 users.user_id
-  orderId VARCHAR(50) UNIQUE,                  -- PayPal orderId，用于幂等更新
-  amount DECIMAL(10,2) NOT NULL,               -- 本次实际扣款金额
-  currency CHAR(3) DEFAULT 'USD',              -- 币种，可扩展多币
-  status VARCHAR(50) DEFAULT 'pending',        -- pending / success / failed / refund…
-  method VARCHAR(20),                          -- 支付方式：paypal / card / applepay 等
-  planCode VARCHAR(20),                        -- 购买的套餐：BASIC / LITE / PRO  等
-  creditsAdded INT DEFAULT 0,                  -- 本次发放的积分
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 记录创建时间
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 状态最后变更时间
-  -- 外键约束
-  CONSTRAINT fk_recharges_user
-    FOREIGN KEY (userId) REFERENCES users(user_id)
-    ON DELETE CASCADE ON UPDATE CASCADE
-);
+CREATE TABLE `recharges` (
+  `rechargeId` varchar(36) NOT NULL, -- 主键：充值记录的唯一标识 UUID
+  `userId` varchar(36) NOT NULL, -- 外键：关联用户表中的 user_id
+  `orderId` varchar(50) DEFAULT NULL, -- PayPal 或其他支付渠道生成的订单号，可能为空（如系统赠送）
+  `amount` decimal(10, 2) NOT NULL, -- 金额（单位：美元），系统赠送为 0
+  `currency` char(3) NOT NULL DEFAULT 'USD', -- 货币代码，默认为 USD（美元）
+  `status` enum('pending', 'success', 'failed', 'refund') NOT NULL, -- 状态：待支付、成功、失败、已退款
+  `method` varchar(20) NOT NULL, -- 支付方式，如 'paypal'、'stripe'、'system'（系统赠送）
+  `planCode` varchar(20) NOT NULL, -- 套餐代码，如 monthly_basic, yearly_pro 等
+  `creditsAdded` int unsigned NOT NULL, -- 实际到账的积分数量
+  `chargeType` enum('Monthly', 'Yearly', 'Credit') NOT NULL, -- 套餐类型：月付、年付、单次购买积分
+  `duration` tinyint unsigned NOT NULL DEFAULT '0', -- 会籍时长（单位：月），仅 Yearly/Monthly 有效
+  `monthlyCredit` int unsigned NOT NULL DEFAULT '0', -- 月度赠送积分（仅 Yearly 有效）
+  `gift_month` char(7) NOT NULL DEFAULT '' COMMENT 'YYYY-MM；系统月赠幂等键', -- 标记赠送积分对应的月份，仅系统发放积分使用
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 创建时间（插入时自动记录）
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 更新时间（记录变动时自动刷新）
+
+  -- 主键
+  PRIMARY KEY (`rechargeId`),
+
+  -- 唯一约束：防止同一用户在同一月份对同一类型的充值（例如系统月赠）重复入账
+  UNIQUE KEY `uq_user_month` (`userId`, `gift_month`, `chargeType`),
+
+  -- 唯一约束：防止同一支付订单号被重复写入
+  UNIQUE KEY `orderId` (`orderId`),
+
+  -- 普通索引：加速通过 userId 查询记录
+  KEY `idx_userId` (`userId`),
+
+  -- 普通索引：加速通过 chargeType 查询
+  KEY `idx_chargeType` (`chargeType`),
+
+  -- 外键约束：保证 userId 的合法性；若用户删除，相关充值记录也将被删除
+  CONSTRAINT `fk_recharges_user` FOREIGN KEY (`userId`) REFERENCES `users` (`user_id`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 创建 image_reports 表
 CREATE TABLE image_reports (

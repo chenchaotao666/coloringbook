@@ -210,7 +210,7 @@ const ImageDetailPage: React.FC = () => {
                 {/* Color Image */}
                 <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
                   <img
-                    src={image.colorUrl}
+                    src={image.coloringUrl}
                     alt={`${getLocalizedText(image.title, language)} - Colored`}
                     className="w-full max-w-full h-auto object-contain rounded-lg"
                   />

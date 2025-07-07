@@ -256,12 +256,12 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 >
                   {t('navigation.language.english')}
                 </div>
-                <div
+                {/* <div
                   className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('ja')}
                 >
                   {t('navigation.language.japanese')}
-                </div>
+                </div> */}
               </div>
             )}
           </div>

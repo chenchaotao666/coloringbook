@@ -39,7 +39,7 @@ export class CategoriesService {
   }
 
   // 获取所有分类
-  static async getCategories(lang: 'zh' | 'en' = 'zh'): Promise<Category[]> {
+  static async getCategories(lang: 'zh' | 'en' | 'ja' = 'zh'): Promise<Category[]> {
     try {
       const data = await ApiUtils.get<Category[]>('/api/images/categories', { lang });
       const rawCategories = data || [];

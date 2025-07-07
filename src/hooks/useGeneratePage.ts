@@ -281,8 +281,8 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
   };
 
   // 从数组中随机选择指定数量的元素
-  const getRandomSuggestions = (suggestions: { zh: StyleSuggestion[], en: StyleSuggestion[] }, count: number = 6, language: 'zh' | 'en' = 'zh'): StyleSuggestion[] => {
-    const languageSuggestions = suggestions[language];
+  const getRandomSuggestions = (suggestions: { zh: StyleSuggestion[], en: StyleSuggestion[], ja?: StyleSuggestion[] }, count: number = 6, language: 'zh' | 'en' | 'ja' = 'zh'): StyleSuggestion[] => {
+    const languageSuggestions = suggestions[language] || suggestions['en'] || [];
     const shuffled = [...languageSuggestions].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   };

@@ -14,7 +14,11 @@ import CreationsPage from './pages/CreationsPage';
 import TestAuthPage from './pages/TestAuthPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
+import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
 import { AuthProvider } from './contexts/AuthContext';
+// import { getSavedLanguage, detectBrowserLanguage } from './components/common/LanguageRouter';
+
+// 移除未使用的语言重定向组件
 
 // 应用内容组件，处理语言加载状态
 function AppContent() {
@@ -33,8 +37,10 @@ function AppContent() {
 
   return (
     <Router>
-      <ScrollToTop />
-      <Routes>
+      <LanguageSyncProvider>
+        <ScrollToTop />
+        <Routes>
+        {/* 英文路由（默认路径，无语言前缀） */}
         <Route path="/" element={<HomePage />} />
         <Route path="/price" element={<PricingPage />} />
         <Route path="/generate" element={<GeneratePage initialTab="text" />} />
@@ -50,8 +56,42 @@ function AppContent() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/creations" element={<CreationsPage />} />
         <Route path="/test-auth" element={<TestAuthPage />} />
-        {/* Add more routes as needed */}
+
+        {/* 中文路由（/zh 前缀） */}
+        <Route path="/zh" element={<HomePage />} />
+        <Route path="/zh/price" element={<PricingPage />} />
+        <Route path="/zh/generate" element={<GeneratePage initialTab="text" />} />
+        <Route path="/zh/text-coloring-page" element={<GeneratePage initialTab="text" />} />
+        <Route path="/zh/image-coloring-page" element={<GeneratePage initialTab="image" />} />
+        <Route path="/zh/categories" element={<CategoriesPage />} />
+        <Route path="/zh/categories/:categoryId" element={<CategoriesDetailPage />} />
+        <Route path="/zh/image/:imageId" element={<ImageDetailPage />} />
+        <Route path="/zh/register" element={<RegisterPage />} />
+        <Route path="/zh/login" element={<LoginPage />} />
+        <Route path="/zh/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/zh/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/zh/profile" element={<ProfilePage />} />
+        <Route path="/zh/creations" element={<CreationsPage />} />
+        <Route path="/zh/test-auth" element={<TestAuthPage />} />
+
+        {/* 日文路由（/ja 前缀） */}
+        <Route path="/ja" element={<HomePage />} />
+        <Route path="/ja/price" element={<PricingPage />} />
+        <Route path="/ja/generate" element={<GeneratePage initialTab="text" />} />
+        <Route path="/ja/text-coloring-page" element={<GeneratePage initialTab="text" />} />
+        <Route path="/ja/image-coloring-page" element={<GeneratePage initialTab="image" />} />
+        <Route path="/ja/categories" element={<CategoriesPage />} />
+        <Route path="/ja/categories/:categoryId" element={<CategoriesDetailPage />} />
+        <Route path="/ja/image/:imageId" element={<ImageDetailPage />} />
+        <Route path="/ja/register" element={<RegisterPage />} />
+        <Route path="/ja/login" element={<LoginPage />} />
+        <Route path="/ja/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/ja/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/ja/profile" element={<ProfilePage />} />
+        <Route path="/ja/creations" element={<CreationsPage />} />
+        <Route path="/ja/test-auth" element={<TestAuthPage />} />
       </Routes>
+      </LanguageSyncProvider>
     </Router>
   );
 }

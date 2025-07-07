@@ -5,7 +5,7 @@ export interface LocalizedText {
 }
 
 // 语言类型
-export type Language = 'zh' | 'en';
+export type Language = 'zh' | 'en' | 'ja';
 
 /**
  * 安全地获取国际化文本
@@ -32,7 +32,7 @@ export const getLocalizedText = (textObj: any, language: Language = 'en'): strin
         return '';
       }
       
-      const result = textObj[language] || textObj['en'] || textObj['zh'] || '';
+      const result = textObj[language] || textObj['en'] || textObj['zh'] || textObj['ja'] || '';
       // 确保结果是字符串，并再次检查是否为对象
       if (typeof result === 'string') {
         return result;

@@ -7,55 +7,26 @@ import {
   getCachedTranslationModule,
   isTranslationModuleCached
 } from '../utils/translationLoader';
+import { 
+  saveLanguagePreference,
+  getSavedLanguage,
+  detectBrowserLanguage 
+} from '../components/common/LanguageRouter';
 
-export type Language = 'zh' | 'en';
+export type Language = 'zh' | 'en' | 'ja';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
   t: (key: string, fallback?: string, params?: { [key: string]: string | number }) => string;
   isLoading: boolean;
+  __internal_setState?: (language: Language) => void;
+  __internal_setNavigate?: (navigate: any) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// 浏览器语言检测
-const detectBrowserLanguage = (): Language => {
-  if (typeof window === 'undefined') return 'en';
-  
-  const browserLang = navigator.language || (navigator as any).userLanguage;
-  // 检测是否为中文
-  if (browserLang.toLowerCase().includes('zh')) {
-    return 'zh';
-  }
-  return 'en';
-};
 
-// 从localStorage获取保存的语言偏好
-const getSavedLanguage = (): Language | null => {
-  if (typeof window === 'undefined') return null;
-  
-  try {
-    const saved = localStorage.getItem('preferred-language');
-    if (saved === 'zh' || saved === 'en') {
-      return saved;
-    }
-  } catch (error) {
-    console.warn('Failed to read language preference from localStorage:', error);
-  }
-  return null;
-};
-
-// 保存语言偏好到localStorage
-const saveLanguage = (language: Language) => {
-  if (typeof window === 'undefined') return;
-  
-  try {
-    localStorage.setItem('preferred-language', language);
-  } catch (error) {
-    console.warn('Failed to save language preference to localStorage:', error);
-  }
-};
 
 // 基础翻译资源（后向兼容，逐步迁移到文件中）
 const baseTranslations: Record<Language, Record<string, string>> = {
@@ -88,9 +59,11 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     // 语言选择
     'language.chinese': '简体中文',
     'language.english': 'English',
+    'language.japanese': '日本語',
     'language.current': '简体中文',
     'navigation.language.chinese': '简体中文',
     'navigation.language.english': 'English',
+    'navigation.language.japanese': '日本語',
     'navigation.language.selectLanguage': '选择语言',
     
     // 通用按钮和操作
@@ -276,9 +249,11 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     // Language selection
     'language.chinese': '简体中文',
     'language.english': 'English',
+    'language.japanese': '日本語',
     'language.current': 'English',
     'navigation.language.chinese': '简体中文',
     'navigation.language.english': 'English',
+    'navigation.language.japanese': '日本語',
     'navigation.language.selectLanguage': 'Select Language',
     
     // Common buttons and actions
@@ -435,6 +410,89 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'auth.registerSuccess': 'Registration successful',
     'auth.logoutSuccess': 'Logout successful',
   },
+  ja: {
+    // 暂时复制英文翻译作为占位符，后续可以补充日语翻译
+    'nav.coloringPagesFree': '無料塗り絵',
+    'nav.textColoringPage': 'テキストから塗り絵ページへ',
+    'nav.imageColoringPage': '写真から塗り絵ページへ',
+    'nav.pricing': '価格',
+    'nav.login': 'ログイン',
+    'nav.register': '登録',
+    'nav.profile': 'プロフィール',
+    'nav.logout': 'ログアウト',
+    'nav.myCreations': '私の作品',
+    
+    'navigation.menu.home': 'ホーム',
+    'navigation.menu.coloringPagesFree': '無料塗り絵',
+    'navigation.menu.textColoringPage': 'テキストから塗り絵ページへ',
+    'navigation.menu.imageColoringPage': '写真から塗り絵ページへ',
+    'navigation.menu.pricing': '価格',
+    'navigation.menu.login': 'ログイン',
+    'navigation.menu.register': '登録',
+    'navigation.menu.profile': 'プロフィール',
+    'navigation.menu.logout': 'ログアウト',
+    'navigation.menu.myCreations': '私の作品',
+    'navigation.menu.categories': 'カテゴリー',
+    'navigation.menu.gallery': 'ギャラリー',
+    
+         'language.chinese': '简体中文',
+     'language.english': 'English',
+     'language.japanese': '日本語',
+     'language.current': '日本語',
+     'navigation.language.chinese': '简体中文',
+     'navigation.language.english': 'English',
+     'navigation.language.japanese': '日本語',
+     'navigation.language.selectLanguage': '言語を選択',
+    
+    'common.confirm': '確認',
+    'common.cancel': 'キャンセル',
+    'common.save': '保存',
+    'common.delete': '削除',
+    'common.edit': '編集',
+    'common.download': 'ダウンロード',
+    'common.upload': 'アップロード',
+    'common.search': '検索',
+    'common.loading': '読み込み中...',
+    'common.error': 'エラー',
+    'common.success': '成功',
+    'common.retry': '再試行',
+    'common.close': '閉じる',
+    'common.back': '戻る',
+    'common.next': '次へ',
+    'common.previous': '前へ',
+    'common.submit': '送信',
+    'common.reset': 'リセット',
+    'common.status.loading': '読み込み中',
+    
+    'form.email': 'メール',
+    'form.password': 'パスワード',
+    'form.confirmPassword': 'パスワード確認',
+    'form.username': 'ユーザー名',
+    'form.required': '必須項目',
+    'form.invalid': '形式が正しくありません',
+    'form.emailInvalid': '有効なメールアドレスを入力してください',
+    'form.passwordTooShort': 'パスワードは最低6文字必要です',
+    'form.passwordMismatch': '入力されたパスワードが一致しません',
+    'form.usernameRequired': 'ユーザー名を入力してください',
+    'form.emailRequired': 'メールアドレスを入力してください',
+    'form.passwordRequired': 'パスワードを入力してください',
+    
+    'forms.auth.loginTitle': 'ログイン',
+    'forms.auth.noAccount': 'アカウントをお持ちでない方',
+    'forms.auth.createAccount': 'アカウント作成',
+    'forms.auth.rememberMe': 'ログイン状態を保持',
+    'forms.auth.forgotPassword': 'パスワードを忘れた方',
+    
+    'auth.loginTitle': 'ログイン',
+    'auth.registerTitle': '登録',
+    'auth.rememberMe': 'ログイン状態を保持',
+    'auth.forgotPassword': 'パスワードを忘れた方',
+    'auth.noAccount': 'アカウントをお持ちでない方',
+    'auth.hasAccount': '既にアカウントをお持ちの方',
+    'auth.loginSuccess': 'ログイン成功',
+    'auth.registerSuccess': '登録成功',
+    'auth.logoutSuccess': 'ログアウト成功',
+  },
 };
 
 interface LanguageProviderProps {
@@ -443,22 +501,31 @@ interface LanguageProviderProps {
 
 // 同步获取初始语言，避免闪烁
 const getInitialLanguage = (): Language => {
-  // 1. 优先使用保存的语言偏好
+  // 1. 优先从URL路径检测语言
+  const currentPath = window.location.pathname;
+  if (currentPath.startsWith('/zh')) {
+    return 'zh';
+  } else if (currentPath.startsWith('/ja')) {
+    return 'ja';
+  }
+  
+  // 2. 其次使用保存的语言偏好
   const savedLanguage = getSavedLanguage();
   if (savedLanguage) {
     return savedLanguage;
   }
   
-  // 2. 检测浏览器语言
+  // 3. 最后检测浏览器语言
   const detectedLanguage = detectBrowserLanguage();
-  saveLanguage(detectedLanguage); // 保存检测到的语言
+  saveLanguagePreference(detectedLanguage); // 保存检测到的语言
   return detectedLanguage;
 };
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // 使用同步函数获取初始语言，避免英文闪烁
-  const [language, setLanguageState] = useState<Language>(() => getInitialLanguage());
+  // 获取初始语言（从localStorage或浏览器检测）
+  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
   const [isLoading, setIsLoading] = useState(true);
+  const [navigate, setNavigate] = useState<any>(null);
 
   // 初始化语言设置 - 只处理异步翻译预加载
   useEffect(() => {
@@ -479,9 +546,31 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const setLanguage = async (lang: Language) => {
     console.log('🌐 Setting language to:', lang);
     
+    if (lang === language) return;
+    
     setIsLoading(true);
-    setLanguageState(lang);
-    saveLanguage(lang);
+    saveLanguagePreference(lang);
+    
+    // 生成新的语言路径
+    const currentPath = window.location.pathname;
+    let pathWithoutLanguage = currentPath;
+    
+    // 移除当前语言前缀
+    if (currentPath.startsWith('/zh')) {
+      pathWithoutLanguage = currentPath.substring(3) || '/';
+    } else if (currentPath.startsWith('/ja')) {
+      pathWithoutLanguage = currentPath.substring(3) || '/';
+    }
+    
+    // 生成新的语言路径
+    let newPath: string;
+    if (lang === 'zh') {
+      newPath = '/zh' + (pathWithoutLanguage === '/' ? '' : pathWithoutLanguage);
+    } else if (lang === 'ja') {
+      newPath = '/ja' + (pathWithoutLanguage === '/' ? '' : pathWithoutLanguage);
+    } else {
+      newPath = pathWithoutLanguage;
+    }
     
     // 预加载新语言的核心翻译资源
     try {
@@ -490,7 +579,17 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       console.warn('Failed to preload translations for new language:', error);
     }
     
-    setIsLoading(false);
+    // 使用React Router导航（无刷新）或者fallback到页面重载
+    if (navigate) {
+      console.log('🚀 Using React Router navigation to:', newPath);
+      navigate(newPath, { replace: true });
+      setLanguageState(lang);
+      setIsLoading(false);
+    } else {
+      console.log('⚠️ Fallback to page reload for:', newPath);
+      // Fallback到页面重载
+      window.location.href = newPath;
+    }
   };
 
   const t = (
@@ -515,8 +614,28 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     return interpolateTranslation(finalResult, params);
   };
 
+  // 内部setState，用于URL路径同步，不触发页面跳转
+  const __internal_setState = (lang: Language) => {
+    if (lang !== language) {
+      setLanguageState(lang);
+      saveLanguagePreference(lang);
+    }
+  };
+
+  // 内部setNavigate，用于注入navigate函数
+  const __internal_setNavigate = (navigateFunc: any) => {
+    setNavigate(() => navigateFunc);
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isLoading }}>
+    <LanguageContext.Provider value={{ 
+      language, 
+      setLanguage, 
+      t, 
+      isLoading, 
+      __internal_setState,
+      __internal_setNavigate
+    }}>
       {children}
     </LanguageContext.Provider>
   );

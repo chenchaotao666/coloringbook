@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage, Language } from '../../contexts/LanguageContext';
+import { generateLanguagePath } from '../common/LanguageRouter';
 
 // 导入图标
 import logo from '../../../public/images/logo.svg';
@@ -18,6 +19,12 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  // const location = useLocation(); // 暂时不需要
+
+  // 生成带语言前缀的链接
+  const createLocalizedLink = (path: string) => {
+    return generateLanguagePath(language, path);
+  };
 
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isUserDropdownVisible, setIsUserDropdownVisible] = useState(false);
@@ -188,23 +195,23 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
     <>
       <div className={`fixed top-0 left-0 right-0 w-full h-[70px] py-[15px] ${bgClass} bg-opacity-98 backdrop-blur-sm flex justify-between items-center z-50`}>
         {/* Logo */}
-        <Link to="/" className="relative z-10 pl-4 sm:pl-5 flex justify-start items-center gap-1 hover:opacity-80 transition-opacity duration-200">
+        <Link to={createLocalizedLink("/")} className="relative z-10 pl-4 sm:pl-5 flex justify-start items-center gap-1 hover:opacity-80 transition-opacity duration-200">
           <img src={logo} alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
           <div className="text-[#161616] text-xl sm:text-2xl font-medium">Coloring</div>
         </Link>
 
         {/* 桌面端导航菜单 */}
         <div className="hidden lg:flex relative z-10 max-h-6 justify-start items-start gap-10 flex-wrap">
-          <Link to="/categories" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          <Link to={createLocalizedLink("/categories")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
             {t('navigation.menu.coloringPagesFree')}
           </Link>
-          <Link to="/text-coloring-page" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          <Link to={createLocalizedLink("/text-coloring-page")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
             {t('navigation.menu.textColoringPage')}
           </Link>
-          <Link to="/image-coloring-page" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          <Link to={createLocalizedLink("/image-coloring-page")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
             {t('navigation.menu.imageColoringPage')}
           </Link>
-          <Link to="/price" className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          <Link to={createLocalizedLink("/price")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
             {t('navigation.menu.pricing')}
           </Link>
         </div>
@@ -218,7 +225,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               onClick={() => setIsDesktopLanguageDropdownOpen(!isDesktopLanguageDropdownOpen)}
             >
               <img src={intlIcon} alt="Language" className="w-5 h-5" />
-              <span className="text-[#161616] text-base font-medium leading-6 whitespace-nowrap">{language === 'zh' ? t('navigation.language.chinese') : t('navigation.language.english')}</span>
+              <span className="text-[#161616] text-base font-medium leading-6 whitespace-nowrap">
+                {language === 'zh' ? t('navigation.language.chinese') : 
+                 language === 'ja' ? t('navigation.language.japanese') : 
+                 t('navigation.language.english')}
+              </span>
               <img 
                 src={expandIcon} 
                 alt="Expand" 
@@ -245,6 +256,12 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 >
                   {t('navigation.language.english')}
                 </div>
+                <div
+                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
+                  onClick={() => handleLanguageSelect('ja')}
+                >
+                  {t('navigation.language.japanese')}
+                </div>
               </div>
             )}
           </div>
@@ -260,7 +277,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             <div className="flex items-center gap-4">
               {/* 积分显示 */}
               <Link 
-                to="/price"
+                to={createLocalizedLink("/price")}
                 className="flex items-center justify-center gap-1.5 px-5 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
                 style={{backgroundColor: '#F9FAFB'}}
               >
@@ -299,7 +316,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     </div>
                     
                     <Link
-                      to="/profile"
+                      to={createLocalizedLink("/profile")}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
@@ -310,7 +327,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     </Link>
                     
                     <Link
-                      to="/creations"
+                      to={createLocalizedLink("/creations")}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
@@ -349,7 +366,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           ) : (
             /* 未登录状态 - 显示登录按钮 */
             <Link
-              to="/login"
+              to={createLocalizedLink("/login")}
               className="inline-flex items-center px-4 py-1 border border-black text-sm font-medium rounded-md text-black hover:bg-gray-50 transition-colors duration-200"
             >
               {t('navigation.menu.login')}
@@ -363,7 +380,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           {isAuthenticated && user && (
             <div className="pr-3">
               <Link 
-                to="/price"
+                to={createLocalizedLink("/price")}
                 className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
                 style={{backgroundColor: '#FAFBFC'}}
               >
@@ -376,7 +393,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           {/* 调色板图标 */}
           <div className="pr-3">
             <Link 
-              to="/image-coloring-page"
+              to={createLocalizedLink("/image-coloring-page")}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
             >
               <img src={colorPaletteIcon} alt="Image Coloring Page" className="w-6 h-6" />
@@ -429,7 +446,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   </div>
                   <div className="mt-3">
                     <Link 
-                      to="/price"
+                      to={createLocalizedLink("/price")}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200 cursor-pointer inline-flex"
                       onClick={handleMobileLinkClick}
                     >
@@ -452,7 +469,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     setIsMobileLanguageDropdownOpen(!isMobileLanguageDropdownOpen);
                   }}
                 >
-                  <span className="whitespace-nowrap">{language === 'zh' ? t('navigation.language.chinese') : t('navigation.language.english')}</span>
+                  <span className="whitespace-nowrap">
+                    {language === 'zh' ? t('navigation.language.chinese') : 
+                     language === 'ja' ? t('navigation.language.japanese') : 
+                     t('navigation.language.english')}
+                  </span>
                   <img 
                     src={expandIcon} 
                     alt="Expand" 
@@ -489,6 +510,17 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     >
                       {t('navigation.language.english')} {language === 'en' ? '✓' : ''}
                     </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setLanguage('ja');
+                        setIsMobileLanguageDropdownOpen(false);
+                      }}
+                      className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
+                    >
+                      {t('navigation.language.japanese')} {language === 'ja' ? '✓' : ''}
+                    </button>
                   </div>
                 )}
               </div>
@@ -497,7 +529,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             {/* 导航链接 */}
             <div className="border-b border-gray-200">
               <Link 
-                to="/categories" 
+                to={createLocalizedLink("/categories")} 
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
@@ -506,7 +538,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             </div>
             <div className="border-b border-gray-200">
               <Link 
-                to="/image-coloring-page" 
+                to={createLocalizedLink("/image-coloring-page")} 
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
@@ -515,7 +547,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             </div>
             <div className="border-b border-gray-200">
               <Link 
-                to="/text-coloring-page" 
+                to={createLocalizedLink("/text-coloring-page")} 
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
@@ -524,7 +556,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             </div>
             <div className="border-b border-gray-200">
               <Link 
-                to="/price" 
+                to={createLocalizedLink("/price")} 
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
@@ -537,7 +569,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               <>
                 <div className="border-b border-gray-200">
                   <Link
-                    to="/profile"
+                    to={createLocalizedLink("/profile")}
                     className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
@@ -546,7 +578,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 </div>
                 <div className="border-b border-gray-200">
                   <Link
-                    to="/creations"
+                    to={createLocalizedLink("/creations")}
                     className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
@@ -565,7 +597,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             ) : (
               <div>
                 <Link
-                  to="/login"
+                  to={createLocalizedLink("/login")}
                   className="block px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   onClick={handleMobileLinkClick}
                 >

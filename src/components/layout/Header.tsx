@@ -38,11 +38,15 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const [isMobileLanguageDropdownOpen, setIsMobileLanguageDropdownOpen] = useState(false);
   const [isMobileLanguageVisible, setIsMobileLanguageVisible] = useState(false);
   const [isMobileLanguageAnimating, setIsMobileLanguageAnimating] = useState(false);
+  const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] = useState(false);
+  const [isCategoriesDropdownVisible, setIsCategoriesDropdownVisible] = useState(false);
+  const [isCategoriesDropdownAnimating, setIsCategoriesDropdownAnimating] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerButtonRef = useRef<HTMLButtonElement>(null);
+  const categoriesDropdownRef = useRef<HTMLDivElement>(null);
 
   // 点击外部关闭下拉菜单
   useEffect(() => {
@@ -54,6 +58,10 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
       // 用户下拉菜单
       if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
         setIsUserDropdownOpen(false);
+      }
+      // 分类下拉菜单
+      if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target as Node)) {
+        setIsCategoriesDropdownOpen(false);
       }
       // 移动端菜单 - 排除汉堡菜单按钮的点击
       if (mobileMenuRef.current && 
@@ -69,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isMobileMenuOpen, isUserDropdownOpen, isDesktopLanguageDropdownOpen, isMobileLanguageDropdownOpen]);
+  }, [isMobileMenuOpen, isUserDropdownOpen, isDesktopLanguageDropdownOpen, isMobileLanguageDropdownOpen, isCategoriesDropdownOpen]);
 
   // 控制移动端菜单的显示动画
   useEffect(() => {
@@ -149,6 +157,12 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
     }
   }, [isUserDropdownOpen]);
 
+  // 控制分类下拉框的显示（无动画）
+  useEffect(() => {
+    setIsCategoriesDropdownVisible(isCategoriesDropdownOpen);
+    setIsCategoriesDropdownAnimating(isCategoriesDropdownOpen);
+  }, [isCategoriesDropdownOpen]);
+
   const handleLanguageSelect = (lang: Language) => {
     setLanguage(lang);
     setIsDesktopLanguageDropdownOpen(false);
@@ -167,6 +181,46 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const handleMobileLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
+
+  // 分类菜单数据
+  const categoriesMenuData = [
+    {
+      title: t('footer.sections.disney', 'Disney'),
+      links: [
+        { label: t('footer.links.mickeyMouse', 'Mickey Mouse'), url: '/category/mickey-mouse' },
+        { label: t('footer.links.minnieMouse', 'Minnie Mouse'), url: '/category/minnie-mouse' },
+        { label: t('footer.links.donaldDuck', 'Donald Duck'), url: '/category/donald-duck' },
+        { label: t('footer.links.daisyDuck', 'Daisy Duck'), url: '/category/daisy-duck' },
+        { label: t('footer.links.goofy', 'Goofy'), url: '/category/goofy' },
+        { label: t('footer.links.snowWhite', 'Snow White'), url: '/category/snow-white' },
+        { label: t('footer.links.cinderella', 'Cinderella'), url: '/category/cinderella' },
+      ],
+    },
+    {
+      title: t('footer.sections.star', 'Star'),
+      links: [
+        { label: t('footer.links.taylorSwift', 'Taylor Swift'), url: '/category/taylor-swift' },
+        { label: t('footer.links.billieEilish', 'Billie Eilish'), url: '/category/billie-eilish' },
+        { label: t('footer.links.scarlettJohansson', 'Scarlett Johansson'), url: '/category/scarlett-johansson' },
+        { label: t('footer.links.galGadot', 'Gal Gadot'), url: '/category/gal-gadot' },
+        { label: t('footer.links.bradPitt', 'Brad Pitt'), url: '/category/brad-pitt' },
+        { label: t('footer.links.zendaya', 'Zendaya'), url: '/category/zendaya' },
+        { label: t('footer.links.timotheeChalamet', 'Timothée Chalamet'), url: '/category/timothee-chalamet' },
+      ],
+    },
+    {
+      title: t('footer.sections.animal', 'Animal'),
+      links: [
+        { label: t('footer.links.dog', 'Dog'), url: '/category/dog' },
+        { label: t('footer.links.cat', 'Cat'), url: '/category/cat' },
+        { label: t('footer.links.tiger', 'Tiger'), url: '/category/tiger' },
+        { label: t('footer.links.butterfly', 'Butterfly'), url: '/category/butterfly' },
+        { label: t('footer.links.bird', 'Bird'), url: '/category/bird' },
+        { label: t('footer.links.giraffe', 'Giraffe'), url: '/category/giraffe' },
+        { label: t('footer.links.horse', 'Horse'), url: '/category/horse' },
+      ],
+    },
+  ];
 
   const bgClass = backgroundColor === 'white' ? 'bg-white' : 'bg-transparent';
 
@@ -202,16 +256,70 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
         {/* 桌面端导航菜单 */}
         <div className="hidden lg:flex relative z-10 max-h-6 justify-start items-start gap-10 flex-wrap">
-          <Link to={createLocalizedLink("/categories")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
-            {t('navigation.menu.coloringPagesFree')}
+          <Link to={createLocalizedLink("/")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
+            {t('navigation.menu.home')}
           </Link>
-          <Link to={createLocalizedLink("/text-coloring-page")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          
+          {/* 免费涂色页 - 带下拉菜单 */}
+          <div 
+            className="relative" 
+            ref={categoriesDropdownRef}
+            onMouseEnter={() => setIsCategoriesDropdownOpen(true)}
+            onMouseLeave={() => setIsCategoriesDropdownOpen(false)}
+          >
+            <Link 
+              to={createLocalizedLink("/categories")} 
+              className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 flex items-center gap-1 group"
+            >
+              {t('navigation.menu.coloringPagesFree')}
+              <svg 
+                className="w-5 h-5 transition-colors duration-200 group-hover:text-[#FF5C07]" 
+                fill="currentColor" 
+                viewBox="0 0 20 20"
+              >
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </Link>
+
+            {/* 分类下拉菜单 */}
+            {isCategoriesDropdownVisible && (
+              <div className="absolute top-full mt-2 left-0 bg-white rounded-lg border border-[#E5E7EB] w-[600px] z-50"
+              style={{boxShadow: '0px 0px 20px 0px rgba(0, 0, 0, 0.10)'}}
+              >
+                <div className="p-5">
+                  <div className="grid grid-cols-3 gap-6">
+                    {categoriesMenuData.map((section, index) => (
+                      <div key={index}>
+                        <p className="mb-4 text-base font-semibold text-black">
+                          {section.title}
+                        </p>
+                        <ul className="space-y-2">
+                          {section.links.map((link, linkIndex) => (
+                            <li key={linkIndex}>
+                              <Link 
+                                to={createLocalizedLink(link.url)} 
+                                className="text-gray-500 hover:text-orange-600 transition-colors duration-200 text-sm"
+                              >
+                                {link.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <Link to={createLocalizedLink("/text-coloring-page")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
             {t('navigation.menu.textColoringPage')}
           </Link>
-          <Link to={createLocalizedLink("/image-coloring-page")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          <Link to={createLocalizedLink("/image-coloring-page")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
             {t('navigation.menu.imageColoringPage')}
           </Link>
-          <Link to={createLocalizedLink("/price")} className="text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200">
+          <Link to={createLocalizedLink("/price")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
             {t('navigation.menu.pricing')}
           </Link>
         </div>
@@ -230,11 +338,13 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                  language === 'ja' ? t('navigation.language.japanese') : 
                  t('navigation.language.english')}
               </span>
-              <img 
-                src={expandIcon} 
-                alt="Expand" 
-                className={`w-3 h-3 transition-transform duration-200 ${isDesktopLanguageDropdownOpen ? 'rotate-180' : ''}`} 
-              />
+              <svg 
+                className={`w-5 h-5 transition-all duration-200 ${isDesktopLanguageDropdownOpen ? 'rotate-180' : ''}`} 
+                fill="currentColor" 
+                viewBox="0 0 20 20"
+              >
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
             </div>
 
             {/* 语言下拉菜单 */}
@@ -474,11 +584,13 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                      language === 'ja' ? t('navigation.language.japanese') : 
                      t('navigation.language.english')}
                   </span>
-                  <img 
-                    src={expandIcon} 
-                    alt="Expand" 
-                    className={`w-3 h-3 transition-transform duration-200 ${isMobileLanguageDropdownOpen ? 'rotate-180' : ''}`} 
-                  />
+                  <svg 
+                    className={`w-5 h-5 transition-all duration-200 ${isMobileLanguageDropdownOpen ? 'rotate-180' : ''}`} 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
                 </button>
                 
                 {/* 下拉菜单 - 浮动样式 */}
@@ -527,6 +639,15 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             </div>
 
             {/* 导航链接 */}
+            <div className="border-b border-gray-200">
+              <Link 
+                to={createLocalizedLink("/")} 
+                className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
+                onClick={handleMobileLinkClick}
+              >
+                {t('navigation.menu.home')}
+              </Link>
+            </div>
             <div className="border-b border-gray-200">
               <Link 
                 to={createLocalizedLink("/categories")} 

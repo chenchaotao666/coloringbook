@@ -11,7 +11,11 @@
     "myCreations": "My Creations",
     "categories": "Categories",
     "gallery": "Gallery",
-    "home": "Home"
+    "home": "Home",
+    "featuredColoringPages": "Featured Coloring Pages",
+    "kidsColoringPages": "Kids Coloring Pages",
+    "teenColoringPages": "Teen Coloring Pages",
+    "adultColoringPages": "Adult Coloring Pages"
   },
   "breadcrumb": {
     "home": "Home",

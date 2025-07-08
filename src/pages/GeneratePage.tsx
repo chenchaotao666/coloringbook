@@ -842,24 +842,24 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
       <div className="flex flex-col lg:flex-row h-screen bg-[#F9FAFB] relative">
         {/* Left Sidebar - 移动端隐藏，桌面端显示 */}
-        <div className="hidden lg:block w-[400px] bg-white pb-[88px] overflow-y-auto h-full">
+        <div className="hidden lg:block w-[500px] bg-white pb-[88px] overflow-y-auto h-full">
           {/* Tab Selector */}
           <div className="mx-5">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
               <div
-                className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[174px] bg-white left-1' :
-                    selectedTab === 'image' ? 'w-[174px] bg-white left-[175px]' : ''
+                className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[calc(50%-4px)] bg-white left-1' :
+                    selectedTab === 'image' ? 'w-[calc(50%-4px)] bg-white right-1' : ''
                   }`}
               ></div>
               <button
-                className={`w-[174px] h-10 z-10 flex items-center justify-center ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
+                className={`flex-1 h-10 z-10 flex items-center justify-center ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
                   }`}
                 onClick={() => setSelectedTab('text')}
               >
                 {t('tabs.textToImage', 'Text to Image')}
               </button>
               <button
-                className={`w-[174px] h-10 z-10 flex items-center justify-center ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
+                className={`flex-1 h-10 z-10 flex items-center justify-center ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
                   }`}
                 onClick={() => setSelectedTab('image')}
               >
@@ -1003,11 +1003,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
 
         {/* 桌面端生成按钮 */}
-        <div className="hidden lg:flex fixed bottom-0 left-0 w-[400px] h-[88px] bg-white items-center justify-center">
+        <div className="hidden lg:flex fixed bottom-0 left-0 w-[500px] h-[88px] bg-white items-center justify-center px-5">
           <button
             onClick={handleGenerate}
             disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
-            className={`w-[360px] h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+            className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
               (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
                 ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
                 : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'

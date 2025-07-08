@@ -11,7 +11,11 @@
     "myCreations": "我的作品",
     "categories": "分类",
     "gallery": "图库",
-    "home": "首页"
+    "home": "首页",
+    "featuredColoringPages": "精选填色页",
+    "kidsColoringPages": "儿童填色页",
+    "teenColoringPages": "青少年填色页",
+    "adultColoringPages": "成人填色页"
   },
   "breadcrumb": {
     "home": "首页",

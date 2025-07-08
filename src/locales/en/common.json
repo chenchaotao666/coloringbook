@@ -28,6 +28,33 @@
     "showAll": "Show All",
     "hideAll": "Hide All"
   },
+  "seo": {
+    "home": {
+      "title": "AI Coloring Pages - Free Printable Generator",
+      "description": "Create unlimited free AI-generated coloring pages instantly! Convert text or images to printable coloring pages. Perfect for kids, parents, and teachers. Print PDF & PNG formats.",
+      "keywords": "AI coloring pages, free coloring pages, printable coloring pages, coloring book generator, kids coloring pages, custom coloring pages, AI art generator"
+    },
+    "generate": {
+      "title": "AI Coloring Generator - Text & Image to Coloring Page",
+      "description": "Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.",
+      "keywords": "AI coloring generator, text to coloring page, image to coloring page, custom coloring pages, AI art generator, printable coloring pages"
+    },
+    "categories": {
+      "title": "Free Coloring Categories - Disney, Animals & More",
+      "description": "Browse our collection of free printable coloring pages by category. Disney characters, animals, superheroes, and more. Download PDF and PNG formats instantly.",
+      "keywords": "coloring page categories, Disney coloring pages, animal coloring pages, character coloring pages, free printable coloring pages"
+    },
+    "creations": {
+      "title": "AI Coloring Gallery - User Creations & Inspiration",
+      "description": "Explore amazing AI-generated coloring pages created by our community. Get inspired and discover new ideas for your next coloring project.",
+      "keywords": "AI coloring gallery, user creations, coloring page inspiration, AI-generated art, community coloring pages"
+    },
+    "pricing": {
+      "title": "Pricing Plans - Premium AI Coloring Features",
+      "description": "Choose the perfect plan for unlimited AI coloring page generation. Free trial available with premium features for unlimited creativity.",
+      "keywords": "coloring page pricing, AI generator subscription, premium coloring features, unlimited coloring pages"
+    }
+  },
   "status": {
     "loading": "Loading...",
     "error": "Error",

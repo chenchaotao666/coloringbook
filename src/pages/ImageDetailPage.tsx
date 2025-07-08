@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
@@ -10,12 +10,14 @@ import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
+import { getImageIdByName, isImageName, updateImageMappings, getImageNameById } from '../utils/imageUtils';
 const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
   const { t } = useAsyncTranslation('categories');
   const { imageId } = useParams<{ imageId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { language } = useLanguage();
   
   const [image, setImage] = useState<HomeImage | null>(null);
@@ -69,8 +71,18 @@ const ImageDetailPage: React.FC = () => {
       try {
         setIsImageLoading(true);
         
+        // 确定实际的图片ID
+        let actualImageId: string;
+        if (isImageName(imageId)) {
+          // 如果是SEO友好名称，转换为实际ID
+          actualImageId = getImageIdByName(imageId);
+        } else {
+          // 如果是ID，直接使用
+          actualImageId = imageId;
+        }
+        
         // 尝试从ImageService中查找主图片
-        let foundImage: HomeImage | null = await ImageService.getImageById(imageId);
+        let foundImage: HomeImage | null = await ImageService.getImageById(actualImageId);
 
         if (foundImage) {
           setImage(foundImage);
@@ -81,6 +93,9 @@ const ImageDetailPage: React.FC = () => {
           try {
             const relatedImages = await ImageService.getRelatedImages(foundImage.categoryId, foundImage.id);
             setRelatedImages(relatedImages);
+            
+            // 更新相关图片的映射表
+            updateImageMappings(relatedImages);
           } catch (error) {
             console.error('Failed to load related images from ImageService:', error);
           } finally {
@@ -125,18 +140,21 @@ const ImageDetailPage: React.FC = () => {
 
   // 获取面包屑路径（即使图片还在加载也可以显示基础面包屑）
   const getBreadcrumbPathEarly = (): BreadcrumbItem[] => {
-    // 检查是否从分类页面跳转过来
-    const urlParams = new URLSearchParams(window.location.search);
-    const fromCategory = urlParams.get('from') === 'category';
-    const categoryId = urlParams.get('categoryId');
-    const categoryName = urlParams.get('categoryName');
+    // 检查是否从分类页面跳转过来（通过location state）
+    const state = location.state as any;
+    const fromCategory = state?.from === 'category';
+    const categoryId = state?.categoryId;
+    const categoryName = state?.categoryName;
+    const categoryPath = state?.categoryPath; // 新增：用于URL路径的值
     
     if (fromCategory && categoryId && categoryName) {
       // 4层面包屑：Home > Coloring Pages Free > xxx category > 图片名字
+      // 使用categoryPath作为URL路径，优先使用英文名称
+      const urlPath = categoryPath || categoryId;
       return [
         { label: t('breadcrumb.home', 'Home'), path: '/' },
         { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
-        { label: decodeURIComponent(categoryName), path: `/categories/${categoryId}` },
+        { label: categoryName, path: `/categories/${urlPath}` },
         { label: image ? getLocalizedText(image.title, language) || '' : '', current: true }
       ];
     } else {
@@ -316,6 +334,11 @@ const ImageDetailPage: React.FC = () => {
                 <MasonryGrid 
                   images={relatedImages}
                   isLoading={false}
+                  onImageClick={(image) => {
+                    // 导航到图片详情页，使用SEO友好的图片路径
+                    const imagePath = getImageNameById(image.id);
+                    navigate(`/image/${imagePath}`);
+                  }}
                 />
               ) : (
                 <div className="flex justify-center items-center py-12">

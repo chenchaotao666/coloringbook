@@ -2,6 +2,8 @@
  * 图片工具函数
  */
 
+import { LocalizedText } from './textUtils';
+
 // ===== 尺寸常量定义 =====
 
 /**
@@ -337,4 +339,73 @@ export const getImageContainerSize = (
     width: `${maxWidth}px`, 
     height: `${maxHeight}px` 
   };
+};
+
+// 动态映射存储
+let imageIdToNameMap: Record<string, string> = {};
+let imageNameToIdMap: Record<string, string> = {};
+
+/**
+ * 将title转换为SEO友好的URL路径
+ */
+export const convertTitleToPath = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // 移除特殊字符
+    .replace(/\s+/g, '-') // 空格替换为短划线
+    .replace(/-+/g, '-') // 多个短划线合并为一个
+    .replace(/^-+|-+$/g, '') // 移除开头和结尾的短划线
+    .trim();
+};
+
+/**
+ * 从图片数据中提取英文标题作为SEO路径
+ */
+export const getEnglishTitleFromImage = (title: LocalizedText | string): string => {
+  if (typeof title === 'string') {
+    return convertTitleToPath(title);
+  }
+  
+  // 如果是LocalizedText对象，优先使用英文
+  const englishTitle = title.en || title.zh || '';
+  return convertTitleToPath(englishTitle);
+};
+
+/**
+ * 更新图片映射表（从API数据动态生成）
+ */
+export const updateImageMappings = (images: Array<{id: string, title: LocalizedText | string}>) => {
+  images.forEach(image => {
+    const seoName = getEnglishTitleFromImage(image.title);
+    imageIdToNameMap[image.id] = seoName;
+    imageNameToIdMap[seoName] = image.id;
+  });
+};
+
+/**
+ * 根据图片ID获取SEO友好的名称
+ */
+export const getImageNameById = (imageId: string): string => {
+  return imageIdToNameMap[imageId] || imageId;
+};
+
+/**
+ * 根据SEO友好的名称获取图片ID
+ */
+export const getImageIdByName = (imageName: string): string => {
+  return imageNameToIdMap[imageName] || imageName;
+};
+
+/**
+ * 检查给定的字符串是否是图片名称（而不是ID）
+ */
+export const isImageName = (value: string): boolean => {
+  return value in imageNameToIdMap;
+};
+
+/**
+ * 检查给定的字符串是否是图片ID
+ */
+export const isImageId = (value: string): boolean => {
+  return value in imageIdToNameMap;
 };

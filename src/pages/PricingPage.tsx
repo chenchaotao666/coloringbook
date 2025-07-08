@@ -7,6 +7,7 @@ import FAQ from '../components/home/FAQ';
 import { useAuth } from '../contexts/AuthContext';
 import { PricingService } from '../services/pricingService';
 import { ApiError } from '../utils/apiUtils';
+import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation, useLanguage } from '../contexts/LanguageContext';
 
 // PayPal Types
@@ -323,6 +324,7 @@ const PricingCard = ({
 
 const PricingPage: React.FC = () => {
   const { t } = useAsyncTranslation('pricing');
+  const { t: tCommon } = useAsyncTranslation('common');
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { language, t: baseT } = useLanguage();
@@ -449,6 +451,13 @@ const PricingPage: React.FC = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={tCommon('seo.pricing.title', 'Pricing Plans - Premium AI Coloring Page Generator Features')}
+        description={tCommon('seo.pricing.description', 'Choose the perfect plan for unlimited AI coloring page generation. Free trial available with premium features for unlimited creativity.')}
+        keywords={tCommon('seo.pricing.keywords', 'coloring page pricing, AI generator subscription, premium coloring features, unlimited coloring pages')}
+        ogTitle={tCommon('seo.pricing.title', 'Pricing Plans - Premium AI Coloring Page Generator Features')}
+        ogDescription={tCommon('seo.pricing.description', 'Choose the perfect plan for unlimited AI coloring page generation. Free trial available with premium features for unlimited creativity.')}
+      />
       {/* Hero Section with Header Gradient - 与HomePage保持一致 */}
       <div className="relative bg-white">
         {/* 渐变背景 - 覆盖菜单和Hero区域，从上到下浅黄渐变 */}

@@ -55,6 +55,33 @@ export class CategoriesService {
     }
   }
 
+  // 根据分类名称获取分类详情
+  static async getCategoryByName(categoryName: string, lang: 'zh' | 'en' | 'ja' = 'zh'): Promise<Category | null> {
+    try {
+      const categories = await this.getCategories(lang);
+      // 查找匹配的分类（支持name字段）
+      const category = categories.find(cat => 
+        cat.name && cat.name.toLowerCase() === categoryName.toLowerCase()
+      );
+      return category || null;
+    } catch (error) {
+      console.error(`Failed to get category by name ${categoryName}:`, error);
+      return null;
+    }
+  }
+
+  // 根据分类ID获取分类详情
+  static async getCategoryById(categoryId: string, lang: 'zh' | 'en' | 'ja' = 'zh'): Promise<Category | null> {
+    try {
+      const categories = await this.getCategories(lang);
+      const category = categories.find(cat => cat.categoryId === categoryId);
+      return category || null;
+    } catch (error) {
+      console.error(`Failed to get category by id ${categoryId}:`, error);
+      return null;
+    }
+  }
+
   // 通过分类名称获取图片列表
   static async getImagesByCategoryId(
     categoryId: string, 

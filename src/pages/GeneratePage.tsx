@@ -8,6 +8,7 @@ import CircularProgress from '../components/ui/CircularProgress';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
+import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import {
   getCenterImageSize,
@@ -37,6 +38,7 @@ interface GeneratePageProps {
 const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   // 获取翻译函数
   const { t } = useAsyncTranslation('generate');
+  const { t: tCommon } = useAsyncTranslation('common');
   
   // 获取导航函数
   const navigate = useNavigate();
@@ -825,6 +827,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   return (
     <LayoutNoFooter>
+      <SEOHead
+        title={tCommon('seo.generate.title', 'AI Coloring Page Generator - Create Custom Coloring Pages from Text & Images')}
+        description={tCommon('seo.generate.description', 'Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.')}
+        keywords={tCommon('seo.generate.keywords', 'AI coloring generator, text to coloring page, image to coloring page, custom coloring pages, AI art generator, printable coloring pages')}
+        ogTitle={tCommon('seo.generate.title', 'AI Coloring Page Generator - Create Custom Coloring Pages from Text & Images')}
+        ogDescription={tCommon('seo.generate.description', 'Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.')}
+      />
       {/* 错误提示 */}
       {/* {error && (
         <div className="fixed top-4 right-4 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg max-w-md">

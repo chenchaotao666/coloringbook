@@ -8,6 +8,7 @@ import { ImageService, HomeImage } from '../services/imageService';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import CircularProgress from '../components/ui/CircularProgress';
 import BackToTop from '../components/common/BackToTop';
+import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 
 // 图标导入
@@ -17,6 +18,7 @@ interface CreationsPageProps {}
 
 const CreationsPage: React.FC<CreationsPageProps> = () => {
   const { t } = useAsyncTranslation('creations');
+  const { t: tCommon } = useAsyncTranslation('common');
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   
@@ -161,6 +163,13 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={tCommon('seo.creations.title', 'AI-Generated Coloring Pages Gallery - User Creations & Inspiration')}
+        description={tCommon('seo.creations.description', 'Explore amazing AI-generated coloring pages created by our community. Get inspired and discover new ideas for your next coloring project.')}
+        keywords={tCommon('seo.creations.keywords', 'AI coloring gallery, user creations, coloring page inspiration, AI-generated art, community coloring pages')}
+        ogTitle={tCommon('seo.creations.title', 'AI-Generated Coloring Pages Gallery - User Creations & Inspiration')}
+        ogDescription={tCommon('seo.creations.description', 'Explore amazing AI-generated coloring pages created by our community. Get inspired and discover new ideas for your next coloring project.')}
+      />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* 页面标题 */}

@@ -10,6 +10,8 @@ import { HomeImage } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
+import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings } from '../utils/categoryUtils';
+import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 // const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
@@ -19,6 +21,7 @@ const CategoriesDetailPage: React.FC = () => {
   const { language } = useLanguage();
 
   const [category, setCategory] = useState<Category | null>(null);
+  const [actualCategoryId, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
   const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
   const [filteredImages, setFilteredImages] = useState<HomeImage[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
@@ -47,11 +50,11 @@ const CategoriesDetailPage: React.FC = () => {
 
   // 加载分类图片数据
   const loadCategoryImages = async (page: number = 1, search?: string) => {
-    if (!categoryId) return;
+    if (!actualCategoryId) return;
 
     try {
-      // 使用新的 getImagesByCategory 方法，传递语言参数
-      const result = await CategoriesService.getImagesByCategoryId(categoryId, {
+      // 使用新的 getImagesByCategory 方法，传递语言参数（使用实际的categoryId）
+      const result = await CategoriesService.getImagesByCategoryId(actualCategoryId, {
         currentPage: page,
         pageSize: 20,
         query: search
@@ -61,6 +64,9 @@ const CategoriesDetailPage: React.FC = () => {
         // 第一页，替换现有数据
         setCategoryImages(result.images);
         setFilteredImages(result.images);
+        
+        // 更新图片映射表
+        updateImageMappings(result.images);
 
         // 生成子分类列表（从图片标签中提取）
         const allTags = result.images.flatMap((img: HomeImage) => img.tags || []);
@@ -68,8 +74,12 @@ const CategoriesDetailPage: React.FC = () => {
         setSubcategories(uniqueTags);
       } else {
         // 后续页面，追加数据
-        setCategoryImages(prev => [...prev, ...result.images]);
-        setFilteredImages(prev => [...prev, ...result.images]);
+        const newImages = [...categoryImages, ...result.images];
+        setCategoryImages(newImages);
+        setFilteredImages(newImages);
+        
+        // 更新图片映射表（包含新加载的图片）
+        updateImageMappings(result.images);
       }
 
       setHasMore(result.hasMore);
@@ -86,16 +96,48 @@ const CategoriesDetailPage: React.FC = () => {
       try {
         // 先加载分类信息
         setIsCategoryLoading(true);
-        const categories = await CategoriesService.getCategories(language);
-        const foundCategory = categories.find((cat: Category) => cat.categoryId === categoryId);
+        
+        // 确定实际的分类ID
+        let actualCategoryId: string;
+        if (isCategoryName(categoryId)) {
+          // 如果是SEO友好名称，转换为实际ID
+          actualCategoryId = getCategoryIdByName(categoryId);
+        } else {
+          // 如果是ID，直接使用
+          actualCategoryId = categoryId;
+        }
+        
+        // 获取所有分类数据并更新映射表
+        const allCategories = await CategoriesService.getCategories(language);
+        updateCategoryMappings(allCategories);
+        
+        // 通过实际ID查找分类
+        const foundCategory = await CategoriesService.getCategoryById(actualCategoryId, language);
 
         if (foundCategory) {
           setCategory(foundCategory);
+          setActualCategoryId(foundCategory.categoryId); // 保存实际的categoryId
           setIsCategoryLoading(false); // 分类信息加载完成，立即显示
 
-          // 异步加载分类图片，不阻塞分类信息显示
+          // 异步加载分类图片，不阻塞分类信息显示（使用实际的categoryId）
           setIsImagesLoading(true);
-          await loadCategoryImages(1);
+          const result = await CategoriesService.getImagesByCategoryId(foundCategory.categoryId, {
+            currentPage: 1,
+            pageSize: 20
+          });
+          
+          setCategoryImages(result.images);
+          setFilteredImages(result.images);
+          
+          // 更新图片映射表
+          updateImageMappings(result.images);
+          
+          const allTags = result.images.flatMap((img: HomeImage) => img.tags || []);
+          const uniqueTags = Array.from(new Set(allTags)) as string[];
+          setSubcategories(uniqueTags);
+          setHasMore(result.hasMore);
+          setCurrentPage(1);
+          
           setIsImagesLoading(false);
         } else {
           setIsCategoryLoading(false);
@@ -257,8 +299,16 @@ const CategoriesDetailPage: React.FC = () => {
                       images={filteredImages}
                       isLoading={false}
                       onImageClick={(image) => {
-                        // 导航到图片详情页，传递分类信息用于面包屑
-                        navigate(`/image/${image.id}?from=category&categoryId=${categoryId}&categoryName=${encodeURIComponent(getLocalizedText(category.displayName, language))}`);
+                        // 导航到图片详情页，使用SEO友好的图片路径
+                        const imagePath = getImageNameById(image.id);
+                        navigate(`/image/${imagePath}`, {
+                          state: {
+                            from: 'category',
+                            categoryId: category.categoryId, // 使用实际的categoryId
+                            categoryName: getLocalizedText(category.displayName, language),
+                            categoryPath: getCategoryNameById(category.categoryId) // 使用SEO友好的路径
+                          }
+                        });
                       }}
                     />
 

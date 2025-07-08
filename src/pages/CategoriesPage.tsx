@@ -8,12 +8,15 @@ import CategoryGrid from '../components/layout/CategoryGrid';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
+import SEOHead from '../components/common/SEOHead';
+import { getCategoryNameById, updateCategoryMappings } from '../utils/categoryUtils';
 const noResultIcon = '/images/no-result.svg';
 
 
 
 const CategoriesPage: React.FC = () => {
   const { t } = useAsyncTranslation('categories');
+  const { t: tCommon } = useAsyncTranslation('common');
   const navigate = useNavigate();
   const { language } = useLanguage();
   
@@ -30,6 +33,10 @@ const CategoriesPage: React.FC = () => {
       try {
         setIsLoadingCategories(true);
         const categoriesData = await CategoriesService.getCategories(language);
+        
+        // 更新分类映射表
+        updateCategoryMappings(categoriesData);
+        
         setCategories(categoriesData);
         setFilteredCategories(categoriesData);
       } catch (error) {
@@ -49,9 +56,12 @@ const CategoriesPage: React.FC = () => {
     }
   }, [categories, isSearchActive]);
 
-  // 处理分类点击 - 导航到详情页面
+  // 处理分类点击 - 导航到详情页面（使用英文名称）
   const handleCategoryClick = (category: Category) => {
-    navigate(`/categories/${category.categoryId}`);
+    // 使用映射表获取SEO友好的名称
+    const categoryPath = getCategoryNameById(category.categoryId);
+    console.log('分类ID:', category.categoryId, '→ SEO路径:', categoryPath);
+    navigate(`/categories/${categoryPath}`);
   };
 
 
@@ -83,6 +93,13 @@ const CategoriesPage: React.FC = () => {
   // 主分类列表页面
   return (
     <Layout>
+      <SEOHead
+        title={tCommon('seo.categories.title', 'Free Coloring Page Categories - Disney, Animals, Characters & More')}
+        description={tCommon('seo.categories.description', 'Browse our collection of free printable coloring pages by category. Disney characters, animals, superheroes, and more. Download PDF and PNG formats instantly.')}
+        keywords={tCommon('seo.categories.keywords', 'coloring page categories, Disney coloring pages, animal coloring pages, character coloring pages, free printable coloring pages')}
+        ogTitle={tCommon('seo.categories.title', 'Free Coloring Page Categories - Disney, Animals, Characters & More')}
+        ogDescription={tCommon('seo.categories.description', 'Browse our collection of free printable coloring pages by category. Disney characters, animals, superheroes, and more. Download PDF and PNG formats instantly.')}
+      />
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}
         <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">

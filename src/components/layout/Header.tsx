@@ -40,7 +40,6 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const [isMobileLanguageAnimating, setIsMobileLanguageAnimating] = useState(false);
   const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] = useState(false);
   const [isCategoriesDropdownVisible, setIsCategoriesDropdownVisible] = useState(false);
-  const [isCategoriesDropdownAnimating, setIsCategoriesDropdownAnimating] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
@@ -160,7 +159,6 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   // 控制分类下拉框的显示（无动画）
   useEffect(() => {
     setIsCategoriesDropdownVisible(isCategoriesDropdownOpen);
-    setIsCategoriesDropdownAnimating(isCategoriesDropdownOpen);
   }, [isCategoriesDropdownOpen]);
 
   const handleLanguageSelect = (lang: Language) => {

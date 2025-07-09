@@ -24,7 +24,10 @@
     "passwordResetFailed": "密码重置失败",
     "emailVerificationRequired": "请先验证邮箱",
     "loginRequired": "请先登录",
-    "sessionExpired": "会话已过期，请重新登录"
+    "sessionExpired": "会话已过期，请重新登录",
+    "googleLoginFailed": "Google登录失败，请重试",
+    "googleTokenInvalid": "Google登录令牌无效",
+    "googleLoginUnavailable": "Google登录暂不可用，请使用邮箱密码登录"
   },
   "validation": {
     "invalidFormat": "输入格式不正确",

@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
+  googleLogin: (token: string, rememberMe?: boolean) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
@@ -114,6 +115,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const googleLogin = async (token: string, rememberMe: boolean = true) => {
+    const loginResponse = await UserService.googleLogin(token, rememberMe);
+    setUser(loginResponse.user);
+    
+    // 登录成功后启动token自动刷新服务
+    if (loginResponse.user) {
+      tokenRefreshService.start();
+    }
+  };
+
   const register = async (username: string, email: string, password: string) => {
     await UserService.register({ username, email, password });
     // 注册成功后不自动登录，让用户手动登录
@@ -172,6 +183,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     isAuthenticated: !!user,
     login,
+    googleLogin,
     register,
     logout,
     updateUser,

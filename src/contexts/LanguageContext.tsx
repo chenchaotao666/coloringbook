@@ -107,6 +107,8 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'forms.auth.createAccount': '创建账户',
     'forms.auth.rememberMe': '记住我',
     'forms.auth.forgotPassword': '忘记密码？',
+    'forms.auth.googleLogin': '使用 Google 登录',
+    'forms.auth.orDivider': '或',
     
     // RegisterPage翻译键
     'forms.auth.registerTitle': '创建新账户',
@@ -186,6 +188,9 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'errors.auth.passwordIncorrect': '密码错误',
     'errors.auth.accountDisabled': '账户已被禁用',
     'errors.auth.invalidCredentials': '邮箱或密码错误',
+    'errors.auth.googleLoginFailed': 'Google登录失败，请重试',
+    'errors.auth.googleTokenInvalid': 'Google登录令牌无效',
+    'errors.auth.googleLoginUnavailable': 'Google登录暂不可用，请使用邮箱密码登录',
     'errors.validation.invalidFormat': '格式不正确',
     'errors.network.connectionFailed': '网络连接失败，请检查网络后重试',
     'errors.network.serverError': '服务器错误，请稍后重试',
@@ -297,6 +302,8 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'forms.auth.createAccount': 'Create Account',
     'forms.auth.rememberMe': 'Remember me',
     'forms.auth.forgotPassword': 'Forgot password?',
+    'forms.auth.googleLogin': 'Login with Google',
+    'forms.auth.orDivider': 'OR',
     
     // RegisterPage翻译键
     'forms.auth.registerTitle': 'Create New Account',
@@ -376,6 +383,9 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'errors.auth.passwordIncorrect': 'Incorrect password',
     'errors.auth.accountDisabled': 'Account has been disabled',
     'errors.auth.invalidCredentials': 'Invalid email or password',
+    'errors.auth.googleLoginFailed': 'Google login failed, please try again',
+    'errors.auth.googleTokenInvalid': 'Google login token is invalid',
+    'errors.auth.googleLoginUnavailable': 'Google login is unavailable, please use email and password',
     'errors.validation.invalidFormat': 'Invalid format',
     'errors.network.connectionFailed': 'Network connection failed, please check your connection and try again',
     'errors.network.serverError': 'Server error, please try again later',
@@ -482,6 +492,8 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'forms.auth.createAccount': 'アカウント作成',
     'forms.auth.rememberMe': 'ログイン状態を保持',
     'forms.auth.forgotPassword': 'パスワードを忘れた方',
+    'forms.auth.googleLogin': 'Googleでログイン',
+    'forms.auth.orDivider': 'または',
     
     'auth.loginTitle': 'ログイン',
     'auth.registerTitle': '登録',

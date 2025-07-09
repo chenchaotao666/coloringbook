@@ -24,7 +24,10 @@
     "passwordResetFailed": "Password reset failed",
     "emailVerificationRequired": "Please verify your email first",
     "loginRequired": "Please login first",
-    "sessionExpired": "Session has expired, please login again"
+    "sessionExpired": "Session has expired, please login again",
+    "googleLoginFailed": "Google login failed, please try again",
+    "googleTokenInvalid": "Google login token is invalid",
+    "googleLoginUnavailable": "Google login is unavailable, please use email and password"
   },
   "validation": {
     "invalidFormat": "Invalid input format",

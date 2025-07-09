@@ -16,12 +16,26 @@ npm run dev
 
 ### 环境配置
 
-创建 `.env.local` 文件配置后端 API 地址：
+创建 `.env.local` 文件配置后端 API 地址和 Google 登录：
 
 ```env
 # 后端 API 地址
 VITE_API_BASE_URL=https://your-backend-api.com
+
+# Google Sign-In 配置
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here.apps.googleusercontent.com
 ```
+
+#### Google 登录配置步骤
+
+1. 访问 [Google Cloud Console](https://console.cloud.google.com/)
+2. 创建新项目或选择现有项目
+3. 启用 Google Sign-In API
+4. 在 "APIs & Services" > "Credentials" 中创建 OAuth 2.0 客户端 ID
+5. 在 "Authorized JavaScript origins" 中添加你的域名：
+   - 本地开发：`http://localhost:5173`
+   - 生产环境：`https://your-domain.com`
+6. 复制客户端 ID 到 `VITE_GOOGLE_CLIENT_ID` 环境变量
 
 ## 📦 部署
 
@@ -29,6 +43,7 @@ VITE_API_BASE_URL=https://your-backend-api.com
 
 1. 在 Vercel 项目设置中添加环境变量：
    - `VITE_API_BASE_URL`: 你的后端 API 地址
+   - `VITE_GOOGLE_CLIENT_ID`: 你的 Google OAuth 2.0 客户端 ID
 
 2. 推送代码，Vercel 会自动构建和部署
 

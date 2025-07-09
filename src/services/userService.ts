@@ -128,6 +128,36 @@ export class UserService {
   }
 
   /**
+   * Google 登录
+   */
+  static async googleLogin(token: string, rememberMe: boolean = true): Promise<LoginResponse> {
+    try {
+      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/auth/google-login', { token });
+
+      console.log('Google loginData: ', loginData);
+      
+      // 保存令牌，根据rememberMe决定存储方式
+      ApiUtils.setTokens({
+        accessToken: loginData.accessToken,
+        refreshToken: loginData.refreshToken,
+        expiresIn: loginData.expiresIn,
+      }, rememberMe);
+      
+      return {
+        user: loginData.user,
+        accessToken: loginData.accessToken,
+        refreshToken: loginData.refreshToken,
+        expiresIn: loginData.expiresIn
+      };
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('1009', 'Google登录失败');
+    }
+  }
+
+  /**
    * 用户登出
    */
   static async logout(): Promise<void> {

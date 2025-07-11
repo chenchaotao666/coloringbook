@@ -41,7 +41,7 @@ export interface UpdateUserRequest {
   password?: string;
 }
 
-// 充值请求
+// 充值请求（已废弃，请使用 pricingService.CreateOrderRequest）
 export interface RechargeRequest {
   type: 'monthly' | 'yearly' | 'credits';
   level: 'lite' | 'pro';

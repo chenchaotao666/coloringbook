@@ -388,65 +388,64 @@ const CategoriesDetailPage: React.FC = () => {
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '21:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('21:9')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '21px', height: '9px', minWidth: '21px', minHeight: '9px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '21px', height: '9px', minWidth: '21px', minHeight: '9px', borderWidth: '2px'}}></div>
                       21:9
                     </button>
                     <button
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('16:9')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '9px', minWidth: '16px', minHeight: '9px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '9px', minWidth: '16px', minHeight: '9px', borderWidth: '2px'}}></div>
                       16:9
                     </button>
                     <button
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('4:3')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '12px', minWidth: '16px', minHeight: '12px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '12px', minWidth: '16px', minHeight: '12px', borderWidth: '2px'}}></div>
                       4:3
                     </button>
                     <button
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('1:1')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', borderWidth: '2px'}}></div>
                       1:1
                     </button>
                   </div>
                   
-                  {/* Second Row - 3 items centered */}
+                  {/* Second Row - 3 items aligned with first 3 of first row */}
                   <div className="bg-[#F2F3F5] h-10 rounded-lg flex items-center relative">
                     <div
                       className={`h-8 rounded-lg absolute transition-all duration-200 bg-white ${
-                        selectedRatio === '3:4' ? 'w-[calc(25%-4px)] left-[calc(12.5%+2px)]' :
-                        selectedRatio === '9:16' ? 'w-[calc(25%-4px)] left-[calc(37.5%+2px)]' :
-                        selectedRatio === '16:21' ? 'w-[calc(25%-4px)] left-[calc(62.5%+2px)]' :
+                        selectedRatio === '3:4' ? 'w-[calc(25%-4px)] left-[2px]' :
+                        selectedRatio === '9:16' ? 'w-[calc(25%-4px)] left-[calc(25%+2px)]' :
+                        selectedRatio === '16:21' ? 'w-[calc(25%-4px)] left-[calc(50%+2px)]' :
                         'w-0 opacity-0'
                       }`}
                     ></div>
-                    <div className="w-1/8"></div>
                     <button
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('3:4')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '21.3333px', minWidth: '14px', minHeight: '10px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '21.3333px', minWidth: '14px', minHeight: '10px', borderWidth: '2px'}}></div>
                       3:4
                     </button>
                     <button
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '9:16' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('9:16')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '9px', height: '16px', minWidth: '9px', minHeight: '16px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '9px', height: '16px', minWidth: '9px', minHeight: '16px', borderWidth: '2px'}}></div>
                       9:16
                     </button>
                     <button
                       className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:21' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                       onClick={() => handleRatioChange('16:21')}
                     >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '12px', height: '15.75px', minWidth: '12px', minHeight: '15.75px', borderWidth: '2px'}}></div>
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '12px', height: '15.75px', minWidth: '12px', minHeight: '15.75px', borderWidth: '2px'}}></div>
                       16:21
                     </button>
-                    <div className="w-1/8"></div>
+                    <div className="flex-1"></div>
                   </div>
                 </div>
                 

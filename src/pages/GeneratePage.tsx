@@ -667,81 +667,128 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* Ratio Selector */}
           <div className="lg:mx-5 mt-6 lg:mt-10">
             <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.ratio', 'Ratio')}</div>
-            <div className="space-y-2">
-              {/* First Row - 4 items */}
-              <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
-                <div
-                  className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 bg-white ${
-                    selectedRatio === '21:9' ? 'w-[calc(25%-4px)] left-[2px]' :
-                    selectedRatio === '16:9' ? 'w-[calc(25%-4px)] left-[calc(25%+2px)]' :
-                    selectedRatio === '4:3' ? 'w-[calc(25%-4px)] left-[calc(50%+2px)]' :
-                    selectedRatio === '1:1' ? 'w-[calc(25%-4px)] left-[calc(75%+2px)]' :
-                    'w-0 opacity-0'
-                  }`}
-                ></div>
+            {/* 统一的灰色块包含所有比例选项 */}
+            <div className="bg-[#F2F3F5] rounded-lg p-1 relative">
+              {/* 滑动指示器 */}
+              <div
+                className={`absolute rounded-md transition-all duration-200 bg-white shadow-sm ${
+                  selectedRatio === '21:9' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[2px] top-[2px]' :
+                  selectedRatio === '16:9' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(25%+2px)] top-[2px]' :
+                  selectedRatio === '4:3' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(50%+2px)] top-[2px]' :
+                  selectedRatio === '1:1' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(75%+2px)] top-[2px]' :
+                  selectedRatio === '3:4' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[2px] top-[calc(50%+1px)]' :
+                  selectedRatio === '9:16' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(25%+2px)] top-[calc(50%+1px)]' :
+                  selectedRatio === '16:21' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(50%+2px)] top-[calc(50%+1px)]' :
+                  'w-0 opacity-0'
+                }`}
+              ></div>
+
+              {/* 第一行：4个项目 */}
+              <div className="grid grid-cols-4 gap-0 relative z-10">
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '21:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '21:9' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('21:9')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '21px', height: '9px', minWidth: '21px', minHeight: '9px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '21:9' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '28px', height: '12px'}}
+                  ></div>
                   21:9
                 </button>
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '16:9' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('16:9')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '9px', minWidth: '16px', minHeight: '9px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '16:9' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '24px', height: '14px'}}
+                  ></div>
                   16:9
                 </button>
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '4:3' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('4:3')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '12px', minWidth: '16px', minHeight: '12px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '4:3' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '20px', height: '15px'}}
+                  ></div>
                   4:3
                 </button>
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '1:1' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('1:1')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '1:1' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '16px', height: '16px'}}
+                  ></div>
                   1:1
                 </button>
               </div>
-              
-              {/* Second Row - 3 items centered */}
-              <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
-                <div
-                  className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 bg-white ${
-                    selectedRatio === '3:4' ? 'w-[calc(25%-4px)] left-[calc(12.5%+2px)]' :
-                    selectedRatio === '9:16' ? 'w-[calc(25%-4px)] left-[calc(37.5%+2px)]' :
-                    selectedRatio === '16:21' ? 'w-[calc(25%-4px)] left-[calc(62.5%+2px)]' :
-                    'w-0 opacity-0'
-                  }`}
-                ></div>
-                <div className="w-1/8"></div>
+
+              {/* 第二行：3个项目，和第一排前3个对齐 */}
+              <div className="grid grid-cols-4 gap-0 relative z-10">
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '3:4' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('3:4')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '21.3333px', minWidth: '14px', minHeight: '10px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '3:4' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '15px', height: '20px'}}
+                  ></div>
                   3:4
                 </button>
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '9:16' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '9:16' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('9:16')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '9px', height: '16px', minWidth: '9px', minHeight: '16px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '9:16' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '14px', height: '24px'}}
+                  ></div>
                   9:16
                 </button>
                 <button
-                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:21' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  className={`h-12 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedRatio === '16:21' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
                   onClick={() => setSelectedRatio('16:21')}
                 >
-                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '12px', height: '15.75px', minWidth: '12px', minHeight: '15.75px', borderWidth: '2px'}}></div>
+                  <div 
+                    className={`border-2 mb-1 ${
+                      selectedRatio === '16:21' ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                    }`}
+                    style={{width: '12px', height: '18px'}}
+                  ></div>
                   16:21
                 </button>
-                <div className="w-1/8"></div>
+                {/* 空占位符，保持和第一行对齐 */}
+                <div className="h-12"></div>
               </div>
             </div>
           </div>

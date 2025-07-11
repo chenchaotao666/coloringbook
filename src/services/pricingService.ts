@@ -1,10 +1,11 @@
 import { ApiUtils, ApiError } from '../utils/apiUtils';
 
-// PayPal订单创建请求接口
+// 支付订单创建请求接口
 export interface CreateOrderRequest {
-  method: 'paypal';
   planCode: 'FREE' | 'LITE' | 'PRO';
-  chargeType: 'Monthly' | 'Yearly';
+  method: 'paypal' | 'card' | 'applepay';
+  chargeType: 'Monthly' | 'Yearly' | 'Credit';
+  rechargeAmount?: number; // 充值金额，默认 0。Monthly/Yearly 可省略或传 0，Credit 类型下必填且 ≥ 10
 }
 
 // PayPal订单创建响应接口

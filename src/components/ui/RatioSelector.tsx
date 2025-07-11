@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-const ratioIcon = '/images/ratio.svg';
+import React from 'react';
 
 type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
 
@@ -10,78 +9,119 @@ interface RatioSelectorProps {
 }
 
 const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, className = '' }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const ratios = [
-    { value: '21:9' as const, label: '21:9' },
-    { value: '16:9' as const, label: '16:9' },
-    { value: '4:3' as const, label: '4:3' },
-    { value: '1:1' as const, label: '1:1' },
-    { value: '3:4' as const, label: '3:4' },
-    { value: '9:16' as const, label: '9:16' },
-    { value: '16:21' as const, label: '16:21' }
+    { value: '21:9' as const, label: '21:9', width: 28, height: 12 },
+    { value: '16:9' as const, label: '16:9', width: 24, height: 14 },
+    { value: '4:3' as const, label: '4:3', width: 20, height: 15 },
+    { value: '1:1' as const, label: '1:1', width: 16, height: 16 },
+    { value: '3:4' as const, label: '3:4', width: 15, height: 20 },
+    { value: '9:16' as const, label: '9:16', width: 14, height: 24 },
+    { value: '16:21' as const, label: '16:21', width: 12, height: 18 }
   ];
 
-  const selectedRatio = ratios.find(ratio => ratio.value === value);
+  const selectedIndex = ratios.findIndex(ratio => ratio.value === value);
 
-  const handleSelect = (ratio: AspectRatio) => {
-    onChange(ratio);
-    setIsOpen(false);
+  // 计算滑动指示器位置
+  const getIndicatorPosition = () => {
+    const itemsPerRow = 4;
+    
+    if (selectedIndex < itemsPerRow) {
+      // 第一行
+      return `calc(${(selectedIndex / itemsPerRow) * 100}% + 2px)`;
+    } else {
+      // 第二行，按3个项目计算位置
+      const secondRowIndex = selectedIndex - itemsPerRow;
+      return `calc(${(secondRowIndex / 3) * 100}% + 2px)`;
+    }
+  };
+
+  const getIndicatorWidth = () => {
+    if (selectedIndex < 4) {
+      return 'calc(25% - 4px)'; // 第一行项目宽度
+    } else {
+      return 'calc(33.333% - 4px)'; // 第二行项目宽度
+    }
+  };
+
+  const getIndicatorTop = () => {
+    return selectedIndex < 4 ? '2px' : 'calc(50% + 1px)';
   };
 
   return (
     <div className={`relative ${className}`}>
-      {/* 选择器按钮 */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#EDEEF0] rounded-lg hover:border-[#FF5C07] hover:bg-[#FFF8F5] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF5C07] focus:ring-opacity-20 min-w-[80px]"
-      >
-        <img src={ratioIcon} alt="Ratio" className="w-4 h-4 flex-shrink-0" />
-        <span className="text-[#161616] text-sm font-medium flex-1 text-left">{selectedRatio?.label}</span>
-        <svg
-          className={`w-4 h-4 text-[#6B7280] transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      {/* 下拉选项 */}
-      {isOpen && (
-        <>
-          {/* 背景遮罩 */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-          
-          {/* 选项列表 */}
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EDEEF0] rounded-lg shadow-lg z-20 overflow-hidden max-h-60 overflow-y-auto">
-            {ratios.map((ratio) => (
-              <button
-                key={ratio.value}
-                type="button"
-                onClick={() => handleSelect(ratio.value)}
-                className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-[#F9FAFB] transition-colors duration-150 ${
-                  value === ratio.value ? 'bg-[#FFE4D6] text-[#FF5C07]' : 'text-[#161616]'
+      {/* 容器背景 - 一个统一的灰色块 */}
+      <div className="bg-[#F5F5F5] rounded-lg p-1 relative">
+        {/* 滑动指示器 */}
+        <div
+          className="absolute bg-white rounded-md shadow-sm transition-all duration-200 ease-in-out z-10"
+          style={{
+            left: getIndicatorPosition(),
+            top: getIndicatorTop(),
+            width: getIndicatorWidth(),
+            height: 'calc(50% - 3px)'
+          }}
+        />
+        
+        {/* 第一行：4个项目 */}
+        <div className="grid grid-cols-4 gap-0 relative z-20">
+          {ratios.slice(0, 4).map((ratio) => (
+            <button
+              key={ratio.value}
+              type="button"
+              onClick={() => onChange(ratio.value)}
+              className={`
+                relative h-16 flex flex-col items-center justify-center rounded-md transition-all duration-200
+                ${value === ratio.value ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'}
+              `}
+            >
+              {/* 比例形状 */}
+              <div 
+                className={`border-2 mb-1 ${
+                  value === ratio.value ? 'border-[#FF5C07]' : 'border-[#272F3E]'
                 }`}
-              >
-                <span className="text-sm font-medium">{ratio.label}</span>
-                {value === ratio.value && (
-                  <svg className="w-4 h-4 ml-auto text-[#FF5C07]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
+                style={{
+                  width: `${ratio.width}px`,
+                  height: `${ratio.height}px`
+                }}
+              />
+              {/* 比例文字 */}
+              <span className="text-xs font-medium leading-none">
+                {ratio.label}
+              </span>
+            </button>
+          ))}
+        </div>
+        
+        {/* 第二行：3个项目 */}
+        <div className="grid grid-cols-3 gap-0 relative z-20">
+          {ratios.slice(4).map((ratio) => (
+            <button
+              key={ratio.value}
+              type="button"
+              onClick={() => onChange(ratio.value)}
+              className={`
+                relative h-16 flex flex-col items-center justify-center rounded-md transition-all duration-200
+                ${value === ratio.value ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'}
+              `}
+            >
+              {/* 比例形状 */}
+              <div 
+                className={`border-2 mb-1 ${
+                  value === ratio.value ? 'border-[#FF5C07]' : 'border-[#272F3E]'
+                }`}
+                style={{
+                  width: `${ratio.width}px`,
+                  height: `${ratio.height}px`
+                }}
+              />
+              {/* 比例文字 */}
+              <span className="text-xs font-medium leading-none">
+                {ratio.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

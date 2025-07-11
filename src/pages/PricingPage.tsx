@@ -92,9 +92,10 @@ const PayPalModal = ({
               const chargeType = planCode.includes('MONTHLY') ? 'Monthly' as const : 'Yearly' as const;
               
               const response = await PricingService.createOrder({
-                method: 'paypal',
                 planCode: planCodeValue,
+                method: 'paypal',
                 chargeType
+                // rechargeAmount 对于 Monthly/Yearly 可省略，系统自动设定金额
               });
               return response.orderId;
             } catch (error) {
@@ -347,10 +348,10 @@ const PricingPage: React.FC = () => {
     const initPayPal = async () => {
       try {
         if (!loadPaypal.current) {
-                  loadPaypal.current = loadScriptPaypal({
-          clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || 'YOUR_PAYPAL_CLIENT_ID',
-          components: "buttons",
-        });
+          loadPaypal.current = loadScriptPaypal({
+            clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || 'YOUR_PAYPAL_CLIENT_ID',
+            components: "buttons",
+          });
         }
         
         await loadPaypal.current;
@@ -410,10 +411,6 @@ const PricingPage: React.FC = () => {
   const getFeatures = (planKey: string) => {
     const features = t(`plans.${planKey}.features`, '');
     if (typeof features === 'string' || !Array.isArray(features)) {
-      // 如果翻译不存在或格式不正确，使用基础翻译系统的后备翻译
-      
-             // 使用基础翻译系统中的后备翻译
-      
       if (planKey === 'free') {
         return [
           baseT('pricing.features.free.credits', language === 'zh' ? '每月40积分' : '40 credits per month'),

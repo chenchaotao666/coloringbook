@@ -8,6 +8,7 @@ import CircularProgress from '../components/ui/CircularProgress';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
+
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import {
@@ -158,8 +159,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       }
       
               // 回填 ratio
-        if (selectedImageData.ratio && ['3:4', '4:3', '1:1'].includes(selectedImageData.ratio)) {
-          setSelectedRatio(selectedImageData.ratio as '3:4' | '4:3' | '1:1');
+        const validRatios = ['21:9', '16:9', '4:3', '1:1', '3:4', '9:16', '16:21'];
+        if (selectedImageData.ratio && validRatios.includes(selectedImageData.ratio)) {
+          setSelectedRatio(selectedImageData.ratio as any);
         }
       
               // 回填 isPublic
@@ -665,32 +667,82 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* Ratio Selector */}
           <div className="lg:mx-5 mt-6 lg:mt-10">
             <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.ratio', 'Ratio')}</div>
-            <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
-              <div
-                className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 ${
-                  selectedRatio === '3:4' ? 'w-[calc(33.33%-4px)] bg-white left-1' :
-                  selectedRatio === '4:3' ? 'w-[calc(33.33%-4px)] bg-white left-[calc(33.33%+2px)]' :
-                  'w-[calc(33.33%-4px)] bg-white right-1'
-                }`}
-              ></div>
-              <button
-                className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-sm ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                onClick={() => setSelectedRatio('3:4')}
-              >
-                3:4
-              </button>
-              <button
-                className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-sm ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                onClick={() => setSelectedRatio('4:3')}
-              >
-                4:3
-              </button>
-              <button
-                className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-sm ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                onClick={() => setSelectedRatio('1:1')}
-              >
-                1:1
-              </button>
+            <div className="space-y-2">
+              {/* First Row - 4 items */}
+              <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
+                <div
+                  className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 bg-white ${
+                    selectedRatio === '21:9' ? 'w-[calc(25%-4px)] left-[2px]' :
+                    selectedRatio === '16:9' ? 'w-[calc(25%-4px)] left-[calc(25%+2px)]' :
+                    selectedRatio === '4:3' ? 'w-[calc(25%-4px)] left-[calc(50%+2px)]' :
+                    selectedRatio === '1:1' ? 'w-[calc(25%-4px)] left-[calc(75%+2px)]' :
+                    'w-0 opacity-0'
+                  }`}
+                ></div>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '21:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('21:9')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '21px', height: '9px', minWidth: '21px', minHeight: '9px', borderWidth: '2px'}}></div>
+                  21:9
+                </button>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('16:9')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '9px', minWidth: '16px', minHeight: '9px', borderWidth: '2px'}}></div>
+                  16:9
+                </button>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('4:3')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '12px', minWidth: '16px', minHeight: '12px', borderWidth: '2px'}}></div>
+                  4:3
+                </button>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('1:1')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', borderWidth: '2px'}}></div>
+                  1:1
+                </button>
+              </div>
+              
+              {/* Second Row - 3 items centered */}
+              <div className="bg-[#F2F3F5] h-10 sm:h-12 rounded-lg flex items-center relative">
+                <div
+                  className={`h-8 sm:h-10 rounded-lg absolute transition-all duration-200 bg-white ${
+                    selectedRatio === '3:4' ? 'w-[calc(25%-4px)] left-[calc(12.5%+2px)]' :
+                    selectedRatio === '9:16' ? 'w-[calc(25%-4px)] left-[calc(37.5%+2px)]' :
+                    selectedRatio === '16:21' ? 'w-[calc(25%-4px)] left-[calc(62.5%+2px)]' :
+                    'w-0 opacity-0'
+                  }`}
+                ></div>
+                <div className="w-1/8"></div>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('3:4')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '21.3333px', minWidth: '14px', minHeight: '10px', borderWidth: '2px'}}></div>
+                  3:4
+                </button>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '9:16' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('9:16')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '9px', height: '16px', minWidth: '9px', minHeight: '16px', borderWidth: '2px'}}></div>
+                  9:16
+                </button>
+                <button
+                  className={`flex-1 h-8 sm:h-10 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:21' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                  onClick={() => setSelectedRatio('16:21')}
+                >
+                  <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '12px', height: '15.75px', minWidth: '12px', minHeight: '15.75px', borderWidth: '2px'}}></div>
+                  16:21
+                </button>
+                <div className="w-1/8"></div>
+              </div>
             </div>
           </div>
         </>
@@ -768,7 +820,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
 
     return (
-      <div className="w-[140px] border-l border-[#E3E4E5] py-5 px-2 overflow-y-auto overflow-x-hidden h-full flex flex-col items-center max-w-[140px]">
+      <div className="w-[140px] border-l border-[#E3E4E5] pt-5 pb-16 px-2 overflow-y-auto overflow-x-hidden h-full flex flex-col items-center max-w-[140px]">
         {/* 生成中的 loading 圆圈 - 使用智能计算的尺寸 */}
         {isGenerating && (
           <div
@@ -799,10 +851,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             .map((image, index) => {
               // 使用图片的 id 进行选中状态判断，但如果有错误则不选中任何图片
               const isSelected = !error && selectedImage === image.id;
+              const isLastImage = index === currentImages.length - 1;
               return (
                 <div
                   key={image.id}
-                  className={`mb-4 rounded-lg cursor-pointer relative transition-all border-2 ${isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-transparent hover:border-gray-200'
+                  className={`${isLastImage ? 'mb-12' : 'mb-4'} rounded-lg cursor-pointer relative transition-all border-2 ${isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-transparent hover:border-gray-200'
                     }`}
                   style={getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions)}
                   onClick={() => handleImageSelect(image.id)}

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 const ratioIcon = '/images/ratio.svg';
 
+type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
+
 interface RatioSelectorProps {
-  value: '3:4' | '4:3' | '1:1';
-  onChange: (ratio: '3:4' | '4:3' | '1:1') => void;
+  value: AspectRatio;
+  onChange: (ratio: AspectRatio) => void;
   className?: string;
 }
 
@@ -11,14 +13,18 @@ const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, classNam
   const [isOpen, setIsOpen] = useState(false);
 
   const ratios = [
-    { value: '3:4' as const, label: '3:4' },
+    { value: '21:9' as const, label: '21:9' },
+    { value: '16:9' as const, label: '16:9' },
     { value: '4:3' as const, label: '4:3' },
-    { value: '1:1' as const, label: '1:1' }
+    { value: '1:1' as const, label: '1:1' },
+    { value: '3:4' as const, label: '3:4' },
+    { value: '9:16' as const, label: '9:16' },
+    { value: '16:21' as const, label: '16:21' }
   ];
 
   const selectedRatio = ratios.find(ratio => ratio.value === value);
 
-  const handleSelect = (ratio: '3:4' | '4:3' | '1:1') => {
+  const handleSelect = (ratio: AspectRatio) => {
     onChange(ratio);
     setIsOpen(false);
   };
@@ -55,7 +61,7 @@ const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, classNam
           />
           
           {/* 选项列表 */}
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EDEEF0] rounded-lg shadow-lg z-20 overflow-hidden">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EDEEF0] rounded-lg shadow-lg z-20 overflow-hidden max-h-60 overflow-y-auto">
             {ratios.map((ratio) => (
               <button
                 key={ratio.value}
@@ -80,4 +86,5 @@ const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, classNam
   );
 };
 
+export { type AspectRatio };
 export default RatioSelector; 

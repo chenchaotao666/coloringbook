@@ -2,6 +2,8 @@ import { ApiUtils, ApiError } from '../utils/apiUtils';
 import { UrlUtils } from '../utils/urlUtils';
 import { LocalizedText } from '../utils/textUtils';
 
+export type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
+
 export interface HomeImage {
   id: string;
   name: string;
@@ -12,7 +14,7 @@ export interface HomeImage {
   description: LocalizedText | string;
   tags?: string[];
   type: 'text2image' | 'image2image' | 'image2coloring';
-  ratio: '3:4' | '4:3' | '1:1' | '16:9' | '';
+  ratio: AspectRatio | '';
   isPublic: boolean;
   hotness: number; // 热度值
   createdAt: string;
@@ -39,13 +41,27 @@ export interface SearchParams {
   query?: string;
   categoryId?: string;
   tags?: string;
-  ratio?: '1:1' | '3:4' | '4:3' | '16:9';
+  ratio?: AspectRatio;
   type?: 'text2image' | 'image2image' | 'image2coloring';
   userId?: string;
   isPublic?: boolean;
   currentPage?: number;
   pageSize?: number;
   isRelated?: boolean;
+}
+
+// 用户图片查询参数接口
+export interface UserImageParams {
+  query?: string;
+  categoryId?: string;
+  tags?: string;
+  ratio?: AspectRatio;
+  type?: 'text2image' | 'image2image' | 'image2coloring';
+  isPublic?: boolean;
+  currentPage?: number;
+  pageSize?: number;
+  sortBy?: 'createdAt' | 'hotness' | 'name';
+  sortOrder?: 'asc' | 'desc';
 }
 
 // 举报请求接口
@@ -272,6 +288,83 @@ export class ImageService {
       userId,
       ...params
     });
+  }
+
+  /**
+   * 📦 获取用户自己创建的图片（专用接口）
+   * 接口地址：GET /api/images/userImg
+   * 用户获取自己创建的图片时，调用这个接口
+   * @param params 查询参数
+   * @returns Promise<SearchResult>
+   */
+  static async getUserOwnImages(params: UserImageParams = {}): Promise<SearchResult> {
+    const {
+      query,
+      categoryId,
+      tags,
+      ratio,
+      type,
+      isPublic,
+      currentPage = 1,
+      pageSize = 20,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = params;
+
+    try {
+      // 构建查询参数
+      const searchParams = new URLSearchParams();
+      
+      if (query) searchParams.append('query', query);
+      if (categoryId) searchParams.append('categoryId', categoryId);
+      if (tags) searchParams.append('tags', tags);
+      if (ratio) searchParams.append('ratio', ratio);
+      if (type) searchParams.append('type', type);
+      if (isPublic !== undefined) searchParams.append('isPublic', isPublic.toString());
+      if (sortBy) searchParams.append('sortBy', sortBy);
+      if (sortOrder) searchParams.append('sortOrder', sortOrder);
+      
+      searchParams.append('currentPage', currentPage.toString());
+      searchParams.append('pageSize', pageSize.toString());
+
+      // 调用专用的用户图片接口，需要认证
+      const response = await ApiUtils.get<{images: HomeImage[], total: number}>(
+        `/api/images/userImg?${searchParams.toString()}`, 
+        {}, 
+        true // 需要认证
+      );
+      
+      // 处理服务器返回的格式
+      const rawImages = response.images || [];
+      const totalCount = response.total || 0;
+      
+      // 处理图片URL，确保都是绝对路径
+      const images = rawImages.map(image => this.processImageUrls(image));
+      
+      // 计算分页信息
+      const totalPages = Math.ceil(totalCount / pageSize);
+      const hasMore = currentPage < totalPages;
+      
+      return {
+        images,
+        totalCount,
+        hasMore,
+        currentPage,
+        pageSize
+      };
+    } catch (error) {
+      console.error('Failed to fetch user own images:', error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      return {
+        images: [],
+        totalCount: 0,
+        hasMore: false,
+        currentPage: 1,
+        pageSize: 20
+      };
+    }
   }
 
   /**

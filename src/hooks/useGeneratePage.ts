@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import GenerateServiceInstance, { StyleSuggestion } from '../services/generateService';
+import GenerateServiceInstance, { StyleSuggestion, AspectRatio } from '../services/generateService';
 import { HomeImage } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
@@ -9,7 +9,7 @@ export interface UseGeneratePageState {
   // 基础状态
   prompt: string;
   selectedTab: 'text' | 'image';
-  selectedRatio: '3:4' | '4:3' | '1:1';
+  selectedRatio: AspectRatio;
   textPublicVisibility: boolean;   // Text to Image 的 Public Visibility
   imagePublicVisibility: boolean;  // Image to Image 的 Public Visibility
   selectedImage: string | null;
@@ -50,7 +50,7 @@ export interface UseGeneratePageActions {
   // 基础操作
   setPrompt: (prompt: string) => void;
   setSelectedTab: (tab: 'text' | 'image') => void;
-  setSelectedRatio: (ratio: '3:4' | '4:3' | '1:1') => void;
+  setSelectedRatio: (ratio: AspectRatio) => void;
   setTextPublicVisibility: (visible: boolean) => void;
   setImagePublicVisibility: (visible: boolean) => void;
   setSelectedImage: (imageUrl: string | null) => void;
@@ -108,9 +108,10 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
   
   // 从URL参数获取初始值
   const getInitialPrompt = () => searchParams.get('prompt') || '';
-  const getInitialRatio = (): '3:4' | '4:3' | '1:1' => {
+  const getInitialRatio = (): AspectRatio => {
     const ratio = searchParams.get('ratio');
-    return (ratio === '3:4' || ratio === '4:3' || ratio === '1:1') ? ratio : '3:4';
+    const validRatios: AspectRatio[] = ['21:9', '16:9', '4:3', '1:1', '3:4', '9:16', '16:21'];
+    return validRatios.includes(ratio as AspectRatio) ? (ratio as AspectRatio) : '1:1';
   };
   const getInitialIsPublic = (): boolean => {
     const isPublic = searchParams.get('isPublic');
@@ -366,7 +367,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     });
   }, []);
 
-  const setSelectedRatio = useCallback((selectedRatio: '3:4' | '4:3' | '1:1') => {
+  const setSelectedRatio = useCallback((selectedRatio: AspectRatio) => {
     updateState({ selectedRatio });
   }, [updateState]);
 
@@ -861,9 +862,11 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         }
         
         // 回填 prompt、ratio、isPublic 到界面，不调用生成方法
+        const validRatios: AspectRatio[] = ['21:9', '16:9', '4:3', '1:1', '3:4', '9:16', '16:21'];
+        const ratio = validRatios.includes(exampleImage.ratio as AspectRatio) ? (exampleImage.ratio as AspectRatio) : '1:1';
         updateState({ 
           prompt: promptToUse,
-          selectedRatio: exampleImage.ratio as '3:4' | '4:3' | '1:1' || '3:4',
+          selectedRatio: ratio,
           textPublicVisibility: exampleImage.isPublic || false,
           error: null
         });
@@ -896,9 +899,11 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           const img = new Image();
           img.onload = () => {
             // 设置文件、尺寸和其他属性
+            const validRatios: AspectRatio[] = ['21:9', '16:9', '4:3', '1:1', '3:4', '9:16', '16:21'];
+            const ratio = validRatios.includes(exampleImage.ratio as AspectRatio) ? (exampleImage.ratio as AspectRatio) : '1:1';
             updateState({
               uploadedFile: file,
-              selectedRatio: exampleImage.ratio as '3:4' | '4:3' | '1:1' || '3:4',
+              selectedRatio: ratio,
               imagePublicVisibility: exampleImage.isPublic || false,
               selectedImage: null, // 清空选中的图片，因为现在是上传模式
               error: null
@@ -912,9 +917,11 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         } catch (fetchError) {
           console.error('Failed to fetch example image:', fetchError);
           // 如果获取图片失败，回退到原来的逻辑
+          const validRatios: AspectRatio[] = ['21:9', '16:9', '4:3', '1:1', '3:4', '9:16', '16:21'];
+          const ratio = validRatios.includes(exampleImage.ratio as AspectRatio) ? (exampleImage.ratio as AspectRatio) : '1:1';
           updateState({
             selectedImage: exampleImage.defaultUrl,
-            selectedRatio: exampleImage.ratio as '3:4' | '4:3' | '1:1' || '3:4',
+            selectedRatio: ratio,
             imagePublicVisibility: exampleImage.isPublic || false,
             error: 'Failed to load example image. Please try uploading your own image.',
           });

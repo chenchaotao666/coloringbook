@@ -3,14 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
-import RatioSelector from '../components/ui/RatioSelector';
+
 import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category } from '../services/categoriesService';
-import { HomeImage } from '../services/imageService';
+import { HomeImage, AspectRatio } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
-import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings } from '../utils/categoryUtils';
+import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 // const imageIcon = '/images/image.svg';
 
@@ -30,7 +30,7 @@ const CategoriesDetailPage: React.FC = () => {
   const [isImagesLoading, setIsImagesLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [generatePrompt, setGeneratePrompt] = useState('');
-  const [selectedRatio, setSelectedRatio] = useState<'3:4' | '4:3' | '1:1'>('3:4');
+  const [selectedRatio, setSelectedRatio] = useState<AspectRatio>('1:1');
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
@@ -94,25 +94,45 @@ const CategoriesDetailPage: React.FC = () => {
       if (!categoryId) return;
 
       try {
-        // 先加载分类信息
         setIsCategoryLoading(true);
         
-        // 确定实际的分类ID
-        let actualCategoryId: string;
-        if (isCategoryName(categoryId)) {
-          // 如果是SEO友好名称，转换为实际ID
-          actualCategoryId = getCategoryIdByName(categoryId);
-        } else {
-          // 如果是ID，直接使用
-          actualCategoryId = categoryId;
-        }
-        
-        // 获取所有分类数据并更新映射表
+        // 🔧 优化：先获取所有分类数据并更新映射表，确保F5刷新时能正确工作
         const allCategories = await CategoriesService.getCategories(language);
         updateCategoryMappings(allCategories);
         
-        // 通过实际ID查找分类
-        const foundCategory = await CategoriesService.getCategoryById(actualCategoryId, language);
+        // 确定实际的分类ID
+        let actualCategoryId: string;
+        let foundCategory: any = null;
+        
+        if (isCategoryName(categoryId)) {
+          // 如果是SEO友好名称，转换为实际ID
+          actualCategoryId = getCategoryIdByName(categoryId);
+          foundCategory = await CategoriesService.getCategoryById(actualCategoryId, language);
+        } else if (isCategoryId(categoryId)) {
+          // 如果是实际的分类ID，直接使用
+          actualCategoryId = categoryId;
+          foundCategory = await CategoriesService.getCategoryById(actualCategoryId, language);
+        } else {
+          // 🔧 新增：如果映射表中没有找到，尝试在全量数据中按名称模糊匹配
+          const categoryName = categoryId.toLowerCase();
+          foundCategory = allCategories.find(cat => {
+            const displayName = typeof cat.displayName === 'string' 
+              ? cat.displayName 
+              : (cat.displayName.en || cat.displayName.zh || '');
+            
+            // 检查英文名称、中文名称或转换后的SEO名称是否匹配
+            const zhName = typeof cat.displayName === 'object' && cat.displayName.zh ? cat.displayName.zh : '';
+            return displayName.toLowerCase().includes(categoryName) ||
+                   convertDisplayNameToPath(displayName) === categoryName ||
+                   (zhName && zhName.toLowerCase().includes(categoryName));
+          });
+          
+          if (foundCategory) {
+            actualCategoryId = foundCategory.categoryId;
+            // 更新映射表以包含找到的分类
+            updateCategoryMappings([foundCategory, ...allCategories]);
+          }
+        }
 
         if (foundCategory) {
           setCategory(foundCategory);
@@ -140,7 +160,9 @@ const CategoriesDetailPage: React.FC = () => {
           
           setIsImagesLoading(false);
         } else {
+          // 没有找到分类，标记加载完成以显示错误页面
           setIsCategoryLoading(false);
+          setIsImagesLoading(false);
         }
       } catch (error) {
         console.error('Failed to load category data:', error);
@@ -175,7 +197,7 @@ const CategoriesDetailPage: React.FC = () => {
     }
   };
 
-  const handleRatioChange = (ratio: '3:4' | '4:3' | '1:1') => {
+  const handleRatioChange = (ratio: AspectRatio) => {
     setSelectedRatio(ratio);
   };
 
@@ -350,12 +372,82 @@ const CategoriesDetailPage: React.FC = () => {
               />
               
               <div className="flex justify-between items-center mt-4">
-                <div className="flex gap-2">
-                  {/* Ratio 选择器组件 */}
-                  <RatioSelector
-                    value={selectedRatio}
-                    onChange={handleRatioChange}
-                  />
+                <div className="space-y-2">
+                  {/* First Row - 4 items */}
+                  <div className="bg-[#F2F3F5] h-10 rounded-lg flex items-center relative">
+                    <div
+                      className={`h-8 rounded-lg absolute transition-all duration-200 bg-white ${
+                        selectedRatio === '21:9' ? 'w-[calc(25%-4px)] left-[2px]' :
+                        selectedRatio === '16:9' ? 'w-[calc(25%-4px)] left-[calc(25%+2px)]' :
+                        selectedRatio === '4:3' ? 'w-[calc(25%-4px)] left-[calc(50%+2px)]' :
+                        selectedRatio === '1:1' ? 'w-[calc(25%-4px)] left-[calc(75%+2px)]' :
+                        'w-0 opacity-0'
+                      }`}
+                    ></div>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '21:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('21:9')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '21px', height: '9px', minWidth: '21px', minHeight: '9px', borderWidth: '2px'}}></div>
+                      21:9
+                    </button>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('16:9')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '9px', minWidth: '16px', minHeight: '9px', borderWidth: '2px'}}></div>
+                      16:9
+                    </button>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('4:3')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '12px', minWidth: '16px', minHeight: '12px', borderWidth: '2px'}}></div>
+                      4:3
+                    </button>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('1:1')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', borderWidth: '2px'}}></div>
+                      1:1
+                    </button>
+                  </div>
+                  
+                  {/* Second Row - 3 items centered */}
+                  <div className="bg-[#F2F3F5] h-10 rounded-lg flex items-center relative">
+                    <div
+                      className={`h-8 rounded-lg absolute transition-all duration-200 bg-white ${
+                        selectedRatio === '3:4' ? 'w-[calc(25%-4px)] left-[calc(12.5%+2px)]' :
+                        selectedRatio === '9:16' ? 'w-[calc(25%-4px)] left-[calc(37.5%+2px)]' :
+                        selectedRatio === '16:21' ? 'w-[calc(25%-4px)] left-[calc(62.5%+2px)]' :
+                        'w-0 opacity-0'
+                      }`}
+                    ></div>
+                    <div className="w-1/8"></div>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('3:4')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '16px', height: '21.3333px', minWidth: '14px', minHeight: '10px', borderWidth: '2px'}}></div>
+                      3:4
+                    </button>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '9:16' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('9:16')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '9px', height: '16px', minWidth: '9px', minHeight: '16px', borderWidth: '2px'}}></div>
+                      9:16
+                    </button>
+                    <button
+                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:21' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
+                      onClick={() => handleRatioChange('16:21')}
+                    >
+                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border rounded-md border-[#272F3E]" style={{width: '12px', height: '15.75px', minWidth: '12px', minHeight: '15.75px', borderWidth: '2px'}}></div>
+                      16:21
+                    </button>
+                    <div className="w-1/8"></div>
+                  </div>
                 </div>
                 
                 <Button 

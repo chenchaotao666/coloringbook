@@ -3,9 +3,11 @@ import { HomeImage } from './imageService';
 
 // ==================== 类型定义 ====================
 // 接口类型定义
+export type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
+
 export interface GenerateTextToImageRequest {
   prompt: string;
-  ratio: '3:4' | '4:3' | '1:1' | '16:9';
+  ratio: AspectRatio;
   isPublic: boolean;
   style?: string;
   userId?: string;
@@ -13,7 +15,7 @@ export interface GenerateTextToImageRequest {
 
 export interface GenerateImageToImageRequest {
   imageFile: File;
-  ratio?: '3:4' | '4:3' | '1:1' | '16:9';
+  ratio?: AspectRatio;
   isPublic: boolean;
   userId?: string;
 }
@@ -179,11 +181,13 @@ class GenerateService {
 
   /**
    * 获取用户生成的图片
+   * @param _userId 用户ID（保留用于向后兼容性，实际不使用，getUserOwnImages从token中获取当前用户）
    */
-  async getUserGeneratedImages(userId: string): Promise<HomeImage[]> {
+  async getUserGeneratedImages(_userId: string): Promise<HomeImage[]> {
     try {
       const { ImageService } = await import('./imageService');
-      const result = await ImageService.getUserImages(userId, { pageSize: 100 });
+      // 注意：userId参数现在不被使用，getUserOwnImages会从认证token中自动获取当前用户ID
+      const result = await ImageService.getUserOwnImages({ pageSize: 100 });
       
       return result.images;
     } catch (error) {

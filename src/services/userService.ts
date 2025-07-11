@@ -132,7 +132,7 @@ export class UserService {
    */
   static async googleLogin(token: string, rememberMe: boolean = true): Promise<LoginResponse> {
     try {
-      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/auth/google-login', { token });
+      const loginData = await ApiUtils.post<{user: User, accessToken: string, refreshToken: string, expiresIn: string}>('/api/auth/google', { token });
 
       console.log('Google loginData: ', loginData);
       
@@ -142,7 +142,7 @@ export class UserService {
         refreshToken: loginData.refreshToken,
         expiresIn: loginData.expiresIn,
       }, rememberMe);
-      
+   
       return {
         user: loginData.user,
         accessToken: loginData.accessToken,
@@ -169,6 +169,23 @@ export class UserService {
       ApiUtils.clearTokens();
     } catch (error) {
       console.error('Logout error:', error);
+      // 即使服务器端登出失败，也要清除本地令牌
+      ApiUtils.clearTokens();
+    }
+  }
+
+  /**
+   * Google账号退出登录
+   */
+  static async googleLogout(): Promise<void> {
+    try {
+      // 调用Google专用退出登录接口，清除服务端保存的刷新令牌
+      await ApiUtils.post('/api/auth/googlelogout', {}, true);
+
+      // 清除本地令牌
+      ApiUtils.clearTokens();
+    } catch (error) {
+      console.error('Google logout error:', error);
       // 即使服务器端登出失败，也要清除本地令牌
       ApiUtils.clearTokens();
     }

@@ -11,6 +11,7 @@ interface AuthContextType {
   googleLogin: (token: string, rememberMe?: boolean) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  googleLogout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
   refreshUser: () => Promise<void>;
 }
@@ -143,6 +144,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const googleLogout = async () => {
+    await UserService.googleLogout();
+    setUser(null);
+    
+    // 登出时停止token自动刷新服务
+    tokenRefreshService.stop();
+    
+    // 退出登录时总是跳转到首页
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
+  };
+
   const updateUser = (userData: Partial<User>) => {
     if (user) {
       setUser({ ...user, ...userData });
@@ -186,6 +200,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     googleLogin,
     register,
     logout,
+    googleLogout,
     updateUser,
     refreshUser
   };

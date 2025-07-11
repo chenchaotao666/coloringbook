@@ -60,16 +60,18 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
       }
 
       const searchParams: any = {
-        userId: user.userId,
         currentPage: page,
-        pageSize: pageSize
+        pageSize: pageSize,
+        sortBy: 'createdAt',
+        sortOrder: 'desc'
       };
 
       if (selectedType !== 'all') {
         searchParams.type = selectedType;
       }
 
-      const result = await ImageService.searchImages(searchParams);
+      // 使用新的专用用户图片接口
+      const result = await ImageService.getUserOwnImages(searchParams);
       
       if (append) {
         setImages(prev => [...prev, ...result.images]);

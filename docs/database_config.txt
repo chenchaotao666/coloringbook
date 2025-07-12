@@ -39,6 +39,7 @@ CREATE TABLE images (
     type VARCHAR(50),                           -- 图片类型：'text2image/image2image/image2coloring'
     ratio VARCHAR(10),                          -- 图片比例：'1:1', '4:3', '16:9'
     isPublic BOOLEAN DEFAULT FALSE,             -- 是否公开
+    isOnline BOOLEAN DEFAULT FALSE,             -- 是否上线（审核通过且可在前端展示）
     hotness INT DEFAULT 0,                      -- 热度值，范围 0-1000
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

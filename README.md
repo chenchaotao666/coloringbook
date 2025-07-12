@@ -97,6 +97,7 @@ src/
 - API 文档：查看后端项目文档
 - 故障排除：[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 - Google 登录配置：[GOOGLE_OAUTH_SETUP.md](./GOOGLE_OAUTH_SETUP.md)
+- SEO 配置说明：[SEO_NOINDEX_CONFIGURATION.md](./SEO_NOINDEX_CONFIGURATION.md)
 
 ## 📄 许可证
 

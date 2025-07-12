@@ -454,6 +454,7 @@ const PricingPage: React.FC = () => {
         keywords={tCommon('seo.pricing.keywords', 'coloring page pricing, AI generator subscription, premium coloring features, unlimited coloring pages')}
         ogTitle={tCommon('seo.pricing.title', 'Pricing Plans - Premium AI Coloring Page Generator Features')}
         ogDescription={tCommon('seo.pricing.description', 'Choose the perfect plan for unlimited AI coloring page generation. Free trial available with premium features for unlimited creativity.')}
+        noIndex={true}
       />
       {/* Hero Section with Header Gradient - 与HomePage保持一致 */}
       <div className="relative bg-white">

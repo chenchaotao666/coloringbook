@@ -99,6 +99,7 @@ const CategoriesPage: React.FC = () => {
         keywords={tCommon('seo.categories.keywords', 'coloring page categories, Disney coloring pages, animal coloring pages, character coloring pages, free printable coloring pages')}
         ogTitle={tCommon('seo.categories.title', 'Free Coloring Page Categories - Disney, Animals, Characters & More')}
         ogDescription={tCommon('seo.categories.description', 'Browse our collection of free printable coloring pages by category. Disney characters, animals, superheroes, and more. Download PDF and PNG formats instantly.')}
+        noIndex={true}
       />
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}

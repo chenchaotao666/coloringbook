@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLanguage, useAsyncTranslation } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
 import GoogleLoginButton from '../components/common/GoogleLoginButton';
+import SEOHead from '../components/common/SEOHead';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -132,7 +133,16 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+    <>
+      <SEOHead
+        title="Login - AI Coloring Page Generator"
+        description="Login to your account to access premium AI coloring page generation features."
+        keywords="login, AI coloring pages, account access"
+        ogTitle="Login - AI Coloring Page Generator"
+        ogDescription="Login to your account to access premium AI coloring page generation features."
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
       <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-8">
           <div className="text-center">
@@ -288,6 +298,7 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
+import SEOHead from '../components/common/SEOHead';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -124,7 +125,16 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <>
+      <SEOHead
+        title="Register - AI Coloring Page Generator"
+        description="Create your account to start generating unlimited AI coloring pages."
+        keywords="register, sign up, AI coloring pages, account creation"
+        ogTitle="Register - AI Coloring Page Generator"
+        ogDescription="Create your account to start generating unlimited AI coloring pages."
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-purple-100">
@@ -283,6 +293,7 @@ const RegisterPage: React.FC = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

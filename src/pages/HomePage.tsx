@@ -34,6 +34,7 @@ const HomePage = () => {
         keywords={tCommon('seo.home.keywords', 'AI coloring pages, free coloring pages, printable coloring pages, coloring book generator, kids coloring pages, custom coloring pages, AI art generator')}
         ogTitle={tCommon('seo.home.title', 'AI Coloring Pages - Free Printable Coloring Pages Generator | Create Custom Coloring Books')}
         ogDescription={tCommon('seo.home.description', 'Create unlimited free AI-generated coloring pages instantly! Convert text or images to printable coloring pages. Perfect for kids, parents, and teachers. Print PDF & PNG formats.')}
+        noIndex={true}
       />
       <Layout>
         <div className="w-full min-w-0">

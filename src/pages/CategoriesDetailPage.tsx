@@ -12,6 +12,7 @@ import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
+import SEOHead from '../components/common/SEOHead';
 // const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
@@ -214,9 +215,9 @@ const CategoriesDetailPage: React.FC = () => {
 
   // 如果分类加载失败且没有找到分类
   if (!isCategoryLoading && !category) {
-    return (
-      <Layout>
-        <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
+      return (
+    <Layout>
+      <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
           <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
             <Breadcrumb
@@ -249,6 +250,14 @@ const CategoriesDetailPage: React.FC = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={category ? `${getLocalizedText(category.displayName, language)} - Free Coloring Pages` : 'Category - Free Coloring Pages'}
+        description={category ? `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.` : 'Browse free printable coloring pages by category.'}
+        keywords={category ? `${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages, free printable coloring pages, ${getLocalizedText(category.displayName, language).toLowerCase()} coloring sheets` : 'coloring pages, printable coloring pages'}
+        ogTitle={category ? `${getLocalizedText(category.displayName, language)} - Free Coloring Pages` : 'Category - Free Coloring Pages'}
+        ogDescription={category ? `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.` : 'Browse free printable coloring pages by category.'}
+        noIndex={true}
+      />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
         <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">

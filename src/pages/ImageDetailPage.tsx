@@ -11,6 +11,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { getImageIdByName, isImageName, updateImageMappings, getImageNameById } from '../utils/imageUtils';
+import SEOHead from '../components/common/SEOHead';
 const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
@@ -198,6 +199,14 @@ const ImageDetailPage: React.FC = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title={image ? `${getLocalizedText(image.title, language)} - Free Coloring Page` : 'Coloring Page'}
+        description={image ? `Download free printable ${getLocalizedText(image.title, language).toLowerCase()} coloring page. High-quality PDF and PNG formats available instantly.` : 'Download free printable coloring pages.'}
+        keywords={image ? `${getLocalizedText(image.title, language).toLowerCase()} coloring page, free printable coloring page, ${getLocalizedText(image.title, language).toLowerCase()} coloring sheet` : 'coloring page, printable coloring page'}
+        ogTitle={image ? `${getLocalizedText(image.title, language)} - Free Coloring Page` : 'Coloring Page'}
+        ogDescription={image ? `Download free printable ${getLocalizedText(image.title, language).toLowerCase()} coloring page. High-quality PDF and PNG formats available instantly.` : 'Download free printable coloring pages.'}
+        noIndex={true}
+      />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
         <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
+import RatioSelector from '../components/ui/RatioSelector';
 
 import Breadcrumb from '../components/common/Breadcrumb';
-import { CategoriesService, Category } from '../services/categoriesService';
+import { CategoriesService, Category, TagCount } from '../services/categoriesService';
 import { HomeImage, AspectRatio } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
@@ -13,98 +14,114 @@ import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 import SEOHead from '../components/common/SEOHead';
-// const imageIcon = '/images/image.svg';
 
 const CategoriesDetailPage: React.FC = () => {
+  console.log('🎯 CategoriesDetailPage component mounted/re-rendered');
   const { t } = useAsyncTranslation('categories');
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
   const { language } = useLanguage();
+
+  // 添加组件实例ID来跟踪
+  const componentIdRef = useRef(Math.random().toString(36).substr(2, 9));
+  console.log('🆔 Component ID:', componentIdRef.current);
 
   const [category, setCategory] = useState<Category | null>(null);
   const [actualCategoryId, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
   const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
   const [filteredImages, setFilteredImages] = useState<HomeImage[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
+  const [tagCounts, setTagCounts] = useState<Map<string, number>>(new Map());
+  const [tagMapping, setTagMapping] = useState<Map<string, string>>(new Map()); // 显示名称 -> 原始tagId的映射
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [isCategoryLoading, setIsCategoryLoading] = useState(true);
   const [isImagesLoading, setIsImagesLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [generatePrompt, setGeneratePrompt] = useState('');
   const [selectedRatio, setSelectedRatio] = useState<AspectRatio>('1:1');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const loadingRef = useRef<string>(''); // 用于跟踪当前正在加载的key
 
-  // 处理标签过滤
+    // 处理标签过滤
   const handleTagClick = (tag: string) => {
+    console.log('🎯 handleTagClick called with tag:', tag);
+    console.log('🎯 Current selectedTag:', selectedTag);
+    console.log('🎯 Total categoryImages:', categoryImages.length);
+    
     if (tag === 'All' || selectedTag === tag) {
       // 如果点击的是All标签或已选中的标签，则显示所有图片
+      console.log('🎯 Showing all images');
       setSelectedTag(null);
       setFilteredImages(categoryImages);
     } else {
       // 过滤包含该标签的图片
       setSelectedTag(tag);
-      const filtered = categoryImages.filter(img => img.tags && img.tags.includes(tag));
+      console.log('🎯 Filtering with tag:', tag);
+      
+      // 获取原始标签ID用于过滤
+      const originalTagId = tagMapping.get(tag) || tag;
+      console.log('🎯 Original tag ID:', originalTagId);
+      console.log('🎯 Tag mapping:', Object.fromEntries(tagMapping));
+      
+      const filtered = categoryImages.filter(img => {
+        if (!img.tags || !Array.isArray(img.tags)) {
+          console.log('🎯 Image has no tags:', img.id);
+          return false;
+        }
+        
+        // 尝试多种匹配方式
+        const hasOriginalId = img.tags.includes(originalTagId);
+        const hasDisplayName = img.tags.includes(tag);
+        
+        // 尝试不区分大小写的匹配
+        const hasLowerCaseMatch = img.tags.some(imgTag => 
+          imgTag.toLowerCase() === tag.toLowerCase() || 
+          imgTag.toLowerCase() === originalTagId.toLowerCase()
+        );
+        
+        const matches = hasOriginalId || hasDisplayName || hasLowerCaseMatch;
+        
+        if (matches) {
+          console.log('🎯 ✅ Image matches:', img.id, 'tags:', img.tags);
+        } else {
+          console.log('🎯 ❌ Image does not match:', img.id, 'tags:', img.tags);
+        }
+        
+        return matches;
+      });
+      
+      console.log('🎯 Filtered result:', filtered.length, 'images from', categoryImages.length, 'total');
       setFilteredImages(filtered);
     }
   };
 
-  // 加载分类图片数据
-  const loadCategoryImages = async (page: number = 1, search?: string) => {
-    if (!actualCategoryId) return;
-
-    try {
-      // 使用新的 getImagesByCategory 方法，传递语言参数（使用实际的categoryId）
-      const result = await CategoriesService.getImagesByCategoryId(actualCategoryId, {
-        currentPage: page,
-        pageSize: 20,
-        query: search
-      });
-
-      if (page === 1) {
-        // 第一页，替换现有数据
-        setCategoryImages(result.images);
-        setFilteredImages(result.images);
-        
-        // 更新图片映射表
-        updateImageMappings(result.images);
-
-        // 生成子分类列表（从图片标签中提取）
-        const allTags = result.images.flatMap((img: HomeImage) => img.tags || []);
-        const uniqueTags = Array.from(new Set(allTags)) as string[];
-        setSubcategories(uniqueTags);
-      } else {
-        // 后续页面，追加数据
-        const newImages = [...categoryImages, ...result.images];
-        setCategoryImages(newImages);
-        setFilteredImages(newImages);
-        
-        // 更新图片映射表（包含新加载的图片）
-        updateImageMappings(result.images);
-      }
-
-      setHasMore(result.hasMore);
-      setCurrentPage(page);
-    } catch (error) {
-      console.error('Failed to load category images:', error);
-    }
-  };
-
   useEffect(() => {
+    console.log('into loadCategoryData, categoryId:', categoryId, 'language:', language);
     const loadCategoryData = async () => {
       if (!categoryId) return;
 
+      // 防止重复加载：如果已经为当前categoryId和language组合正在加载，则跳过
+      const currentKey = `${categoryId}-${language}`;
+      if (loadingRef.current === currentKey) {
+        console.log('Already loading for', currentKey, 'skipping...');
+        return;
+      }
+
+      console.log('Loading data for', currentKey, 'previous loading:', loadingRef.current);
+
+      // 设置当前加载的key
+      loadingRef.current = currentKey;
+
       try {
         setIsCategoryLoading(true);
-        
+
         // 🔧 优化：先获取所有分类数据并更新映射表，确保F5刷新时能正确工作
         const allCategories = await CategoriesService.getCategories(language);
         updateCategoryMappings(allCategories);
-        
+
         // 确定实际的分类ID
         let actualCategoryId: string;
         let foundCategory: any = null;
-        
+
         if (isCategoryName(categoryId)) {
           // 如果是SEO友好名称，转换为实际ID
           actualCategoryId = getCategoryIdByName(categoryId);
@@ -117,17 +134,17 @@ const CategoriesDetailPage: React.FC = () => {
           // 🔧 新增：如果映射表中没有找到，尝试在全量数据中按名称模糊匹配
           const categoryName = categoryId.toLowerCase();
           foundCategory = allCategories.find(cat => {
-            const displayName = typeof cat.displayName === 'string' 
-              ? cat.displayName 
+            const displayName = typeof cat.displayName === 'string'
+              ? cat.displayName
               : (cat.displayName.en || cat.displayName.zh || '');
-            
+
             // 检查英文名称、中文名称或转换后的SEO名称是否匹配
             const zhName = typeof cat.displayName === 'object' && cat.displayName.zh ? cat.displayName.zh : '';
             return displayName.toLowerCase().includes(categoryName) ||
-                   convertDisplayNameToPath(displayName) === categoryName ||
-                   (zhName && zhName.toLowerCase().includes(categoryName));
+              convertDisplayNameToPath(displayName) === categoryName ||
+              (zhName && zhName.toLowerCase().includes(categoryName));
           });
-          
+
           if (foundCategory) {
             actualCategoryId = foundCategory.categoryId;
             // 更新映射表以包含找到的分类
@@ -146,19 +163,48 @@ const CategoriesDetailPage: React.FC = () => {
             currentPage: 1,
             pageSize: 20
           });
-          
+
           setCategoryImages(result.images);
           setFilteredImages(result.images);
-          
+
+          // 调试：查看实际的图片数据结构
+          console.log('🔍 Category images loaded:', result.images.length);
+          if (result.images.length > 0) {
+            console.log('🔍 First image tags:', result.images[0].tags);
+            console.log('🔍 First image data:', result.images[0]);
+          }
+
           // 更新图片映射表
           updateImageMappings(result.images);
-          
-          const allTags = result.images.flatMap((img: HomeImage) => img.tags || []);
-          const uniqueTags = Array.from(new Set(allTags)) as string[];
-          setSubcategories(uniqueTags);
-          setHasMore(result.hasMore);
-          setCurrentPage(1);
-          
+
+          // 生成子分类列表（从分类的tagCounts获取标签信息）
+          if (foundCategory && foundCategory.tagCounts && foundCategory.tagCounts.length > 0) {
+            // 使用分类的tagCounts获取标签信息
+            console.log('🔍 Category tagCounts:', foundCategory.tagCounts);
+            const tagNames = foundCategory.tagCounts.map((tagCount: TagCount) => {
+              const displayName = typeof tagCount.displayName === 'string' 
+                ? tagCount.displayName 
+                : getLocalizedText(tagCount.displayName, language);
+              console.log('🔍 Tag mapping:', tagCount.tagId, '->', displayName);
+              return displayName;
+            });
+            setSubcategories(tagNames);
+            console.log('🔍 Final subcategories:', tagNames);
+            
+            // 设置标签计数映射和标签ID映射
+            const countMap = new Map<string, number>();
+            const mappingMap = new Map<string, string>();
+            foundCategory.tagCounts.forEach((tagCount: TagCount) => {
+              const tagName = typeof tagCount.displayName === 'string' 
+                ? tagCount.displayName 
+                : getLocalizedText(tagCount.displayName, language);
+              countMap.set(tagName, tagCount.count);
+              mappingMap.set(tagName, tagCount.tagId); // 建立显示名称到tagId的映射
+            });
+            setTagCounts(countMap);
+            setTagMapping(mappingMap);
+          }
+
           setIsImagesLoading(false);
         } else {
           // 没有找到分类，标记加载完成以显示错误页面
@@ -175,14 +221,29 @@ const CategoriesDetailPage: React.FC = () => {
     loadCategoryData();
   }, [categoryId, language]);
 
-  // 加载更多图片
-  const handleLoadMore = async () => {
-    if (hasMore && !isLoadingMore) {
-      setIsLoadingMore(true);
-      await loadCategoryImages(currentPage + 1);
-      setIsLoadingMore(false);
+  // 监听标签选择变化，重新应用过滤
+  useEffect(() => {
+    if (categoryImages.length > 0) {
+      console.log('🎯 useEffect: Reapplying filter for selectedTag:', selectedTag);
+      if (selectedTag === null) {
+        setFilteredImages(categoryImages);
+      } else {
+        // 重新应用过滤逻辑
+        const originalTagId = tagMapping.get(selectedTag) || selectedTag;
+        const filtered = categoryImages.filter(img => {
+          if (!img.tags || !Array.isArray(img.tags)) return false;
+          
+          return img.tags.includes(originalTagId) || 
+                 img.tags.includes(selectedTag) ||
+                 img.tags.some(imgTag => 
+                   imgTag.toLowerCase() === selectedTag.toLowerCase() || 
+                   imgTag.toLowerCase() === originalTagId.toLowerCase()
+                 );
+        });
+        setFilteredImages(filtered);
+      }
     }
-  };
+  }, [categoryImages, selectedTag, tagMapping]);
 
   const handleBackToCategories = () => {
     navigate('/categories');
@@ -198,12 +259,6 @@ const CategoriesDetailPage: React.FC = () => {
     }
   };
 
-  const handleRatioChange = (ratio: AspectRatio) => {
-    setSelectedRatio(ratio);
-  };
-
-
-
   // 获取基础面包屑（即使分类还在加载也可以显示）
   const getBreadcrumbPathEarly = () => {
     return [
@@ -215,11 +270,11 @@ const CategoriesDetailPage: React.FC = () => {
 
   // 如果分类加载失败且没有找到分类
   if (!isCategoryLoading && !category) {
-      return (
-    <Layout>
-      <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
+    return (
+      <Layout>
+        <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
-          <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
             <Breadcrumb
               items={[
                 { label: t('breadcrumb.home', 'Home'), path: '/' },
@@ -260,33 +315,222 @@ const CategoriesDetailPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
-        <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
           <Breadcrumb items={getBreadcrumbPathEarly()} />
         </div>
 
         <div className="container mx-auto px-4 max-w-[1200px]">
           {isCategoryLoading || isImagesLoading ? (
             /* 加载中 - 不显示任何文本 */
-            <div className="flex justify-center items-center py-20">
+            <div className="flex justify-center items-center py-20 h-[500px]">
               {/* 加载时不显示任何内容 */}
             </div>
           ) : category ? (
             /* 分类内容 */
             <>
               {/* Category Title */}
-              <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
+              <h1 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1]">
                 {getLocalizedText(category.displayName, language)}
               </h1>
 
+              {/* Category Description */}
+              {category.description && (
+                <div className="mb-8 lg:mb-12">
+                  <div className="max-w-4xl mx-auto text-left">
+                    {(() => {
+                      const descriptionText = getLocalizedText(category.description, language);
+
+                      // 按 <h2> 标签分段
+                      const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.trim());
+
+                      if (sections.length <= 1) {
+                        // 如果没有 h2 标签，直接显示原文本
+                        const lines = descriptionText.split('\n').filter(line => line.trim());
+                        const shouldShowToggle = lines.length > 2;
+                        const displayLines = isDescriptionExpanded ? lines : lines.slice(0, 2);
+
+                        return (
+                          <div className="relative">
+                            <div className="text-[#6B7280] text-base lg:text-lg leading-relaxed">
+                              {displayLines.map((line, index) => {
+                                const isSecondLine = index === 1;
+                                const showToggleButton = shouldShowToggle && !isDescriptionExpanded && isSecondLine;
+
+                                return (
+                                  <p key={index} className="mb-3 last:mb-0">
+                                    {line.trim()}
+                                    {showToggleButton && (
+                                      <button
+                                        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                        className="ml-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
+                                      >
+                                        <span className="text-sm">查看更多</span>
+                                        <svg
+                                          className="w-3 h-3"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                      </button>
+                                    )}
+                                  </p>
+                                );
+                              })}
+                            </div>
+                            {shouldShowToggle && isDescriptionExpanded && (
+                              <div className="flex justify-center mt-4">
+                                <button
+                                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                  className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
+                                >
+                                  <span className="text-sm">收起</span>
+                                  <svg
+                                    className="w-4 h-4 transition-transform duration-200 rotate-180"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+
+                      // 处理有 h2 标签的情况
+                      const allElements: Array<{ type: 'title' | 'content'; text: string; sectionIndex: number }> = [];
+
+                      sections.forEach((section, sectionIndex) => {
+                        const titleMatch = section.match(/^([^<]*)<\/h2>/);
+                        const title = titleMatch ? titleMatch[1].trim() : '';
+                        const content = section.replace(/^[^<]*<\/h2>/, '').trim();
+
+                        if (title) {
+                          allElements.push({ type: 'title', text: title, sectionIndex });
+                        }
+
+                        if (content) {
+                          const contentLines = content.split('\n').filter(p => p.trim());
+                          contentLines.forEach(line => {
+                            allElements.push({ type: 'content', text: line.trim(), sectionIndex });
+                          });
+                        }
+                      });
+
+                      const shouldShowToggle = allElements.length > 2;
+                      const displayElements = isDescriptionExpanded ? allElements : allElements.slice(0, 2);
+
+                      return (
+                        <div className="relative">
+                          {displayElements.map((element, index) => {
+                            const isSecondLine = index === 1;
+                            const showToggleButton = shouldShowToggle && !isDescriptionExpanded && isSecondLine;
+
+                            return (
+                              <div key={`${element.sectionIndex}-${index}`} className="mb-3 lg:mb-4 last:mb-0">
+                                {element.type === 'title' ? (
+                                  <h2 className="text-[#161616] text-xl lg:text-2xl font-semibold mb-3 lg:mb-4">
+                                    {element.text}
+                                  </h2>
+                                ) : (
+                                  <div className="relative">
+                                    <p className="text-base lg:text-lg leading-relaxed">
+                                      {element.text}
+                                      {showToggleButton && (
+                                        <button
+                                          onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                          className="ml-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
+                                        >
+                                          <span className="text-sm">查看更多</span>
+                                          <svg
+                                            className="w-3 h-3"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                          </svg>
+                                        </button>
+                                      )}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                          {shouldShowToggle && isDescriptionExpanded && (
+                            <div className="flex justify-center mt-4">
+                              <button
+                                onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
+                              >
+                                <span className="text-sm">收起</span>
+                                <svg
+                                  className="w-4 h-4 transition-transform duration-200 rotate-180"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {/* Generate Section - 等待加载完成后显示 */}
+              <div className="max-w-[920px] mx-auto">
+                <h2 className="text-center text-[#161616] text-3xl lg:text-[2rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
+                  {t('detail.generateSection.title', 'Create your personalized AI {category} coloring page', {
+                    category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '自定义')
+                  })}
+                </h2>
+
+                <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-12">
+                  <textarea
+                    value={generatePrompt}
+                    onChange={(e) => setGeneratePrompt(e.target.value)}
+                    placeholder={t('detail.generatePrompt.placeholder', 'Enter the coloring book you want to search')}
+                    className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
+                  />
+
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="w-36">
+                      <RatioSelector
+                        value={selectedRatio}
+                        onChange={setSelectedRatio}
+                      />
+                    </div>
+
+                    <Button
+                      onClick={handleGenerateClick}
+                      variant="gradient"
+                      disabled={!generatePrompt.trim()}
+                      className="px-6 py-2 text-base font-bold"
+                    >
+                      {t('detail.generatePrompt.button', 'Create')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
               {/* Subcategories Tags */}
               {subcategories.length > 0 && (
-                <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-16">
+                <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-8">
                   {/* All标签 */}
                   <button
                     onClick={() => handleTagClick('All')}
-                    className={`px-3 py-2 rounded-2xl border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
-                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                        : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                    className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
+                      ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                      : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
                       }`}
                   >
                     <span className="text-sm font-normal leading-4">
@@ -298,13 +542,13 @@ const CategoriesDetailPage: React.FC = () => {
                     <button
                       key={index}
                       onClick={() => handleTagClick(tag)}
-                      className={`px-3 py-2 rounded-2xl border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
-                          ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                          : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                      className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
+                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                        : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
                         }`}
                     >
                       <span className="text-sm font-normal leading-4">
-                        {tag} ({categoryImages.filter(img => img.tags && img.tags.includes(tag)).length})
+                        {tag} ({tagCounts.get(tag) || 0})
                       </span>
                     </button>
                   ))}
@@ -330,32 +574,12 @@ const CategoriesDetailPage: React.FC = () => {
                       images={filteredImages}
                       isLoading={false}
                       onImageClick={(image) => {
-                        // 导航到图片详情页，使用SEO友好的图片路径
+                        // 导航到图片详情页，使用新的URL结构 /categories/:categoryId/:imageId
                         const imagePath = getImageNameById(image.id);
-                        navigate(`/image/${imagePath}`, {
-                          state: {
-                            from: 'category',
-                            categoryId: category.categoryId, // 使用实际的categoryId
-                            categoryName: getLocalizedText(category.displayName, language),
-                            categoryPath: getCategoryNameById(category.categoryId) // 使用SEO友好的路径
-                          }
-                        });
+                        const categoryPath = getCategoryNameById(category.categoryId);
+                        navigate(`/categories/${categoryPath}/${imagePath}`);
                       }}
                     />
-
-                    {/* Load More Button */}
-                    {hasMore && selectedTag === null && (
-                      <div className="flex justify-center mt-12">
-                        <Button
-                          onClick={handleLoadMore}
-                          variant="outline"
-                          disabled={isLoadingMore}
-                          className="px-8 py-3"
-                        >
-                          Load More Images
-                        </Button>
-                      </div>
-                    )}
                   </>
                 )}
               </div>
@@ -363,113 +587,7 @@ const CategoriesDetailPage: React.FC = () => {
             </>
           ) : null}
 
-          {/* Generate Section - 等待加载完成后显示 */}
-          {!isCategoryLoading && !isImagesLoading && (
-            <div className="max-w-[920px] mx-auto">
-            <h2 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
-              {t('detail.generateSection.title', 'Create your personalized AI {category} coloring page', {
-                category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '自定义')
-              })}
-            </h2>
-            
-            <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-8">
-              <textarea
-                value={generatePrompt}
-                onChange={(e) => setGeneratePrompt(e.target.value)}
-                placeholder={t('detail.generatePrompt.placeholder', 'Enter the coloring book you want to search')}
-                className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
-              />
-              
-              <div className="flex justify-between items-center mt-4">
-                <div className="space-y-2">
-                  {/* First Row - 4 items */}
-                  <div className="bg-[#F2F3F5] h-10 rounded-lg flex items-center relative">
-                    <div
-                      className={`h-8 rounded-lg absolute transition-all duration-200 bg-white ${
-                        selectedRatio === '21:9' ? 'w-[calc(25%-4px)] left-[2px]' :
-                        selectedRatio === '16:9' ? 'w-[calc(25%-4px)] left-[calc(25%+2px)]' :
-                        selectedRatio === '4:3' ? 'w-[calc(25%-4px)] left-[calc(50%+2px)]' :
-                        selectedRatio === '1:1' ? 'w-[calc(25%-4px)] left-[calc(75%+2px)]' :
-                        'w-0 opacity-0'
-                      }`}
-                    ></div>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '21:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('21:9')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '21px', height: '9px', minWidth: '21px', minHeight: '9px', borderWidth: '2px'}}></div>
-                      21:9
-                    </button>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:9' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('16:9')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '9px', minWidth: '16px', minHeight: '9px', borderWidth: '2px'}}></div>
-                      16:9
-                    </button>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '4:3' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('4:3')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '12px', minWidth: '16px', minHeight: '12px', borderWidth: '2px'}}></div>
-                      4:3
-                    </button>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '1:1' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('1:1')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', borderWidth: '2px'}}></div>
-                      1:1
-                    </button>
-                  </div>
-                  
-                  {/* Second Row - 3 items aligned with first 3 of first row */}
-                  <div className="bg-[#F2F3F5] h-10 rounded-lg flex items-center relative">
-                    <div
-                      className={`h-8 rounded-lg absolute transition-all duration-200 bg-white ${
-                        selectedRatio === '3:4' ? 'w-[calc(25%-4px)] left-[2px]' :
-                        selectedRatio === '9:16' ? 'w-[calc(25%-4px)] left-[calc(25%+2px)]' :
-                        selectedRatio === '16:21' ? 'w-[calc(25%-4px)] left-[calc(50%+2px)]' :
-                        'w-0 opacity-0'
-                      }`}
-                    ></div>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '3:4' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('3:4')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '16px', height: '21.3333px', minWidth: '14px', minHeight: '10px', borderWidth: '2px'}}></div>
-                      3:4
-                    </button>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '9:16' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('9:16')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '9px', height: '16px', minWidth: '9px', minHeight: '16px', borderWidth: '2px'}}></div>
-                      9:16
-                    </button>
-                    <button
-                      className={`flex-1 h-8 z-10 flex items-center justify-center text-xs leading-none ${selectedRatio === '16:21' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
-                      onClick={() => handleRatioChange('16:21')}
-                    >
-                      <div className="ml-2 sm:ml-10 mr-2 sm:mr-3 border border-[#272F3E]" style={{width: '12px', height: '15.75px', minWidth: '12px', minHeight: '15.75px', borderWidth: '2px'}}></div>
-                      16:21
-                    </button>
-                    <div className="flex-1"></div>
-                  </div>
-                </div>
-                
-                <Button 
-                  onClick={handleGenerateClick}
-                  variant="gradient"
-                  disabled={!generatePrompt.trim()}
-                  className="px-6 py-2 text-base font-bold"
-                >
-                  {t('detail.generatePrompt.button', 'Create')}
-                </Button>
-              </div>
-            </div>
-          </div>
-          )}
+
         </div>
       </div>
     </Layout>

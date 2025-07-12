@@ -31,7 +31,9 @@ export const LanguageSyncProvider: React.FC<LanguageSyncProviderProps> = ({ chil
   // 监听URL变化，同步语言设置
   useEffect(() => {
     const urlLanguage = getCurrentLanguageFromPath(location.pathname);
+    console.log('🔍 LanguageSyncProvider: URL language:', urlLanguage, 'current language:', language, 'pathname:', location.pathname);
     if (urlLanguage !== language && __internal_setState) {
+      console.log('🔄 LanguageSyncProvider: Updating language from', language, 'to', urlLanguage);
       // 直接更新语言状态，不触发路径跳转
       __internal_setState(urlLanguage);
     }

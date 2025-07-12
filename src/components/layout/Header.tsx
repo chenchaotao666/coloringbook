@@ -4,13 +4,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage, Language } from '../../contexts/LanguageContext';
 import { generateLanguagePath } from '../common/LanguageRouter';
 
-// 导入图标
-import logo from '../../../public/images/logo.svg';
-import intlIcon from '../../../public/images/intl.svg';
-import expandIcon from '../../../public/images/expand.svg';
-import creditsIcon from '../../../public/images/credits.svg';
-import defaultAvatar from '../../../public/images/default-avatar.svg';
-import colorPaletteIcon from '../../../public/images/color-palette.png';
+// 导入图标 - 使用正确的 public 路径
+const logo = '/images/logo.svg';
+const intlIcon = '/images/intl.svg';
+const expandIcon = '/images/expand.svg';
+const creditsIcon = '/images/credits.svg';
+const defaultAvatar = '/images/default-avatar.svg';
+const colorPaletteIcon = '/images/color-palette.png';
 
 interface HeaderProps {
   backgroundColor?: 'transparent' | 'white';
@@ -323,21 +323,21 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
         </div>
 
         {/* 桌面端右侧菜单 */}
-        <div className="hidden lg:flex relative z-10 w-[300px] pr-5 justify-end items-center gap-[30px]">
+        <div className="hidden lg:flex relative z-10 min-w-[300px] pr-5 justify-end items-center gap-[20px]">
           {/* 语言选择下拉菜单 */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative flex-shrink-0" ref={dropdownRef}>
             <div 
-              className="px-3 py-1.5 rounded-lg flex justify-start items-center gap-1.5 hover:opacity-60 transition-opacity duration-200 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg flex justify-start items-center gap-1.5 hover:opacity-60 transition-opacity duration-200 cursor-pointer min-w-fit"
               onClick={() => setIsDesktopLanguageDropdownOpen(!isDesktopLanguageDropdownOpen)}
             >
-              <img src={intlIcon} alt="Language" className="w-5 h-5" />
-              <span className="text-[#161616] text-base font-medium leading-6 whitespace-nowrap">
+              <img src={intlIcon} alt="Language" className="w-5 h-5 flex-shrink-0" />
+              <span className="text-[#161616] text-base font-medium leading-6 whitespace-nowrap flex-shrink-0">
                 {language === 'zh' ? t('navigation.language.chinese') : 
                  language === 'ja' ? t('navigation.language.japanese') : 
                  t('navigation.language.english')}
               </span>
               <svg 
-                className={`w-5 h-5 transition-all duration-200 ${isDesktopLanguageDropdownOpen ? 'rotate-180' : ''}`} 
+                className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${isDesktopLanguageDropdownOpen ? 'rotate-180' : ''}`} 
                 fill="currentColor" 
                 viewBox="0 0 20 20"
               >
@@ -382,11 +382,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               <div className="w-8 h-8 rounded-full animate-pulse"></div>
             </div>
           ) : isAuthenticated && user ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {/* 积分显示 */}
               <Link 
                 to={createLocalizedLink("/price")}
-                className="flex items-center justify-center gap-1.5 px-5 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
+                className="flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer flex-shrink-0" 
                 style={{backgroundColor: '#F9FAFB'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
@@ -394,7 +394,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               </Link>
 
               {/* 用户头像和下拉菜单 */}
-              <div className="relative" ref={userDropdownRef}>
+              <div className="relative flex-shrink-0" ref={userDropdownRef}>
                 <div 
                   className="flex items-center gap-2 hover:opacity-60 transition-opacity duration-200 cursor-pointer"
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}

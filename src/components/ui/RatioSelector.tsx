@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+
+const ratioIcon = '/images/ratio.svg';
 
 type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
 
@@ -9,6 +11,9 @@ interface RatioSelectorProps {
 }
 
 const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, className = '' }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const ratios = [
     { value: '21:9' as const, label: '21:9', width: 28, height: 12 },
     { value: '16:9' as const, label: '16:9', width: 24, height: 14 },
@@ -19,64 +24,76 @@ const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, classNam
     { value: '16:21' as const, label: '16:21', width: 12, height: 18 }
   ];
 
-  const selectedIndex = ratios.findIndex(ratio => ratio.value === value);
+  const selectedRatio = ratios.find(ratio => ratio.value === value);
 
-  // 计算滑动指示器位置
-  const getIndicatorPosition = () => {
-    const itemsPerRow = 4;
-    
-    if (selectedIndex < itemsPerRow) {
-      // 第一行
-      return `calc(${(selectedIndex / itemsPerRow) * 100}% + 2px)`;
-    } else {
-      // 第二行，按3个项目计算位置
-      const secondRowIndex = selectedIndex - itemsPerRow;
-      return `calc(${(secondRowIndex / 3) * 100}% + 2px)`;
-    }
-  };
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
 
-  const getIndicatorWidth = () => {
-    if (selectedIndex < 4) {
-      return 'calc(25% - 4px)'; // 第一行项目宽度
-    } else {
-      return 'calc(33.333% - 4px)'; // 第二行项目宽度
-    }
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
-  const getIndicatorTop = () => {
-    return selectedIndex < 4 ? '2px' : 'calc(50% + 1px)';
+  const handleSelect = (ratio: AspectRatio) => {
+    onChange(ratio);
+    setIsOpen(false);
   };
 
   return (
-    <div className={`relative ${className}`}>
-      {/* 容器背景 - 一个统一的灰色块 */}
-      <div className="bg-[#F5F5F5] rounded-lg p-1 relative">
-        {/* 滑动指示器 */}
-        <div
-          className="absolute bg-white rounded-md shadow-sm transition-all duration-200 ease-in-out z-10"
-          style={{
-            left: getIndicatorPosition(),
-            top: getIndicatorTop(),
-            width: getIndicatorWidth(),
-            height: 'calc(50% - 3px)'
-          }}
-        />
+    <div className={`relative ${className}`} ref={dropdownRef}>
+      {/* 下拉框触发按钮 */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-white border border-[#E5E7EB] rounded-lg px-4 py-2 flex items-center justify-between hover:border-[#D1D5DB] transition-all duration-200"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* 当前选中的比例形状 */}
+            <div 
+              className="border-2 border-[#272F3E]"
+              style={{
+                width: `${selectedRatio?.width}px`,
+                height: `${selectedRatio?.height}px`
+              }}
+            />
+            {/* 当前选中的比例文字 */}
+            <span className="text-[#161616] font-medium">{selectedRatio?.label}</span>
+          </div>
+        </div>
         
-        {/* 第一行：4个项目 */}
-        <div className="grid grid-cols-4 gap-0 relative z-20">
-          {ratios.slice(0, 4).map((ratio) => (
+        {/* 下拉箭头 */}
+        <svg 
+          className={`w-5 h-5 text-[#6B7280] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* 下拉菜单 */}
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 z-50">
+          {ratios.map((ratio) => (
             <button
               key={ratio.value}
               type="button"
-              onClick={() => onChange(ratio.value)}
-              className={`
-                relative h-16 flex flex-col items-center justify-center rounded-md transition-all duration-200
-                ${value === ratio.value ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'}
-              `}
+              onClick={() => handleSelect(ratio.value)}
+              className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-[#F9FAFB] transition-colors duration-200 ${
+                value === ratio.value ? 'bg-[#FFF4F1] text-[#FF5C07]' : 'text-[#161616]'
+              }`}
             >
               {/* 比例形状 */}
               <div 
-                className={`border-2 mb-1 ${
+                className={`border-2 ${
                   value === ratio.value ? 'border-[#FF5C07]' : 'border-[#272F3E]'
                 }`}
                 style={{
@@ -85,43 +102,20 @@ const RatioSelector: React.FC<RatioSelectorProps> = ({ value, onChange, classNam
                 }}
               />
               {/* 比例文字 */}
-              <span className="text-xs font-medium leading-none">
-                {ratio.label}
-              </span>
+              <span className="font-medium">{ratio.label}</span>
+              
+              {/* 选中状态指示器 */}
+              {value === ratio.value && (
+                <div className="ml-auto">
+                  <svg className="w-4 h-4 text-[#FF5C07]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              )}
             </button>
           ))}
         </div>
-        
-        {/* 第二行：3个项目 */}
-        <div className="grid grid-cols-3 gap-0 relative z-20">
-          {ratios.slice(4).map((ratio) => (
-            <button
-              key={ratio.value}
-              type="button"
-              onClick={() => onChange(ratio.value)}
-              className={`
-                relative h-16 flex flex-col items-center justify-center rounded-md transition-all duration-200
-                ${value === ratio.value ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'}
-              `}
-            >
-              {/* 比例形状 */}
-              <div 
-                className={`border-2 mb-1 ${
-                  value === ratio.value ? 'border-[#FF5C07]' : 'border-[#272F3E]'
-                }`}
-                style={{
-                  width: `${ratio.width}px`,
-                  height: `${ratio.height}px`
-                }}
-              />
-              {/* 比例文字 */}
-              <span className="text-xs font-medium leading-none">
-                {ratio.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

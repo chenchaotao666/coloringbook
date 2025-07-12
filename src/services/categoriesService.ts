@@ -19,7 +19,7 @@ export interface Category {
   name: string;
   displayName: LocalizedText | string;
   display_name: LocalizedText | string;
-  description: string;
+  description: LocalizedText | string;
   hotness: number; // 热度值
   imageCount?: number; // 可选，为了向后兼容
   tagCounts: TagCount[]; // 标签统计数组

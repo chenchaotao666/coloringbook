@@ -629,6 +629,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   // 内部setState，用于URL路径同步，不触发页面跳转
   const __internal_setState = (lang: Language) => {
     if (lang !== language) {
+      console.log('🔄 LanguageProvider: __internal_setState from', language, 'to', lang);
       setLanguageState(lang);
       saveLanguagePreference(lang);
     }

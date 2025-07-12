@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { CategoriesService, Category } from '../../services/categoriesService';
 import CategoryGrid from '../layout/CategoryGrid';
 import { useLanguage, useAsyncTranslation } from '../../contexts/LanguageContext';
+import { getCategoryNameById, updateCategoryMappings } from '../../utils/categoryUtils';
 
 interface GalleryProps {
   title: string;
@@ -21,6 +22,10 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
       try {
         setIsLoading(true);
         const categoriesData = await CategoriesService.getCategories(language);
+        
+        // 更新分类映射表
+        updateCategoryMappings(categoriesData);
+        
         // 按热度排序，热度高的在前
         const sortedCategories = categoriesData.sort((a, b) => b.hotness - a.hotness);
         setCategories(sortedCategories);
@@ -37,7 +42,10 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
   const displayCategories = categories.slice(0, 8); // 显示前8个分类
 
   const handleCategoryClick = (category: Category) => {
-    navigate(`/categories/${category.categoryId}`);
+    // 使用映射表获取SEO友好的名称
+    const categoryPath = getCategoryNameById(category.categoryId);
+    console.log('分类ID:', category.categoryId, '→ SEO路径:', categoryPath);
+    navigate(`/categories/${categoryPath}`);
   };
 
   return (

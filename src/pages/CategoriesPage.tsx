@@ -103,7 +103,7 @@ const CategoriesPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}
-        <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
           <Breadcrumb 
             items={[
               { label: t('breadcrumb.home', 'Home'), path: '/' },
@@ -114,7 +114,7 @@ const CategoriesPage: React.FC = () => {
         
         {/* Page Title */}
         <div className="container mx-auto text-center mb-4 lg:mb-8">
-          <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1.6]">
+          <h1 className="text-center text-[#161616] text-3xl lg:text-[46px] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1]">
 {isLoadingCategories ? <div>&nbsp;</div> : t('title', `${categories.length} categories to explore`, { count: categories.length })}
           </h1>
         </div>

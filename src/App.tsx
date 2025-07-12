@@ -54,6 +54,7 @@ function AppContent() {
         <Route path="/image-coloring-page" element={<GeneratePage initialTab="image" />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/categories/:categoryId" element={<CategoriesDetailPage />} />
+        <Route path="/categories/:categoryId/:imageId" element={<ImageDetailPage />} />
         <Route path="/image/:imageId" element={<ImageDetailPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -71,6 +72,7 @@ function AppContent() {
         <Route path="/zh/image-coloring-page" element={<GeneratePage initialTab="image" />} />
         <Route path="/zh/categories" element={<CategoriesPage />} />
         <Route path="/zh/categories/:categoryId" element={<CategoriesDetailPage />} />
+        <Route path="/zh/categories/:categoryId/:imageId" element={<ImageDetailPage />} />
         <Route path="/zh/image/:imageId" element={<ImageDetailPage />} />
         <Route path="/zh/register" element={<RegisterPage />} />
         <Route path="/zh/login" element={<LoginPage />} />
@@ -88,6 +90,7 @@ function AppContent() {
         <Route path="/ja/image-coloring-page" element={<GeneratePage initialTab="image" />} />
         <Route path="/ja/categories" element={<CategoriesPage />} />
         <Route path="/ja/categories/:categoryId" element={<CategoriesDetailPage />} />
+        <Route path="/ja/categories/:categoryId/:imageId" element={<ImageDetailPage />} />
         <Route path="/ja/image/:imageId" element={<ImageDetailPage />} />
         <Route path="/ja/register" element={<RegisterPage />} />
         <Route path="/ja/login" element={<LoginPage />} />

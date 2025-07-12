@@ -6,22 +6,25 @@ import MasonryGrid from '../components/layout/MasonryGrid';
 import Breadcrumb, { BreadcrumbItem } from '../components/common/Breadcrumb';
 import { ImageService } from '../services/imageService';
 import { HomeImage } from '../services/imageService';
+import { CategoriesService, Category } from '../services/categoriesService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
-import { getImageIdByName, isImageName, updateImageMappings, getImageNameById } from '../utils/imageUtils';
+import { getImageIdByName, isImageName, updateImageMappings, getImageNameById, getEnglishTitleFromImage } from '../utils/imageUtils';
+import { getCategoryIdByName, getCategoryNameById, isCategoryName, getEnglishNameFromCategory, updateCategoryMappings } from '../utils/categoryUtils';
 import SEOHead from '../components/common/SEOHead';
 const downloadIcon = '/images/download-white.svg';
 
 const ImageDetailPage: React.FC = () => {
   const { t } = useAsyncTranslation('categories');
-  const { imageId } = useParams<{ imageId: string }>();
+  const { imageId, categoryId } = useParams<{ imageId: string; categoryId?: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { language } = useLanguage();
   
   const [image, setImage] = useState<HomeImage | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
   const [relatedImages, setRelatedImages] = useState<HomeImage[]>([]);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [isRelatedImagesLoading, setIsRelatedImagesLoading] = useState(true);
@@ -72,47 +75,162 @@ const ImageDetailPage: React.FC = () => {
       try {
         setIsImageLoading(true);
         
-        // 确定实际的图片ID
-        let actualImageId: string;
-        if (isImageName(imageId)) {
-          // 如果是SEO友好名称，转换为实际ID
-          actualImageId = getImageIdByName(imageId);
-        } else {
-          // 如果是ID，直接使用
-          actualImageId = imageId;
-        }
-        
-        // 尝试从ImageService中查找主图片
-        let foundImage: HomeImage | null = await ImageService.getImageById(actualImageId);
-
-        if (foundImage) {
-          setImage(foundImage);
-          setIsImageLoading(false); // 主图片加载完成，立即显示
+        // 如果URL中有categoryId，使用优化的加载逻辑
+        if (categoryId) {
+          console.log('🔍 Loading data for category:', categoryId, 'image:', imageId);
           
-          // 异步加载相关图片，不阻塞主内容显示
-          setIsRelatedImagesLoading(true);
-          try {
-            const relatedImages = await ImageService.getRelatedImages(foundImage.categoryId, foundImage.id);
-            setRelatedImages(relatedImages);
+          // 步骤1：获取全量分类数据
+          const allCategories = await CategoriesService.getCategories();
+          console.log('📦 Loaded all categories:', allCategories.length);
+          
+          // 步骤2：根据URL中的分类名称找到分类ID
+          let foundCategory: Category | null = null;
+          
+          // 先尝试映射表
+          if (isCategoryName(categoryId)) {
+            const actualCategoryId = getCategoryIdByName(categoryId);
+            foundCategory = allCategories.find(cat => cat.categoryId === actualCategoryId) || null;
+          }
+          
+          // 如果映射表没找到，通过SEO名称搜索
+          if (!foundCategory) {
+            foundCategory = allCategories.find((cat: Category) => {
+              const seoName = getEnglishNameFromCategory(cat.displayName);
+              return seoName === categoryId;
+            }) || null;
             
-            // 更新相关图片的映射表
-            updateImageMappings(relatedImages);
-          } catch (error) {
-            console.error('Failed to load related images from ImageService:', error);
-          } finally {
-            setIsRelatedImagesLoading(false);
+            if (foundCategory) {
+              console.log('✅ Found category by SEO name:', foundCategory.categoryId);
+              // 更新映射表
+              updateCategoryMappings([foundCategory]);
+            }
+          }
+          
+          if (foundCategory) {
+            setCategory(foundCategory);
+            
+            // 步骤3：根据分类ID从后台获取该分类的所有图片
+            console.log('🖼️ Loading images for category:', foundCategory.categoryId);
+            const categoryImagesResult = await CategoriesService.getImagesByCategoryId(foundCategory.categoryId, {
+              currentPage: 1,
+              pageSize: 100 // 获取更多图片以确保能找到目标图片
+            });
+            
+            console.log('📸 Loaded category images:', categoryImagesResult.images.length);
+            
+            // 更新图片映射表
+            updateImageMappings(categoryImagesResult.images);
+            
+            // 步骤4：根据URL中的图片名称过滤出需要的图片
+            let foundImage: HomeImage | null = null;
+            
+            // 先尝试映射表
+            if (isImageName(imageId)) {
+              const actualImageId = getImageIdByName(imageId);
+              foundImage = categoryImagesResult.images.find(img => img.id === actualImageId) || null;
+            }
+            
+            // 如果映射表没找到，通过SEO名称搜索
+            if (!foundImage) {
+              foundImage = categoryImagesResult.images.find(img => {
+                const seoName = getEnglishTitleFromImage(img.title);
+                return seoName === imageId;
+              }) || null;
+              
+              if (foundImage) {
+                console.log('✅ Found image by SEO name:', foundImage.id);
+                // 更新映射表
+                updateImageMappings([foundImage]);
+              }
+            }
+            
+            if (foundImage) {
+              setImage(foundImage);
+              setIsImageLoading(false);
+              
+              // 异步加载相关图片，不阻塞主内容显示
+              setIsRelatedImagesLoading(true);
+              try {
+                const relatedImages = await ImageService.getRelatedImages(foundImage.categoryId, foundImage.id);
+                setRelatedImages(relatedImages);
+                
+                // 更新相关图片的映射表
+                updateImageMappings(relatedImages);
+              } catch (error) {
+                console.error('Failed to load related images:', error);
+              } finally {
+                setIsRelatedImagesLoading(false);
+              }
+            } else {
+              console.error('❌ Image not found in category:', imageId);
+              setIsImageLoading(false);
+            }
+          } else {
+            console.error('❌ Category not found:', categoryId);
+            setIsImageLoading(false);
           }
         } else {
-          setIsImageLoading(false);
+          // 如果没有categoryId，使用原来的逻辑（向后兼容）
+          console.log('🔍 Loading image without category context:', imageId);
+          
+          // 尝试使用映射表转换SEO友好名称
+          let actualImageId: string;
+          if (isImageName(imageId)) {
+            actualImageId = getImageIdByName(imageId);
+          } else {
+            actualImageId = imageId;
+          }
+          
+          // 通过API搜索图片
+          let foundImage: HomeImage | null = await ImageService.getImageById(actualImageId);
+          
+          if (!foundImage && imageId !== actualImageId) {
+            // 如果通过映射表转换的ID没找到图片，尝试通过SEO名称搜索
+            console.log('Image not found by ID, trying to search by SEO name:', imageId);
+            try {
+              const searchResult = await ImageService.searchImages({ query: imageId, pageSize: 50 });
+              
+              foundImage = searchResult.images.find(img => {
+                const seoName = getEnglishTitleFromImage(img.title);
+                return seoName === imageId;
+              }) || null;
+              
+              if (foundImage) {
+                console.log('Found image by SEO name search:', foundImage.id);
+                updateImageMappings([foundImage]);
+              }
+            } catch (searchError) {
+              console.error('Failed to search image by SEO name:', searchError);
+            }
+          }
+
+          if (foundImage) {
+            setImage(foundImage);
+            setIsImageLoading(false);
+            
+            // 异步加载相关图片
+            setIsRelatedImagesLoading(true);
+            try {
+              const relatedImages = await ImageService.getRelatedImages(foundImage.categoryId, foundImage.id);
+              setRelatedImages(relatedImages);
+              updateImageMappings(relatedImages);
+            } catch (error) {
+              console.error('Failed to load related images:', error);
+            } finally {
+              setIsRelatedImagesLoading(false);
+            }
+          } else {
+            setIsImageLoading(false);
+          }
         }
       } catch (error) {
-        console.error('Failed to load image:', error);
+        console.error('Failed to load image data:', error);
         setIsImageLoading(false);
       }
     };
 
     loadImageData();
-  }, [imageId]);
+  }, [imageId, categoryId]);
 
   const handleDownload = async (format: 'png' | 'pdf') => {
     if (!image) return;
@@ -141,21 +259,39 @@ const ImageDetailPage: React.FC = () => {
 
   // 获取面包屑路径（即使图片还在加载也可以显示基础面包屑）
   const getBreadcrumbPathEarly = (): BreadcrumbItem[] => {
-    // 检查是否从分类页面跳转过来（通过location state）
+    // 优先使用URL参数中的categoryId，然后再检查location state
     const state = location.state as any;
     const fromCategory = state?.from === 'category';
-    const categoryId = state?.categoryId;
-    const categoryName = state?.categoryName;
-    const categoryPath = state?.categoryPath; // 新增：用于URL路径的值
+    const stateCategoryId = state?.categoryId;
+    const stateCategoryName = state?.categoryName;
+    const stateCategoryPath = state?.categoryPath;
     
-    if (fromCategory && categoryId && categoryName) {
+    // 如果URL中有categoryId或者从分类页面跳转过来
+    if (categoryId || (fromCategory && stateCategoryId && stateCategoryName)) {
       // 4层面包屑：Home > Coloring Pages Free > xxx category > 图片名字
-      // 使用categoryPath作为URL路径，优先使用英文名称
-      const urlPath = categoryPath || categoryId;
+      let categoryName: string;
+      let categoryPath: string;
+      
+      if (category) {
+        // 优先使用从API加载的分类信息
+        categoryName = getLocalizedText(category.displayName, language);
+        categoryPath = getCategoryNameById(category.categoryId);
+      } else if (categoryId) {
+        // 使用URL中的categoryId，但转换为更友好的显示名称
+        categoryName = categoryId.split('-').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' '); // 将"cats"转换为"Cats"，"disney-characters"转换为"Disney Characters"
+        categoryPath = categoryId;
+      } else {
+        // 使用state中的信息
+        categoryName = stateCategoryName;
+        categoryPath = stateCategoryPath || stateCategoryId;
+      }
+      
       return [
         { label: t('breadcrumb.home', 'Home'), path: '/' },
         { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
-        { label: categoryName, path: `/categories/${urlPath}` },
+        { label: categoryName, path: `/categories/${categoryPath}` },
         { label: image ? getLocalizedText(image.title, language) || '' : '', current: true }
       ];
     } else {
@@ -175,7 +311,7 @@ const ImageDetailPage: React.FC = () => {
       <Layout>
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
-          <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
             <Breadcrumb items={[
               { label: t('breadcrumb.home', 'Home'), path: '/' },
               { label: t('imageDetail.notFound.breadcrumb', 'Image not found'), current: true }
@@ -209,7 +345,7 @@ const ImageDetailPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
-        <div className="container mx-auto px-4 py-6 lg:py-10 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
           <Breadcrumb items={breadcrumbPath} />
         </div>
 
@@ -217,7 +353,7 @@ const ImageDetailPage: React.FC = () => {
         <div className="container mx-auto px-4 max-w-[1200px]">
           {isImageLoading ? (
             /* 加载状态 - 不显示任何文本 */
-            <div className="flex justify-center items-center py-20">
+            <div className="flex justify-center items-center py-20 h-[1200px]">
               {/* 加载时不显示任何内容 */}
             </div>
           ) : image ? (
@@ -249,7 +385,7 @@ const ImageDetailPage: React.FC = () => {
                 <div className="flex-1 space-y-6 lg:space-y-9">
                   {/* Title and Description */}
                   <div className="space-y-3 lg:space-y-4">
-                    <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-5">
+                    <h1 className="text-xl lg:text-2xl font-bold text-[#161616] capitalize leading-6 lg:leading-8">
                       {getLocalizedText(image.title, language)}
                     </h1>
                     <p className="text-sm text-[#6B7280] leading-5">
@@ -346,7 +482,14 @@ const ImageDetailPage: React.FC = () => {
                   onImageClick={(image) => {
                     // 导航到图片详情页，使用SEO友好的图片路径
                     const imagePath = getImageNameById(image.id);
-                    navigate(`/image/${imagePath}`);
+                    
+                    // 如果当前在分类页面结构中，保持在同一分类内跳转
+                    if (categoryId) {
+                      navigate(`/categories/${categoryId}/${imagePath}`);
+                    } else {
+                      // 否则使用传统的图片详情页路径
+                      navigate(`/image/${imagePath}`);
+                    }
                   }}
                 />
               ) : (

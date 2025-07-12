@@ -97,7 +97,7 @@ const PayPalModal = ({
                 chargeType
                 // rechargeAmount 对于 Monthly/Yearly 可省略，系统自动设定金额
               });
-              return response.orderId;
+              return response.id;
             } catch (error) {
               console.error('创建订单失败:', error);
               if (error instanceof ApiError) {

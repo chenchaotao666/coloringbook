@@ -10,7 +10,7 @@ export interface CreateOrderRequest {
 
 // PayPal订单创建响应接口
 export interface CreateOrderResponse {
-  orderId: string;
+  id: string;
   amount: number;
 }
 

@@ -1,5 +1,9 @@
 {
   "type": "module",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
   "dependencies": {
     "@paypal/paypal-js": "^8.2.0",
     "@radix-ui/react-slot": "^1.2.3",
@@ -31,6 +35,7 @@
     "vercel-build": "npm run build",
     "netlify-build": "npm run build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-google-oauth": "node scripts/check-google-oauth.cjs"
   }
 }

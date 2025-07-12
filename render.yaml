@@ -2,6 +2,7 @@ services:
   - type: web
     name: coloringbook-frontend
     env: static
+    runtime: node
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     routes:
@@ -11,8 +12,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 18.19.0
       - key: VITE_API_BASE_URL
         value: https://coloringbook-backend-n6f5.onrender.com
+      - key: VITE_GOOGLE_CLIENT_ID
+        value: your_google_client_id_here.apps.googleusercontent.com
     headers:
       - path: /*
         name: X-Robots-Tag

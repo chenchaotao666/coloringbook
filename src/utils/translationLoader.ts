@@ -70,6 +70,9 @@ export const loadTranslationModule = async (
         case 'creations':
           translationModule = await import(`../locales/${language}/pages/creations.json`);
           break;
+        case 'profile':
+          translationModule = await import(`../locales/${language}/pages/profile.json`);
+          break;
         default:
           console.warn(`Unknown translation module: ${module}`);
           return {};

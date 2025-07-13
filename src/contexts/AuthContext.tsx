@@ -82,13 +82,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(userData);
         tokenRefreshService.start();
       } else {
-        // 有token但获取用户信息失败，说明token无效（可能已被getCurrentUser清除）
+        // 有token但获取用户信息失败，可能是token过期
         console.log('❌ AuthContext: 有token但获取用户信息失败，token可能已过期');
         setUser(null);
         tokenRefreshService.stop();
-        // 这种情况表示token过期，需要跳转
-        const redirected = redirectToHomeIfNeeded();
-        console.log('🔄 AuthContext: token过期，尝试跳转:', redirected);
+        
+        // 不要在页面刷新时自动跳转，让用户自己处理
+        console.log('⚠️ AuthContext: token可能过期，但不自动跳转，让用户自己处理');
       }
     } catch (error) {
       console.error('❌ AuthContext: 检查认证状态异常:', error);
@@ -96,9 +96,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 认证失败，停止token刷新服务
       tokenRefreshService.stop();
       
-      // catch到异常说明有严重问题，也需要跳转
-      const redirected = redirectToHomeIfNeeded();
-      console.log('🔄 AuthContext: 异常时尝试跳转:', redirected);
+      // 不要在认证异常时自动跳转，让用户自己处理
+      console.log('⚠️ AuthContext: 认证异常，但不自动跳转，让用户自己处理');
     } finally {
       setIsLoading(false);
     }
@@ -181,16 +180,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 如果有token但获取用户信息失败，说明token可能无效
       if (!userData) {
         console.log('❌ AuthContext: refreshUser - 有token但刷新用户信息失败');
-        const redirected = redirectToHomeIfNeeded();
-        console.log('🔄 AuthContext: refreshUser - 尝试跳转:', redirected);
+        console.log('⚠️ AuthContext: refreshUser - 不自动跳转，让用户自己处理');
       }
     } catch (error) {
       console.error('❌ AuthContext: refreshUser - 异常:', error);
       setUser(null);
       
-      // 刷新用户信息失败，可能是token过期，跳转到首页
-      const redirected = redirectToHomeIfNeeded();
-      console.log('🔄 AuthContext: refreshUser - 异常时尝试跳转:', redirected);
+      // 刷新用户信息失败，不自动跳转，让用户自己处理
+      console.log('⚠️ AuthContext: refreshUser - 异常时不自动跳转，让用户自己处理');
     }
   };
 

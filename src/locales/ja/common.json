@@ -55,9 +55,9 @@
       "keywords": "coloring page pricing, AI generator subscription, premium coloring features, unlimited coloring pages"
     },
     "profile": {
-      "title": "Profile - Account Management",
-      "description": "Manage your account information and settings. Update username, password, avatar and other personal information.",
-      "keywords": "profile, account management, user settings, password change, avatar upload"
+      "title": "プロフィール - アカウント管理",
+      "description": "アカウント情報と設定を管理します。ユーザー名、パスワード、アバターなどの個人情報を更新できます。",
+      "keywords": "プロフィール, アカウント管理, ユーザー設定, パスワード変更, アバターアップロード"
     }
   },
   "status": {
@@ -95,11 +95,7 @@
     "processing": "Processing, please wait...",
     "confirmDelete": "Are you sure you want to delete?",
     "confirmAction": "Are you sure you want to perform this action?",
-    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
-    "orderHistoryNotAvailable": "Order history feature is not available yet",
-    "loadOrdersFailed": "Failed to load order history",
-    "loadUserFailed": "Failed to load user information, please refresh the page and try again",
-    "loginRequired": "Please login to access your profile"
+    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
   },
   "time": {
     "now": "Just now",

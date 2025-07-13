@@ -20,7 +20,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
   const { t } = useAsyncTranslation('creations');
   const { t: tCommon } = useAsyncTranslation('common');
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   
   // 状态管理
   const [images, setImages] = useState<HomeImage[]>([]);
@@ -40,12 +40,20 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
 
   // 检查用户登录状态
   useEffect(() => {
+    // 等待认证初始化完成
+    if (authLoading) {
+      return;
+    }
+    
+    // 如果认证完成但用户未登录，跳转到登录页面
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
+    
+    // 如果用户已登录，加载用户图片
     loadUserImages();
-  }, [isAuthenticated, selectedType]);
+  }, [authLoading, isAuthenticated, selectedType]);
 
   // 加载用户图片
   const loadUserImages = async (page: number = 1, append: boolean = false) => {
@@ -225,9 +233,12 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
           )}
 
           {/* 内容区域 */}
-          {loading ? (
+          {authLoading || loading ? (
             <div className="flex justify-center items-center py-20">
               <CircularProgress progress={0} size="large" showPercentage={false} />
+              <p className="ml-4 text-gray-600">
+                {authLoading ? t('common.loading', '加载中...') : t('messages.loadingImages', '正在加载图片...')}
+              </p>
             </div>
           ) : (
             <>

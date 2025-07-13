@@ -25,9 +25,9 @@ const Hero = () => {
       
       {/* Hero内容区域 - 白色背景 */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 flex items-center justify-center min-h-[500px] sm:min-h-[600px]">
-        <div className="flex flex-col lg:flex-row items-center max-w-[1400px] lg:gap-12">
+        <div className="flex flex-col lg:flex-row items-center max-w-[1400px]">
           {/* 左侧内容区域 */}
-          <div className="w-full lg:w-auto flex flex-col items-center lg:items-start gap-6 sm:gap-9">
+          <div className="w-full lg:w-auto flex flex-col items-center lg:items-start gap-6 sm:gap-9 min-w-[800px]">
             <div className="flex flex-col gap-4 sm:gap-6 text-center lg:text-left">
               <h1 className="mt-6 sm:mt-0 text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-bold capitalize leading-tight">
                 <span className="text-[#161616]">{t('hero.aiTitle', 'AI ')} </span>

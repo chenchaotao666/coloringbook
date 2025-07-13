@@ -100,7 +100,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 
   return (
     <div 
-      className="pt-[1px] pb-3 bg-white rounded-2xl border border-[#EDEEF0] w-full max-w-[278px] mx-auto"
+      className="pt-[1px] pb-3 bg-white rounded-2xl border border-[#EDEEF0] w-full max-w-[320px] mx-auto"
     >
       <div className="w-full flex flex-col justify-start items-center gap-4">
         {/* 图片区域 */}

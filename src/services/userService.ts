@@ -70,6 +70,7 @@ export interface AvatarUploadResponse {
   updatedAt: string;
 }
 
+
 /**
  * 用户服务类
  */
@@ -345,6 +346,20 @@ export class UserService {
         throw error;
       }
       throw new ApiError('1019', '重置密码失败');
+    }
+  }
+
+  /**
+   * 取消订阅
+   */
+  static async cancelSubscription(): Promise<void> {
+    try {
+      await ApiUtils.post('/api/subscription/cancel', {}, true);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('1022', '取消订阅失败');
     }
   }
 }

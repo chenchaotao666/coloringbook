@@ -133,7 +133,11 @@ export class ApiUtils {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/refresh-token`, {
+      // 检查token是否存储在localStorage中，以确定rememberMe状态
+      const isInLocalStorage = typeof window !== 'undefined' && 
+        localStorage.getItem('accessToken') !== null;
+      
+      const response = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +148,8 @@ export class ApiUtils {
       const data: ApiResponse<AuthTokens> = await response.json();
       
       if (data.status === 'success' && data.data) {
-        this.setTokens(data.data);
+        // 保持原来的rememberMe状态
+        this.setTokens(data.data, isInLocalStorage);
         return true;
       }
       
@@ -185,6 +190,21 @@ export class ApiUtils {
         ...options,
         headers,
       });
+
+      // 处理 HTTP 错误状态码
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new ApiError('404', `请求的资源不存在: ${endpoint}`);
+        }
+        if (response.status === 500) {
+          throw new ApiError('500', '服务器内部错误');
+        }
+        if (response.status === 403) {
+          throw new ApiError('403', '访问被拒绝');
+        }
+        // 其他 HTTP 错误
+        throw new ApiError(response.status.toString(), `HTTP 错误: ${response.status} ${response.statusText}`);
+      }
 
       const data: ApiResponse<T> = await response.json();
 

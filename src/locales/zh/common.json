@@ -53,6 +53,11 @@
       "title": "价格方案 - 高级AI涂色功能",
       "description": "选择完美方案，享受无限AI涂色页生成。提供免费试用，高级功能助您无限创作。",
       "keywords": "涂色页价格, AI生成器订阅, 高级涂色功能, 无限涂色页"
+    },
+    "profile": {
+      "title": "个人资料 - 账户管理",
+      "description": "管理您的账户信息和设置。修改用户名、密码、头像等个人信息。",
+      "keywords": "个人资料, 账户管理, 用户设置, 密码修改, 头像上传"
     }
   },
   "status": {
@@ -90,7 +95,11 @@
     "processing": "正在处理，请稍候...",
     "confirmDelete": "确定要删除吗？",
     "confirmAction": "确定要执行此操作吗？",
-    "unsavedChanges": "您有未保存的更改，确定要离开吗？"
+    "unsavedChanges": "您有未保存的更改，确定要离开吗？",
+    "orderHistoryNotAvailable": "订单历史功能暂未开放",
+    "loadOrdersFailed": "加载订单历史失败",
+    "loadUserFailed": "加载用户信息失败，请刷新页面重试",
+    "loginRequired": "请先登录以访问个人资料"
   },
   "time": {
     "now": "刚刚",

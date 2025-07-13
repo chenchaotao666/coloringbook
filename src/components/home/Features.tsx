@@ -74,7 +74,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({ title, description, images, l
       {/* 桌面端布局：保持原有设计 */}
       <div className={`hidden lg:flex ${isReversed ? 'flex-row-reverse' : 'flex-row'} items-center justify-center gap-20`}>
         {/* 桌面端：文字和按钮区域 */}
-        <div className="flex flex-col gap-8 w-[500px]">
+        <div className="flex flex-col gap-8 w-[580px]">
           <div className="flex flex-col gap-4 text-left">
             <h3 className="text-[#161616] text-3xl xl:text-4xl font-bold capitalize leading-tight">
               {title}

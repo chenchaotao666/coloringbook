@@ -251,13 +251,11 @@ const CategoriesDetailPage: React.FC = () => {
   };
 
   const handleGenerateClick = () => {
-    if (generatePrompt.trim()) {
-      // 构建包含 prompt 和 ratio 的 URL 参数
-      const params = new URLSearchParams();
-      params.set('prompt', generatePrompt);
-      params.set('ratio', selectedRatio);
-      navigateWithLanguage(navigate, `/generate?${params.toString()}`);
-    }
+    // 构建包含 prompt 和 ratio 的 URL 参数
+    const params = new URLSearchParams();
+    params.set('prompt', generatePrompt);
+    params.set('ratio', selectedRatio);
+    navigateWithLanguage(navigate, `/generate?${params.toString()}`);
   };
 
   // 获取基础面包屑（即使分类还在加载也可以显示）
@@ -275,7 +273,7 @@ const CategoriesDetailPage: React.FC = () => {
       <Layout>
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
-          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
+          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1380px]">
             <Breadcrumb
               items={[
                 { label: t('breadcrumb.home', 'Home'), path: '/' },
@@ -285,7 +283,7 @@ const CategoriesDetailPage: React.FC = () => {
             />
           </div>
 
-          <div className="container mx-auto px-4 max-w-[1200px]">
+          <div className="container mx-auto px-4">
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
                 <div className="text-6xl mb-4">❌</div>
@@ -316,14 +314,14 @@ const CategoriesDetailPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
-        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1380px]">
           <Breadcrumb items={getBreadcrumbPathEarly()} />
         </div>
 
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-4 max-w-[1380px]">
           {isCategoryLoading || isImagesLoading ? (
             /* 加载中 - 不显示任何文本 */
-            <div className="flex justify-center items-center py-20 h-[1200px]">
+            <div className="flex justify-center items-center py-20 h-[1380px]">
               {/* 加载时不显示任何内容 */}
             </div>
           ) : category ? (
@@ -337,7 +335,7 @@ const CategoriesDetailPage: React.FC = () => {
               {/* Category Description */}
               {category.description && (
                 <div className="mb-8 lg:mb-12">
-                  <div className="max-w-4xl mx-auto text-left">
+                  <div className="mx-auto text-left">
                     {(() => {
                       const descriptionText = getLocalizedText(category.description, language);
 
@@ -515,7 +513,6 @@ const CategoriesDetailPage: React.FC = () => {
                     <Button
                       onClick={handleGenerateClick}
                       variant="gradient"
-                      disabled={!generatePrompt.trim()}
                       className="px-6 py-2 text-base font-bold"
                     >
                       {t('detail.generatePrompt.button', 'Create')}

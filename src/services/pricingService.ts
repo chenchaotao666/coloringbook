@@ -25,6 +25,24 @@ export interface CaptureOrderResponse {
   message?: string;
 }
 
+// 订单信息接口
+export interface OrderInfo {
+  orderId: string;
+  amount: string;
+  currency: string;
+  planCode: string;
+  chargeType: 'Monthly' | 'Yearly' | 'Credit';
+  status: 'pending' | 'completed' | 'failed' | 'cancelled';
+  createdAt: string;
+  creditsAdded: number;
+  duration: number;
+  giftMonth: string;
+  gift_month: string;
+  method: string;
+  monthlyCredit: number;
+}
+
+
 /**
  * 定价和支付服务类
  */
@@ -58,6 +76,24 @@ export class PricingService {
       throw new ApiError('1021', '捕获支付订单失败');
     }
   }
+
+    /**
+   * 获取订单历史
+   */
+    static async getOrderHistory(page: number = 1, pageSize: number = 10): Promise<OrderInfo[]> {
+      try {
+        const response = await ApiUtils.get<OrderInfo[]>('/api/payment/chargerecord', {
+          page: page.toString(),
+          pageSize: pageSize.toString()
+        }, true);
+        return response;
+      } catch (error) {
+        if (error instanceof ApiError) {
+          throw error;
+        }
+        throw new ApiError('1023', '获取订单历史失败');
+      }
+    }
 }
 
 // 导出默认实例

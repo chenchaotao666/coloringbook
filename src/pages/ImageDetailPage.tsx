@@ -303,7 +303,7 @@ const ImageDetailPage: React.FC = () => {
             ]} />
           </div>
           
-          <div className="container mx-auto px-4 max-w-[1200px]">
+          <div className="container mx-auto px-4">
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
                 <div className="text-lg lg:text-xl text-[#161616] mb-4">{t('imageDetail.notFound.title', 'Image not found')}</div>
@@ -330,15 +330,15 @@ const ImageDetailPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
-        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1380px]">
           <Breadcrumb items={breadcrumbPath} />
         </div>
 
         {/* Main Content */}
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-4 max-w-[1380px]">
           {isImageLoading ? (
             /* 加载状态 - 不显示任何文本 */
-            <div className="flex justify-center items-center py-20 h-[1200px]">
+            <div className="flex justify-center items-center py-20 h-[1380px]">
               {/* 加载时不显示任何内容 */}
             </div>
           ) : image ? (
@@ -347,7 +347,7 @@ const ImageDetailPage: React.FC = () => {
               {/* Left Side - Images */}
               <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
                 {/* Black & White Image */}
-                <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
+                <div className="w-1/2 lg:max-w-[320px] flex items-start justify-center">
                   <img
                     src={image.defaultUrl}
                     alt={getLocalizedText(image.title, language)}
@@ -356,7 +356,7 @@ const ImageDetailPage: React.FC = () => {
                 </div>
                 
                 {/* Color Image */}
-                <div className="w-1/2 lg:max-w-[300px] flex items-start justify-center">
+                <div className="w-1/2 lg:max-w-[320px] flex items-start justify-center">
                   <img
                     src={image.coloringUrl}
                     alt={`${getLocalizedText(image.title, language)} - Colored`}
@@ -366,7 +366,7 @@ const ImageDetailPage: React.FC = () => {
               </div>
 
               {/* Right Side - Details */}
-              <div className="flex-1 lg:max-w-[524px] flex flex-col">
+              <div className="flex-1 lg:max-w-[680px] flex flex-col">
                 <div className="flex-1 space-y-6 lg:space-y-9">
                   {/* Title and Description */}
                   <div className="space-y-3 lg:space-y-4">

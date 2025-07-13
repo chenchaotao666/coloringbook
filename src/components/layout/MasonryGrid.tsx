@@ -159,11 +159,11 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
     <div className={`w-full ${className}`} data-masonry-version="v2.0">
       {/* 瀑布流布局 - 桌面端 */}
       <div className="hidden lg:block">
-        <div className={`flex gap-4 xl:gap-6 max-w-[1200px] mx-auto ${desktopJustifyClass}`}>
+        <div className={`flex gap-4 xl:gap-6 mx-auto ${desktopJustifyClass}`}>
           {desktopImageColumns.map((columnImages, columnIndex) => (
             <div 
               key={`desktop-column-${columnIndex}`} 
-              className="space-y-4 xl:space-y-6 flex-1 max-w-[273px]"
+              className="space-y-4 xl:space-y-6 flex-1 max-w-[320px]"
             >
               {columnImages.map((image, imageIndex) => (
                 <div key={`${image.id}-desktop-${columnIndex}-${imageIndex}`} className="w-full">

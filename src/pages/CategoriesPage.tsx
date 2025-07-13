@@ -65,8 +65,6 @@ const CategoriesPage: React.FC = () => {
     navigateWithLanguage(navigate, `/categories/${categoryPath}`);
   };
 
-
-
   // 执行搜索
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -104,7 +102,7 @@ const CategoriesPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}
-        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1380px]">
           <Breadcrumb 
             items={[
               { label: t('breadcrumb.home', 'Home'), path: '/' },
@@ -141,7 +139,7 @@ const CategoriesPage: React.FC = () => {
         </div>
         
         {/* Category Grid */}
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-4 ">
           <CategoryGrid
             categories={filteredCategories}
             isLoading={isLoadingCategories}
@@ -154,7 +152,7 @@ const CategoriesPage: React.FC = () => {
                       description: t('emptyState.noResults.description', 'No categories found matching your search.')
                     }
                   : {
-                      icon: "📂",
+                      icon: noResultIcon,
                       title: t('emptyState.noCategories.title', 'No categories found'),
                       description: t('emptyState.noCategories.description', 'Categories are being loaded. Please wait a moment.')
                     }

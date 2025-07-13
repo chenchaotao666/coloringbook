@@ -6,6 +6,14 @@
  * 检查当前路径是否为公开页面
  */
 export const isPublicPath = (path: string): boolean => {
+  // 移除语言前缀以进行路径检查
+  let pathWithoutLanguage = path;
+  if (path.startsWith('/zh')) {
+    pathWithoutLanguage = path.substring(3) || '/';
+  } else if (path.startsWith('/ja')) {
+    pathWithoutLanguage = path.substring(3) || '/';
+  }
+  
   const publicPaths = [
     '/', 
     '/categories', 
@@ -19,13 +27,14 @@ export const isPublicPath = (path: string): boolean => {
     '/image-coloring-page'
   ];
   
-  return publicPaths.some(publicPath => path === publicPath) || 
-         path.startsWith('/categories/') || 
-         path.startsWith('/image/');
+  return publicPaths.some(publicPath => pathWithoutLanguage === publicPath) || 
+         pathWithoutLanguage.startsWith('/categories/') || 
+         pathWithoutLanguage.startsWith('/image/');
 };
 
 /**
  * 在认证失败时跳转到首页（只有在非公开页面时）
+ * 注意：这个函数应该非常保守，只在确实需要时才跳转
  */
 export const redirectToHomeIfNeeded = (): boolean => {
   if (typeof window !== 'undefined') {
@@ -34,10 +43,11 @@ export const redirectToHomeIfNeeded = (): boolean => {
     
     console.log('🔍 检查是否需要跳转:', { currentPath, isPublic });
     
+    // 更保守的跳转策略：只在真正的私有页面且认证完全失败时才跳转
     if (!isPublic) {
-      console.log('🔄 非公开页面，执行跳转到首页');
-      window.location.href = '/';
-      return true; // 表示进行了跳转
+      console.log('🔄 非公开页面，但暂时不跳转，让用户自己处理');
+      // 暂时不自动跳转，让用户看到错误信息或手动处理
+      return false;
     } else {
       console.log('✅ 公开页面，不执行跳转');
     }

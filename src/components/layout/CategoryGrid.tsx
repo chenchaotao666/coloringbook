@@ -57,9 +57,8 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
           ) : (
             <div className="text-6xl mb-4">{emptyState.icon}</div>
           )}
-          <h3 className="text-xl font-semibold text-[#161616] mb-2">{emptyState.title}</h3>
           <p className="text-[#6B7280] text-base font-normal leading-6 mb-6">
-            {emptyState.description}
+            {emptyState.title}
           </p>
           {emptyState.actionButton && (
             <button
@@ -144,11 +143,11 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
     <div className={`w-full ${className}`} data-category-grid-version="v1.0">
       {/* 瀑布流布局 - 桌面端 */}
       <div className="hidden lg:block">
-        <div className={`flex gap-4 xl:gap-6 max-w-[1200px] mx-auto ${desktopJustifyClass}`}>
+        <div className={`flex gap-4 xl:gap-6 mx-auto ${desktopJustifyClass}`}>
           {desktopCategoryColumns.map((columnCategories, columnIndex) => (
             <div 
               key={`desktop-column-${columnIndex}`} 
-              className="space-y-4 xl:space-y-6 flex-1 max-w-[273px]"
+              className="space-y-4 xl:space-y-6 flex-1 max-w-[320px]"
             >
               {columnCategories.map((category, categoryIndex) => (
                 <div key={`${category.categoryId}-desktop-${columnIndex}-${categoryIndex}`} className="w-full">

@@ -8,8 +8,8 @@ export class TokenRefreshService {
   private static instance: TokenRefreshService;
   private refreshInterval: number | null = null;
   private isRefreshing = false;
-  private readonly REFRESH_INTERVAL = 5 * 60 * 1000; // 5分钟 (更频繁检查)
-  private readonly TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000; // 5分钟缓冲时间 (更早刷新)
+  private readonly REFRESH_INTERVAL = 10 * 60 * 1000; // 10分钟检查间隔
+  private readonly TOKEN_EXPIRY_BUFFER = 10 * 60 * 1000; // 10分钟缓冲时间
 
   private constructor() {}
 
@@ -32,7 +32,7 @@ export class TokenRefreshService {
       this.stop();
     }
 
-    console.log('🔄 Token自动刷新服务已启动，每5分钟检查一次');
+    console.log('🔄 Token自动刷新服务已启动，每10分钟检查一次');
 
     // 立即检查一次token状态
     this.checkAndRefreshToken();
@@ -90,8 +90,14 @@ export class TokenRefreshService {
         } else {
           console.warn('❌ 访问令牌刷新失败');
           
-          // 刷新失败，可能需要重新登录
-          this.dispatchTokenExpiredEvent();
+          // 刷新失败，但不立即触发过期事件，给一个宽松期
+          const timeUntilExpiry = this.getTokenTimeUntilExpiry(accessToken);
+          if (timeUntilExpiry <= 0) {
+            // 只有在token已经过期时才触发过期事件
+            this.dispatchTokenExpiredEvent();
+          } else {
+            console.log('⚠️ Token刷新失败，但token仍有效，稍后重试');
+          }
         }
       } else {
         console.log('✅ 访问令牌仍然有效，无需刷新');
@@ -99,8 +105,14 @@ export class TokenRefreshService {
     } catch (error) {
       console.error('❌ Token刷新过程中发生错误:', error);
       
-      // 发生错误时，触发token过期事件
-      this.dispatchTokenExpiredEvent();
+      // 发生错误时，检查token是否真的过期
+      const timeUntilExpiry = this.getTokenTimeUntilExpiry(accessToken);
+      if (timeUntilExpiry <= 0) {
+        // 只有在token已经过期时才触发过期事件
+        this.dispatchTokenExpiredEvent();
+      } else {
+        console.log('⚠️ Token刷新出错，但token仍有效，稍后重试');
+      }
     } finally {
       this.isRefreshing = false;
     }
@@ -132,6 +144,30 @@ export class TokenRefreshService {
     } catch (error) {
       console.error('❌ 解析token时发生错误:', error);
       return true; // 解析失败时，执行刷新
+    }
+  }
+
+  /**
+   * 获取token剩余有效时间（毫秒）
+   * @param token 访问令牌
+   * @returns 剩余时间（毫秒），如果解析失败返回0
+   */
+  private getTokenTimeUntilExpiry(token: string): number {
+    try {
+      const payload = this.parseJwtPayload(token);
+      
+      if (!payload || !payload.exp) {
+        return 0;
+      }
+
+      const currentTime = Math.floor(Date.now() / 1000);
+      const expiryTime = payload.exp;
+      const timeUntilExpiry = (expiryTime - currentTime) * 1000; // 转换为毫秒
+
+      return Math.max(0, timeUntilExpiry);
+    } catch (error) {
+      console.error('❌ 解析token时发生错误:', error);
+      return 0;
     }
   }
 

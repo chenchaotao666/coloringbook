@@ -1,0 +1,94 @@
+{
+  "title": "Profile",
+  "subtitle": "Manage your account information and settings",
+  "loading": "Loading...",
+  "avatar": "Avatar",
+  "credits": "Credits",
+  "userType": {
+    "free": "Free User",
+    "lite": "Lite User",
+    "pro": "Pro User"
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "changePassword": "Change Password",
+    "passwordHint": "Leave the following fields empty if you don't want to change your password",
+    "orderHistory": "Order History"
+  },
+  "fields": {
+    "username": "Username",
+    "email": "Email Address",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password"
+  },
+  "placeholders": {
+    "username": "Enter your username",
+    "currentPassword": "Enter your current password",
+    "newPassword": "Enter new password (at least 6 characters)",
+    "confirmPassword": "Enter new password again"
+  },
+  "hints": {
+    "emailReadonly": "Email address cannot be changed"
+  },
+  "buttons": {
+    "logout": "Logout",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "changePlan": "Change Plan",
+    "cancelSubscription": "Cancel Subscription"
+  },
+  "messages": {
+    "success": "Profile updated successfully!",
+    "loginRequired": "Please login to access your profile",
+    "loadUserFailed": "Failed to load user information, please refresh the page and try again",
+    "networkError": "Network error, please check your connection and try again",
+    "loadOrdersFailed": "Failed to load order history",
+    "confirmCancelSubscription": "Are you sure you want to cancel your subscription?",
+    "subscriptionCancelled": "Subscription cancelled",
+    "cancelSubscriptionFailed": "Failed to cancel subscription, please try again later"
+  },
+  "errors": {
+    "username": {
+      "required": "Please enter a username",
+      "minLength": "Username must be at least 2 characters",
+      "maxLength": "Username cannot exceed 20 characters",
+      "exists": "This username is already taken"
+    },
+    "password": {
+      "currentRequired": "Please enter your current password",
+      "newRequired": "Please enter a new password",
+      "minLength": "New password must be at least 6 characters",
+      "maxLength": "New password cannot exceed 50 characters",
+      "confirmRequired": "Please confirm your new password",
+      "confirmMismatch": "The two new passwords do not match",
+      "samePassword": "New password cannot be the same as current password",
+      "currentIncorrect": "Current password is incorrect"
+    },
+    "avatar": {
+      "fileType": "Please select an image file",
+      "fileSize": "Image size cannot exceed 5MB",
+      "uploadFailed": "Avatar upload failed, please try again"
+    },
+    "format": "Input format is incorrect, please check and try again",
+    "updateFailed": "Update failed, please try again later"
+  },
+  "subscription": {
+    "free": "Free",
+    "lite": "Lite",
+    "pro": "Pro"
+  },
+  "orderTable": {
+    "orderId": "Order ID",
+    "planInfo": "Plan Info",
+    "amount": "Amount",
+    "createdAt": "Created At",
+    "paymentStatus": "Payment Status",
+    "unpaid": "Unpaid",
+    "paid": "Paid",
+    "failed": "Failed",
+    "pending": "Pending",
+    "cancelled": "Cancelled",
+    "noOrders": "No orders found"
+  }
+} 

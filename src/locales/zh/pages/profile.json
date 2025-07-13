@@ -1,0 +1,94 @@
+{
+  "title": "个人资料",
+  "subtitle": "管理您的账户信息和设置",
+  "loading": "加载中...",
+  "avatar": "头像",
+  "credits": "积分",
+  "userType": {
+    "free": "免费用户",
+    "lite": "Lite用户",
+    "pro": "Pro用户"
+  },
+  "sections": {
+    "basicInfo": "基本信息",
+    "changePassword": "修改密码",
+    "passwordHint": "如果不需要修改密码，请留空以下字段",
+    "orderHistory": "订单记录"
+  },
+  "fields": {
+    "username": "用户名",
+    "email": "邮箱地址",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认新密码"
+  },
+  "placeholders": {
+    "username": "请输入用户名",
+    "currentPassword": "请输入当前密码",
+    "newPassword": "请输入新密码（至少6个字符）",
+    "confirmPassword": "请再次输入新密码"
+  },
+  "hints": {
+    "emailReadonly": "邮箱地址无法修改"
+  },
+  "buttons": {
+    "logout": "退出登录",
+    "cancel": "取消",
+    "save": "保存更改",
+    "changePlan": "更换套餐",
+    "cancelSubscription": "取消订阅"
+  },
+  "messages": {
+    "success": "个人信息更新成功！",
+    "loginRequired": "请先登录以访问个人资料",
+    "loadUserFailed": "加载用户信息失败，请刷新页面重试",
+    "networkError": "网络错误，请检查网络连接后重试",
+    "loadOrdersFailed": "加载订单历史失败",
+    "confirmCancelSubscription": "确定要取消订阅吗？",
+    "subscriptionCancelled": "订阅已取消",
+    "cancelSubscriptionFailed": "取消订阅失败，请稍后重试"
+  },
+  "errors": {
+    "username": {
+      "required": "请输入用户名",
+      "minLength": "用户名至少需要2个字符",
+      "maxLength": "用户名不能超过20个字符",
+      "exists": "该用户名已被使用"
+    },
+    "password": {
+      "currentRequired": "请输入当前密码",
+      "newRequired": "请输入新密码",
+      "minLength": "新密码至少需要6个字符",
+      "maxLength": "新密码不能超过50个字符",
+      "confirmRequired": "请确认新密码",
+      "confirmMismatch": "两次输入的新密码不一致",
+      "samePassword": "新密码不能与当前密码相同",
+      "currentIncorrect": "当前密码错误"
+    },
+    "avatar": {
+      "fileType": "请选择图片文件",
+      "fileSize": "图片大小不能超过5MB",
+      "uploadFailed": "头像上传失败，请重试"
+    },
+    "format": "输入信息格式不正确，请检查后重试",
+    "updateFailed": "更新失败，请稍后重试"
+  },
+  "subscription": {
+    "free": "免费",
+    "lite": "Lite",
+    "pro": "Pro"
+  },
+  "orderTable": {
+    "orderId": "订单ID",
+    "planInfo": "套餐信息", 
+    "amount": "金额",
+    "createdAt": "创建时间",
+    "paymentStatus": "支付状态",
+    "unpaid": "未支付",
+    "paid": "已支付",
+    "failed": "支付失败",
+    "pending": "待支付",
+    "cancelled": "已取消",
+    "noOrders": "暂无订单记录"
+  }
+} 

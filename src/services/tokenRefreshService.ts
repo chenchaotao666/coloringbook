@@ -80,7 +80,7 @@ export class TokenRefreshService {
         this.isRefreshing = true;
 
         // 执行刷新
-        const success = await ApiUtils.refreshAccessToken();
+        const success = await ApiUtils.refreshToken();
         
         if (success) {
           console.log('✅ 访问令牌刷新成功');
@@ -199,7 +199,7 @@ export class TokenRefreshService {
 
     try {
       this.isRefreshing = true;
-      const success = await ApiUtils.refreshAccessToken();
+      const success = await ApiUtils.refreshToken();
       
       if (success) {
         console.log('✅ 手动token刷新成功');

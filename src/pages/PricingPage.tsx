@@ -114,7 +114,7 @@ const PayPalModal = ({
               const { orderID } = data;
               const response = await PricingService.captureOrder(orderID);
               
-              if (response.success) {
+              if (response.status === 'COMPLETED') {
                 // 支付成功，刷新用户信息
                 await refreshUser();
                 

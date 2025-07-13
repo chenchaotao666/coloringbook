@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const ratioIcon = '/images/ratio.svg';
+// const ratioIcon = '/images/ratio.svg';
 
 type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
 

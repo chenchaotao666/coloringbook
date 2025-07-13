@@ -347,7 +347,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
             {/* 语言下拉菜单 */}
             {isDesktopLanguageVisible && (
-              <div className={`absolute top-full mt-2 right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50 transition-all duration-150 ease-out ${
+              <div className={`absolute top-full mt-[2px] right-0 bg-white border border-[#E5E7EB] rounded-lg shadow-lg py-2 min-w-[120px] z-50 transition-all duration-150 ease-out ${
                 isDesktopLanguageAnimating 
                   ? 'opacity-100 translate-y-0 scale-100' 
                   : 'opacity-0 -translate-y-1 scale-95'

@@ -5,6 +5,7 @@ import { CategoriesService, Category } from '../../services/categoriesService';
 import CategoryGrid from '../layout/CategoryGrid';
 import { useLanguage, useAsyncTranslation } from '../../contexts/LanguageContext';
 import { getCategoryNameById, updateCategoryMappings } from '../../utils/categoryUtils';
+import { navigateWithLanguage } from '../../utils/navigationUtils';
 
 interface GalleryProps {
   title: string;
@@ -45,7 +46,7 @@ const Gallery: React.FC<GalleryProps> = ({ title }) => {
     // 使用映射表获取SEO友好的名称
     const categoryPath = getCategoryNameById(category.categoryId);
     console.log('分类ID:', category.categoryId, '→ SEO路径:', categoryPath);
-    navigate(`/categories/${categoryPath}`);
+    navigateWithLanguage(navigate, `/categories/${categoryPath}`);
   };
 
   return (

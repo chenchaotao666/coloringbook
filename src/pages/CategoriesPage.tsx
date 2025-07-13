@@ -10,6 +10,7 @@ import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import SEOHead from '../components/common/SEOHead';
 import { getCategoryNameById, updateCategoryMappings } from '../utils/categoryUtils';
+import { navigateWithLanguage } from '../utils/navigationUtils';
 const noResultIcon = '/images/no-result.svg';
 
 
@@ -61,7 +62,7 @@ const CategoriesPage: React.FC = () => {
     // 使用映射表获取SEO友好的名称
     const categoryPath = getCategoryNameById(category.categoryId);
     console.log('分类ID:', category.categoryId, '→ SEO路径:', categoryPath);
-    navigate(`/categories/${categoryPath}`);
+    navigateWithLanguage(navigate, `/categories/${categoryPath}`);
   };
 
 
@@ -103,7 +104,7 @@ const CategoriesPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
         {/* Breadcrumb */}
-        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
           <Breadcrumb 
             items={[
               { label: t('breadcrumb.home', 'Home'), path: '/' },

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { navigateWithLanguage } from '../../utils/navigationUtils';
 
 const homeIcon = '/images/home.svg';
 const chevronRightIcon = '/images/chevron-right.svg';
@@ -20,7 +21,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
 
   const handleItemClick = (item: BreadcrumbItem) => {
     if (item.path && !item.current) {
-      navigate(item.path);
+      navigateWithLanguage(navigate, item.path);
     }
   };
 

@@ -1,4 +1,4 @@
-import { ApiUtils, AuthTokens, ApiError } from '../utils/apiUtils';
+import { ApiUtils, ApiError } from '../utils/apiUtils';
 import { UrlUtils } from '../utils/urlUtils';
 
 // 用户接口
@@ -258,35 +258,6 @@ export class UserService {
         throw error;
       }
       throw new ApiError('1017', '充值失败');
-    }
-  }
-
-  /**
-   * 刷新访问令牌
-   */
-  static async refreshToken(): Promise<AuthTokens> {
-    try {
-      const refreshToken = ApiUtils.getRefreshToken();
-      if (!refreshToken) {
-        throw new ApiError('1010', '刷新令牌不存在');
-      }
-
-      const tokens = await ApiUtils.post<AuthTokens>('/api/users/auth/refresh-token', {
-        refreshToken,
-      });
-
-      // 更新令牌
-      ApiUtils.setTokens(tokens);
-      
-      return tokens;
-    } catch (error) {
-      // 刷新失败，清除所有令牌
-      ApiUtils.clearTokens();
-      
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      throw new ApiError('1010', '令牌刷新失败');
     }
   }
 

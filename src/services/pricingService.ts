@@ -21,7 +21,7 @@ export interface CaptureOrderRequest {
 
 // PayPal订单捕获响应接口
 export interface CaptureOrderResponse {
-  success: boolean;
+  status: 'COMPLETED' | 'FAILED';
   message?: string;
 }
 

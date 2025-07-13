@@ -40,7 +40,7 @@ const API_BASE_URL = import.meta.env.MODE === 'development'
  */
 export class ApiUtils {
   private static accessToken: string | null = null;
-  private static refreshToken: string | null = null;
+  private static refreshTokenValue: string | null = null;
 
   /**
    * 处理认证失败时的跳转逻辑
@@ -62,7 +62,7 @@ export class ApiUtils {
    */
   static setTokens(tokens: AuthTokens, rememberMe: boolean = true) {
     this.accessToken = tokens.accessToken;
-    this.refreshToken = tokens.refreshToken;
+    this.refreshTokenValue = tokens.refreshToken;
     
     // 根据rememberMe决定存储方式
     if (typeof window !== 'undefined') {
@@ -101,7 +101,7 @@ export class ApiUtils {
    * 获取刷新令牌
    */
   static getRefreshToken(): string | null {
-    if (this.refreshToken) return this.refreshToken;
+    if (this.refreshTokenValue) return this.refreshTokenValue;
     
     if (typeof window !== 'undefined') {
       // 先检查localStorage，再检查sessionStorage
@@ -115,7 +115,7 @@ export class ApiUtils {
    */
   static clearTokens() {
     this.accessToken = null;
-    this.refreshToken = null;
+    this.refreshTokenValue = null;
     if (typeof window !== 'undefined') {
       // 同时清除localStorage和sessionStorage中的token
       localStorage.removeItem('accessToken');
@@ -128,7 +128,7 @@ export class ApiUtils {
   /**
    * 刷新访问令牌
    */
-  static async refreshAccessToken(): Promise<boolean> {
+  static async refreshToken(): Promise<boolean> {
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) return false;
 
@@ -191,7 +191,7 @@ export class ApiUtils {
       // 处理认证失败的情况
       if (response.status === 401 && requireAuth) {
         // 尝试刷新令牌
-        const refreshed = await this.refreshAccessToken();
+        const refreshed = await this.refreshToken();
         if (refreshed) {
           // 重新发送请求
           const newToken = this.getAccessToken();
@@ -297,7 +297,7 @@ export class ApiUtils {
 
       // 处理认证失败的情况
       if (response.status === 401 && requireAuth) {
-        const refreshed = await this.refreshAccessToken();
+        const refreshed = await this.refreshToken();
         if (refreshed) {
           const newToken = this.getAccessToken();
           if (newToken) {

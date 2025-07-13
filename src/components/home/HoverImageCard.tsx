@@ -6,6 +6,7 @@ import { downloadImageByUrl, downloadImageAsPdf } from '../../utils/downloadUtil
 import { useLanguage } from '../../contexts/LanguageContext';
 import { getLocalizedText } from '../../utils/textUtils';
 import { getImageNameById } from '../../utils/imageUtils';
+import { navigateWithLanguage } from '../../utils/navigationUtils';
 const downloadIcon = '/images/download.svg';
 const downloadColorIcon = '/images/download-hover.svg';
 
@@ -69,7 +70,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   const handleCardClick = () => {
     // 导航到图片详情页，使用SEO友好的图片路径
     const imagePath = getImageNameById(image.id);
-    navigate(`/image/${imagePath}`);
+    navigateWithLanguage(navigate, `/image/${imagePath}`);
   };
 
 

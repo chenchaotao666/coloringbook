@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
@@ -13,6 +13,7 @@ import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { getImageIdByName, isImageName, updateImageMappings, getImageNameById, getEnglishTitleFromImage } from '../utils/imageUtils';
 import { getCategoryIdByName, getCategoryNameById, isCategoryName, getEnglishNameFromCategory, updateCategoryMappings } from '../utils/categoryUtils';
+import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
 const downloadIcon = '/images/download-white.svg';
 
@@ -20,7 +21,6 @@ const ImageDetailPage: React.FC = () => {
   const { t } = useAsyncTranslation('categories');
   const { imageId, categoryId } = useParams<{ imageId: string; categoryId?: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const { language } = useLanguage();
   
   const [image, setImage] = useState<HomeImage | null>(null);
@@ -34,6 +34,7 @@ const ImageDetailPage: React.FC = () => {
   });
   
   const leftImagesRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef<string>(''); // 防止重复加载
 
   // 解析 tags 为数组（支持 string 或 string[] 类型）
   const parseTags = (tags: string | string[]): string[] => {
@@ -72,16 +73,23 @@ const ImageDetailPage: React.FC = () => {
     const loadImageData = async () => {
       if (!imageId) return;
 
+      // 防止重复加载：如果已经为当前imageId和categoryId组合正在加载，则跳过
+      const currentKey = `${imageId}-${categoryId || 'no-category'}`;
+      if (loadingRef.current === currentKey) {
+        console.log('Already loading for', currentKey, 'skipping...');
+        return;
+      }
+
+      // 设置当前加载的key
+      loadingRef.current = currentKey;
+
       try {
         setIsImageLoading(true);
         
         // 如果URL中有categoryId，使用优化的加载逻辑
         if (categoryId) {
-          console.log('🔍 Loading data for category:', categoryId, 'image:', imageId);
-          
           // 步骤1：获取全量分类数据
           const allCategories = await CategoriesService.getCategories();
-          console.log('📦 Loaded all categories:', allCategories.length);
           
           // 步骤2：根据URL中的分类名称找到分类ID
           let foundCategory: Category | null = null;
@@ -100,7 +108,6 @@ const ImageDetailPage: React.FC = () => {
             }) || null;
             
             if (foundCategory) {
-              console.log('✅ Found category by SEO name:', foundCategory.categoryId);
               // 更新映射表
               updateCategoryMappings([foundCategory]);
             }
@@ -226,6 +233,9 @@ const ImageDetailPage: React.FC = () => {
       } catch (error) {
         console.error('Failed to load image data:', error);
         setIsImageLoading(false);
+      } finally {
+        // 重置加载状态，允许下次加载
+        loadingRef.current = '';
       }
     };
 
@@ -255,38 +265,13 @@ const ImageDetailPage: React.FC = () => {
     }
   };
 
-
-
   // 获取面包屑路径（即使图片还在加载也可以显示基础面包屑）
   const getBreadcrumbPathEarly = (): BreadcrumbItem[] => {
-    // 优先使用URL参数中的categoryId，然后再检查location state
-    const state = location.state as any;
-    const fromCategory = state?.from === 'category';
-    const stateCategoryId = state?.categoryId;
-    const stateCategoryName = state?.categoryName;
-    const stateCategoryPath = state?.categoryPath;
-    
-    // 如果URL中有categoryId或者从分类页面跳转过来
-    if (categoryId || (fromCategory && stateCategoryId && stateCategoryName)) {
+    // 只有当category被设置时，才显示分类面包屑
+    if (category) {
       // 4层面包屑：Home > Coloring Pages Free > xxx category > 图片名字
-      let categoryName: string;
-      let categoryPath: string;
-      
-      if (category) {
-        // 优先使用从API加载的分类信息
-        categoryName = getLocalizedText(category.displayName, language);
-        categoryPath = getCategoryNameById(category.categoryId);
-      } else if (categoryId) {
-        // 使用URL中的categoryId，但转换为更友好的显示名称
-        categoryName = categoryId.split('-').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' '); // 将"cats"转换为"Cats"，"disney-characters"转换为"Disney Characters"
-        categoryPath = categoryId;
-      } else {
-        // 使用state中的信息
-        categoryName = stateCategoryName;
-        categoryPath = stateCategoryPath || stateCategoryId;
-      }
+      const categoryName = getLocalizedText(category.displayName, language);
+      const categoryPath = getCategoryNameById(category.categoryId);
       
       return [
         { label: t('breadcrumb.home', 'Home'), path: '/' },
@@ -298,7 +283,7 @@ const ImageDetailPage: React.FC = () => {
       // 默认2层面包屑：Home > 图片名字
       return [
         { label: t('breadcrumb.home', 'Home'), path: '/' },
-        { label: image ? getLocalizedText(image.title, language) || '' : '', current: true }
+        { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' }
       ];
     }
   };
@@ -311,7 +296,7 @@ const ImageDetailPage: React.FC = () => {
       <Layout>
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
-          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
+          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
             <Breadcrumb items={[
               { label: t('breadcrumb.home', 'Home'), path: '/' },
               { label: t('imageDetail.notFound.breadcrumb', 'Image not found'), current: true }
@@ -345,7 +330,7 @@ const ImageDetailPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
-        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
           <Breadcrumb items={breadcrumbPath} />
         </div>
 
@@ -412,7 +397,7 @@ const ImageDetailPage: React.FC = () => {
                 </div>
 
                 {/* Download Buttons - 响应式布局 */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-6 lg:mt-auto">
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
                   <Button
                     onClick={() => handleDownload('png')}
                     disabled={isDownloading.png}
@@ -450,13 +435,66 @@ const ImageDetailPage: React.FC = () => {
             return (
               <div className="space-y-8 lg:space-y-12 mb-8 lg:mb-20">
                 <section>
-                  <h2 className="text-xl font-bold text-black mb-4 lg:mb-6">📝 {t('imageDetail.detailsTitle', '详细信息')}</h2>
-                  <div className="text-sm text-[#6B7280] leading-7 space-y-3">
-                    {additionalInfo.split('\n').filter(line => line.trim()).map((paragraph: string, index: number) => (
-                      <p key={index} className="text-sm text-[#6B7280] leading-7">
-                        {paragraph.trim()}
-                      </p>
-                    ))}
+                  <div className="mx-auto text-left">
+                    {(() => {
+                      const descriptionText = additionalInfo;
+
+                      // 按 <h2> 标签分段
+                      const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.trim());
+
+                      if (sections.length <= 1) {
+                        // 如果没有 h2 标签，直接显示原文本
+                        const lines = descriptionText.split('\n').filter(line => line.trim());
+
+                        return (
+                          <div className="text-sm text-[#6B7280] leading-7">
+                            {lines.map((line, index) => (
+                              <p key={index} className="mb-3 last:mb-0">
+                                {line.trim()}
+                              </p>
+                            ))}
+                          </div>
+                        );
+                      }
+
+                      // 处理有 h2 标签的情况
+                      const allElements: Array<{ type: 'title' | 'content'; text: string; sectionIndex: number }> = [];
+
+                      sections.forEach((section, sectionIndex) => {
+                        const titleMatch = section.match(/^([^<]*)<\/h2>/);
+                        const title = titleMatch ? titleMatch[1].trim() : '';
+                        const content = section.replace(/^[^<]*<\/h2>/, '').trim();
+
+                        if (title) {
+                          allElements.push({ type: 'title', text: title, sectionIndex });
+                        }
+
+                        if (content) {
+                          const contentLines = content.split('\n').filter(p => p.trim());
+                          contentLines.forEach(line => {
+                            allElements.push({ type: 'content', text: line.trim(), sectionIndex });
+                          });
+                        }
+                      });
+
+                      return (
+                        <div>
+                          {allElements.map((element, index) => (
+                            <div key={`${element.sectionIndex}-${index}`} className="mb-3 lg:mb-4 last:mb-0">
+                              {element.type === 'title' ? (
+                                <h3 className="text-[#161616] text-lg lg:text-xl font-semibold mb-3 lg:mb-4">
+                                  {element.text}
+                                </h3>
+                              ) : (
+                                <p className="text-sm text-[#6B7280] leading-7">
+                                  {element.text}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </section>
               </div>
@@ -485,10 +523,10 @@ const ImageDetailPage: React.FC = () => {
                     
                     // 如果当前在分类页面结构中，保持在同一分类内跳转
                     if (categoryId) {
-                      navigate(`/categories/${categoryId}/${imagePath}`);
+                      navigateWithLanguage(navigate, `/categories/${categoryId}/${imagePath}`);
                     } else {
                       // 否则使用传统的图片详情页路径
-                      navigate(`/image/${imagePath}`);
+                      navigateWithLanguage(navigate, `/image/${imagePath}`);
                     }
                   }}
                 />

@@ -482,7 +482,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
                   {/* Example 标题栏 */}
                   <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-3">
-                    <div className="text-[#161616] font-medium text-sm">{t('examples.title', 'Example')}</div>
+                    <div className="text-[#6B7280] font-medium text-sm">{t('examples.title', 'Example')}</div>
                     <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
                       {t('examples.change', 'Change')}
                       <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
@@ -672,13 +672,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               {/* 滑动指示器 */}
               <div
                 className={`absolute rounded-md transition-all duration-200 bg-white shadow-sm ${
-                  selectedRatio === '21:9' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[2px] top-[2px]' :
-                  selectedRatio === '16:9' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(25%+2px)] top-[2px]' :
-                  selectedRatio === '4:3' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(50%+2px)] top-[2px]' :
-                  selectedRatio === '1:1' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(75%+2px)] top-[2px]' :
-                  selectedRatio === '3:4' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[2px] top-[calc(50%+1px)]' :
-                  selectedRatio === '9:16' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(25%+2px)] top-[calc(50%+1px)]' :
-                  selectedRatio === '16:21' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(50%+2px)] top-[calc(50%+1px)]' :
+                  selectedRatio === '21:9' ? 'w-[calc(25%-4px)] h-[calc(50%-6px)] left-[4px] top-[4px]' :
+                  selectedRatio === '16:9' ? 'w-[calc(25%-4px)] h-[calc(50%-6px)] left-[calc(25%+2px)] top-[4px]' :
+                  selectedRatio === '4:3' ? 'w-[calc(25%-4px)] h-[calc(50%-6px)] left-[calc(50%+2px)] top-[4px]' :
+                  selectedRatio === '1:1' ? 'w-[calc(25%-6px)] h-[calc(50%-6px)] left-[calc(75%+2px)] top-[4px]' :
+                  selectedRatio === '3:4' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[4px] top-[calc(50%-1px)]' :
+                  selectedRatio === '9:16' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(25%+2px)] top-[calc(50%-1px)]' :
+                  selectedRatio === '16:21' ? 'w-[calc(25%-4px)] h-[calc(50%-3px)] left-[calc(50%+2px)] top-[calc(50%-1px)]' :
                   'w-0 opacity-0'
                 }`}
               ></div>
@@ -798,7 +798,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       return (
         <>
           {/* Image Upload Section */}
-          <div className="lg:mx-5 mt-1">
+          <div className="lg:mx-5 lg:mt-7">
             <div className="text-sm font-bold text-[#161616] mb-2">{t('upload.title', 'Image')}</div>
             <div
               className="w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"
@@ -952,7 +952,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
       <div className="flex flex-col lg:flex-row h-screen bg-[#F9FAFB] relative">
         {/* Left Sidebar - 移动端隐藏，桌面端显示 */}
-        <div className="hidden lg:block w-[500px] bg-white pb-[88px] overflow-y-auto h-full">
+        <div className="hidden lg:block w-[600px] bg-white pb-[88px] overflow-y-auto h-full">
           {/* Tab Selector */}
           <div className="mx-5">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
@@ -1113,7 +1113,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
 
         {/* 桌面端生成按钮 */}
-        <div className="hidden lg:flex fixed bottom-0 left-0 w-[500px] h-[88px] bg-white items-center justify-center px-5">
+        <div className="hidden lg:flex fixed bottom-0 left-0 w-[600px] h-[88px] bg-white items-center justify-center px-5">
           <button
             onClick={handleGenerate}
             disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}

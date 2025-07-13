@@ -13,6 +13,7 @@ import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
+import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
 
 const CategoriesDetailPage: React.FC = () => {
@@ -27,7 +28,7 @@ const CategoriesDetailPage: React.FC = () => {
   console.log('🆔 Component ID:', componentIdRef.current);
 
   const [category, setCategory] = useState<Category | null>(null);
-  const [actualCategoryId, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
+  const [, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
   const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
   const [filteredImages, setFilteredImages] = useState<HomeImage[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
@@ -246,7 +247,7 @@ const CategoriesDetailPage: React.FC = () => {
   }, [categoryImages, selectedTag, tagMapping]);
 
   const handleBackToCategories = () => {
-    navigate('/categories');
+    navigateWithLanguage(navigate, '/categories');
   };
 
   const handleGenerateClick = () => {
@@ -255,7 +256,7 @@ const CategoriesDetailPage: React.FC = () => {
       const params = new URLSearchParams();
       params.set('prompt', generatePrompt);
       params.set('ratio', selectedRatio);
-      navigate(`/generate?${params.toString()}`);
+      navigateWithLanguage(navigate, `/generate?${params.toString()}`);
     }
   };
 
@@ -274,7 +275,7 @@ const CategoriesDetailPage: React.FC = () => {
       <Layout>
         <div className="w-full bg-[#F9FAFB] pb-16 md:pb-[120px]">
           {/* Breadcrumb - 即使出错也显示 */}
-          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
+          <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
             <Breadcrumb
               items={[
                 { label: t('breadcrumb.home', 'Home'), path: '/' },
@@ -315,14 +316,14 @@ const CategoriesDetailPage: React.FC = () => {
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}
-        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-6 max-w-[1200px]">
+        <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1200px]">
           <Breadcrumb items={getBreadcrumbPathEarly()} />
         </div>
 
         <div className="container mx-auto px-4 max-w-[1200px]">
           {isCategoryLoading || isImagesLoading ? (
             /* 加载中 - 不显示任何文本 */
-            <div className="flex justify-center items-center py-20 h-[500px]">
+            <div className="flex justify-center items-center py-20 h-[1200px]">
               {/* 加载时不显示任何内容 */}
             </div>
           ) : category ? (
@@ -351,7 +352,7 @@ const CategoriesDetailPage: React.FC = () => {
 
                         return (
                           <div className="relative">
-                            <div className="text-[#6B7280] text-base lg:text-lg leading-relaxed">
+                            <div className="text-base lg:text-lg leading-relaxed">
                               {displayLines.map((line, index) => {
                                 const isSecondLine = index === 1;
                                 const showToggleButton = shouldShowToggle && !isDescriptionExpanded && isSecondLine;
@@ -504,7 +505,7 @@ const CategoriesDetailPage: React.FC = () => {
                   />
 
                   <div className="flex justify-between items-center mt-4">
-                    <div className="w-36">
+                    <div className="w-32">
                       <RatioSelector
                         value={selectedRatio}
                         onChange={setSelectedRatio}
@@ -577,7 +578,7 @@ const CategoriesDetailPage: React.FC = () => {
                         // 导航到图片详情页，使用新的URL结构 /categories/:categoryId/:imageId
                         const imagePath = getImageNameById(image.id);
                         const categoryPath = getCategoryNameById(category.categoryId);
-                        navigate(`/categories/${categoryPath}/${imagePath}`);
+                        navigateWithLanguage(navigate, `/categories/${categoryPath}/${imagePath}`);
                       }}
                     />
                   </>

@@ -112,25 +112,21 @@ const PayPalModal = ({
           onApprove: async (data: any) => {
             try {
               const { orderID } = data;
-              const response = await PricingService.captureOrder(orderID);
+              await PricingService.captureOrder(orderID);
               
-              if (response.status === 'COMPLETED') {
-                // 支付成功，刷新用户信息
-                await refreshUser();
+              // 支付成功，刷新用户信息
+              await refreshUser();
+              
+              // 计算获得的积分
+              const config = planConfigs[planTitle as keyof typeof planConfigs];
+              if (config) {
+                const billingPeriod = planCode.includes('MONTHLY') ? 'monthly' : 'yearly';
+                const credits = config[billingPeriod].credits;
                 
-                // 计算获得的积分
-                const config = planConfigs[planTitle as keyof typeof planConfigs];
-                if (config) {
-                  const billingPeriod = planCode.includes('MONTHLY') ? 'monthly' : 'yearly';
-                  const credits = config[billingPeriod].credits;
-                  
-                  onClose();
-                  // 这里可以显示成功弹窗
-                  alert(t('payment.success.message', '支付成功！获得 {credits} 积分', { credits }));
-                  navigate('/generate');
-                }
-              } else {
-                throw new Error(response.message || '支付失败');
+                onClose();
+                // 这里可以显示成功弹窗
+                alert(t('payment.success.message', '支付成功！获得 {credits} 积分', { credits }));
+                navigate('/generate');
               }
             } catch (error) {
               console.error('捕获支付失败:', error);

@@ -117,11 +117,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const googleLogin = async (token: string, rememberMe: boolean = true) => {
-    const loginResponse = await UserService.googleLogin(token, rememberMe);
-    setUser(loginResponse.user);
+    await UserService.googleLogin(token, rememberMe);
+    // 登录成功后获取用户信息，与普通登录保持一致
+    const userData = await UserService.getCurrentUser();
+    setUser(userData);
     
     // 登录成功后启动token自动刷新服务
-    if (loginResponse.user) {
+    if (userData) {
       tokenRefreshService.start();
     }
   };

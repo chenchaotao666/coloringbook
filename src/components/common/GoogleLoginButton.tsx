@@ -166,7 +166,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
         const renderOptions = { 
           theme: "outline" as const, 
           size: "large" as const,
-          width: "386",
+          width: "400",
           text: "signin_with" as const,
           shape: "rectangular" as const,
           locale: finalLocale,
@@ -190,13 +190,20 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   }, [language]); // 依赖语言变化，重新渲染按钮
 
   return (
-    <div className="w-full">
-      <div ref={buttonRef} className="w-full flex justify-center"></div>
+    <div className="w-full relative" style={{ minHeight: '44px' }}>
+      <div 
+        ref={buttonRef} 
+        className={`w-full flex justify-center transition-opacity duration-200 ${
+          isGoogleLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      ></div>
       
-      {/* 可以在这里添加备用按钮或加载状态 */}
+      {/* 加载状态 - 使用绝对定位避免抖动 */}
       {!isGoogleLoaded && (
-        <div className="w-full py-2 text-center text-gray-500 text-sm">
-          正在加载Google登录...
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-gray-500 text-sm">
+            正在加载Google登录...
+          </div>
         </div>
       )}
     </div>

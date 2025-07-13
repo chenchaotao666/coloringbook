@@ -527,9 +527,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                           />
                           <button
                             onClick={() => handleRecreateExample(example.id)}
-                            className="absolute top-3 left-3 bg-[#FF5C07] text-white text-xs py-1 px-2 rounded-full hover:bg-[#FF7A47] transition-all duration-300 cursor-pointer"
+                            className="absolute top-3 left-3 inline-flex items-center justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-[#FF9D00] to-[#FF5907] text-white hover:from-[#FFB84D] hover:to-[#FF7A47] transition-all duration-300 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer"
                           >
-{t('examples.recreate', 'Recreate')}
+                            {t('examples.recreate', 'Recreate')}
                           </button>
                         </div>
                       );
@@ -917,7 +917,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             })
         ) : !isGenerating ? (
           // 空状态 - 根据当前标签页显示不同的提示
-          <div className="text-center text-[#A4A4A4] text-xs mt-8">
+          <div className="text-center text-[#6B7280] text-xs mt-8">
             {selectedTab === 'text' ? t('states.noTextToImageYet', 'No text to image yet') : t('states.noImageToImageYet', 'No image to image yet')}
           </div>
         ) : null}

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserService } from '../services/userService';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
+import SEOHead from '../components/common/SEOHead';
 
 const ForgotPasswordPage: React.FC = () => {
-  const { t } = useLanguage();
+  const { t: tForms } = useAsyncTranslation('forms');
+  const { t: tErrors } = useAsyncTranslation('errors');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   // 邮箱验证
   const validateEmail = (email: string) => {
@@ -21,17 +23,17 @@ const ForgotPasswordPage: React.FC = () => {
     e.preventDefault();
     
     if (!email.trim()) {
-      setError(t('forms.validation.emailRequired'));
+      setErrors({ email: tForms('validation.required', '此字段为必填项') });
       return;
     }
     
     if (!validateEmail(email)) {
-      setError(t('forms.validation.emailInvalid'));
+      setErrors({ email: tForms('validation.emailInvalid', '请输入有效的邮箱地址') });
       return;
     }
 
     setIsLoading(true);
-    setError('');
+    setErrors({});
     
     try {
       await UserService.forgotPassword(email.trim());
@@ -42,180 +44,187 @@ const ForgotPasswordPage: React.FC = () => {
       if (error instanceof ApiError) {
         switch (error.errorCode) {
           case '1004':
-            setError(t('errors.auth.emailNotRegistered2'));
+            setErrors({ email: tErrors('auth.emailNotRegistered', '邮箱未注册') });
             break;
           case '1018':
-            setError(t('errors.auth.sendEmailFailed'));
+            setErrors({ general: tErrors('auth.sendEmailFailed', '发送邮件失败') });
             break;
           default:
-            setError(error.message || t('errors.auth.resetEmailFailed'));
+            setErrors({ general: error.message || tErrors('auth.forgotPasswordFailed', '重置密码失败') });
         }
       } else {
-        setError(t('errors.network.connectionFailed'));
+        setErrors({ general: tErrors('network.connectionFailed', '网络连接失败') });
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 处理输入变化
+  // 处理邮箱输入变化
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    if (error) {
-      setError('');
+    if (errors.email) {
+      setErrors(prev => ({
+        ...prev,
+        email: ''
+      }));
     }
   };
 
+  // 如果邮件已发送，显示成功页面
   if (isEmailSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-8">
-            <div className="text-center">
-              <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100">
-                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                {t('forms.auth.emailSentTitle')}
-              </h2>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                {t('forms.auth.emailSentDesc')}
-              </p>
-              <p className="mt-1 text-center text-sm font-medium text-blue-600">
-                {email}
-              </p>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                {t('forms.auth.emailSentInstructions')}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-blue-700">
-                      {t('forms.auth.emailNotReceivedTip')}
-                    </p>
-                  </div>
+      <>
+        <SEOHead
+          title={`${tForms('auth.resetPasswordTitle', 'Reset Password')} - AI Coloring Page Generator`}
+          description="Password reset email sent successfully."
+          keywords="reset password, forgot password, AI coloring pages"
+          ogTitle={`${tForms('auth.resetPasswordTitle', 'Reset Password')} - AI Coloring Page Generator`}
+          ogDescription="Password reset email sent successfully."
+          noIndex={true}
+        />
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+          {/* Logo */}
+          <Link to="/" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 mr-[20px]">
+            <img src="/images/logo.svg" alt="Logo" className="h-15 w-auto mr-2" style={{height: '60px', width: '50px'}} />
+            <span className="text-2xl font-bold text-gray-900">ColorPage</span>
+          </Link>
+          
+          {/* Success Card */}
+          <div className="w-full bg-white border border-gray-200 rounded-lg shadow sm:max-w-[31rem] xl:p-0">
+            <div className="p-12">
+              <div className="text-center">
+                <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100 mb-6">
+                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
                 </div>
-              </div>
-
-              <div className="flex flex-col space-y-3">
+                <h1 className="mb-6 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+                  邮件已发送
+                </h1>
+                <p className="mb-4 text-sm text-gray-600">
+                  重置密码的邮件已发送到：
+                </p>
+                <p className="mb-6 text-sm font-medium text-blue-600">
+                  {email}
+                </p>
+                <p className="mb-8 text-sm text-gray-600">
+                  请检查您的邮箱并点击邮件中的链接来重置密码。
+                </p>
+                
+                {/* 返回登录按钮 */}
+                <div className="mb-6">
+                  <Link
+                    to="/login"
+                    className="w-full inline-flex justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  >
+                    {tForms('auth.backToLogin', '返回登录')}
+                  </Link>
+                </div>
+                
+                {/* 重新发送 */}
                 <button
                   onClick={() => {
                     setIsEmailSent(false);
                     setEmail('');
                   }}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="text-sm font-medium text-blue-600 hover:underline"
                 >
-                  {t('forms.auth.resendEmail')}
+                  重新发送邮件
                 </button>
-                
-                <Link
-                  to="/login"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  {t('forms.auth.backToLogin')}
-                </Link>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-      <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-8">
-          <div className="text-center">
-            <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
-              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-              </svg>
-            </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              {t('forms.auth.forgotPasswordTitle')}
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              {t('forms.auth.forgotPasswordDesc')}
-            </p>
-          </div>
+    <>
+      <SEOHead
+        title={`${tForms('auth.resetPasswordTitle', 'Reset Password')} - AI Coloring Page Generator`}
+        description="Reset your password to regain access to your AI coloring page generator account."
+        keywords="reset password, forgot password, AI coloring pages"
+        ogTitle={`${tForms('auth.resetPasswordTitle', 'Reset Password')} - AI Coloring Page Generator`}
+        ogDescription="Reset your password to regain access to your AI coloring page generator account."
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+        {/* Logo */}
+        <Link to="/" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 mr-[20px]">
+          <img src="/images/logo.svg" alt="Logo" className="h-15 w-auto mr-2" style={{height: '60px', width: '50px'}} />
+          <span className="text-2xl font-bold text-gray-900">ColorPage</span>
+        </Link>
+        
+        {/* Reset Password Card */}
+        <div className="w-full bg-white border border-gray-200 rounded-lg shadow sm:max-w-[31rem] xl:p-0">
+          <div className="p-12">
+            <h1 className="mb-8 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+              {tForms('auth.resetYourPassword', '重置密码')}
+            </h1>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{error}</div>
-              </div>
-            )}
+            <form onSubmit={handleSubmit}>
+              {errors.general && (
+                <div className="rounded-md bg-red-50 p-4 mb-6">
+                  <div className="text-sm text-red-700">{errors.general}</div>
+                </div>
+              )}
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                {t('forms.fields.emailAddress')}
-              </label>
-              <div className="mt-1">
+              {/* 邮箱输入 */}
+              <div className="mb-6">
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('fields.emailAddress', '邮件')}
+                </label>
                 <input
                   id="email"
                   name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
                   value={email}
                   onChange={handleEmailChange}
-                  className={`appearance-none relative block w-full px-3 py-2 border ${
-                    error ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                  placeholder={t('forms.placeholders.email')}
+                  className={`w-full px-3 py-3 text-sm border ${
+                    errors.email ? 'border-red-300' : 'border-gray-300'
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.emailAddress', '请输入您的邮箱地址')}
                 />
+                <div className="h-4 mt-1">
+                  {errors.email && (
+                    <p className="text-sm text-red-600">{errors.email}</p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    {/* 移除loading文本，只显示加载图标 */}
-                  </div>
-                ) : (
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <svg className="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
-                  </span>
-                )}
-                {!isLoading && t('forms.auth.sendResetEmail')}
-              </button>
-            </div>
+              {/* 发送重置邮件按钮 */}
+              <div className="mb-6">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  ) : (
+                    tForms('auth.sendResetEmail', '发送重置邮件')
+                  )}
+                </button>
+              </div>
 
-            <div className="text-center">
-              <Link
-                to="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                {t('forms.auth.backToLogin')}
-              </Link>
-            </div>
-          </form>
+              {/* 返回登录链接 */}
+              <p className="text-sm font-light text-center text-gray-500">
+                {tForms('auth.rememberPassword', '记住密码？')}{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:underline">
+                  {tForms('auth.backToLogin', '返回登录')}
+                </Link>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

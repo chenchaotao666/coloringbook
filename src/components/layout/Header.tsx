@@ -245,9 +245,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
   return (
     <>
-      <div className={`fixed top-0 left-0 right-0 w-full h-[70px] py-[15px] ${bgClass} bg-opacity-98 backdrop-blur-sm flex justify-between items-center z-50`}>
+      <div className={`fixed top-0 left-0 right-0 w-full h-[70px] py-[15px] ${bgClass} bg-opacity-98 backdrop-blur-md flex justify-between items-center z-50`}>
         {/* Logo */}
-        <Link to={createLocalizedLink("/")} className="relative z-10 pl-4 sm:pl-5 flex justify-start items-center gap-1 hover:opacity-80 transition-opacity duration-200">
+        <Link to={createLocalizedLink("/")} className="relative z-10 pl-4 sm:pl-5 flex justify-start items-center gap-1 hover:opacity-90 transition-opacity duration-200">
           <img src={logo} alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
           <div className="text-[#161616] text-xl sm:text-2xl font-medium">Coloring</div>
         </Link>
@@ -327,7 +327,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           {/* 语言选择下拉菜单 */}
           <div className="relative flex-shrink-0" ref={dropdownRef}>
             <div 
-              className="px-3 py-1.5 rounded-lg flex justify-start items-center gap-1.5 hover:opacity-60 transition-opacity duration-200 cursor-pointer min-w-fit"
+              className="px-3 py-1.5 rounded-lg flex justify-start items-center gap-1.5 hover:opacity-85 transition-opacity duration-200 cursor-pointer min-w-fit"
               onClick={() => setIsDesktopLanguageDropdownOpen(!isDesktopLanguageDropdownOpen)}
             >
               <img src={intlIcon} alt="Language" className="w-5 h-5 flex-shrink-0" />
@@ -386,7 +386,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               {/* 积分显示 */}
               <Link 
                 to={createLocalizedLink("/price")}
-                className="flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer flex-shrink-0" 
+                className="flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity duration-200 cursor-pointer flex-shrink-0" 
                 style={{backgroundColor: '#F9FAFB'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
@@ -396,11 +396,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               {/* 用户头像和下拉菜单 */}
               <div className="relative flex-shrink-0" ref={userDropdownRef}>
                 <div 
-                  className="flex items-center gap-2 hover:opacity-60 transition-opacity duration-200 cursor-pointer"
+                  className="flex items-center gap-2 hover:opacity-85 transition-opacity duration-200 cursor-pointer"
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                 >
                   <img
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-6 h-6 rounded-full object-cover"
                     src={user.avatar || defaultAvatar}
                     alt="头像"
                   />
@@ -489,7 +489,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             <div className="pr-3">
               <Link 
                 to={createLocalizedLink("/price")}
-                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer" 
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity duration-200 cursor-pointer" 
                 style={{backgroundColor: '#FAFBFC'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
@@ -555,7 +555,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   <div className="mt-3">
                     <Link 
                       to={createLocalizedLink("/price")}
-                      className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200 cursor-pointer inline-flex"
+                      className="flex items-center gap-2 hover:opacity-90 transition-opacity duration-200 cursor-pointer inline-flex"
                       onClick={handleMobileLinkClick}
                     >
                       <img src={creditsIcon} alt="积分" className="w-4 h-4" />

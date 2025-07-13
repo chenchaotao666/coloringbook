@@ -490,7 +490,7 @@ const CategoriesDetailPage: React.FC = () => {
 
               {/* Generate Section - 等待加载完成后显示 */}
               <div className="max-w-[920px] mx-auto">
-                <h2 className="text-center text-[#161616] text-3xl lg:text-[2rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
+                <h2 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
                   {t('detail.generateSection.title', 'Create your personalized AI {category} coloring page', {
                     category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '自定义')
                   })}

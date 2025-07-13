@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { UserService } from '../services/userService';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
+import SEOHead from '../components/common/SEOHead';
 
 const ResetPasswordPage: React.FC = () => {
-  const { t } = useLanguage();
+  const { t: tForms } = useAsyncTranslation('forms');
+  const { t: tErrors } = useAsyncTranslation('errors');
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   
@@ -45,18 +47,18 @@ const ResetPasswordPage: React.FC = () => {
 
     // 密码验证
     if (!formData.password) {
-      newErrors.password = t('forms.validation.newPasswordRequired');
+      newErrors.password = tForms('validation.required', '此字段为必填项');
     } else if (formData.password.length < 6) {
-      newErrors.password = t('forms.validation.passwordTooShort', undefined, { min: 6 });
+      newErrors.password = tForms('validation.passwordTooShort', '密码至少需要{min}位').replace('{min}', '6');
     } else if (formData.password.length > 50) {
-      newErrors.password = t('forms.validation.passwordMaxLength', undefined, { max: 50 });
+      newErrors.password = tForms('validation.maxLength', '不能超过{max}个字符').replace('{max}', '50');
     }
 
     // 确认密码验证
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = t('forms.validation.confirmNewPasswordRequired');
+      newErrors.confirmPassword = tForms('validation.required', '此字段为必填项');
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = t('forms.validation.newPasswordMismatch');
+      newErrors.confirmPassword = tForms('validation.passwordMismatch', '两次输入的密码不一致');
     }
 
     setErrors(newErrors);
@@ -71,12 +73,52 @@ const ResetPasswordPage: React.FC = () => {
       [name]: value
     }));
     
-    // 清除对应字段的错误
-    if (errors[name]) {
+    // 实时密码校验
+    if (name === 'password') {
+      const newErrors: {[key: string]: string} = {};
+      
+      if (value && value.length < 6) {
+        newErrors.password = tForms('validation.passwordTooShort', '密码至少需要{min}位').replace('{min}', '6');
+      } else if (value && value.length > 50) {
+        newErrors.password = tForms('validation.maxLength', '不能超过{max}个字符').replace('{max}', '50');
+      }
+      
+      // 如果确认密码已经输入，检查是否匹配
+      if (formData.confirmPassword && value !== formData.confirmPassword) {
+        newErrors.confirmPassword = tForms('validation.passwordMismatch', '两次输入的密码不一致');
+      } else if (formData.confirmPassword && value === formData.confirmPassword) {
+        // 密码匹配时清除确认密码错误
+        setErrors(prev => ({
+          ...prev,
+          confirmPassword: ''
+        }));
+      }
+      
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        password: newErrors.password || '',
+        ...(newErrors.confirmPassword !== undefined && { confirmPassword: newErrors.confirmPassword })
       }));
+    } else if (name === 'confirmPassword') {
+      // 确认密码实时校验
+      const newErrors: {[key: string]: string} = {};
+      
+      if (value && formData.password !== value) {
+        newErrors.confirmPassword = tForms('validation.passwordMismatch', '两次输入的密码不一致');
+      }
+      
+      setErrors(prev => ({
+        ...prev,
+        confirmPassword: newErrors.confirmPassword || ''
+      }));
+    } else {
+      // 其他字段清除错误
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
     }
   };
 
@@ -99,16 +141,16 @@ const ResetPasswordPage: React.FC = () => {
       if (error instanceof ApiError) {
         switch (error.errorCode) {
           case '1019':
-            setErrors({ general: t('errors.auth.tokenExpired') });
+            setErrors({ general: tErrors('auth.tokenExpired', '重置链接已过期') });
             break;
           case '1020':
-            setErrors({ general: t('errors.auth.tokenInvalid') });
+            setErrors({ general: tErrors('auth.tokenInvalid', '重置链接无效') });
             break;
           default:
-            setErrors({ general: error.message || t('errors.auth.resetFailed') });
+            setErrors({ general: error.message || tErrors('auth.resetFailed', '重置密码失败') });
         }
       } else {
-        setErrors({ general: t('errors.network.connectionFailed') });
+        setErrors({ general: tErrors('network.connectionFailed', '网络连接失败') });
       }
     } finally {
       setIsLoading(false);
@@ -118,205 +160,237 @@ const ResetPasswordPage: React.FC = () => {
   // Token无效页面
   if (isTokenValid === false) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-8">
-            <div className="text-center">
-              <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-red-100">
-                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
+      <>
+        <SEOHead
+          title={`${tForms('auth.linkInvalid', 'Link Invalid')} - AI Coloring Page Generator`}
+          description="Password reset link is invalid or expired."
+          keywords="password reset, invalid link"
+          noIndex={true}
+        />
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+          {/* Logo */}
+          <Link to="/" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 mr-[20px] ">
+            <img src="/images/logo.svg" alt="Logo" className="h-15 w-auto mr-2" style={{height: '60px', width: '50px'}} />
+            <span className="text-2xl font-bold text-gray-900">ColorPage</span>
+          </Link>
+          
+          {/* Error Card */}
+          <div className="w-full bg-white border border-gray-200 rounded-lg shadow sm:max-w-[31rem] xl:p-0">
+            <div className="p-12">
+              <div className="text-center">
+                <h1 className="mb-4 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+                  {tForms('auth.linkInvalid', '链接无效')}
+                </h1>
+                <p className="mb-8 text-sm text-gray-600">
+                  {tForms('auth.linkInvalidDesc', '此重置链接已过期或无效，请重新申请')}
+                </p>
               </div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                {t('forms.auth.linkInvalid')}
-              </h2>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                {t('forms.auth.linkInvalidDesc')}
-              </p>
-            </div>
 
-            <div className="space-y-4">
-              <Link
-                to="/forgot-password"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                {t('forms.auth.requestNewReset')}
-              </Link>
+              <div className="mb-6">
+                <Link
+                  to="/forgot-password"
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center block"
+                >
+                  {tForms('auth.requestNewReset', '重新申请重置')}
+                </Link>
+              </div>
               
-              <Link
-                to="/login"
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                {t('forms.auth.backToLogin')}
-              </Link>
+              <p className="text-sm font-light text-center text-gray-500">
+                {tForms('auth.rememberPassword', '记住密码？')}{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:underline">
+                  {tForms('auth.backToLogin', '返回登录')}
+                </Link>
+              </p>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   // 重置成功页面
   if (isResetSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-8">
-            <div className="text-center">
-              <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100">
-                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+      <>
+        <SEOHead
+          title={`${tForms('auth.resetSuccess', 'Reset Successful')} - AI Coloring Page Generator`}
+          description="Password has been successfully reset."
+          keywords="password reset, success"
+          noIndex={true}
+        />
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+          {/* Logo */}
+          <Link to="/" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 mr-[20px]">
+            <img src="/images/logo.svg" alt="Logo" className="h-15 w-auto mr-2" style={{height: '60px', width: '50px'}} />
+            <span className="text-2xl font-bold text-gray-900">ColorPage</span>
+          </Link>
+          
+          {/* Success Card */}
+          <div className="w-full bg-white border border-gray-200 rounded-lg shadow sm:max-w-[31rem] xl:p-0">
+            <div className="p-12">
+              <div className="text-center">
+                <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100 mb-6">
+                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h1 className="mb-4 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+                  {tForms('auth.resetSuccess', '重置成功')}
+                </h1>
+                <p className="mb-8 text-sm text-gray-600">
+                  {tForms('auth.resetSuccessDesc', '您的密码已成功重置，现在可以使用新密码登录')}
+                </p>
               </div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                {t('forms.auth.resetSuccess')}
-              </h2>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                {t('forms.auth.resetSuccessDesc')}
-              </p>
-            </div>
 
-            <div>
-              <Link
-                to="/login"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                {t('forms.auth.goToLogin')}
-              </Link>
+              <div className="mb-6">
+                <Link
+                  to="/login"
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center block"
+                >
+                  {tForms('auth.goToLogin', '前往登录')}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   // 加载中
   if (isTokenValid === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          {/* 加载时不显示文本 */}
+      <>
+        <SEOHead
+          title={`${tForms('auth.resetPasswordTitle', 'Reset Password')} - AI Coloring Page Generator`}
+          description="Reset your password to regain access to your account."
+          keywords="password reset, account recovery"
+          noIndex={true}
+        />
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   // 重置密码表单
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-      <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-8">
-          <div className="text-center">
-            <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
-              <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1721 9z" />
-              </svg>
-            </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              {t('forms.auth.resetPasswordTitle')}
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              {t('forms.auth.resetPasswordDesc')}
+    <>
+      <SEOHead
+        title={`${tForms('auth.resetPasswordTitle', 'Reset Password')} - AI Coloring Page Generator`}
+        description="Reset your password to regain access to your account."
+        keywords="password reset, account recovery"
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+        {/* Logo */}
+        <Link to="/" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 mr-[20px]">
+          <img src="/images/logo.svg" alt="Logo" className="h-15 w-auto mr-2" style={{height: '60px', width: '50px'}} />
+          <span className="text-2xl font-bold text-gray-900">ColorPage</span>
+        </Link>
+        
+        {/* Reset Password Card */}
+        <div className="w-full bg-white border border-gray-200 rounded-lg shadow sm:max-w-[31rem] xl:p-0">
+          <div className="p-12">
+            <h1 className="mb-4 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+              {tForms('auth.resetPasswordTitle', '重置密码')}
+            </h1>
+            <p className="mb-8 text-sm text-gray-600">
+              {tForms('auth.resetPasswordDesc', '请输入您的新密码')}
             </p>
-          </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {errors.general && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{errors.general}</div>
-              </div>
-            )}
+            <form onSubmit={handleSubmit}>
+              {errors.general && (
+                <div className="rounded-md bg-red-50 p-4 mb-6">
+                  <div className="text-sm text-red-700">{errors.general}</div>
+                </div>
+              )}
 
-            <div className="space-y-4">
               {/* 新密码输入 */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  {t('forms.auth.newPassword')}
+              <div className="mb-6">
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('auth.newPassword', '新密码')}
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`appearance-none relative block w-full px-3 py-2 border ${
-                      errors.password ? 'border-red-300' : 'border-gray-300'
-                    } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder={t('forms.placeholders.password')}
-                  />
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-3 text-sm border ${
+                    errors.password ? 'border-red-300' : 'border-gray-300'
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.password', '请输入密码')}
+                />
+                <div className="h-4 mt-1">
                   {errors.password && (
-                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    <p className="text-sm text-red-600">{errors.password}</p>
                   )}
                 </div>
               </div>
 
               {/* 确认密码输入 */}
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  {t('forms.auth.confirmNewPassword')}
+              <div className="mb-6">
+                <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('auth.confirmNewPassword', '确认新密码')}
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className={`appearance-none relative block w-full px-3 py-2 border ${
-                      errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                    } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder={t('forms.placeholders.confirmPassword')}
-                  />
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-3 text-sm border ${
+                    errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.confirmPassword', '请再次输入密码')}
+                />
+                <div className="h-4 mt-1">
                   {errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                    <p className="text-sm text-red-600">{errors.confirmPassword}</p>
                   )}
                 </div>
               </div>
-            </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    {/* 移除loading文本，只显示加载图标 */}
-                  </div>
-                ) : (
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <svg className="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a5 5 0 0110 0z" clipRule="evenodd" />
-                    </svg>
-                  </span>
-                )}
-                {!isLoading && t('forms.auth.resetPassword')}
-              </button>
-            </div>
+              {/* 重置按钮 */}
+              <div className="mb-6">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  ) : (
+                    tForms('auth.resetPassword', '重置密码')
+                  )}
+                </button>
+              </div>
 
-            <div className="text-center">
-              <Link
-                to="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                {t('forms.auth.backToLogin')}
-              </Link>
-            </div>
-          </form>
+              {/* 返回登录链接 */}
+              <p className="text-sm font-light text-center text-gray-500">
+                {tForms('auth.rememberPassword', '记住密码？')}{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:underline">
+                  {tForms('auth.backToLogin', '返回登录')}
+                </Link>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

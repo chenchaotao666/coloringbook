@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
+import GoogleLoginButton from '../components/common/GoogleLoginButton';
 import SEOHead from '../components/common/SEOHead';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
-  const { t } = useLanguage();
+  const { t: tForms } = useAsyncTranslation('forms');
+  const { t: tErrors } = useAsyncTranslation('errors');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -24,41 +26,40 @@ const RegisterPage: React.FC = () => {
 
     // 用户名验证
     if (!formData.username.trim()) {
-      newErrors.username = t('forms.validation.usernameRequired');
+      newErrors.username = tForms('validation.required', '此字段为必填项');
     } else if (formData.username.length < 2) {
-      newErrors.username = t('forms.validation.usernameMinLength', undefined, { min: 2 });
+      newErrors.username = tForms('validation.minLength', '至少需要{min}个字符').replace('{min}', '2');
     } else if (formData.username.length > 20) {
-      newErrors.username = t('forms.validation.usernameMaxLength', undefined, { max: 20 });
+      newErrors.username = tForms('validation.maxLength', '不能超过{max}个字符').replace('{max}', '20');
     }
 
     // 邮箱验证
     if (!formData.email.trim()) {
-      newErrors.email = t('forms.validation.emailRequired');
+      newErrors.email = tForms('validation.required', '此字段为必填项');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = t('forms.validation.emailInvalid');
+      newErrors.email = tForms('validation.emailInvalid', '请输入有效的邮箱地址');
     }
 
     // 密码验证
     if (!formData.password) {
-      newErrors.password = t('forms.validation.passwordRequired');
+      newErrors.password = tForms('validation.required', '此字段为必填项');
     } else if (formData.password.length < 6) {
-      newErrors.password = t('forms.validation.passwordTooShort', undefined, { min: 6 });
+      newErrors.password = tForms('validation.passwordTooShort', '密码至少需要{min}位').replace('{min}', '6');
     } else if (formData.password.length > 50) {
-      newErrors.password = t('forms.validation.passwordMaxLength', undefined, { max: 50 });
+      newErrors.password = tForms('validation.maxLength', '不能超过{max}个字符').replace('{max}', '50');
     }
 
     // 确认密码验证
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = t('forms.validation.confirmPasswordRequired');
+      newErrors.confirmPassword = tForms('validation.required', '此字段为必填项');
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = t('forms.validation.passwordMismatch');
+      newErrors.confirmPassword = tForms('validation.passwordMismatch', '两次输入的密码不一致');
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // 处理输入变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -66,16 +67,55 @@ const RegisterPage: React.FC = () => {
       [name]: value
     }));
     
-    // 清除对应字段的错误
-    if (errors[name]) {
+    // 实时密码校验
+    if (name === 'password') {
+      const newErrors: {[key: string]: string} = {};
+      
+      if (value && value.length < 6) {
+        newErrors.password = tForms('validation.passwordTooShort', '密码至少需要{min}位').replace('{min}', '6');
+      } else if (value && value.length > 50) {
+        newErrors.password = tForms('validation.maxLength', '不能超过{max}个字符').replace('{max}', '50');
+      }
+      
+      // 如果确认密码已经输入，检查是否匹配
+      if (formData.confirmPassword && value !== formData.confirmPassword) {
+        newErrors.confirmPassword = tForms('validation.passwordMismatch', '两次输入的密码不一致');
+      } else if (formData.confirmPassword && value === formData.confirmPassword) {
+        // 密码匹配时清除确认密码错误
+        setErrors(prev => ({
+          ...prev,
+          confirmPassword: ''
+        }));
+      }
+      
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        password: newErrors.password || '',
+        ...(newErrors.confirmPassword !== undefined && { confirmPassword: newErrors.confirmPassword })
       }));
+    } else if (name === 'confirmPassword') {
+      // 确认密码实时校验
+      const newErrors: {[key: string]: string} = {};
+      
+      if (value && formData.password !== value) {
+        newErrors.confirmPassword = tForms('validation.passwordMismatch', '两次输入的密码不一致');
+      }
+      
+      setErrors(prev => ({
+        ...prev,
+        confirmPassword: newErrors.confirmPassword || ''
+      }));
+    } else {
+      // 其他字段清除错误
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
     }
   };
 
-  // 处理表单提交
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -84,40 +124,38 @@ const RegisterPage: React.FC = () => {
     }
 
     setIsLoading(true);
-    try {
-      await register(
-        formData.username.trim(),
-        formData.email.trim(),
-        formData.password
-      );
+    setErrors({});
 
-      // 注册成功，跳转到登录页面
-      navigate('/login', { 
-        state: { 
-          message: t('forms.auth.registerSuccess'),
-          email: formData.email.trim()
+    try {
+      await register(formData.username, formData.email, formData.password);
+      
+      // 注册成功后跳转到登录页面，并传递成功消息
+      navigate('/login', {
+        state: {
+          message: tForms('auth.registerSuccess', '注册成功！请登录您的账户。'),
+          email: formData.email
         }
       });
+      
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Register error:', error);
       
       if (error instanceof ApiError) {
-        // 处理特定的API错误
         switch (error.errorCode) {
-          case '1001':
-            setErrors({ email: t('errors.auth.emailAlreadyRegistered') });
+          case '2001':
+            setErrors({ email: tErrors('auth.emailAlreadyExists', '邮箱已被注册') });
             break;
-          case '1002':
-            setErrors({ username: t('errors.auth.usernameAlreadyTaken') });
+          case '2002':
+            setErrors({ username: tErrors('auth.usernameAlreadyExists', '用户名已被使用') });
             break;
           case '1003':
-            setErrors({ general: t('errors.auth.invalidInputFormat') });
+            setErrors({ general: tErrors('validation.invalidFormat', '格式不正确') });
             break;
           default:
-            setErrors({ general: error.message || t('errors.auth.registrationFailed') });
+            setErrors({ general: error.message || tErrors('auth.registrationFailed', '注册失败') });
         }
       } else {
-        setErrors({ general: t('errors.network.connectionFailed') });
+        setErrors({ general: tErrors('network.connectionFailed', '网络连接失败') });
       }
     } finally {
       setIsLoading(false);
@@ -127,172 +165,174 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Register - AI Coloring Page Generator"
-        description="Create your account to start generating unlimited AI coloring pages."
+        title={`${tForms('auth.registerTitle', 'Register')} - AI Coloring Page Generator`}
+        description={tForms('auth.registerTitle', 'Register') + " to create your account and start generating unlimited AI coloring pages."}
         keywords="register, sign up, AI coloring pages, account creation"
-        ogTitle="Register - AI Coloring Page Generator"
-        ogDescription="Create your account to start generating unlimited AI coloring pages."
+        ogTitle={`${tForms('auth.registerTitle', 'Register')} - AI Coloring Page Generator`}
+        ogDescription={tForms('auth.registerTitle', 'Register') + " to create your account and start generating unlimited AI coloring pages."}
         noIndex={true}
       />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-purple-100">
-            <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
-          </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {t('forms.auth.registerTitle')}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t('forms.auth.hasAccount')}{' '}
-            <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
-              {t('forms.auth.loginNow')}
-            </Link>
-          </p>
-        </div>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+        {/* Logo */}
+        <Link to="/" className="flex items-center mb-6 text-3xl font-semibold text-gray-900 mr-[20px]">
+          <img src="/images/logo.svg" alt="Logo" className="h-15 w-auto mr-2" style={{height: '60px', width: '50px'}} />
+          <span className="text-2xl font-bold text-gray-900">ColorPage</span>
+        </Link>
+        
+        {/* Register Card */}
+        <div className="w-full bg-white border border-gray-200 rounded-lg shadow sm:max-w-[31rem] xl:p-0">
+          <div className="p-12">
+            <h1 className="mb-8 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+              {tForms('auth.registerYourAccount', '注册您的账号')}
+            </h1>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {errors.general && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">{errors.general}</div>
+            {/* Google 登录按钮 */}
+            <GoogleLoginButton 
+              rememberMe={false}
+              onError={(error) => {
+                setErrors({ general: error.message || tErrors('auth.googleLoginFailed', 'Google登录失败') });
+              }}
+            />
+            
+            {/* 分割线 */}
+            <div className="flex items-center py-3 my-2 text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6">
+              {tForms('auth.orDivider', '或使用')}
             </div>
-          )}
 
-          <div className="space-y-4">
-            {/* 用户名输入 */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                {t('forms.fields.username')}
-              </label>
-              <div className="mt-1">
+            <form onSubmit={handleSubmit}>
+              {errors.general && (
+                <div className="rounded-md bg-red-50 p-4 mb-6">
+                  <div className="text-sm text-red-700">{errors.general}</div>
+                </div>
+              )}
+
+              {/* 用户名输入 */}
+              <div className="mb-2">
+                <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('fields.username', '用户名')}
+                </label>
                 <input
                   id="username"
                   name="username"
                   type="text"
                   autoComplete="username"
-                  required
                   value={formData.username}
                   onChange={handleInputChange}
-                  className={`appearance-none relative block w-full px-3 py-2 border ${
+                  className={`w-full px-3 py-3 text-sm border ${
                     errors.username ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder={t('forms.placeholders.username')}
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.username', '请输入用户名')}
                 />
-                {errors.username && (
-                  <p className="mt-1 text-sm text-red-600">{errors.username}</p>
-                )}
+                <div className="h-4 mt-1">
+                  {errors.username && (
+                    <p className="text-sm text-red-600">{errors.username}</p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* 邮箱输入 */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                {t('forms.fields.emailAddress')}
-              </label>
-              <div className="mt-1">
+              {/* 邮箱输入 */}
+              <div className="mb-2">
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('fields.email', '邮箱')}
+                </label>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`appearance-none relative block w-full px-3 py-2 border ${
+                  className={`w-full px-3 py-3 text-sm border ${
                     errors.email ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder={t('forms.placeholders.email')}
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.email', '请输入邮箱')}
                 />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
+                <div className="h-4 mt-1">
+                  {errors.email && (
+                    <p className="text-sm text-red-600">{errors.email}</p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* 密码输入 */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                {t('forms.fields.password')}
-              </label>
-              <div className="mt-1">
+              {/* 密码输入 */}
+              <div className="mb-2">
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('fields.password', '密码')}
+                </label>
                 <input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="new-password"
-                  required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`appearance-none relative block w-full px-3 py-2 border ${
+                  className={`w-full px-3 py-3 text-sm border ${
                     errors.password ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder={t('forms.placeholders.passwordHint')}
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.password', '请输入密码')}
                 />
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                )}
+                <div className="h-4 mt-1">
+                  {errors.password && (
+                    <p className="text-sm text-red-600">{errors.password}</p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* 确认密码输入 */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                {t('forms.fields.confirmPassword')}
-              </label>
-              <div className="mt-1">
+              {/* 确认密码输入 */}
+              <div className="mb-2">
+                <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900">
+                  <span className="text-red-500 mr-1">*</span>{tForms('fields.confirmPassword', '确认密码')}
+                </label>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
                   autoComplete="new-password"
-                  required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className={`appearance-none relative block w-full px-3 py-2 border ${
+                  className={`w-full px-3 py-3 text-sm border ${
                     errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm`}
-                  placeholder={t('forms.placeholders.confirmPassword')}
+                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
+                  placeholder={tForms('placeholders.confirmPassword', '请再次输入密码')}
                 />
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {/* 移除loading文本，只显示加载图标 */}
+                <div className="h-4 mt-1">
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-600">{errors.confirmPassword}</p>
+                  )}
                 </div>
-              ) : (
-                t('forms.auth.createAccount')
-              )}
-            </button>
-          </div>
+              </div>
 
-          <div className="text-center">
-            <p className="text-xs text-gray-500">
-              {t('forms.auth.agreeTerms')}{' '}
-              <a href="#" className="text-purple-600 hover:text-purple-500">{t('forms.auth.termsOfService')}</a>
-              {' '}{t('forms.auth.and')}{' '}
-              <a href="#" className="text-purple-600 hover:text-purple-500">{t('forms.auth.privacyPolicy')}</a>
-            </p>
+              {/* 注册按钮 */}
+              <div className="mb-6">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  ) : (
+                    tForms('auth.registerButton', '注册')
+                  )}
+                </button>
+              </div>
+
+              {/* 登录链接 */}
+              <p className="text-sm font-light text-center text-gray-500">
+                {tForms('auth.hasAccount', '已经有账户？')}{' '}
+                <Link to="/login" className="font-medium text-blue-600 hover:underline">
+                  {tForms('auth.loginHere', '点击这里登录')}
+                </Link>
+              </p>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
     </>
   );
 };

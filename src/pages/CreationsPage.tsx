@@ -32,13 +32,26 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
   const [reportContent, setReportContent] = useState('');
   const [submittingReport, setSubmittingReport] = useState(false);
   
-  // 分页状态
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const pageSize = 20;
+  // 添加固定的图片类型计数
+  const [typeCounts, setTypeCounts] = useState({
+    all: 0,
+    text2image: 0,
+    image2image: 0
+  });
 
-  // 检查用户登录状态
+  // 存储所有图片数据的缓存
+  const [allImages, setAllImages] = useState<HomeImage[]>([]);
+
+  // 根据选择的类型过滤图片
+  useEffect(() => {
+    if (selectedType === 'all') {
+      setImages(allImages);
+    } else {
+      setImages(allImages.filter(img => img.type === selectedType));
+    }
+  }, [selectedType, allImages]);
+
+  // 检查用户登录状态并加载数据
   useEffect(() => {
     // 等待认证初始化完成
     if (authLoading) {
@@ -53,55 +66,50 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
     
     // 如果用户已登录，加载用户图片
     loadUserImages();
-  }, [authLoading, isAuthenticated, selectedType]);
+  }, [authLoading, isAuthenticated]);
 
-  // 加载用户图片
-  const loadUserImages = async (page: number = 1, append: boolean = false) => {
+  // 加载用户图片 - 一次性加载所有数据
+  const loadUserImages = async () => {
     if (!user) return;
     
     try {
-      if (!append) {
-        setLoading(true);
-        setError(null);
-      } else {
-        setLoadingMore(true);
-      }
+      setLoading(true);
+      setError(null);
 
-      const searchParams: any = {
-        currentPage: page,
-        pageSize: pageSize,
-        sortBy: 'createdAt',
-        sortOrder: 'desc'
+      const searchParams = {
+        sortBy: 'createdAt' as const,
+        sortOrder: 'desc' as const
       };
-
-      if (selectedType !== 'all') {
-        searchParams.type = selectedType;
-      }
 
       // 使用新的专用用户图片接口
       const result = await ImageService.getUserOwnImages(searchParams);
       
-      if (append) {
-        setImages(prev => [...prev, ...result.images]);
-      } else {
+      // 添加调试日志
+      console.log('API Response:', result);
+      console.log('First image example:', result.images[0]);
+      
+      // 保存所有图片到缓存
+      setAllImages(result.images);
+      
+      // 根据当前选择的类型设置显示的图片
+      if (selectedType === 'all') {
         setImages(result.images);
+      } else {
+        setImages(result.images.filter(img => img.type === selectedType));
       }
       
-      setHasMore(result.hasMore);
-      setCurrentPage(page);
+      // 更新计数
+      setTypeCounts({
+        all: result.images.length,
+        text2image: result.images.filter(img => img.type === 'text2image').length,
+        image2image: result.images.filter(img => img.type === 'image2image').length
+      });
+      
     } catch (err) {
       console.error('Failed to load user images:', err);
       setError('加载图片失败，请稍后重试');
     } finally {
       setLoading(false);
-      setLoadingMore(false);
-    }
-  };
-
-  // 加载更多图片
-  const loadMore = () => {
-    if (!loadingMore && hasMore) {
-      loadUserImages(currentPage + 1, true);
     }
   };
 
@@ -110,7 +118,18 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
     try {
       const success = await ImageService.deleteImage(imageId);
       if (success) {
-        setImages(prev => prev.filter(img => img.id !== imageId));
+        // 同时更新缓存和显示的图片
+        const newAllImages = allImages.filter(img => img.id !== imageId);
+        setAllImages(newAllImages);
+        setImages(images.filter(img => img.id !== imageId));
+        
+        // 更新计数
+        setTypeCounts({
+          all: newAllImages.length,
+          text2image: newAllImages.filter(img => img.type === 'text2image').length,
+          image2image: newAllImages.filter(img => img.type === 'image2image').length
+        });
+        
         setShowDeleteConfirm(null);
       } else {
         setError('删除失败，请稍后重试');
@@ -182,45 +201,44 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
         noIndex={true}
       />
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* 页面标题 */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title', 'My Creations')}</h1>
-            <p className="text-gray-600">{t('description', 'View and manage all your generated coloring pages')}</p>
+          <div className="mb-8 text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('title', 'My Creations')}</h1>
           </div>
 
           {/* 筛选标签 */}
-          <div className="mb-6">
-            <div className="flex gap-2">
+          <div className="mb-6 flex justify-center">
+            <div className="inline-flex gap-2 bg-white rounded-lg p-1 shadow-sm">
               <button
                 onClick={() => setSelectedType('all')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedType === 'all'
                     ? 'bg-blue-100 text-blue-700'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-{t('filters.all', 'All')} ({images.length})
+                {t('filters.all', 'All')} ({typeCounts.all})
               </button>
               <button
                 onClick={() => setSelectedType('text2image')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedType === 'text2image'
                     ? 'bg-blue-100 text-blue-700'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-{t('filters.textToImage', 'Text to Image')}
+                {t('filters.textToImage', 'Text to Image')} ({typeCounts.text2image})
               </button>
               <button
                 onClick={() => setSelectedType('image2image')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedType === 'image2image'
                     ? 'bg-blue-100 text-blue-700'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                Image to Image
+                Image to Image ({typeCounts.image2image})
               </button>
             </div>
           </div>
@@ -233,54 +251,17 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
           )}
 
           {/* 内容区域 */}
-          {authLoading || loading ? (
-            <div className="flex justify-center items-center py-20">
-              <CircularProgress progress={0} size="large" showPercentage={false} />
-              <p className="ml-4 text-gray-600">
-                {authLoading ? t('common.loading', '加载中...') : t('messages.loadingImages', '正在加载图片...')}
-              </p>
-            </div>
-          ) : (
-            <>
-                        <MasonryGrid
-            images={images}
-            isLoading={loading}
-            emptyState={{
-              icon: noResultIcon,
-              title: "No creations yet",
-              description: "Start creating your first coloring page!",
-              actionButton: {
-                text: "Create Now",
-                onClick: () => {
-                  // 根据当前筛选类型跳转到对应页面
-                  if (selectedType === 'text2image') {
-                    navigate('/text-coloring-page');
-                  } else if (selectedType === 'image2image') {
-                    navigate('/image-coloring-page');
-                  } else {
-                    // 默认跳转到text to image页面
-                    navigate('/text-coloring-page');
-                  }
-                }
-              }
-            }}
-            renderCard={renderCard}
-            className="mb-8"
-          />
-
-              {/* 加载更多按钮 */}
-              {hasMore && images.length > 0 && (
-                <div className="text-center mt-8">
-                  <button
-                    onClick={loadMore}
-                    disabled={loadingMore}
-                    className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Load More
-                  </button>
-                </div>
-              )}
-            </>
+          {loading ? null : (
+            <MasonryGrid
+              images={images}
+              isLoading={false}
+              emptyState={{
+                icon: noResultIcon,
+                title: "No creations yet",
+                description: "Start creating your first coloring page!"
+              }}
+              renderCard={renderCard}
+            />
           )}
         </div>
       </div>

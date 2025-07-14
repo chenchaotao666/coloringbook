@@ -2,8 +2,8 @@
   "title": "价格套餐",
   "subtitle": "选择最适合您的套餐",
   "billing": {
-    "monthly": "月付",
-    "yearly": "年付",
+    "monthly": "月",
+    "yearly": "年",
     "discount": "(节省20%)"
   },
   "plans": {

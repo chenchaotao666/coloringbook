@@ -27,7 +27,7 @@ const ProfilePage: React.FC = () => {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
@@ -150,11 +150,54 @@ const ProfilePage: React.FC = () => {
       [name]: value
     }));
     
-    if (errors[name]) {
+    // 实时密码校验
+    if (name === 'newPassword') {
+      const newErrors: {[key: string]: string} = {};
+      
+      if (value && value.length < 6) {
+        newErrors.newPassword = t('errors.password.minLength', '新密码至少需要6个字符');
+      } else if (value && value.length > 50) {
+        newErrors.newPassword = t('errors.password.maxLength', '新密码不能超过50个字符');
+      } else if (value && formData.currentPassword && value === formData.currentPassword) {
+        newErrors.newPassword = t('errors.password.samePassword', '新密码不能与当前密码相同');
+      }
+      
+      // 如果确认新密码已经输入，检查是否匹配
+      if (formData.confirmPassword && value !== formData.confirmPassword) {
+        newErrors.confirmPassword = t('errors.password.confirmMismatch', '两次输入的新密码不一致');
+      } else if (formData.confirmPassword && value === formData.confirmPassword) {
+        // 密码匹配时清除确认密码错误
+        setErrors(prev => ({
+          ...prev,
+          confirmPassword: ''
+        }));
+      }
+      
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        newPassword: newErrors.newPassword || '',
+        ...(newErrors.confirmPassword !== undefined && { confirmPassword: newErrors.confirmPassword })
       }));
+    } else if (name === 'confirmPassword') {
+      // 确认新密码实时校验
+      const newErrors: {[key: string]: string} = {};
+      
+      if (value && formData.newPassword !== value) {
+        newErrors.confirmPassword = t('errors.password.confirmMismatch', '两次输入的新密码不一致');
+      }
+      
+      setErrors(prev => ({
+        ...prev,
+        confirmPassword: newErrors.confirmPassword || ''
+      }));
+    } else {
+      // 其他字段清除错误
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
     }
     
     if (successMessage) {
@@ -320,19 +363,7 @@ const ProfilePage: React.FC = () => {
 
   // 显示加载状态：认证初始化期间或用户数据加载期间
   if (authLoading || isLoadingUser) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <svg className="animate-spin h-8 w-8 text-gray-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p className="mt-2 text-gray-600">
-            {authLoading ? t('common.loading', '加载中...') : t('messages.loadingProfile', '正在加载用户信息...')}
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -417,75 +448,69 @@ const ProfilePage: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900">{t('sections.orderHistory', '订单记录')}</h3>
           </div>
           <div className="px-6 py-4">
-            {isLoadingOrders ? (
-              <div className="flex justify-center py-8">
-                <svg className="animate-spin h-6 w-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-            ) : (
+            {isLoadingOrders ? null : (
               <>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="bg-gray-50">
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                           {t('orderTable.orderId', '订单ID')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                           {t('orderTable.planInfo', '套餐信息')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                           {t('orderTable.amount', '金额')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                           {t('orderTable.createdAt', '创建时间')}
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                           {t('orderTable.paymentStatus', '支付状态')}
                         </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {orderHistory && orderHistory.length > 0 ? (
-                        orderHistory.map((order) => {
-                          const statusDisplay = getOrderStatusDisplay(order.status);
-                          return (
-                            <tr key={order.orderId}>
-                              <td className="px-4 py-4 whitespace-nowrap text-gray-500">
-                                <h3 className="text-sm font-medium">{order.orderId}</h3>
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div className="flex items-center gap-2">
-                                  <span>{order.planCode}</span>
-                                  <span>{order.chargeType}</span>
-                                  {order.creditsAdded > 0 && (
-                                    <span className="text-orange-600">+{order.creditsAdded} 积分</span>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {order.amount} {order.currency}
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {new Date(order.createdAt).toLocaleString()}
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap">
-                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusDisplay.className}`}>
-                                  {statusDisplay.text}
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      ) : (
-                        <tr>
-                          <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                            {isLoadingOrders ? t('common.loading', '加载中...') : t('orderTable.noOrders', '暂无订单记录')}
-                          </td>
-                        </tr>
-                      )}
+                          orderHistory.map((order) => {
+                            const statusDisplay = getOrderStatusDisplay(order.status);
+                            return (
+                              <tr key={order.orderId}>
+                                <td className="px-4 py-4 whitespace-nowrap text-gray-500">
+                                  <h3 className="text-sm font-medium">{order.orderId}</h3>
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <div className="flex items-center gap-2">
+                                    <span>{order.planCode}</span>
+                                    <span>{order.chargeType}</span>
+                                    {order.creditsAdded > 0 && (
+                                      <span className="text-orange-600">+{order.creditsAdded} 积分</span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {order.amount} {order.currency}
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {new Date(order.createdAt).toLocaleString()}
+                                </td>
+                                <td className="px-4 py-4 whitespace-nowrap">
+                                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusDisplay.className}`}>
+                                    {statusDisplay.text}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        ) : (
+                          <tr>
+                            <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                              {t('orderTable.noOrders', '暂无订单记录')}
+                            </td>
+                          </tr>
+                        )
+                      }
                     </tbody>
                   </table>
                 </div>
@@ -578,7 +603,7 @@ const ProfilePage: React.FC = () => {
               </button>
               
               {isPasswordSectionOpen && (
-                <div className="px-4 pb-4 space-y-4 border-t border-gray-200">
+                <div className="px-4 pb-4 space-y-1 border-t border-gray-200">
                   
                   {/* 当前密码 */}
                   <div>
@@ -597,9 +622,11 @@ const ProfilePage: React.FC = () => {
                         } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                         placeholder={t('placeholders.currentPassword', '请输入当前密码')}
                       />
-                      {errors.currentPassword && (
-                        <p className="mt-1 text-sm text-red-600">{errors.currentPassword}</p>
-                      )}
+                      <div className="mt-1 h-5">
+                        {errors.currentPassword && (
+                          <p className="text-sm text-red-600">{errors.currentPassword}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -620,9 +647,11 @@ const ProfilePage: React.FC = () => {
                         } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                         placeholder={t('placeholders.newPassword', '请输入新密码（至少6个字符）')}
                       />
-                      {errors.newPassword && (
-                        <p className="mt-1 text-sm text-red-600">{errors.newPassword}</p>
-                      )}
+                      <div className="mt-1 h-5">
+                        {errors.newPassword && (
+                          <p className="text-sm text-red-600">{errors.newPassword}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -643,9 +672,11 @@ const ProfilePage: React.FC = () => {
                         } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                         placeholder={t('placeholders.confirmPassword', '请再次输入新密码')}
                       />
-                      {errors.confirmPassword && (
-                        <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-                      )}
+                      <div className="mt-1 h-5">
+                        {errors.confirmPassword && (
+                          <p className="text-sm text-red-600">{errors.confirmPassword}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

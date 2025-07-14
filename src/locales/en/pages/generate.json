@@ -61,7 +61,8 @@
     "ratio": "Aspect Ratio",
     "visibility": "Public Visibility",
     "private": "Private",
-    "public": "Public"
+    "public": "Public",
+    "visibilityTip": "When enabled, your generated images may be visible to other users in the public gallery. When disabled, only you can see your generated images."
   },
   "history": {
     "title": "Generation History",

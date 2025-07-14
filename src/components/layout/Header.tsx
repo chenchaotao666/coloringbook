@@ -296,7 +296,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                             <li key={linkIndex}>
                               <Link 
                                 to={createLocalizedLink(link.url)} 
-                                className="text-gray-500 hover:text-orange-600 transition-colors duration-200 text-sm"
+                                className="block py-2 px-3 -mx-3 text-gray-500 hover:text-orange-600 hover:bg-gray-50 transition-colors duration-200 text-sm rounded-md"
                               >
                                 {link.label}
                               </Link>
@@ -353,19 +353,19 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   : 'opacity-0 -translate-y-1 scale-95'
               }`}>
                 <div
-                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
-                  onClick={() => handleLanguageSelect('zh')}
-                >
-                  {t('navigation.language.chinese')}
-                </div>
-                <div
-                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
+                  className="px-4 py-1.5 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('en')}
                 >
                   {t('navigation.language.english')}
                 </div>
+                <div
+                  className="px-4 py-1.5 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
+                  onClick={() => handleLanguageSelect('zh')}
+                >
+                  {t('navigation.language.chinese')}
+                </div>
                 {/* <div
-                  className="px-4 py-2 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
+                  className="px-4 py-1.5 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('ja')}
                 >
                   {t('navigation.language.japanese')}

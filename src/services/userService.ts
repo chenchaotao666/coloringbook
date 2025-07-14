@@ -326,7 +326,7 @@ export class UserService {
    */
   static async validateResetToken(token: string): Promise<void> {
     try {
-      await ApiUtils.post('/api/auth/validate-reset-token', { token });
+      await ApiUtils.post(`/api/users/validate-reset-token/${token}`);
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;

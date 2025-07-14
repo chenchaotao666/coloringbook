@@ -61,7 +61,8 @@
     "ratio": "画面比例",
     "visibility": "公开可见",
     "private": "仅自己可见",
-    "public": "所有人可见"
+    "public": "所有人可见",
+    "visibilityTip": "启用后，您生成的图片将可能在公共画廊中对其他用户可见。禁用后，只有您能看到您的图片。"
   },
   "history": {
     "title": "生成历史",

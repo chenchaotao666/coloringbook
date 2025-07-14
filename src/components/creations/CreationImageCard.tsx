@@ -122,12 +122,13 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
   // 格式化日期
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
   };
 
   // 点击外部关闭菜单
@@ -155,17 +156,28 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
       <div className="w-full flex flex-col gap-4">
         {/* 图片区域 */}
         <div className="w-full overflow-hidden rounded-t-2xl relative">
-          <HoverColorImage 
-            homeImage={image}
-            className="w-full h-auto"
-            alt={getLocalizedText(image.title, language) || getLocalizedText(image.description, language)}
-          />
+          {image.type === 'image2image' ? (
+            <HoverColorImage 
+              homeImage={{
+                ...image,
+                coloringUrl: image.colorUrl || image.defaultUrl // 使用colorUrl作为hover效果的图片
+              }}
+              className="w-full h-auto"
+              alt={getLocalizedText(image.title, language) || getLocalizedText(image.description, language)}
+            />
+          ) : (
+            <img 
+              src={image.defaultUrl}
+              className="w-full h-auto"
+              alt={getLocalizedText(image.title, language) || getLocalizedText(image.description, language)}
+            />
+          )}
           
           {/* Recreate按钮 */}
-          <div className="absolute top-2 left-2">
+          <div className="absolute top-3 left-3">
             <button
               onClick={handleRecreate}
-              className="bg-[#FF5C07] text-white text-xs py-1 px-2 rounded-full hover:bg-[#FF7A47] transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-[#FF9D00] to-[#FF5907] text-white hover:from-[#FFB84D] hover:to-[#FF7A47] transition-all duration-300 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer"
             >
               Recreate
             </button>
@@ -237,16 +249,14 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
                     ? 'bg-blue-100 text-blue-800' 
                     : 'bg-green-100 text-green-800'
                 }`}>
-                  {image.type === 'text2image' ? 'Text' : 'Image'}
+                  {image.type === 'text2image' ? 'Text To Image' : 'Image To Image'}
                 </span>
-                {/* 公开状态标签 */}
-                <span className={`px-2 py-1 rounded text-xs ${
-                  image.isPublic 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}>
-                  {image.isPublic ? 'Public' : 'Private'}
-                </span>
+                {/* 公开状态标签 - 只显示public */}
+                {Number(image.isPublic) === 1 && (
+                  <span className="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
+                    Public
+                  </span>
+                )}
               </div>
             </div>
             
@@ -260,16 +270,14 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
                     ? 'bg-blue-100 text-blue-800' 
                     : 'bg-green-100 text-green-800'
                 }`}>
-                  {image.type === 'text2image' ? 'Text' : 'Image'}
+                  {image.type === 'text2image' ? 'Text To Image' : 'Image To Image'}
                 </span>
-                {/* 公开状态标签 */}
-                <span className={`px-2 py-1 rounded text-xs ${
-                  image.isPublic 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}>
-                  {image.isPublic ? 'Public' : 'Private'}
-                </span>
+                {/* 公开状态标签 - 只显示public */}
+                {Number(image.isPublic) === 1 && (
+                  <span className="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
+                    Public
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -334,13 +342,13 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
                     <img src={deleteIcon} alt="Delete" className="w-3 h-3" />
                     Delete
                   </button>
-                  <button
+                  {/* <button
                     onClick={handleReport}
                     className="w-full px-3 py-2 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2 text-xs"
                   >
                     <img src={reportIcon} alt="Report" className="w-3 h-3" />
                     Report
-                  </button>
+                  </button> */}
                 </div>
               )}
             </div>

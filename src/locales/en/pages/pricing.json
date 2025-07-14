@@ -2,8 +2,8 @@
   "title": "Pricing Plans",
   "subtitle": "Choose the plan that's right for you",
   "billing": {
-    "monthly": "Monthly",
-    "yearly": "Yearly",
+    "monthly": "Month",
+    "yearly": "Year",
     "discount": "(Save 20%)"
   },
   "plans": {

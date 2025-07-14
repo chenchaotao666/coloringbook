@@ -6,6 +6,7 @@ interface TooltipProps {
   children: React.ReactNode;
   side?: 'top' | 'right' | 'bottom' | 'left';
   sideOffset?: number;
+  align?: 'start' | 'center' | 'end';
   className?: string;
 }
 
@@ -14,6 +15,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   children,
   side = 'top',
   sideOffset = 4,
+  align = 'center',
   className = '',
 }) => {
   return (
@@ -26,6 +28,7 @@ const Tooltip: React.FC<TooltipProps> = ({
           <TooltipPrimitive.Content
             side={side}
             sideOffset={sideOffset}
+            align={align}
             className={`
               z-50 overflow-hidden rounded-md bg-gray-900 px-3 py-1.5 text-xs text-white shadow-md 
               animate-in fade-in-0 zoom-in-95 

@@ -205,6 +205,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   }, [selectedTab, textGeneratedImages, imageGeneratedImages, selectedImage, setSelectedImage]);
 
+  // Set public visibility to true by default when component mounts
+  useEffect(() => {
+    setTextPublicVisibility(true);
+    setImagePublicVisibility(true);
+  }, []);
+
   // 事件处理函数
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
@@ -451,13 +457,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
                             <span className="text-sm">{t('actions.delete', 'Delete')}</span>
                           </button>
-                          <button
+                          {/* <button
                             onClick={handleReport}
                             className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
                           >
                             <img src={reportIcon} alt="Report" className="w-4 h-4" />
                             <span className="text-sm">{t('actions.report', 'Report')}</span>
-                          </button>
+                          </button> */}
                         </div>
                       )}
                     </div>
@@ -611,7 +617,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <div className="text-sm font-bold text-[#161616] mb-2">{t('prompt.title', 'Prompt')}</div>
             <div className="relative">
               <textarea
-                className="w-full h-[120px] sm:h-[150px] lg:h-[180px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none"
+                className="w-full h-[120px] sm:h-[150px] lg:h-[200px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none"
                 placeholder={t('prompt.placeholder', 'What do you want to create?')}
                 value={prompt}
                 onChange={handlePromptChange}
@@ -634,12 +640,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <img src={textCountIcon} alt="Text count" className="w-3 h-3" />
               </div>
 
-              <div className="absolute bottom-2 left-3 bg-white rounded-full px-2 sm:px-3 py-1 mb-2 sm:mb-3 flex items-center">
+              {/* <div className="absolute bottom-2 left-3 bg-white rounded-full px-2 sm:px-3 py-1 mb-2 sm:mb-3 flex items-center">
                 <span className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2">
                   <img src={aiGenerateIcon} alt="AI Generate" className="w-3 h-3 sm:w-4 sm:h-4" />
                 </span>
                 <span className="text-[#6B7280] text-xs sm:text-sm">{t('prompt.generateWithAI', 'Generate with AI')}</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -925,6 +931,28 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     );
   };
 
+  const handleVisibilityToggle = (isText: boolean) => {
+    // Check if user is not premium (free or expired membership)
+    const isNotPremium = !user?.membershipExpiry || user?.userType === 'free';
+    
+    if (isNotPremium) {
+      // If trying to set to private, redirect to pricing page
+      if ((isText && textPublicVisibility) || (!isText && imagePublicVisibility)) {
+        navigate('/pricing');
+        return;
+      }
+      // Non-premium users can't set to private, ignore the toggle
+      return;
+    }
+
+    // Premium users can toggle visibility
+    if (isText) {
+      setTextPublicVisibility(!textPublicVisibility);
+    } else {
+      setImagePublicVisibility(!imagePublicVisibility);
+    }
+  };
+
   return (
     <LayoutNoFooter>
       <SEOHead
@@ -986,9 +1014,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <div className="text-[14px] font-bold text-[#161616] flex items-center">
               {t('settings.visibility', 'Public Visibility')}
               <Tooltip 
-                content="When enabled, your generated images will be visible to other users in the public gallery. When disabled, only you can see your generated images."
+                content={t('settings.visibilityTip', 'When enabled, your generated images may be visible to other users in the public gallery. When disabled, only you can see your generated images.')}
                 side="top"
-                className="ml-3"
+                align="start"
+                className="ml-1"
               >
                 <span className="w-[18px] h-[18px] cursor-help inline-block">
                   <img src={tipIcon} alt="Info" className="w-[18px] h-[18px]" />
@@ -996,15 +1025,30 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               </Tooltip>
             </div>
             <div className="flex items-center">
-              <span className="mr-2 w-[18px] h-[18px]">
-                <img src={crownIcon} alt="Premium" className="w-[18px] h-[18px]" />
-              </span>
+              <Tooltip
+                content="Premium Feature"
+                side="top"
+                align="center"
+                className="mr-2"
+              >
+                <span className="w-[18px] h-[18px] cursor-help inline-block">
+                  <img src={crownIcon} alt="Premium" className="w-[18px] h-[18px]" />
+                </span>
+              </Tooltip>
               <button
-                className={`w-[30px] h-4 rounded-lg relative ${selectedTab === 'text' ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')}`}
-                onClick={() => selectedTab === 'text' ? setTextPublicVisibility(!textPublicVisibility) : setImagePublicVisibility(!imagePublicVisibility)}
+                className={`w-[30px] h-4 rounded-lg relative ${
+                  selectedTab === 'text' 
+                    ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') 
+                    : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')
+                } ${!user?.membershipExpiry || user?.userType === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                onClick={() => handleVisibilityToggle(selectedTab === 'text')}
               >
                 <div
-                  className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${selectedTab === 'text' ? (textPublicVisibility ? 'right-[1px]' : 'left-[1px]') : (imagePublicVisibility ? 'right-[1px]' : 'left-[1px]')}`}
+                  className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${
+                    selectedTab === 'text' 
+                      ? (textPublicVisibility ? 'right-[1px]' : 'left-[1px]') 
+                      : (imagePublicVisibility ? 'right-[1px]' : 'left-[1px]')
+                  }`}
                 ></div>
               </button>
             </div>
@@ -1042,14 +1086,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             <div className="bg-white border-t border-gray-200 p-4">
               {renderLeftSidebar()}
               
-              {/* Public Visibility */}
+              {/* Public Visibility - Mobile */}
               <div className="mt-5 flex items-center justify-between">
                 <div className="text-sm font-bold text-[#161616] flex items-center">
                   {t('settings.visibility', 'Public Visibility')}
                   <Tooltip 
-                    content="When enabled, your generated images will be visible to other users in the public gallery. When disabled, only you can see your generated images."
+                    content={t('settings.visibilityTip', 'When enabled, your generated images may be visible to other users in the public gallery. When disabled, only you can see your generated images.')}
                     side="top"
-                    className="ml-2"
+                    align="start"
+                    className="ml-1"
                   >
                     <span className="w-4 h-4 cursor-help inline-block">
                       <img src={tipIcon} alt="Info" className="w-4 h-4" />
@@ -1057,15 +1102,30 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   </Tooltip>
                 </div>
                 <div className="flex items-center">
-                  <span className="mr-2 w-4 h-4">
-                    <img src={crownIcon} alt="Premium" className="w-4 h-4" />
-                  </span>
+                  <Tooltip
+                    content="Premium Feature"
+                    side="top"
+                    align="center"
+                    className="mr-2"
+                  >
+                    <span className="w-4 h-4 cursor-help inline-block">
+                      <img src={crownIcon} alt="Premium" className="w-4 h-4" />
+                    </span>
+                  </Tooltip>
                   <button
-                    className={`w-[30px] h-4 rounded-lg relative ${selectedTab === 'text' ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')}`}
-                    onClick={() => selectedTab === 'text' ? setTextPublicVisibility(!textPublicVisibility) : setImagePublicVisibility(!imagePublicVisibility)}
+                    className={`w-[30px] h-4 rounded-lg relative ${
+                      selectedTab === 'text' 
+                        ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') 
+                        : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')
+                    } ${!user?.membershipExpiry || user?.userType === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    onClick={() => handleVisibilityToggle(selectedTab === 'text')}
                   >
                     <div
-                      className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${selectedTab === 'text' ? (textPublicVisibility ? 'right-[1px]' : 'left-[1px]') : (imagePublicVisibility ? 'right-[1px]' : 'left-[1px]')}`}
+                      className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[1px] transition-all duration-200 ${
+                        selectedTab === 'text' 
+                          ? (textPublicVisibility ? 'right-[1px]' : 'left-[1px]') 
+                          : (imagePublicVisibility ? 'right-[1px]' : 'left-[1px]')
+                      }`}
                     ></div>
                   </button>
                 </div>

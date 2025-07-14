@@ -23,15 +23,37 @@ const arrowRightIcon = '/images/arrow-right-outline.svg';
 const checkIcon = '/images/check.svg';
 const protectIcon = '/images/protect.svg';
 
+interface PlanConfig {
+  monthly: {
+    price: number;
+    credits: number;
+    code: string;
+  };
+  yearly: {
+    price: number;
+    credits: number;
+    code: string;
+    monthlyPrice: number;
+  };
+}
+
 // 套餐配置
-const planConfigs = {
+const planConfigs: Record<string, PlanConfig> = {
+  'Free': {
+    monthly: { price: 0, credits: 0, code: 'FREE' },
+    yearly: { price: 0, credits: 0, code: 'FREE', monthlyPrice: 0 }
+  },
   'Lite': {
-    monthly: { price: 9.99, credits: 300, code: 'LITE_MONTHLY' },
-    yearly: { price: 99.99, credits: 3600, code: 'LITE_YEARLY' }
+    monthly: { price: 9.99, credits: 100, code: 'LITE_MONTHLY' },
+    yearly: { price: 83.88, credits: 1200, code: 'LITE_YEARLY', monthlyPrice: 6.99 }
   },
   'Pro': {
-    monthly: { price: 19.99, credits: 600, code: 'PRO_MONTHLY' },
-    yearly: { price: 199.99, credits: 7200, code: 'PRO_YEARLY' }
+    monthly: { price: 19.99, credits: 300, code: 'PRO_MONTHLY' },
+    yearly: { price: 167.88, credits: 3600, code: 'PRO_YEARLY', monthlyPrice: 13.99 }
+  },
+  'Max': {
+    monthly: { price: 39.99, credits: 1000, code: 'MAX_MONTHLY' },
+    yearly: { price: 335.88, credits: 12000, code: 'MAX_YEARLY', monthlyPrice: 27.99 }
   }
 };
 
@@ -255,6 +277,8 @@ const PricingCard = ({
   priceNote, 
   features, 
   onBuyClick,
+  selected,
+  onClick
 }: { 
   title: string, 
   price: string, 
@@ -262,74 +286,84 @@ const PricingCard = ({
   priceNote?: string, 
   features: string[],
   onBuyClick?: () => void,
+  selected: boolean;
+  onClick: () => void;
 }) => {
   const { t } = useAsyncTranslation('pricing');
   
   return (
-  <div 
-    className={`w-full sm:w-[376px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden transition-all duration-200 border-2 ${
-      popular ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'
-    }`}
-  >
-    {popular && (
-      <div className="absolute -top-1 -right-1 px-4 sm:px-6 py-2 bg-[#6200E2] text-white font-bold italic text-xs sm:text-sm rounded-bl-2xl rounded-tr-2xl">
-        {t('plans.lite.popular', 'Most Popular')}
-      </div>
-    )}
-    <div className="flex flex-col items-center gap-6 sm:gap-8">
-      <div className="flex flex-col items-center gap-4 sm:gap-6 w-full">
-        <div className="text-center text-[#161616] text-2xl sm:text-4xl font-bold">
-          {title} {price}
+    <div
+      className={`w-full sm:w-[350px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden transition-all duration-200 border-2 ${
+        popular ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'
+      } ${selected ? 'border-[#FF5C07] shadow-lg' : ''} cursor-pointer hover:shadow-lg`}
+      onClick={onClick}
+    >
+      {popular && (
+        <div className="absolute -top-1 -right-1 px-4 sm:px-6 py-2 bg-[#6200E2] text-white font-bold italic text-xs sm:text-sm rounded-bl-2xl rounded-tr-2xl">
+          {t('plans.lite.popular', 'Most Popular')}
         </div>
-        {priceNote && (
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-xs sm:text-sm text-[#6B7280] text-center px-2">{priceNote}</div>
-            <div className="flex justify-center items-center gap-2">
-              <img src={protectIcon} alt="Protect" className="w-3 h-3" />
-              <div className="text-[#FF5C07] text-xs sm:text-sm">{t('cancelAnytime', 'Cancel anytime')}</div>
-            </div>
+      )}
+      <div className="flex flex-col items-center gap-6 sm:gap-8">
+        <div className="flex flex-col items-center gap-4 sm:gap-6 w-full">
+          <div className="text-center text-[#161616] text-2xl sm:text-4xl font-bold">
+            {title}
           </div>
-        )}
-      </div>
-      <div className="flex flex-col gap-4 sm:gap-5 w-full">
-        <Button 
-          variant={popular ? 'gradient' : 'default'}
-          className={`w-full h-12 sm:h-[60px] text-lg sm:text-xl font-bold ${
-            !popular ? 'border border-[#818181] bg-white text-[#161616] hover:bg-gray-200' : ''
-          }`}
-          onClick={(e) => {
-            e.stopPropagation(); // 阻止事件冒泡
-            if (onBuyClick) onBuyClick();
-          }}
-        >
-          {title === 'Free' ? t('buttons.tryNow', 'Try Now') : t('buttons.buyNow', 'Buy Now')}
-        </Button>
-        <div className="flex flex-col gap-3">
-          {features.map((feature, index) => (
-            <FeatureItem 
-              key={index} 
-              text={feature} 
-              highlighted={index === 0} 
-            />
-          ))}
+          {/* Monthly Price */}
+          <div className="mt-4 text-5xl text-black">
+            <span className="font-bold">${price}</span>
+            <span className="text-sm text-[#454D59]">/ {t('billing.monthly', 'Month')}</span>
+          </div>
+          {/* Yearly Price */}
+          {priceNote && (
+            <div className="text-sm mt-[5px] font-medium text-[#454D59]">
+              {priceNote}
+            </div>
+          )}
+          {title !== 'Free' && (
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex justify-center items-center gap-2">
+                <img src={protectIcon} alt="Protect" className="w-3 h-3" />
+                <div className="text-[#FF5C07] text-xs sm:text-sm">{t('cancelAnytime', 'Cancel anytime')}</div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-4 sm:gap-5 w-full">
+          <Button 
+            variant={popular ? 'gradient' : 'default'}
+            className={`w-full h-12 sm:h-[60px] text-lg sm:text-xl font-bold ${
+              !popular ? 'border border-[#818181] bg-white text-[#161616] hover:bg-gray-200' : ''
+            }`}
+            onClick={(e) => {
+              e.stopPropagation(); // 阻止事件冒泡
+              if (onBuyClick) onBuyClick();
+            }}
+          >
+            {title === 'Free' ? t('buttons.tryNow', 'Try Now') : t('buttons.buyNow', 'Buy Now')}
+          </Button>
+          <div className="flex flex-col gap-3">
+            {features.map((feature, index) => (
+              <FeatureItem 
+                key={index} 
+                text={feature} 
+                highlighted={index === 0} 
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 
 const PricingPage: React.FC = () => {
   const { t } = useAsyncTranslation('pricing');
-  const { t: tCommon } = useAsyncTranslation('common');
-  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { language, t: baseT } = useLanguage();
+  const { isAuthenticated } = useAuth();
   
-  // State to manage billing period
+  // 默认选择Pro计划和月付
+  const [selectedPlan, setSelectedPlan] = useState('Pro');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
-
-  // 弹窗状态
   const [showPayPalModal, setShowPayPalModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successCredits] = useState(0);
@@ -405,52 +439,49 @@ const PricingPage: React.FC = () => {
 
   // Features for pricing plans - 直接从翻译文件获取数组
   const getFeatures = (planKey: string) => {
-    const features = t(`plans.${planKey}.features`, '');
-    if (typeof features === 'string' || !Array.isArray(features)) {
-      if (planKey === 'free') {
+    switch (planKey) {
+      case 'Free':
         return [
-          baseT('pricing.features.free.credits', language === 'zh' ? '每月40积分' : '40 credits per month'),
-          baseT('pricing.features.free.basic', language === 'zh' ? '基础图片生成' : 'Basic image generation'),
-          baseT('pricing.features.free.quality', language === 'zh' ? '标准质量' : 'Standard quality'),
-          baseT('pricing.features.free.support', language === 'zh' ? '社区支持' : 'Community support')
+          t('features.free.basic', 'Basic features'),
+          t('features.free.publicOnly', 'Public images only'),
+          t('features.free.limitedCredits', 'Limited credits'),
         ];
-      } else if (planKey === 'lite') {
+      case 'Lite':
         return [
-          baseT('pricing.features.lite.credits', language === 'zh' ? '每月300积分' : '300 credits per month'),
-          baseT('pricing.features.lite.quality', language === 'zh' ? '高质量生成' : 'High-quality generation'),
-          baseT('pricing.features.lite.priority', language === 'zh' ? '优先处理' : 'Priority processing'),
-          baseT('pricing.features.lite.email', language === 'zh' ? '邮件支持' : 'Email support'),
-          baseT('pricing.features.lite.license', language === 'zh' ? '商业许可' : 'Commercial license')
+          t('features.lite.credits', '2000 credits per month'),
+          t('features.lite.allFeatures', 'All basic features'),
+          t('features.lite.privateImages', 'Private images'),
+          t('features.lite.priority', 'Priority support'),
         ];
-      } else if (planKey === 'pro') {
+      case 'Pro':
         return [
-          baseT('pricing.features.pro.credits', language === 'zh' ? '每月600积分' : '600 credits per month'),
-          baseT('pricing.features.pro.premium', language === 'zh' ? '高级质量' : 'Premium quality'),
-          baseT('pricing.features.pro.fastest', language === 'zh' ? '最快处理' : 'Fastest processing'),
-          baseT('pricing.features.pro.support', language === 'zh' ? '优先支持' : 'Priority support'),
-          baseT('pricing.features.pro.advanced', language === 'zh' ? '高级功能' : 'Advanced features'),
-          baseT('pricing.features.pro.license', language === 'zh' ? '商业许可' : 'Commercial license')
+          t('features.pro.credits', '6000 credits per month'),
+          t('features.pro.allFeatures', 'All Lite features'),
+          t('features.pro.priority', 'High priority support'),
+          t('features.pro.advanced', 'Advanced features'),
         ];
-      }
-      
-      return [];
+      case 'Max':
+        return [
+          t('features.max.credits', '20000 credits per month'),
+          t('features.max.allFeatures', 'All Pro features'),
+          t('features.max.priority', 'VIP support'),
+          t('features.max.exclusive', 'Exclusive features'),
+        ];
+      default:
+        return [];
     }
-    return features as string[];
   };
 
-  const freePlanFeatures = getFeatures('free');
-  const litePlanFeatures = getFeatures('lite');
-  const proPlanFeatures = getFeatures('pro');
+  const freePlanFeatures = getFeatures('Free');
+  const litePlanFeatures = getFeatures('Lite');
+  const proPlanFeatures = getFeatures('Pro');
+  const maxPlanFeatures = getFeatures('Max');
 
   return (
     <Layout>
       <SEOHead
-        title={tCommon('seo.pricing.title', 'Pricing Plans - Premium AI Coloring Page Generator Features')}
-        description={tCommon('seo.pricing.description', 'Choose the perfect plan for unlimited AI coloring page generation. Free trial available with premium features for unlimited creativity.')}
-        keywords={tCommon('seo.pricing.keywords', 'coloring page pricing, AI generator subscription, premium coloring features, unlimited coloring pages')}
-        ogTitle={tCommon('seo.pricing.title', 'Pricing Plans - Premium AI Coloring Page Generator Features')}
-        ogDescription={tCommon('seo.pricing.description', 'Choose the perfect plan for unlimited AI coloring page generation. Free trial available with premium features for unlimited creativity.')}
-        noIndex={true}
+        title={t('seo.title', 'Pricing - AI Coloring Book Generator')}
+        description={t('seo.description', 'Choose your plan and start creating amazing coloring pages with AI.')}
       />
       {/* Hero Section with Header Gradient - 与HomePage保持一致 */}
       <div className="relative bg-white">
@@ -497,28 +528,20 @@ const PricingPage: React.FC = () => {
           </div>
           
           {/* Pricing Cards */}
-          <div className="flex flex-col sm:flex-row gap-6 mb-8 sm:mb-12 md:mb-16 w-full max-w-6xl">
-            <PricingCard 
-              title={t('plans.free.title', 'Free')} 
-              price="" 
-              features={freePlanFeatures}
-              onBuyClick={() => handleBuyClick('Free')}
-            />
-            <PricingCard 
-              title={t('plans.lite.title', 'Lite')} 
-              price={billingPeriod === 'monthly' ? '$5' : '$96'} 
-              priceNote={billingPeriod === 'monthly' ? t('plans.lite.priceNote.monthly', 'For first time, then $10/month') : t('plans.lite.priceNote.yearly', 'For first time, then $120/year (Save 20%)')} 
-              features={litePlanFeatures}
-              popular={true}
-              onBuyClick={() => handleBuyClick('Lite')}
-            />
-            <PricingCard 
-              title={t('plans.pro.title', 'Pro')} 
-              price={billingPeriod === 'monthly' ? '$12' : '$192'} 
-              priceNote={billingPeriod === 'monthly' ? t('plans.pro.priceNote.monthly', 'For first time, then $20/month') : t('plans.pro.priceNote.yearly', 'For first time, then $240/year (Save 20%)')} 
-              features={proPlanFeatures}
-              onBuyClick={() => handleBuyClick('Pro')}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center mb-8 sm:mb-12 md:mb-16 w-full max-w-[1450px]">
+            {Object.entries(planConfigs).map(([planKey, plan]) => (
+              <PricingCard
+                key={planKey}
+                title={planKey}
+                price={planKey === 'Free' ? t('pricing.free', 'Free') : billingPeriod === 'monthly' ? plan.monthly.price.toFixed(2) : plan.yearly.monthlyPrice.toFixed(2)}
+                priceNote={billingPeriod === 'yearly' && planKey !== 'Free' ? `$${plan[billingPeriod].price.toFixed(2)}/ ${t('billing.yearly', 'Year')}` : undefined}
+                popular={planKey === 'Pro'}
+                features={getFeatures(planKey)}
+                onBuyClick={() => handleBuyClick(planKey)}
+                selected={selectedPlan === planKey}
+                onClick={() => setSelectedPlan(planKey)}
+              />
+            ))}
           </div>
           
           {/* Payment Methods */}

@@ -11,20 +11,17 @@ const downloadIcon = '/images/download.svg';
 const downloadColorIcon = '/images/download-hover.svg';
 const moreIcon = '/images/more.svg';
 const deleteIcon = '/images/delete.svg';
-const reportIcon = '/images/report.svg';
 
 interface CreationImageCardProps {
   image: HomeImage;
   className?: string;
   onDelete?: (imageId: string) => void;
-  onReport?: (imageId: string) => void;
 }
 
 const CreationImageCard: React.FC<CreationImageCardProps> = ({ 
   image, 
   className = '',
   onDelete,
-  onReport
 }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -111,13 +108,13 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
     }
   };
 
-  const handleReport = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    setShowMoreMenu(false);
-    if (onReport) {
-      onReport(image.id);
-    }
-  };
+  // const handleReport = (event: React.MouseEvent) => {
+  //   event.stopPropagation();
+  //   setShowMoreMenu(false);
+  //   if (onReport) {
+  //     onReport(image.id);
+  //   }
+  // };
 
   // 格式化日期
   const formatDate = (dateString: string) => {

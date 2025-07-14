@@ -6,7 +6,6 @@ import CreationImageCard from '../components/creations/CreationImageCard';
 import { useAuth } from '../contexts/AuthContext';
 import { ImageService, HomeImage } from '../services/imageService';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
-import CircularProgress from '../components/ui/CircularProgress';
 import BackToTop from '../components/common/BackToTop';
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
@@ -176,9 +175,9 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
   };
 
   // 处理举报确认
-  const handleReportConfirm = (imageId: string) => {
-    setShowReportDialog(imageId);
-  };
+  // const handleReportConfirm = (imageId: string) => {
+  //   setShowReportDialog(imageId);
+  // };
 
   // 自定义渲染卡片
   const renderCard = (image: HomeImage, _index: number) => (
@@ -186,7 +185,6 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
       key={image.id}
       image={image}
       onDelete={handleDeleteConfirm}
-      onReport={handleReportConfirm}
     />
   );
 

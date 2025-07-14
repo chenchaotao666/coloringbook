@@ -18,17 +18,15 @@ import {
   getGeneratingContainerSize,
   EXAMPLE_IMAGE_DIMENSIONS,
 } from '../utils/imageUtils';
-const aiGenerateIcon = '/images/AI-generate.svg';
 const addImageIcon = '/images/add-image.svg';
-const crownIcon = '/images/crown.svg';
 const refreshIcon = '/images/refresh.svg';
+const crownIcon = '/images/crown.svg';
 const tipIcon = '/images/tip.svg';
 const subtractColorIcon = '/images/subtract-color.svg';
 const subtractIcon = '/images/subtract.svg';
 const downloadIcon = '/images/download.svg';
 const moreIcon = '/images/more.svg';
 const deleteIcon = '/images/delete.svg';
-const reportIcon = '/images/report.svg';
 const textCountIcon = '/images/text-count.svg';
 const generateFailIcon = '/images/generate-fail.svg';
 
@@ -303,14 +301,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   };
 
-  const handleReport = () => {
-    if (selectedImage) {
-      // TODO: 实现举报功能
-      console.log('Report image:', selectedImage);
-      setShowMoreMenu(false);
-    }
-  };
-
   // 移动端标签切换处理函数 - 添加滚动到顶部功能
   const handleMobileTabChange = (tab: 'text' | 'image') => {
     // 检查是否是移动端
@@ -457,13 +447,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
                             <span className="text-sm">{t('actions.delete', 'Delete')}</span>
                           </button>
-                          {/* <button
-                            onClick={handleReport}
-                            className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
-                          >
-                            <img src={reportIcon} alt="Report" className="w-4 h-4" />
-                            <span className="text-sm">{t('actions.report', 'Report')}</span>
-                          </button> */}
                         </div>
                       )}
                     </div>

@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { PricingService } from '../services/pricingService';
 import { ApiError } from '../utils/apiUtils';
 import SEOHead from '../components/common/SEOHead';
-import { useAsyncTranslation, useLanguage } from '../contexts/LanguageContext';
+import { useAsyncTranslation } from '../contexts/LanguageContext';
 
 // PayPal Types
 import type { PayPalNamespace } from "@paypal/paypal-js";
@@ -471,11 +471,6 @@ const PricingPage: React.FC = () => {
         return [];
     }
   };
-
-  const freePlanFeatures = getFeatures('Free');
-  const litePlanFeatures = getFeatures('Lite');
-  const proPlanFeatures = getFeatures('Pro');
-  const maxPlanFeatures = getFeatures('Max');
 
   return (
     <Layout>

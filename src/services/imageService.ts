@@ -136,15 +136,17 @@ export class ImageService {
       const images = rawImages.map(image => this.processImageUrls(image));
       
       // 计算分页信息
-      const totalPages = Math.ceil(totalCount / pageSize);
-      const hasMore = currentPage < totalPages;
+      const safePageSize = pageSize || 20;
+      const safeCurrentPage = currentPage || 1;
+      const totalPages = Math.ceil(totalCount / safePageSize);
+      const hasMore = safeCurrentPage < totalPages;
       
       return {
         images,
         totalCount,
         hasMore,
-        currentPage,
-        pageSize
+        currentPage: safeCurrentPage,
+        pageSize: safePageSize
       };
     } catch (error) {
       console.error('Failed to search images:', error);
@@ -355,15 +357,17 @@ export class ImageService {
       const images = rawImages.map(image => this.processImageUrls(image));
       
       // 计算分页信息
-      const totalPages = Math.ceil(totalCount / pageSize);
-      const hasMore = currentPage < totalPages;
+      const safePageSize = pageSize || 20;
+      const safeCurrentPage = currentPage || 1;
+      const totalPages = Math.ceil(totalCount / safePageSize);
+      const hasMore = safeCurrentPage < totalPages;
       
       return {
         images,
         totalCount,
         hasMore,
-        currentPage,
-        pageSize
+        currentPage: safeCurrentPage,
+        pageSize: safePageSize
       };
     } catch (error) {
       console.error('Failed to fetch user own images:', error);

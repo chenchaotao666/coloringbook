@@ -35,15 +35,6 @@ const ImageDetailPage: React.FC = () => {
   const leftImagesRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef<string>(''); // 防止重复加载
 
-  // 解析 tags 为数组（支持 string 或 string[] 类型）
-  const parseTags = (tags: string | string[]): string[] => {
-    try {
-      if (Array.isArray(tags)) return tags;
-      return typeof tags === 'string' ? JSON.parse(tags) : [];
-    } catch {
-      return typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : [];
-    }
-  };
 
   // 解析 additionalInfo，直接从多语言对象中获取本地化文本
   const parseAdditionalInfo = (additionalInfo: any) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
@@ -15,6 +15,103 @@ import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategor
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
+
+// 将 DescriptionSection 定义在组件外部，使用 React.memo 避免不必要的重新渲染
+const DescriptionSection = React.memo<{ element: any; expandedSections: Set<number>; toggleSectionExpansion: (index: number) => void; t: any }>(({ element, expandedSections, toggleSectionExpansion, t }) => {
+  const isExpanded = expandedSections.has(element.section.index);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [needsExpansion, setNeedsExpansion] = useState(false);
+  
+  // 检查内容是否需要展开（是否超过一行）
+  useEffect(() => {
+    if (contentRef.current) {
+      const contentElement = contentRef.current;
+      const lineHeight = parseFloat(getComputedStyle(contentElement).lineHeight);
+      const height = contentElement.scrollHeight;
+      const lines = Math.round(height / lineHeight);
+      
+      console.log('Content measurement:', {
+        sectionIndex: element.section.index,
+        lineHeight,
+        height,
+        lines,
+        needsExpansion: lines > 1
+      });
+      
+      setNeedsExpansion(lines > 1);
+    }
+  }, [element.section.content]);
+  
+  return (
+    <div className="mb-8 lg:mb-12">
+      <div className="mx-auto text-left">
+        {element.section.title && (
+          <h2 className="text-[#161616] text-xl lg:text-2xl font-semibold mb-3 lg:mb-4">
+            {element.section.title}
+          </h2>
+        )}
+        {element.section.content && (
+          <div className="relative">
+            <div
+              ref={contentRef}
+              className={`text-base lg:text-lg leading-relaxed ${
+                !isExpanded && needsExpansion 
+                  ? 'overflow-hidden' 
+                  : ''
+              }`}
+              style={{
+                display: !isExpanded && needsExpansion ? '-webkit-box' : 'block',
+                WebkitLineClamp: !isExpanded && needsExpansion ? 1 : 'none',
+                WebkitBoxOrient: 'vertical' as const,
+                paddingRight: !isExpanded && needsExpansion ? '80px' : '0px'
+              }}
+            >
+              {element.section.content}
+            </div>
+            
+            {/* 查看更多按钮 */}
+            {needsExpansion && !isExpanded && (
+              <button
+                onClick={() => toggleSectionExpansion(element.section.index)}
+                className="absolute top-0 right-0 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
+              >
+                <span className="text-sm mt-[5px]">{t('detail.viewMore', '查看更多')}</span>
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            )}
+            
+            {/* 收起按钮 */}
+            {needsExpansion && isExpanded && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => toggleSectionExpansion(element.section.index)}
+                  className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
+                >
+                  <span className="text-sm">{t('detail.collapse', '收起')}</span>
+                  <svg
+                    className="w-4 h-4 transition-transform duration-200 rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
 
 const CategoriesDetailPage: React.FC = () => {
   console.log('🎯 CategoriesDetailPage component mounted/re-rendered');
@@ -39,7 +136,7 @@ const CategoriesDetailPage: React.FC = () => {
   const [isImagesLoading, setIsImagesLoading] = useState(true);
   const [generatePrompt, setGeneratePrompt] = useState('');
   const [selectedRatio, setSelectedRatio] = useState<AspectRatio>('1:1');
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set());
   const loadingRef = useRef<string>(''); // 用于跟踪当前正在加载的key
 
     // 处理标签过滤
@@ -239,6 +336,16 @@ const CategoriesDetailPage: React.FC = () => {
     navigateWithLanguage(navigate, '/categories');
   };
 
+  const toggleSectionExpansion = useCallback((sectionIndex: number) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(sectionIndex)) {
+      newExpanded.delete(sectionIndex);
+    } else {
+      newExpanded.add(sectionIndex);
+    }
+    setExpandedSections(newExpanded);
+  }, [expandedSections]);
+
   const handleGenerateClick = () => {
     // 构建包含 prompt 和 ratio 的 URL 参数
     const params = new URLSearchParams();
@@ -321,162 +428,8 @@ const CategoriesDetailPage: React.FC = () => {
                 {getLocalizedText(category.displayName, language)}
               </h1>
 
-              {/* Category Description */}
-              {category.description && (
-                <div className="mb-8 lg:mb-12">
-                  <div className="mx-auto text-left">
-                    {(() => {
-                      const descriptionText = getLocalizedText(category.description, language);
-
-                      // 按 <h2> 标签分段
-                      const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.trim());
-
-                      if (sections.length <= 1) {
-                        // 如果没有 h2 标签，直接显示原文本
-                        const lines = descriptionText.split('\n').filter(line => line.trim());
-                        const shouldShowToggle = lines.length > 2;
-                        const displayLines = isDescriptionExpanded ? lines : lines.slice(0, 2);
-
-                        return (
-                          <div className="relative">
-                            <div className="text-base lg:text-lg leading-relaxed">
-                              {displayLines.map((line, index) => {
-                                const isSecondLine = index === 1;
-                                const showToggleButton = shouldShowToggle && !isDescriptionExpanded && isSecondLine;
-
-                                return (
-                                  <p key={index} className="mb-3 last:mb-0">
-                                    {line.trim()}
-                                    {showToggleButton && (
-                                      <button
-                                        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                        className="ml-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
-                                      >
-                                        <span className="text-sm">查看更多</span>
-                                        <svg
-                                          className="w-3 h-3"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          viewBox="0 0 24 24"
-                                        >
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                      </button>
-                                    )}
-                                  </p>
-                                );
-                              })}
-                            </div>
-                            {shouldShowToggle && isDescriptionExpanded && (
-                              <div className="flex justify-center mt-4">
-                                <button
-                                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                  className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
-                                >
-                                  <span className="text-sm">收起</span>
-                                  <svg
-                                    className="w-4 h-4 transition-transform duration-200 rotate-180"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      }
-
-                      // 处理有 h2 标签的情况
-                      const allElements: Array<{ type: 'title' | 'content'; text: string; sectionIndex: number }> = [];
-
-                      sections.forEach((section, sectionIndex) => {
-                        const titleMatch = section.match(/^([^<]*)<\/h2>/);
-                        const title = titleMatch ? titleMatch[1].trim() : '';
-                        const content = section.replace(/^[^<]*<\/h2>/, '').trim();
-
-                        if (title) {
-                          allElements.push({ type: 'title', text: title, sectionIndex });
-                        }
-
-                        if (content) {
-                          const contentLines = content.split('\n').filter(p => p.trim());
-                          contentLines.forEach(line => {
-                            allElements.push({ type: 'content', text: line.trim(), sectionIndex });
-                          });
-                        }
-                      });
-
-                      const shouldShowToggle = allElements.length > 2;
-                      const displayElements = isDescriptionExpanded ? allElements : allElements.slice(0, 2);
-
-                      return (
-                        <div className="relative">
-                          {displayElements.map((element, index) => {
-                            const isSecondLine = index === 1;
-                            const showToggleButton = shouldShowToggle && !isDescriptionExpanded && isSecondLine;
-
-                            return (
-                              <div key={`${element.sectionIndex}-${index}`} className="mb-3 lg:mb-4 last:mb-0">
-                                {element.type === 'title' ? (
-                                  <h2 className="text-[#161616] text-xl lg:text-2xl font-semibold mb-3 lg:mb-4">
-                                    {element.text}
-                                  </h2>
-                                ) : (
-                                  <div className="relative">
-                                    <p className="text-base lg:text-lg leading-relaxed">
-                                      {element.text}
-                                      {showToggleButton && (
-                                        <button
-                                          onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                          className="ml-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
-                                        >
-                                          <span className="text-sm">查看更多</span>
-                                          <svg
-                                            className="w-3 h-3"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                          </svg>
-                                        </button>
-                                      )}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                          {shouldShowToggle && isDescriptionExpanded && (
-                            <div className="flex justify-center mt-4">
-                              <button
-                                onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
-                              >
-                                <span className="text-sm">收起</span>
-                                <svg
-                                  className="w-4 h-4 transition-transform duration-200 rotate-180"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
-              )}
-
-              {/* Generate Section - 等待加载完成后显示 */}
-              <div className="max-w-[920px] mx-auto">
+              {/* Generate Section - 移动到标题下面 */}
+              <div className="max-w-[920px] mx-auto mb-12">
                 <h2 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
                   {t('detail.generateSection.title', 'Create your personalized AI {category} coloring page', {
                     category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '自定义')
@@ -509,67 +462,221 @@ const CategoriesDetailPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* Subcategories Tags */}
-              {subcategories.length > 0 && (
-                <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-8">
-                  {/* All标签 */}
-                  <button
-                    onClick={() => handleTagClick('All')}
-                    className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
-                      ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                      : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                      }`}
-                  >
-                    <span className="text-sm font-normal leading-4">
-                      All ({categoryImages.length})
-                    </span>
-                  </button>
 
-                  {subcategories.map((tag, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleTagClick(tag)}
-                      className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
-                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                        : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                        }`}
-                    >
-                      <span className="text-sm font-normal leading-4">
-                        {tag} ({tagCounts.get(tag) || 0})
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
+              {/* 交替显示描述和图片 */}
+              {(() => {
+                if (!category.description) {
+                  // 如果没有描述，直接显示标签和图片
+                  return (
+                    <>
+                      {/* Subcategories Tags */}
+                      {subcategories.length > 0 && (
+                        <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-8">
+                          <button
+                            onClick={() => handleTagClick('All')}
+                            className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
+                              ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                              : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                              }`}
+                          >
+                            <span className="text-sm font-normal leading-4">
+                              All ({categoryImages.length})
+                            </span>
+                          </button>
 
-              {/* Images Grid */}
-              <div className="mb-8 lg:mb-20 min-h-[500px]">
-                {filteredImages.length === 0 ? (
-                  /* 无图片状态 */
-                  <div className="flex flex-col items-center justify-center py-16">
-                    <div className="text-center">
-                      <img src="/images/no-result.svg" alt="No results" className="mb-4 mx-auto" />
-                      <p className="text-[#6B7280] text-sm max-w-md">
-                        This category doesn't have any images yet. Please try another category.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  /* 图片网格 */
-                  <>
-                    <MasonryGrid
-                      images={filteredImages}
-                      isLoading={false}
-                      onImageClick={(image) => {
-                        // 导航到图片详情页，使用新的URL结构 /categories/:categoryId/:imageId
-                        const imagePath = getImageNameById(image.id);
-                        const categoryPath = getCategoryNameById(category.categoryId);
-                        navigateWithLanguage(navigate, `/categories/${categoryPath}/${imagePath}`);
-                      }}
-                    />
-                  </>
-                )}
-              </div>
+                          {subcategories.map((tag, index) => (
+                            <button
+                              key={index}
+                              onClick={() => handleTagClick(tag)}
+                              className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
+                                ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                                : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                                }`}
+                            >
+                              <span className="text-sm font-normal leading-4">
+                                {tag} ({tagCounts.get(tag) || 0})
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* All Images */}
+                      <div className="mb-8 lg:mb-20">
+                        {filteredImages.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-16">
+                            <div className="text-center">
+                              <img src="/images/no-result.svg" alt="No results" className="mb-4 mx-auto" />
+                              <p className="text-[#6B7280] text-sm max-w-md">
+                                This category doesn't have any images yet. Please try another category.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <MasonryGrid
+                            images={filteredImages}
+                            isLoading={false}
+                            onImageClick={(image) => {
+                              const imagePath = getImageNameById(image.id);
+                              const categoryPath = getCategoryNameById(category.categoryId);
+                              navigateWithLanguage(navigate, `/categories/${categoryPath}/${imagePath}`);
+                            }}
+                          />
+                        )}
+                      </div>
+                    </>
+                  );
+                }
+
+                const descriptionText = getLocalizedText(category.description, language);
+                console.log('Original description:', descriptionText);
+                
+                // 按 <h2> 标签分段
+                const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.trim());
+                console.log('Split sections:', sections);
+                
+                // 解析每个段落
+                const descriptionSections = sections.map((section, index) => {
+                  const titleMatch = section.match(/^([^<]*)<\/h2>/);
+                  const title = titleMatch ? titleMatch[1].trim() : '';
+                  const content = section.replace(/^[^<]*<\/h2>/, '').trim();
+                  
+                  console.log(`Section ${index}:`, { title, content: content.substring(0, 100) + '...' });
+                  
+                  return {
+                    index,
+                    title,
+                    content
+                  };
+                }).filter(section => section.title || section.content);
+                
+                console.log('Final description sections:', descriptionSections.length);
+
+                // 生成交替显示的内容
+                const contentElements: Array<{
+                  type: 'description' | 'images' | 'tags';
+                  key: string;
+                  images?: HomeImage[];
+                  section?: { index: number; title: string; content: string };
+                }> = [];
+                let imageIndex = 0;
+
+                // 先显示4张图片
+                if (filteredImages.length > 0) {
+                  const firstImages = filteredImages.slice(0, 4);
+                  contentElements.push({
+                    type: 'images',
+                    images: firstImages,
+                    key: 'first-images'
+                  });
+                  imageIndex = 4;
+                }
+
+                // 然后交替显示描述和图片
+                descriptionSections.forEach((section, sectionIndex) => {
+                  // 添加描述段落
+                  contentElements.push({
+                    type: 'description',
+                    section: section,
+                    key: `desc-${sectionIndex}`
+                  });
+
+                  // 如果是最后一个段落，显示所有剩余图片
+                  if (sectionIndex === descriptionSections.length - 1) {
+                    const remainingImages = filteredImages.slice(imageIndex);
+                    if (remainingImages.length > 0) {
+                      contentElements.push({
+                        type: 'images',
+                        images: remainingImages,
+                        key: 'remaining-images'
+                      });
+                    }
+                  } else {
+                    // 不是最后一个段落，显示4张图片
+                    const nextImages = filteredImages.slice(imageIndex, imageIndex + 4);
+                    if (nextImages.length > 0) {
+                      contentElements.push({
+                        type: 'images',
+                        images: nextImages,
+                        key: `images-${sectionIndex}`
+                      });
+                      imageIndex += 4;
+                    }
+                  }
+                });
+
+                // Generate Section 已经移动到页面标题下面，不需要在这里添加了
+
+                // 添加标签选择器
+                contentElements.push({
+                  type: 'tags',
+                  key: 'tags-section'
+                });
+
+                // 将 DescriptionSection 移到组件外部以避免重新创建
+
+                return contentElements.map((element) => {
+                  if (element.type === 'description' && element.section) {
+                    return <DescriptionSection 
+                      key={element.key} 
+                      element={element} 
+                      expandedSections={expandedSections}
+                      toggleSectionExpansion={toggleSectionExpansion}
+                      t={t}
+                    />;
+                  } else if (element.type === 'images' && element.images) {
+                    return (
+                      <div key={element.key} className="mb-8 lg:mb-12">
+                        <MasonryGrid
+                          images={element.images}
+                          isLoading={false}
+                          onImageClick={(image) => {
+                            const imagePath = getImageNameById(image.id);
+                            const categoryPath = getCategoryNameById(category.categoryId);
+                            navigateWithLanguage(navigate, `/categories/${categoryPath}/${imagePath}`);
+                          }}
+                        />
+                      </div>
+                    );
+                  } else if (element.type === 'tags') {
+                    return (
+                      <div key={element.key}>
+                        {subcategories.length > 0 && (
+                          <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-8">
+                            <button
+                              onClick={() => handleTagClick('All')}
+                              className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
+                                ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                                : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                                }`}
+                            >
+                              <span className="text-sm font-normal leading-4">
+                                All ({categoryImages.length})
+                              </span>
+                            </button>
+
+                            {subcategories.map((tag, index) => (
+                              <button
+                                key={index}
+                                onClick={() => handleTagClick(tag)}
+                                className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
+                                  ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                                  : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                                  }`}
+                              >
+                                <span className="text-sm font-normal leading-4">
+                                  {tag} ({tagCounts.get(tag) || 0})
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                });
+              })()}
 
             </>
           ) : null}

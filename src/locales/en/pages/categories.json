@@ -42,7 +42,9 @@
     "noImages": {
       "title": "No images in this category",
       "description": "There are no images in this category yet. Please try other categories."
-    }
+    },
+    "viewMore": "View More",
+    "collapse": "Collapse"
   },
   "imageDetail": {
     "notFound": {

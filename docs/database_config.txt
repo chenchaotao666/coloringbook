@@ -18,6 +18,11 @@ CREATE TABLE categories (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- 为 categories 表添加 SEO 字段
+ALTER TABLE categories 
+ADD COLUMN seo_title JSON COMMENT '多语言SEO标题 {"en": "SEO Title", "zh": "SEO标题"}',
+ADD COLUMN seo_desc JSON COMMENT '多语言SEO描述 {"en": "SEO Description", "zh": "SEO描述"}';
+
 -- 创建 tags 表
 CREATE TABLE tags (
   tag_id VARCHAR(36) PRIMARY KEY,

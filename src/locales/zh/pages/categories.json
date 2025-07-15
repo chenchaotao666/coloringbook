@@ -42,7 +42,9 @@
     "noImages": {
       "title": "该分类暂无图片",
       "description": "该分类下还没有图片，请尝试其他分类。"
-    }
+    },
+    "viewMore": "查看更多",
+    "collapse": "收起"
   },
   "imageDetail": {
     "notFound": {

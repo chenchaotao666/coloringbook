@@ -24,7 +24,7 @@ const CategoriesDetailPage: React.FC = () => {
   const { language } = useLanguage();
 
   // 添加组件实例ID来跟踪
-  const componentIdRef = useRef(Math.random().toString(36).substr(2, 9));
+  const componentIdRef = useRef(Math.random().toString(36).substring(2, 11));
   console.log('🆔 Component ID:', componentIdRef.current);
 
   const [category, setCategory] = useState<Category | null>(null);
@@ -69,17 +69,11 @@ const CategoriesDetailPage: React.FC = () => {
           return false;
         }
         
-        // 尝试多种匹配方式
-        const hasOriginalId = img.tags.includes(originalTagId);
-        const hasDisplayName = img.tags.includes(tag);
-        
-        // 尝试不区分大小写的匹配
-        const hasLowerCaseMatch = img.tags.some(imgTag => 
-          imgTag.toLowerCase() === tag.toLowerCase() || 
-          imgTag.toLowerCase() === originalTagId.toLowerCase()
-        );
-        
-        const matches = hasOriginalId || hasDisplayName || hasLowerCaseMatch;
+        // 简化后的匹配逻辑，只需要匹配标签ID
+        const matches = img.tags.some(imgTag => {
+          if (typeof imgTag !== 'object') return false;
+          return imgTag.tag_id === originalTagId;
+        });
         
         if (matches) {
           console.log('🎯 ✅ Image matches:', img.id, 'tags:', img.tags);
@@ -160,10 +154,7 @@ const CategoriesDetailPage: React.FC = () => {
 
           // 异步加载分类图片，不阻塞分类信息显示（使用实际的categoryId）
           setIsImagesLoading(true);
-          const result = await CategoriesService.getImagesByCategoryId(foundCategory.categoryId, {
-            currentPage: 1,
-            pageSize: 20
-          });
+          const result = await CategoriesService.getImagesByCategoryId(foundCategory.categoryId);
 
           setCategoryImages(result.images);
           setFilteredImages(result.images);
@@ -234,12 +225,10 @@ const CategoriesDetailPage: React.FC = () => {
         const filtered = categoryImages.filter(img => {
           if (!img.tags || !Array.isArray(img.tags)) return false;
           
-          return img.tags.includes(originalTagId) || 
-                 img.tags.includes(selectedTag) ||
-                 img.tags.some(imgTag => 
-                   imgTag.toLowerCase() === selectedTag.toLowerCase() || 
-                   imgTag.toLowerCase() === originalTagId.toLowerCase()
-                 );
+          return img.tags.some(imgTag => {
+            if (typeof imgTag !== 'object') return false;
+            return imgTag.tag_id === originalTagId;
+          });
         });
         setFilteredImages(filtered);
       }

@@ -104,8 +104,8 @@ export class ImageService {
       type,
       userId,
       isPublic,
-      currentPage = 1,
-      pageSize = 20,
+      currentPage,
+      pageSize,
       isRelated = false
     } = params;
 
@@ -123,8 +123,8 @@ export class ImageService {
       if (isPublic !== undefined) searchParams.append('isPublic', isPublic.toString());
       if (isRelated) searchParams.append('isRelated', isRelated.toString());
       
-      searchParams.append('currentPage', currentPage.toString());
-      searchParams.append('pageSize', pageSize.toString());
+      if (currentPage) searchParams.append('currentPage', currentPage.toString());
+      if (pageSize) searchParams.append('pageSize', pageSize.toString());
 
       const response = await ApiUtils.get<{images: HomeImage[], total: number}>(`/api/images?${searchParams.toString()}`);
       

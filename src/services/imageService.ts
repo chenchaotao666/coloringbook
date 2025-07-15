@@ -4,6 +4,19 @@ import { LocalizedText } from '../utils/textUtils';
 
 export type AspectRatio = '21:9' | '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '16:21';
 
+// 定义 Tag 接口
+export interface Tag {
+  tag_id: string;
+  description: {
+    en: string;
+    zh: string;
+  };
+  display_name: {
+    en: string;
+    zh: string;
+  };
+}
+
 export interface HomeImage {
   id: string;
   name: string;
@@ -12,7 +25,7 @@ export interface HomeImage {
   coloringUrl?: string;
   title: LocalizedText | string;
   description: LocalizedText | string;
-  tags?: string[];
+  tags?: Tag[];  // 更新为新的 Tag 类型
   type: 'text2image' | 'image2image' | 'image2coloring';
   ratio: AspectRatio | '';
   isPublic: boolean;

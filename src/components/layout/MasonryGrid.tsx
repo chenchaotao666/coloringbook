@@ -86,7 +86,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
       <HoverImageCard
         image={image}
         title={getLocalizedText(image.title, language)}
-        tags={image.tags ? image.tags.map(tag => tag.trim()) : []}
+        tags={image.tags || []}
         className="w-full"
       />
     </div>

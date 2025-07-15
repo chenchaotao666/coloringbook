@@ -4,8 +4,7 @@ import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
 import Breadcrumb, { BreadcrumbItem } from '../components/common/Breadcrumb';
-import { ImageService } from '../services/imageService';
-import { HomeImage } from '../services/imageService';
+import { ImageService, HomeImage, Tag } from '../services/imageService';
 import { CategoriesService, Category } from '../services/categoriesService';
 import { downloadImageByUrl, downloadImageAsPdf } from '../utils/downloadUtils';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -379,16 +378,16 @@ const ImageDetailPage: React.FC = () => {
                   </div>
 
                   {/* Tags */}
-                  {image.tags && (
+                  {image.tags && image.tags.length > 0 && (
                     <div className="space-y-3 lg:space-y-4">
                       <h3 className="text-base font-medium text-black">{t('imageDetail.tags', 'Tags')}</h3>
                       <div className="flex flex-wrap gap-2">
-                        {parseTags(image.tags).map((tag: string, index: number) => (
+                        {image.tags.map((tag: Tag) => (
                           <span
-                            key={index}
+                            key={tag.tag_id}
                             className="px-3 py-2 bg-white border border-[#EDEEF0] rounded-2xl text-sm text-[#161616]"
                           >
-                            {tag}
+                            {getLocalizedText(tag.display_name, language)}
                           </span>
                         ))}
                       </div>

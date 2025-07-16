@@ -4,109 +4,344 @@ import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
 import RatioSelector from '../components/ui/RatioSelector';
-
 import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category, TagCount } from '../services/categoriesService';
 import { HomeImage, AspectRatio } from '../services/imageService';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage, Language } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
+import { useUploadImage } from '../contexts/UploadImageContext';
+
+// 添加 ExpandableContent 组件
+interface ExpandableContentProps {
+  content: React.ReactNode;
+  maxLines?: number;
+  viewMoreText?: string;
+  collapseText?: string;
+  className?: string;
+}
+
+// 添加 GenerateSection 组件
+interface GenerateSectionProps {
+  category: Category;
+  language: Language;
+  t: any;
+}
+
+type TabType = 'text' | 'image';
+
+const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t }) => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabType>('text');
+  const [generatePrompt, setGeneratePrompt] = useState('');
+  const [selectedRatio, setSelectedRatio] = useState<AspectRatio>('1:1');
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [isTextLoaded, setIsTextLoaded] = useState(false);
+  const { setUploadedImage: setGlobalUploadedImage } = useUploadImage();
+
+  // 检查文本是否已加载
+  const titleText = t('detail.generateSection.title', '', {
+    category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '')
+  });
+  
+  // 当文本加载完成时设置状态
+  React.useEffect(() => {
+    if (titleText && titleText.trim() !== '') {
+      setIsTextLoaded(true);
+    }
+  }, [titleText]);
+
+  const handleGenerateClick = () => {
+    if (activeTab === 'text') {
+      const params = new URLSearchParams();
+      params.set('prompt', generatePrompt);
+      params.set('ratio', selectedRatio);
+      navigateWithLanguage(navigate, `/generate?${params.toString()}`);
+    } else if (uploadedImage) {
+      // 设置全局上传图片状态
+      setGlobalUploadedImage(uploadedImage);
+      // 直接跳转到图生图页面
+      navigateWithLanguage(navigate, '/image-coloring-page');
+    }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedImage(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  const clearUploadedImage = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setUploadedImage(null);
+    setPreviewUrl('');
+  };
+
+  return (
+    <div className="max-w-[920px] mx-auto mb-12">
+      <h2 
+        className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6] transition-opacity duration-300"
+        style={{
+          opacity: isTextLoaded ? 1 : 0,
+          visibility: isTextLoaded ? 'visible' : 'hidden',
+          minHeight: '3rem' // 预留空间避免布局跳动
+        }}
+      >
+        {titleText}
+      </h2>
+
+      {/* Tabs */}
+      <div className="flex justify-center mb-6" style={{ opacity: isTextLoaded ? 1 : 0, visibility: isTextLoaded ? 'visible' : 'hidden' }}>
+        <div className="w-[400px] bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
+          <div
+            className={`h-10 rounded-lg absolute transition-all duration-200 ${
+              activeTab === 'text' ? 'w-[calc(50%-4px)] bg-white left-1' :
+              activeTab === 'image' ? 'w-[calc(50%-4px)] bg-white right-1' : ''
+            }`}
+          ></div>
+          <button
+            onClick={() => setActiveTab('text')}
+            className={`flex-1 h-10 z-10 flex items-center justify-center ${
+              activeTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
+            }`}
+          >
+            {t('detail.generateSection.textTab', '文字转图片')}
+          </button>
+          <button
+            onClick={() => setActiveTab('image')}
+            className={`flex-1 h-10 z-10 flex items-center justify-center ${
+              activeTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
+            }`}
+          >
+            {t('detail.generateSection.imageTab', '图片转图片')}
+          </button>
+        </div>
+      </div>
+
+      <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-20" style={{ opacity: isTextLoaded ? 1 : 0, visibility: isTextLoaded ? 'visible' : 'hidden' }}>
+        {activeTab === 'text' ? (
+          <textarea
+            value={generatePrompt}
+            onChange={(e) => setGeneratePrompt(e.target.value)}
+            placeholder={t('detail.generatePrompt.placeholder', '')}
+            className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
+          />
+        ) : (
+          <div
+            className="w-full h-[150px] sm:h-[180px] lg:h-[192px] rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors relative"
+            onClick={() => document.getElementById('categoryImageUpload')?.click()}
+          >
+            {uploadedImage ? (
+              <div className="w-full h-full relative flex items-center justify-center">
+                <img
+                  src={previewUrl}
+                  alt="Uploaded"
+                  className="max-w-full max-h-full object-contain rounded-lg"
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearUploadedImage();
+                  }}
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-[46px] lg:h-[46px] mb-3 sm:mb-4">
+                  <img src="/images/add-image.svg" alt="Upload" className="w-full h-full" />
+                </div>
+                <div className="text-[#A4A4A4] text-xs sm:text-sm">{t('detail.generatePrompt.uploadImage', '点击上传')}</div>
+              </>
+            )}
+            <input
+              id="categoryImageUpload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+          </div>
+        )}
+
+        <div className={`${activeTab === 'text' ? 'flex justify-between items-center mt-4' : 'absolute bottom-[17px] right-4'}`}>
+          {activeTab === 'text' && (
+            <div className="w-32">
+              <RatioSelector
+                value={selectedRatio}
+                onChange={setSelectedRatio}
+              />
+            </div>
+          )}
+
+          <Button
+            onClick={handleGenerateClick}
+            variant="gradient"
+            className="px-6 py-2 text-base font-bold"
+            disabled={activeTab === 'image' && !uploadedImage}
+          >
+            {t('detail.generatePrompt.button', '')}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ExpandableContent: React.FC<ExpandableContentProps> = ({
+  content,
+  maxLines = 2,
+  viewMoreText = '查看更多',
+  collapseText = '收起',
+  className = ''
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [needsExpansion, setNeedsExpansion] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const hiddenRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 延迟计算确保DOM完全渲染
+    const timer = setTimeout(() => {
+      if (hiddenRef.current && contentRef.current) {
+        const hiddenElement = hiddenRef.current;
+        const contentElement = contentRef.current;
+        
+        // 确保隐藏元素和显示元素有相同的宽度
+        const containerWidth = contentElement.offsetWidth;
+        hiddenElement.style.width = `${containerWidth}px`;
+        
+        // 计算行数
+        const lineHeight = parseFloat(getComputedStyle(hiddenElement).lineHeight);
+        const height = hiddenElement.scrollHeight;
+        const lines = Math.round(height / lineHeight);
+        
+        setNeedsExpansion(lines > maxLines);
+        setIsInitialized(true);
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [maxLines, content]);
+
+  return (
+    <div className={`relative ${className}`}>
+      {/* 隐藏元素用于计算高度 */}
+      <div
+        ref={hiddenRef}
+        className="text-lg leading-relaxed"
+        style={{
+          position: 'absolute',
+          top: '-9999px',
+          left: '-9999px',
+          visibility: 'hidden',
+          pointerEvents: 'none',
+          zIndex: -1,
+          fontSize: '18px'
+        }}
+      >
+        {content}
+      </div>
+
+      {/* 实际显示的内容 */}
+      <div
+        ref={contentRef}
+        className="text-lg leading-relaxed"
+        style={{
+          opacity: isInitialized ? 1 : 0,
+          visibility: isInitialized ? 'visible' : 'hidden',
+          transition: 'opacity 0.2s ease-in-out',
+          fontSize: '18px'
+        }}
+      >
+        {/* 根据需要显示省略或完整内容 */}
+        {isInitialized && (
+          <div
+            className={`${
+              !isExpanded && needsExpansion ? 'overflow-hidden' : ''
+            }`}
+            style={{
+              display: !isExpanded && needsExpansion ? '-webkit-box' : 'block',
+              WebkitLineClamp: !isExpanded && needsExpansion ? maxLines : 'none',
+              WebkitBoxOrient: 'vertical' as const,
+              paddingRight: !isExpanded && needsExpansion ? '90px' : '0px'
+            }}
+          >
+            {content}
+          </div>
+        )}
+      </div>
+
+      {needsExpansion && !isExpanded && isInitialized && (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="absolute top-0 right-0 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
+        >
+          <span className='text-lg'>{viewMoreText}</span>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      )}
+
+      {needsExpansion && isExpanded && isInitialized && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
+          >
+            <span className='text-lg'>{collapseText}</span>
+            <svg
+              className="w-4 h-4 transition-transform duration-200 rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // 将 DescriptionSection 定义在组件外部，使用 React.memo 避免不必要的重新渲染
-const DescriptionSection = React.memo<{ element: any; expandedSections: Set<number>; toggleSectionExpansion: (index: number) => void; t: any }>(({ element, expandedSections, toggleSectionExpansion, t }) => {
-  const isExpanded = expandedSections.has(element.section.index);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [needsExpansion, setNeedsExpansion] = useState(false);
-  
-  // 检查内容是否需要展开（是否超过一行）
-  useEffect(() => {
-    if (contentRef.current) {
-      const contentElement = contentRef.current;
-      const lineHeight = parseFloat(getComputedStyle(contentElement).lineHeight);
-      const height = contentElement.scrollHeight;
-      const lines = Math.round(height / lineHeight);
-      
-      console.log('Content measurement:', {
-        sectionIndex: element.section.index,
-        lineHeight,
-        height,
-        lines,
-        needsExpansion: lines > 1
-      });
-      
-      setNeedsExpansion(lines > 1);
-    }
-  }, [element.section.content]);
-  
+const DescriptionSection = React.memo<{ element: any; t: any }>(({ element, t }) => {
   return (
-    <div className="mb-8 lg:mb-12">
-      <div className="mx-auto text-left">
+    <div className={`mb-8 lg:mb-12 ${element.className || ''}`}>
+      <div className={`mx-auto ${element.textAlign === 'center' ? 'text-center' : 'text-left'}`}>
         {element.section.title && (
-          <h2 className="text-[#161616] text-xl lg:text-2xl font-semibold mb-3 lg:mb-4">
+          <h2 className={`text-[#161616] ${element.titleSize || 'text-xl lg:text-2xl'} font-semibold mb-3 lg:mb-4`}>
             {element.section.title}
           </h2>
         )}
         {element.section.content && (
-          <div className="relative">
-            <div
-              ref={contentRef}
-              className={`text-base lg:text-lg leading-relaxed ${
-                !isExpanded && needsExpansion 
-                  ? 'overflow-hidden' 
-                  : ''
-              }`}
-              style={{
-                display: !isExpanded && needsExpansion ? '-webkit-box' : 'block',
-                WebkitLineClamp: !isExpanded && needsExpansion ? 1 : 'none',
-                WebkitBoxOrient: 'vertical' as const,
-                paddingRight: !isExpanded && needsExpansion ? '80px' : '0px'
-              }}
-            >
-              {element.section.content}
-            </div>
-            
-            {/* 查看更多按钮 */}
-            {needsExpansion && !isExpanded && (
-              <button
-                onClick={() => toggleSectionExpansion(element.section.index)}
-                className="absolute top-0 right-0 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
-              >
-                <span className="text-sm mt-[5px]">{t('detail.viewMore', '查看更多')}</span>
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            )}
-            
-            {/* 收起按钮 */}
-            {needsExpansion && isExpanded && (
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={() => toggleSectionExpansion(element.section.index)}
-                  className="flex items-center gap-2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200"
-                >
-                  <span className="text-sm">{t('detail.collapse', '收起')}</span>
-                  <svg
-                    className="w-4 h-4 transition-transform duration-200 rotate-180"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
+          <ExpandableContent
+            content={element.section.content}
+            maxLines={element.maxLines || 1}
+            viewMoreText={t('detail.viewMore', '')}
+            collapseText={t('detail.collapse', '')}
+            className={element.contentClassName || ''}
+          />
         )}
       </div>
     </div>
@@ -120,10 +355,6 @@ const CategoriesDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
 
-  // 添加组件实例ID来跟踪
-  const componentIdRef = useRef(Math.random().toString(36).substring(2, 11));
-  console.log('🆔 Component ID:', componentIdRef.current);
-
   const [category, setCategory] = useState<Category | null>(null);
   const [, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
   const [categoryImages, setCategoryImages] = useState<HomeImage[]>([]);
@@ -136,33 +367,24 @@ const CategoriesDetailPage: React.FC = () => {
   const [isImagesLoading, setIsImagesLoading] = useState(true);
   const [generatePrompt, setGeneratePrompt] = useState('');
   const [selectedRatio, setSelectedRatio] = useState<AspectRatio>('1:1');
-  const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set());
   const loadingRef = useRef<string>(''); // 用于跟踪当前正在加载的key
 
     // 处理标签过滤
   const handleTagClick = (tag: string) => {
-    console.log('🎯 handleTagClick called with tag:', tag);
-    console.log('🎯 Current selectedTag:', selectedTag);
-    console.log('🎯 Total categoryImages:', categoryImages.length);
     
     if (tag === 'All' || selectedTag === tag) {
       // 如果点击的是All标签或已选中的标签，则显示所有图片
-      console.log('🎯 Showing all images');
       setSelectedTag(null);
       setFilteredImages(categoryImages);
     } else {
       // 过滤包含该标签的图片
       setSelectedTag(tag);
-      console.log('🎯 Filtering with tag:', tag);
       
       // 获取原始标签ID用于过滤
       const originalTagId = tagMapping.get(tag) || tag;
-      console.log('🎯 Original tag ID:', originalTagId);
-      console.log('🎯 Tag mapping:', Object.fromEntries(tagMapping));
       
       const filtered = categoryImages.filter(img => {
         if (!img.tags || !Array.isArray(img.tags)) {
-          console.log('🎯 Image has no tags:', img.id);
           return false;
         }
         
@@ -172,33 +394,22 @@ const CategoriesDetailPage: React.FC = () => {
           return imgTag.tag_id === originalTagId;
         });
         
-        if (matches) {
-          console.log('🎯 ✅ Image matches:', img.id, 'tags:', img.tags);
-        } else {
-          console.log('🎯 ❌ Image does not match:', img.id, 'tags:', img.tags);
-        }
-        
         return matches;
       });
       
-      console.log('🎯 Filtered result:', filtered.length, 'images from', categoryImages.length, 'total');
       setFilteredImages(filtered);
     }
   };
 
   useEffect(() => {
-    console.log('into loadCategoryData, categoryId:', categoryId, 'language:', language);
     const loadCategoryData = async () => {
       if (!categoryId) return;
 
       // 防止重复加载：如果已经为当前categoryId和language组合正在加载，则跳过
       const currentKey = `${categoryId}-${language}`;
       if (loadingRef.current === currentKey) {
-        console.log('Already loading for', currentKey, 'skipping...');
         return;
       }
-
-      console.log('Loading data for', currentKey, 'previous loading:', loadingRef.current);
 
       // 设置当前加载的key
       loadingRef.current = currentKey;
@@ -256,29 +467,19 @@ const CategoriesDetailPage: React.FC = () => {
           setCategoryImages(result.images);
           setFilteredImages(result.images);
 
-          // 调试：查看实际的图片数据结构
-          console.log('🔍 Category images loaded:', result.images.length);
-          if (result.images.length > 0) {
-            console.log('🔍 First image tags:', result.images[0].tags);
-            console.log('🔍 First image data:', result.images[0]);
-          }
-
           // 更新图片映射表
           updateImageMappings(result.images);
 
           // 生成子分类列表（从分类的tagCounts获取标签信息）
           if (foundCategory && foundCategory.tagCounts && foundCategory.tagCounts.length > 0) {
             // 使用分类的tagCounts获取标签信息
-            console.log('🔍 Category tagCounts:', foundCategory.tagCounts);
             const tagNames = foundCategory.tagCounts.map((tagCount: TagCount) => {
               const displayName = typeof tagCount.displayName === 'string' 
                 ? tagCount.displayName 
                 : getLocalizedText(tagCount.displayName, language);
-              console.log('🔍 Tag mapping:', tagCount.tagId, '->', displayName);
               return displayName;
             });
             setSubcategories(tagNames);
-            console.log('🔍 Final subcategories:', tagNames);
             
             // 设置标签计数映射和标签ID映射
             const countMap = new Map<string, number>();
@@ -308,12 +509,11 @@ const CategoriesDetailPage: React.FC = () => {
     };
 
     loadCategoryData();
-  }, [categoryId, language]);
+  }, []);
 
   // 监听标签选择变化，重新应用过滤
   useEffect(() => {
     if (categoryImages.length > 0) {
-      console.log('🎯 useEffect: Reapplying filter for selectedTag:', selectedTag);
       if (selectedTag === null) {
         setFilteredImages(categoryImages);
       } else {
@@ -334,24 +534,6 @@ const CategoriesDetailPage: React.FC = () => {
 
   const handleBackToCategories = () => {
     navigateWithLanguage(navigate, '/categories');
-  };
-
-  const toggleSectionExpansion = useCallback((sectionIndex: number) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(sectionIndex)) {
-      newExpanded.delete(sectionIndex);
-    } else {
-      newExpanded.add(sectionIndex);
-    }
-    setExpandedSections(newExpanded);
-  }, [expandedSections]);
-
-  const handleGenerateClick = () => {
-    // 构建包含 prompt 和 ratio 的 URL 参数
-    const params = new URLSearchParams();
-    params.set('prompt', generatePrompt);
-    params.set('ratio', selectedRatio);
-    navigateWithLanguage(navigate, `/generate?${params.toString()}`);
   };
 
   // 获取基础面包屑（即使分类还在加载也可以显示）
@@ -428,40 +610,70 @@ const CategoriesDetailPage: React.FC = () => {
                 {getLocalizedText(category.displayName, language)}
               </h1>
 
-              {/* Generate Section - 移动到标题下面 */}
-              <div className="max-w-[920px] mx-auto mb-12">
-                <h2 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6]">
-                  {t('detail.generateSection.title', 'Create your personalized AI {category} coloring page', {
-                    category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '自定义')
-                  })}
-                </h2>
-
-                <div className="relative bg-white border border-[#EDEEF0] rounded-lg p-4 mb-12">
-                  <textarea
-                    value={generatePrompt}
-                    onChange={(e) => setGeneratePrompt(e.target.value)}
-                    placeholder={t('detail.generatePrompt.placeholder', 'Enter the coloring book you want to search')}
-                    className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
-                  />
-
-                  <div className="flex justify-between items-center mt-4">
-                    <div className="w-32">
-                      <RatioSelector
-                        value={selectedRatio}
-                        onChange={setSelectedRatio}
-                      />
-                    </div>
-
-                    <Button
-                      onClick={handleGenerateClick}
-                      variant="gradient"
-                      className="px-6 py-2 text-base font-bold"
-                    >
-                      {t('detail.generatePrompt.button', 'Create')}
-                    </Button>
-                  </div>
+              {/* Category Intro Section */}
+              <div className="mx-auto mb-12">
+                <div className="mb-4">
+                  <p className="text-[#161616] text-lg font-medium">
+                    {t('detail.categoryIntro.imageCount', '', { count: categoryImages.length, category: getLocalizedText(category.displayName, language) })}
+                  </p>
                 </div>
+
+                <ExpandableContent
+                  content={
+                    <div className="text-left">
+                      <p className="mb-4">
+                        {t('detail.categoryIntro.description', '')}
+                      </p>
+                      <p>
+                        {t('detail.categoryIntro.downloadInfo', '', { category: getLocalizedText(category.displayName, language) })}
+                      </p>
+                    </div>
+                  }
+                  maxLines={1}
+                  viewMoreText={t('detail.viewMore', '')}
+                  collapseText={t('detail.collapse', '')}
+                  className="text-base lg:text-lg leading-relaxed"
+                />
               </div>
+
+              {/* Generate Section */}
+              <GenerateSection
+                category={category}
+                language={language}
+                t={t}
+              />
+
+              {/* Subcategories Tags */}
+              {subcategories.length > 0 && (
+                <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-12">
+                  <button
+                    onClick={() => handleTagClick('All')}
+                    className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
+                      ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                      : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                      }`}
+                  >
+                    <span className="text-sm font-normal leading-4">
+                      All ({categoryImages.length})
+                    </span>
+                  </button>
+
+                  {subcategories.map((tag, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleTagClick(tag)}
+                      className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
+                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                        : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                        }`}
+                    >
+                      <span className="text-sm font-normal leading-4">
+                        {tag} ({tagCounts.get(tag) || 0})
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* 交替显示描述和图片 */}
               {(() => {
@@ -469,38 +681,6 @@ const CategoriesDetailPage: React.FC = () => {
                   // 如果没有描述，直接显示标签和图片
                   return (
                     <>
-                      {/* Subcategories Tags */}
-                      {subcategories.length > 0 && (
-                        <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-8">
-                          <button
-                            onClick={() => handleTagClick('All')}
-                            className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
-                              ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                              : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                              }`}
-                          >
-                            <span className="text-sm font-normal leading-4">
-                              All ({categoryImages.length})
-                            </span>
-                          </button>
-
-                          {subcategories.map((tag, index) => (
-                            <button
-                              key={index}
-                              onClick={() => handleTagClick(tag)}
-                              className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
-                                ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                                : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                                }`}
-                            >
-                              <span className="text-sm font-normal leading-4">
-                                {tag} ({tagCounts.get(tag) || 0})
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
                       {/* All Images */}
                       <div className="mb-8 lg:mb-20">
                         {filteredImages.length === 0 ? (
@@ -529,19 +709,15 @@ const CategoriesDetailPage: React.FC = () => {
                 }
 
                 const descriptionText = getLocalizedText(category.description, language);
-                console.log('Original description:', descriptionText);
                 
                 // 按 <h2> 标签分段
                 const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.trim());
-                console.log('Split sections:', sections);
                 
                 // 解析每个段落
                 const descriptionSections = sections.map((section, index) => {
                   const titleMatch = section.match(/^([^<]*)<\/h2>/);
                   const title = titleMatch ? titleMatch[1].trim() : '';
                   const content = section.replace(/^[^<]*<\/h2>/, '').trim();
-                  
-                  console.log(`Section ${index}:`, { title, content: content.substring(0, 100) + '...' });
                   
                   return {
                     index,
@@ -550,18 +726,24 @@ const CategoriesDetailPage: React.FC = () => {
                   };
                 }).filter(section => section.title || section.content);
                 
-                console.log('Final description sections:', descriptionSections.length);
-
                 // 生成交替显示的内容
                 const contentElements: Array<{
-                  type: 'description' | 'images' | 'tags';
+                  type: 'description' | 'images';
                   key: string;
                   images?: HomeImage[];
                   section?: { index: number; title: string; content: string };
                 }> = [];
-                let imageIndex = 0;
 
-                // 先显示4张图片
+                // 先显示第一段描述
+                if (descriptionSections.length > 0) {
+                  contentElements.push({
+                    type: 'description',
+                    section: descriptionSections[0],
+                    key: `desc-0`
+                  });
+                }
+
+                // 然后显示前4张图片
                 if (filteredImages.length > 0) {
                   const firstImages = filteredImages.slice(0, 4);
                   contentElements.push({
@@ -569,21 +751,23 @@ const CategoriesDetailPage: React.FC = () => {
                     images: firstImages,
                     key: 'first-images'
                   });
-                  imageIndex = 4;
                 }
 
-                // 然后交替显示描述和图片
-                descriptionSections.forEach((section, sectionIndex) => {
+                // 计算已经显示的图片数量
+                let displayedImagesCount = 4;
+
+                // 然后显示剩余的描述和图片
+                for (let i = 1; i < descriptionSections.length; i++) {
                   // 添加描述段落
                   contentElements.push({
                     type: 'description',
-                    section: section,
-                    key: `desc-${sectionIndex}`
+                    section: descriptionSections[i],
+                    key: `desc-${i}`
                   });
 
                   // 如果是最后一个段落，显示所有剩余图片
-                  if (sectionIndex === descriptionSections.length - 1) {
-                    const remainingImages = filteredImages.slice(imageIndex);
+                  if (i === descriptionSections.length - 1) {
+                    const remainingImages = filteredImages.slice(displayedImagesCount);
                     if (remainingImages.length > 0) {
                       contentElements.push({
                         type: 'images',
@@ -593,35 +777,24 @@ const CategoriesDetailPage: React.FC = () => {
                     }
                   } else {
                     // 不是最后一个段落，显示4张图片
-                    const nextImages = filteredImages.slice(imageIndex, imageIndex + 4);
+                    const nextImages = filteredImages.slice(displayedImagesCount, displayedImagesCount + 4);
                     if (nextImages.length > 0) {
                       contentElements.push({
                         type: 'images',
                         images: nextImages,
-                        key: `images-${sectionIndex}`
+                        key: `images-${i}`
                       });
-                      imageIndex += 4;
+                      displayedImagesCount += nextImages.length;
                     }
                   }
-                });
+                }
 
-                // Generate Section 已经移动到页面标题下面，不需要在这里添加了
-
-                // 添加标签选择器
-                contentElements.push({
-                  type: 'tags',
-                  key: 'tags-section'
-                });
-
-                // 将 DescriptionSection 移到组件外部以避免重新创建
-
+                // 不再需要添加标签选择器到 contentElements
                 return contentElements.map((element) => {
                   if (element.type === 'description' && element.section) {
                     return <DescriptionSection 
                       key={element.key} 
                       element={element} 
-                      expandedSections={expandedSections}
-                      toggleSectionExpansion={toggleSectionExpansion}
                       t={t}
                     />;
                   } else if (element.type === 'images' && element.images) {
@@ -638,50 +811,12 @@ const CategoriesDetailPage: React.FC = () => {
                         />
                       </div>
                     );
-                  } else if (element.type === 'tags') {
-                    return (
-                      <div key={element.key}>
-                        {subcategories.length > 0 && (
-                          <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-8">
-                            <button
-                              onClick={() => handleTagClick('All')}
-                              className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
-                                ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                                : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                                }`}
-                            >
-                              <span className="text-sm font-normal leading-4">
-                                All ({categoryImages.length})
-                              </span>
-                            </button>
-
-                            {subcategories.map((tag, index) => (
-                              <button
-                                key={index}
-                                onClick={() => handleTagClick(tag)}
-                                className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
-                                  ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                                  : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                                  }`}
-                              >
-                                <span className="text-sm font-normal leading-4">
-                                  {tag} ({tagCounts.get(tag) || 0})
-                                </span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
                   }
                   return null;
                 });
               })()}
-
             </>
           ) : null}
-
-
         </div>
       </div>
     </Layout>

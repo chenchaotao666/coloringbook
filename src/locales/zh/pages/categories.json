@@ -31,11 +31,14 @@
     "allTags": "全部",
     "generatePrompt": {
       "placeholder": "输入您想要搜索的涂色书内容",
-      "button": "创建"
+      "button": "创建",
+      "uploadImage": "点击上传图片"
     },
     "generateSection": {
       "title": "创建您的个性化AI {category} 涂色页",
-      "customCategory": "自定义"
+      "customCategory": "自定义",
+      "textTab": "文字转图片",
+      "imageTab": "图片转图片"
     },
     "ratio": "画面比例",
     "loadMore": "加载更多",
@@ -44,7 +47,12 @@
       "description": "该分类下还没有图片，请尝试其他分类。"
     },
     "viewMore": "查看更多",
-    "collapse": "收起"
+    "collapse": "收起",
+    "categoryIntro": {
+      "imageCount": "我们将展示{count}张{category}填色页！",
+      "description": "涂色书不仅仅是一种娱乐活动，更是促进儿童全面发展的有效工具。它能提升专注力和耐心，培养创造力和想象力。涂色过程中，孩子的手眼协调能力和精细动作技能得到锻炼。同时，它也是减压的好方法，能帮助孩子放松心情。涂色还能增强色彩认知，提高美感。对于成人来说，涂色也是一种放松身心、缓解压力的好方式。此外，涂色还能成为家人共度优质时光的纽带，增进亲子关系。",
+      "downloadInfo": "所有{category}填色页均可免费下载，支持PDF和PNG格式"
+    }
   },
   "imageDetail": {
     "notFound": {

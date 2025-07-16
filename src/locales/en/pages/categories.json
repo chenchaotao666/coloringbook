@@ -1,55 +1,63 @@
 {
-  "title": "{count} categories to explore",
+  "title": "{count} Categories to Explore",
   "loading": "Loading...",
-  "viewAllCategories": "View all categories",
+  "viewAllCategories": "View All Categories",
   "breadcrumb": {
     "home": "Home",
-    "categories": "Coloring Pages Free"
+    "categories": "Free Coloring Pages"
   },
   "search": {
-    "placeholder": "Enter the category to search",
+    "placeholder": "Search categories",
     "button": "Search"
   },
   "emptyState": {
     "noResults": {
-      "title": "No results found",
+      "title": "No Results Found",
       "description": "No categories found matching your search."
     },
     "noCategories": {
-      "title": "No categories found",
-      "description": "Categories are being loaded. Please wait a moment."
+      "title": "No Categories Found",
+      "description": "Categories are loading, please wait a moment."
     }
   },
   "detail": {
     "loading": "Loading category details...",
     "notFound": {
-      "title": "Category not found",
+      "title": "Category Not Found",
       "description": "The category you're looking for doesn't exist or has been removed.",
       "backButton": "Back to Categories"
     },
     "backToCategories": "Back to Categories",
     "allTags": "All",
     "generatePrompt": {
-      "placeholder": "Enter the coloring book you want to search",
-      "button": "Create"
+      "placeholder": "Enter the coloring book content you want to search",
+      "button": "Create",
+      "uploadImage": "Click to upload image"
     },
     "generateSection": {
       "title": "Create your personalized AI {category} coloring page",
-      "customCategory": "Custom"
+      "customCategory": "custom",
+      "textTab": "Text to Image",
+      "imageTab": "Image to Image"
     },
     "ratio": "Aspect Ratio",
     "loadMore": "Load More",
     "noImages": {
-      "title": "No images in this category",
-      "description": "There are no images in this category yet. Please try other categories."
+      "title": "No Images in This Category",
+      "description": "This category doesn't have any images yet. Please try another category."
     },
     "viewMore": "View More",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "categoryIntro": {
+      "imageCount": "We will show {count} {category} coloring pages!",
+      "description": "Coloring books are not just entertainment, but an effective tool for children's overall development. They enhance concentration and patience while fostering creativity and imagination. During coloring, children's hand-eye coordination and fine motor skills are exercised. It's also a great way to relieve stress and help children relax. Coloring also strengthens color recognition and improves aesthetic sense. For adults, coloring is also a great way to relax and relieve stress. Additionally, coloring can become a bond for quality family time, enhancing parent-child relationships.",
+      "downloadInfo": "All {category} coloring pages are available for free download in PDF and PNG formats"
+    }
   },
   "imageDetail": {
     "notFound": {
-      "title": "Image not found",
-      "breadcrumb": "Image not found",
+      "title": "Image Not Found",
+      "breadcrumb": "Image Not Found",
       "goHome": "Go Home"
     },
     "tags": "Tags",
@@ -57,7 +65,7 @@
     "downloadPdf": "Download PDF",
     "png": "PNG",
     "pdf": "PDF",
-    "relatedImages": "You Might Also Like",
-    "noRelatedImages": "No related images found"
+    "relatedImages": "You May Also Like",
+    "noRelatedImages": "No Related Images"
   }
 } 

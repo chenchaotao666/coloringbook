@@ -17,9 +17,7 @@ import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
 import { AuthProvider } from './contexts/AuthContext';
-// import { getSavedLanguage, detectBrowserLanguage } from './components/common/LanguageRouter';
-
-// 移除未使用的语言重定向组件
+import { UploadImageProvider } from './contexts/UploadImageContext';
 
 // 应用内容组件，处理语言加载状态
 function AppContent() {
@@ -110,7 +108,9 @@ function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <AppContent />
+        <UploadImageProvider>
+          <AppContent />
+        </UploadImageProvider>
       </AuthProvider>
     </LanguageProvider>
   );

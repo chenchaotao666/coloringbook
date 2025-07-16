@@ -30,6 +30,8 @@ const deleteIcon = '/images/delete.svg';
 const textCountIcon = '/images/text-count.svg';
 const generateFailIcon = '/images/generate-fail.svg';
 
+import { useUploadImage } from '../contexts/UploadImageContext';
+
 interface GeneratePageProps {
   initialTab?: 'text' | 'image';
 }
@@ -100,6 +102,17 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     refreshStyleSuggestions,
     deleteImage,
   } = useGeneratePage(initialTab, refreshUser);
+
+  const { uploadedImage: globalUploadedImage, setUploadedImage: setGlobalUploadedImage } = useUploadImage();
+
+  // 当有全局上传的图片时，自动设置到组件状态
+  useEffect(() => {
+    if (globalUploadedImage && initialTab === 'image') {
+      setUploadedImageWithDimensions(globalUploadedImage, null);
+      // 清除全局状态
+      setGlobalUploadedImage(null);
+    }
+  }, [globalUploadedImage, initialTab]);
 
   // 当initialTab变化时更新selectedTab
   useEffect(() => {

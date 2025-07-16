@@ -277,7 +277,7 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
               display: !isExpanded && needsExpansion ? '-webkit-box' : 'block',
               WebkitLineClamp: !isExpanded && needsExpansion ? maxLines : 'none',
               WebkitBoxOrient: 'vertical' as const,
-              paddingRight: !isExpanded && needsExpansion ? '120px' : '0px'
+              paddingRight: !isExpanded && needsExpansion ? '110px' : '0px'
             }}
           >
             {content}

@@ -277,7 +277,7 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
               display: !isExpanded && needsExpansion ? '-webkit-box' : 'block',
               WebkitLineClamp: !isExpanded && needsExpansion ? maxLines : 'none',
               WebkitBoxOrient: 'vertical' as const,
-              paddingRight: !isExpanded && needsExpansion ? '100px' : '0px'
+              paddingRight: !isExpanded && needsExpansion ? '120px' : '0px'
             }}
           >
             {content}
@@ -290,7 +290,7 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
           onClick={() => setIsExpanded(true)}
           className="absolute top-0 right-0 text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 inline-flex items-center gap-1"
         >
-          <span className='text-lg'>{viewMoreText}</span>
+          <span className='text-lg mt-[1px]'>{viewMoreText}</span>
           <svg
             className="w-4 h-4"
             fill="none"

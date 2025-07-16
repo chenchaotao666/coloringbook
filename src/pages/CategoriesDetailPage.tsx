@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
@@ -365,8 +365,6 @@ const CategoriesDetailPage: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [isCategoryLoading, setIsCategoryLoading] = useState(true);
   const [isImagesLoading, setIsImagesLoading] = useState(true);
-  const [generatePrompt, setGeneratePrompt] = useState('');
-  const [selectedRatio, setSelectedRatio] = useState<AspectRatio>('1:1');
   const loadingRef = useRef<string>(''); // 用于跟踪当前正在加载的key
 
     // 处理标签过滤

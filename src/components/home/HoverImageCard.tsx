@@ -16,6 +16,7 @@ interface HoverImageCardProps {
   tags: string[];
   className?: string;
   variant?: 'default' | 'category'; // 添加变体参数
+  onClick?: () => void; // 添加外部点击处理函数
 }
 
 const HoverImageCard: React.FC<HoverImageCardProps> = ({ 
@@ -23,7 +24,8 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   title, 
   tags, 
   className = '',
-  variant = 'default'
+  variant = 'default',
+  onClick
 }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -68,9 +70,14 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   };
 
   const handleCardClick = () => {
-    // 导航到图片详情页，使用SEO友好的图片路径
-    const imagePath = getImageNameById(image.id);
-    navigateWithLanguage(navigate, `/image/${imagePath}`);
+    if (onClick) {
+      // 如果有外部点击处理函数，使用外部的
+      onClick();
+    } else {
+      // 否则使用默认的导航逻辑
+      const imagePath = getImageNameById(image.id);
+      navigateWithLanguage(navigate, `/image/${imagePath}`);
+    }
   };
 
 

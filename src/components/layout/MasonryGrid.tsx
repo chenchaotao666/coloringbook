@@ -79,17 +79,13 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
   };
 
   const defaultRenderCard = (image: HomeImage, _index: number) => (
-    <div 
-      onClick={() => handleImageClick(image)}
-      className={onImageClick ? "cursor-pointer" : ""}
-    >
-      <HoverImageCard
-        image={image}
-        title={getLocalizedText(image.title, language)}
-        tags={image.tags ? image.tags.map(tag => getLocalizedText(tag.display_name, language)) : []}
-        className="w-full"
-      />
-    </div>
+    <HoverImageCard
+      image={image}
+      title={getLocalizedText(image.title, language)}
+      tags={image.tags ? image.tags.map(tag => getLocalizedText(tag.display_name, language)) : []}
+      className="w-full"
+      onClick={onImageClick ? () => handleImageClick(image) : undefined}
+    />
   );
 
   const cardRenderer = renderCard || defaultRenderCard;

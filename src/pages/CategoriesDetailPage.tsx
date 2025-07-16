@@ -402,12 +402,16 @@ const CategoriesDetailPage: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('🔄 useEffect triggered for loadCategoryData', { categoryId, language });
+    
     const loadCategoryData = async () => {
+      console.log('🚀 loadCategoryData called', { categoryId, language });
       if (!categoryId) return;
 
       // 防止重复加载：如果已经为当前categoryId和language组合正在加载，则跳过
       const currentKey = `${categoryId}-${language}`;
       if (loadingRef.current === currentKey) {
+        console.log('⚠️ Skipping - already loading for this key');
         return;
       }
 
@@ -505,11 +509,13 @@ const CategoriesDetailPage: React.FC = () => {
         console.error('Failed to load category data:', error);
         setIsCategoryLoading(false);
         setIsImagesLoading(false);
+      } finally {
+        console.log('🏁 Finished loading for key:', currentKey);
       }
     };
 
     loadCategoryData();
-  }, []);
+  }, [categoryId, language]);
 
   // 监听标签选择变化，重新应用过滤
   useEffect(() => {
@@ -699,7 +705,9 @@ const CategoriesDetailPage: React.FC = () => {
                             onImageClick={(image) => {
                               const imagePath = getImageNameById(image.id);
                               const categoryPath = getCategoryNameById(category.categoryId);
-                              navigateWithLanguage(navigate, `/categories/${categoryPath}/${imagePath}`);
+                              const targetPath = `/categories/${categoryPath}/${imagePath}`;
+                              console.log('🔗 Navigating to:', targetPath);
+                              navigateWithLanguage(navigate, targetPath);
                             }}
                           />
                         )}
@@ -806,7 +814,9 @@ const CategoriesDetailPage: React.FC = () => {
                           onImageClick={(image) => {
                             const imagePath = getImageNameById(image.id);
                             const categoryPath = getCategoryNameById(category.categoryId);
-                            navigateWithLanguage(navigate, `/categories/${categoryPath}/${imagePath}`);
+                            const targetPath = `/categories/${categoryPath}/${imagePath}`;
+                            console.log('🔗 Navigating to:', targetPath);
+                            navigateWithLanguage(navigate, targetPath);
                           }}
                         />
                       </div>

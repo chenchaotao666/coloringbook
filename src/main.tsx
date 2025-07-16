@@ -5,7 +5,5 @@ import './index.css';
 import './utils/debugUtils'; // 导入调试工具
  
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <App />
 ); 

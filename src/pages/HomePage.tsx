@@ -8,10 +8,28 @@ import FAQ from '../components/home/FAQ';
 import CallToAction from '../components/home/CallToAction';
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
+import { ImageService } from '../services/imageService';
+import { useState, useEffect } from 'react';
 
 const HomePage = () => {
-  const { t, loading } = useAsyncTranslation('home');
+  const { loading } = useAsyncTranslation('home');
   const { t: tCommon } = useAsyncTranslation('common');
+  const [imageCount, setImageCount] = useState<number>(0); // 默认值
+  
+  // 获取图片总数
+  useEffect(() => {
+    const fetchImageCount = async () => {
+      try {
+        const count = await ImageService.getImageCount();
+        setImageCount(count);
+      } catch (error) {
+        console.error('Failed to fetch image count:', error);
+        // 保持默认值1281
+      }
+    };
+    
+    fetchImageCount();
+  }, []);
   
   // 如果翻译还在加载中，不显示任何内容
   if (loading) {
@@ -38,9 +56,9 @@ const HomePage = () => {
       />
       <Layout>
         <div className="w-full min-w-0">
-          <Hero />
+          <Hero imageCount={imageCount} />
           <Features />
-          <Gallery title={t('gallery.title', 'Browse our 1,281 free coloring pages; printable in PDF and PNG formats!')} />
+          <Gallery imageCount={imageCount} />
           <Testimonials />
           <HowToCreate />
           <FAQ />

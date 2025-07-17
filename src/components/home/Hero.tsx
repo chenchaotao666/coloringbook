@@ -4,7 +4,11 @@ import { useAsyncTranslation } from '../../contexts/LanguageContext';
 const arrowRightIcon = '/images/arrow-right-outline-default.svg';
 const heroImage = '/images/color-cat.png';
 
-const Hero = () => {
+interface HeroProps {
+  imageCount: number;
+}
+
+const Hero: React.FC<HeroProps> = ({ imageCount }) => {
   const { t } = useAsyncTranslation('home');
   
   return (
@@ -44,7 +48,7 @@ const Hero = () => {
             <div className="p-6 sm:p-6 pl-12 sm:pl-12 pr-12 sm:pr-12 bg-[#F9FAFB] rounded-lg max-w-[300px] lg:max-w-[400px]">
               <div className="flex items-center justify-center sm:justify-start gap-8 sm:gap-10">
                 <div className="flex flex-col gap-1 items-center sm:items-start">
-                  <div className="text-[#161616] text-xl sm:text-2xl font-bold">1,281</div>
+                  <div className="text-[#161616] text-xl sm:text-2xl font-bold">{imageCount > 0 ? imageCount.toLocaleString() : '\u00A0'}</div>
                   <div className="text-[#6B7280] text-xs sm:text-sm text-center sm:text-left">{t('hero.freePages', 'Coloring Pages Free')}</div>
                 </div>
                 <div className="flex flex-col gap-1 items-center sm:items-start">

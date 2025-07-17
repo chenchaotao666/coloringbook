@@ -28,6 +28,8 @@
     },
   "gallery": {
     "title": "浏览我们的1,281个免费涂色页；可打印PDF和PNG格式！",
+    "titlePrefix": "浏览我们的",
+    "titleSuffix": "个免费涂色页；可打印PDF和PNG格式！",
     "viewAll": "查看全部分类"
   },
   "howItWorks": {

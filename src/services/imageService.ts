@@ -398,4 +398,18 @@ export class ImageService {
     });
   }
 
+  /**
+   * 获取图片总数
+   * @returns Promise<number> 返回图片总数
+   */
+  static async getImageCount(): Promise<number> {
+    try {
+      const response = await ApiUtils.get<number>('/api/images/count');
+      return response;
+    } catch (error) {
+      console.error('Failed to fetch image count:', error);
+      return 0;
+    }
+  }
+
 }

@@ -28,6 +28,8 @@
   },
   "gallery": {
     "title": "Browse our 1,281 free coloring pages; printable in PDF and PNG formats!",
+    "titlePrefix": "Browse our",
+    "titleSuffix": "free coloring pages; printable in PDF and PNG formats!",
     "viewAll": "View all categories"
   },
   "howItWorks": {

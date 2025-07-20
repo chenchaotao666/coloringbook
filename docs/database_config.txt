@@ -56,6 +56,10 @@ CREATE TABLE images (
     taskId VARCHAR(255)
 );
 
+-- 为 images 表添加难度字段
+ALTER TABLE images 
+ADD COLUMN difficulty VARCHAR(30) DEFAULT 'children' COMMENT '难度等级：toddler、children、teen、adult';
+
 -- 创建 image_tags 关联表（多对多关系，替代images表中的tags JSON字段）
 CREATE TABLE image_tags (
   image_id VARCHAR(36),                        -- 匹配images表主键类型
@@ -78,6 +82,7 @@ CREATE INDEX idx_images_type ON images(type);
 CREATE INDEX idx_images_public ON images(isPublic);
 CREATE INDEX idx_images_created ON images(createdAt);
 CREATE INDEX idx_images_hotness ON images(hotness);
+CREATE INDEX idx_images_difficulty ON images(difficulty);
 CREATE INDEX idx_categories_hotness ON categories(hotness);
 
 

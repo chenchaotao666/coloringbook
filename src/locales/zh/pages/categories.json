@@ -21,6 +21,7 @@
     }
   },
   "detail": {
+    "pageTitle": "{count}张{category}填色页（免费PDF和PNG打印）",
     "loading": "加载分类详情中...",
     "notFound": {
       "title": "分类未找到",
@@ -52,6 +53,22 @@
       "imageCount": "我们将展示{count}张{category}填色页！",
       "description": "涂色书不仅仅是一种娱乐活动，更是促进儿童全面发展的有效工具。它能提升专注力和耐心，培养创造力和想象力。涂色过程中，孩子的手眼协调能力和精细动作技能得到锻炼。同时，它也是减压的好方法，能帮助孩子放松心情。涂色还能增强色彩认知，提高美感。对于成人来说，涂色也是一种放松身心、缓解压力的好方式。此外，涂色还能成为家人共度优质时光的纽带，增进亲子关系。",
       "downloadInfo": "所有{category}填色页均可免费下载，支持PDF和PNG格式"
+    },
+    "aiGuide": {
+      "textToImage": {
+        "alt": "文字转图片",
+        "badge": "独角兽在云端跳舞",
+        "title": "文字转填色页工具",
+        "description": "从幼儿到成人，支持4种难度的选择",
+        "button": "立即生成"
+      },
+      "imageToImage": {
+        "alt": "图片转图片",
+        "badge": "一键转换",
+        "title": "图片变成填色页工具",
+        "description": "把你的图片，变成填色页",
+        "button": "立即生成"
+      }
     }
   },
   "imageDetail": {

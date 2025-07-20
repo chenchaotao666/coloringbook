@@ -21,6 +21,7 @@
     }
   },
   "detail": {
+    "pageTitle": "{count} {category} Coloring Pages (Free PDF and PNG Print)",
     "loading": "Loading category details...",
     "notFound": {
       "title": "Category Not Found",
@@ -52,6 +53,22 @@
       "imageCount": "We will show {count} {category} coloring pages!",
       "description": "Coloring books are not just entertainment, but an effective tool for children's overall development. They enhance concentration and patience while fostering creativity and imagination. During coloring, children's hand-eye coordination and fine motor skills are exercised. It's also a great way to relieve stress and help children relax. Coloring also strengthens color recognition and improves aesthetic sense. For adults, coloring is also a great way to relax and relieve stress. Additionally, coloring can become a bond for quality family time, enhancing parent-child relationships.",
       "downloadInfo": "All {category} coloring pages are available for free download in PDF and PNG formats"
+    },
+    "aiGuide": {
+      "textToImage": {
+        "alt": "Text to Image",
+        "badge": "Unicorn dancing in the clouds",
+        "title": "Text to Coloring Page Tool",
+        "description": "From toddlers to adults, supports 4 difficulty levels",
+        "button": "Generate Now"
+      },
+      "imageToImage": {
+        "alt": "Image to Image",
+        "badge": "One-click Convert",
+        "title": "Image to Coloring Page Tool",
+        "description": "Turn your images into coloring pages",
+        "button": "Generate Now"
+      }
     }
   },
   "imageDetail": {

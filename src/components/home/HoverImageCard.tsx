@@ -115,9 +115,12 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
         {/* 内容区域 */}
         <div className="self-stretch px-2 sm:px-3 flex flex-col items-start gap-1.5 sm:gap-2">
         <div className="w-full">
-          <div className="w-full text-[#161616] text-sm sm:text-base font-medium capitalize leading-tight sm:leading-5 line-clamp-2">
+          <h3 
+            title={title}
+            className="flex-1 mr-2 text-sm font-bold text-gray-800 sm:text-lg line-clamp-2 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-white capitalize leading-tight sm:leading-5"
+          >
             {title}
-          </div>
+          </h3>
         </div>
         
         {/* 标签 */}

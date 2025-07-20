@@ -20,6 +20,8 @@ export interface Category {
   displayName: LocalizedText | string;
   display_name: LocalizedText | string;
   description: LocalizedText | string;
+  seoTitle?: LocalizedText | string; // SEO标题，可选
+  seoDesc?: LocalizedText | string; // SEO描述，可选
   hotness: number; // 热度值
   imageCount?: number; // 可选，为了向后兼容
   tagCounts: TagCount[]; // 标签统计数组

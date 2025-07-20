@@ -165,9 +165,12 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         <div className="self-stretch px-3 flex flex-col justify-start items-start gap-2">
           {/* 标题 */}
           <div className="w-[254px] flex justify-start items-start">
-            <div className="w-[254px] text-[#161616] text-base font-medium capitalize leading-5 break-words">
+            <h3 
+              title={getLocalizedText(displayCategory.displayName || displayCategory.display_name, language)}
+              className="flex-1 mr-2 text-sm font-bold text-gray-800 sm:text-lg line-clamp-2 hover:text-primary-600 dark:text-neutral-300 dark:hover:text-white capitalize leading-5 break-words"
+            >
               {getLocalizedText(displayCategory.displayName || displayCategory.display_name, language)}
-            </div>
+            </h3>
           </div>
           
           {/* 子分类标签 */}

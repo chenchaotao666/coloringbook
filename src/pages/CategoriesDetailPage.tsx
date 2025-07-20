@@ -15,6 +15,7 @@ import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
 import { useUploadImage } from '../contexts/UploadImageContext';
+import AIGenerateGuide from '../components/common/AIGenerateGuide';
 
 // 添加 ExpandableContent 组件
 interface ExpandableContentProps {
@@ -88,7 +89,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
   };
 
   return (
-    <div className="max-w-[920px] mx-auto mb-12">
+    <div className="max-w-[1020px] mx-auto mb-12">
       <h2 
         className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-8 leading-relaxed lg:leading-[1.6] transition-opacity duration-300"
         style={{
@@ -328,10 +329,10 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
 // 将 DescriptionSection 定义在组件外部，使用 React.memo 避免不必要的重新渲染
 const DescriptionSection = React.memo<{ element: any; t: any }>(({ element, t }) => {
   return (
-    <div className={`mb-8 lg:mb-12 ${element.className || ''}`}>
+    <div className={`mb-8 ${element.className || ''}`}>
       <div className={`mx-auto ${element.textAlign === 'center' ? 'text-center' : 'text-left'}`}>
         {element.section.title && (
-          <h2 className={`text-[#161616] ${element.titleSize || 'text-xl lg:text-2xl'} font-semibold mb-3 lg:mb-4`}>
+          <h2 className={`text-[#161616] ${element.titleSize || 'text-xl lg:text-2xl'} font-semibold mb-3 lg:mb-6`}>
             {element.section.title}
           </h2>
         )}
@@ -588,11 +589,11 @@ const CategoriesDetailPage: React.FC = () => {
   return (
     <Layout>
       <SEOHead
-        title={category ? `${getLocalizedText(category.displayName, language)} - Free Coloring Pages` : 'Category - Free Coloring Pages'}
-        description={category ? `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.` : 'Browse free printable coloring pages by category.'}
+        title={category ? `${categoryImages.length} ${getLocalizedText(category.seoTitle || category.displayName, language)}` : 'Category - Free Coloring Pages'}
+        description={category ? getLocalizedText(category.seoDesc || `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.`, language) : 'Browse free printable coloring pages by category.'}
         keywords={category ? `${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages, free printable coloring pages, ${getLocalizedText(category.displayName, language).toLowerCase()} coloring sheets` : 'coloring pages, printable coloring pages'}
-        ogTitle={category ? `${getLocalizedText(category.displayName, language)} - Free Coloring Pages` : 'Category - Free Coloring Pages'}
-        ogDescription={category ? `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.` : 'Browse free printable coloring pages by category.'}
+        ogTitle={category ? `${categoryImages.length} ${getLocalizedText(category.seoTitle || category.displayName, language)}` : 'Category - Free Coloring Pages'}
+        ogDescription={category ? getLocalizedText(category.seoDesc || `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.`, language) : 'Browse free printable coloring pages by category.'}
         noIndex={true}
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
@@ -612,7 +613,10 @@ const CategoriesDetailPage: React.FC = () => {
             <>
               {/* Category Title */}
               <h1 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1]">
-                {getLocalizedText(category.displayName, language)}
+                {t('detail.pageTitle', '', { 
+                  count: categoryImages.length, 
+                  category: getLocalizedText(category.displayName, language) 
+                })}
               </h1>
 
               {/* Category Intro Section */}
@@ -824,6 +828,9 @@ const CategoriesDetailPage: React.FC = () => {
                   return null;
                 });
               })()}
+
+              {/* AI Generate Guide - 页面末尾引导 */}
+              <AIGenerateGuide />
             </>
           ) : null}
         </div>

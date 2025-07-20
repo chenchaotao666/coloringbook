@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
-import useGeneratePage, { DifficultyLevel } from '../hooks/useGeneratePage';
+import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import { getLocalizedText } from '../utils/textUtils';
 import CircularProgress from '../components/ui/CircularProgress';

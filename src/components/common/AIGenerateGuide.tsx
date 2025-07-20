@@ -1,13 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../../contexts/LanguageContext';
 import { useAsyncTranslation } from '../../contexts/LanguageContext';
 import { navigateWithLanguage } from '../../utils/navigationUtils';
 
 const AIGenerateGuide: React.FC = () => {
   const { t } = useAsyncTranslation('categories');
   const navigate = useNavigate();
-  const { language } = useLanguage();
 
   const handleTextToImageClick = () => {
     navigateWithLanguage(navigate, '/generate');

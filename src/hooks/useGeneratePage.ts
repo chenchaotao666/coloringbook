@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import GenerateServiceInstance, { StyleSuggestion, AspectRatio } from '../services/generateService';
+
+// 难度类型定义
+export type DifficultyLevel = 'toddler' | 'children' | 'teen' | 'adult';
 import { HomeImage } from '../services/imageService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
@@ -10,6 +13,7 @@ export interface UseGeneratePageState {
   prompt: string;
   selectedTab: 'text' | 'image';
   selectedRatio: AspectRatio;
+  selectedDifficulty: DifficultyLevel;
   textPublicVisibility: boolean;   // Text to Image 的 Public Visibility
   imagePublicVisibility: boolean;  // Image to Image 的 Public Visibility
   selectedImage: string | null;
@@ -51,6 +55,7 @@ export interface UseGeneratePageActions {
   setPrompt: (prompt: string) => void;
   setSelectedTab: (tab: 'text' | 'image') => void;
   setSelectedRatio: (ratio: AspectRatio) => void;
+  setSelectedDifficulty: (difficulty: DifficultyLevel) => void;
   setTextPublicVisibility: (visible: boolean) => void;
   setImagePublicVisibility: (visible: boolean) => void;
   setSelectedImage: (imageUrl: string | null) => void;
@@ -294,6 +299,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     prompt: getInitialPrompt(),
     selectedTab: initialTab,
     selectedRatio: getInitialRatio(),
+    selectedDifficulty: 'children',
     textPublicVisibility: searchParams.get('isPublic') ? getInitialIsPublic() : true,
     imagePublicVisibility: searchParams.get('isPublic') ? getInitialIsPublic() : true,
     selectedImage: null,
@@ -369,6 +375,10 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
 
   const setSelectedRatio = useCallback((selectedRatio: AspectRatio) => {
     updateState({ selectedRatio });
+  }, [updateState]);
+
+  const setSelectedDifficulty = useCallback((selectedDifficulty: DifficultyLevel) => {
+    updateState({ selectedDifficulty });
   }, [updateState]);
 
   const setTextPublicVisibility = useCallback((textPublicVisibility: boolean) => {
@@ -1178,6 +1188,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     setPrompt,
     setSelectedTab,
     setSelectedRatio,
+    setSelectedDifficulty,
     setTextPublicVisibility,
     setImagePublicVisibility,
     setSelectedImage,

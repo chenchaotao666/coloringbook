@@ -58,11 +58,22 @@
     "clickToUpload": "Click to upload"
   },
   "settings": {
+    "difficulty": "Difficulty Level",
     "ratio": "Aspect Ratio",
     "visibility": "Public Visibility",
     "private": "Private",
     "public": "Public",
     "visibilityTip": "When enabled, your generated images may be visible to other users in the public gallery. When disabled, only you can see your generated images."
+  },
+  "difficulty": {
+    "toddler": "Toddler",
+    "toddlerAge": "2-5 years",
+    "children": "Children", 
+    "childrenAge": "5-10 years",
+    "teen": "Teen",
+    "teenAge": "10-18 years",
+    "adult": "Adult",
+    "adultAge": "18+ years"
   },
   "history": {
     "title": "Generation History",

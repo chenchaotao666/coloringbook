@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LayoutNoFooter from '../components/layout/LayoutNoFooter';
-import useGeneratePage from '../hooks/useGeneratePage';
+import useGeneratePage, { DifficultyLevel } from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import { getLocalizedText } from '../utils/textUtils';
 import CircularProgress from '../components/ui/CircularProgress';
@@ -65,6 +65,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     prompt,
     selectedTab,
     selectedRatio,
+    selectedDifficulty,
     textPublicVisibility,
     imagePublicVisibility,
     selectedImage,
@@ -90,6 +91,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setPrompt,
     setSelectedTab,
     setSelectedRatio,
+    setSelectedDifficulty,
     setTextPublicVisibility,
     setImagePublicVisibility,
     setSelectedImage,
@@ -139,17 +141,27 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     };
   }, [showMoreMenu]);
 
+  // 检查是否有URL参数（表示从其他页面跳转而来）
+  const hasUrlParameters = () => {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.has('prompt') || searchParams.has('ratio') || searchParams.has('isPublic') || searchParams.has('sourceImageUrl');
+  };
+
   // 自动选择最新生成的图片
   useEffect(() => {
     // 只有在初始数据加载完成后才自动选择图片
     if (!isInitialDataLoaded) return;
     
+    // 如果有URL参数，说明是从其他页面跳转而来，不要自动选择历史记录
+    if (hasUrlParameters()) return;
+    
     const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
     
     if (currentImages.length > 0 && !isGenerating) {
       const latestImage = currentImages[0]; // 假设数组已按时间排序
-      // 如果当前没有选中图片，或者当前选中的图片不在当前类型的列表中，则选择最新的
-      if (!selectedImage || !currentImages.find(img => img.id === selectedImage)) {
+      // 只有当前没有选中任何图片时，才自动选择最新的图片
+      // 不再检查选中的图片是否在当前类型列表中，避免标签切换时自动选择
+      if (!selectedImage) {
         setSelectedImage(latestImage.id);
       }
     }
@@ -160,35 +172,47 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
     const selectedImageData = currentImages.find(img => img.id === imageId);
     
-
+    // 检查是否有URL参数，如果有则不要覆盖
+    const searchParams = new URLSearchParams(window.location.search);
+    const hasPromptParam = searchParams.has('prompt');
+    const hasRatioParam = searchParams.has('ratio');
+    const hasIsPublicParam = searchParams.has('isPublic');
     
     if (selectedImageData) {
-      // 回填 prompt（仅对 text to image 有效）
-      if (selectedTab === 'text') {
+      // 回填 prompt（仅对 text to image 有效，且没有URL参数时才回填）
+      if (selectedTab === 'text' && !hasPromptParam) {
         const promptValue = getLocalizedText(selectedImageData.prompt, 'zh');
         setPrompt(promptValue);
       }
       
-              // 回填 ratio
+      // 回填 ratio（没有URL参数时才回填）
+      if (!hasRatioParam) {
         const validRatios = ['21:9', '16:9', '4:3', '1:1', '3:4', '9:16', '16:21'];
         if (selectedImageData.ratio && validRatios.includes(selectedImageData.ratio)) {
           setSelectedRatio(selectedImageData.ratio as any);
         }
+      }
       
-              // 回填 isPublic
+      // 回填 isPublic（没有URL参数时才回填）
+      if (!hasIsPublicParam) {
         if (selectedTab === 'text') {
           setTextPublicVisibility(selectedImageData.isPublic);
         } else {
           setImagePublicVisibility(selectedImageData.isPublic);
         }
-      
-      // 对于 Image to Image 模式，清空当前上传的文件
-      // 但如果URL参数中有sourceImageUrl，说明是recreate操作，不要清空
-      const sourceImageUrl = new URLSearchParams(window.location.search).get('sourceImageUrl');
-      if (selectedTab === 'image' && uploadedFile && !sourceImageUrl) {
-        setUploadedImageWithDimensions(null, null);
       }
-          }
+      
+      // 对于 Image to Image 模式，选择历史图片时不清空上传的文件
+      // 用户可能希望在上传图片和历史图片之间切换，保持上传图片不变
+      // 注释掉清空上传图片的逻辑
+      // const sourceImageUrl = searchParams.get('sourceImageUrl');
+      // const hasAnyUrlParams = hasPromptParam || hasRatioParam || hasIsPublicParam || sourceImageUrl;
+      
+      // 不再清空上传文件，让用户自主选择使用上传图片还是历史图片
+      // if (selectedTab === 'image' && uploadedFile && !hasAnyUrlParams) {
+      //   setUploadedImageWithDimensions(null, null);
+      // }
+    }
   };
 
   // 标签页切换时的图片选择逻辑
@@ -199,16 +223,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       const currentImage = currentImages.find(img => img.id === selectedImage);
       
       if (!currentImage) {
-        // 当前选中的图片不属于当前标签页类型，需要重新选择
-        if (currentImages.length > 0) {
-          // 选择该类型的第一张图片
-          const firstImageId = currentImages[0].id;
-          setSelectedImage(firstImageId);
-          fillImageAttributes(firstImageId);
-        } else {
-          // 该类型没有图片，清空选择
-          setSelectedImage(null);
-        }
+        // 当前选中的图片不属于当前标签页类型，清空选择
+        // 不再自动选择历史图片，避免覆盖用户选择
+        setSelectedImage(null);
       } else {
         // 当前选中的图片属于当前标签页，回填其属性
         fillImageAttributes(selectedImage);
@@ -663,6 +680,71 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               <span className="cursor-pointer hover:opacity-70 transition-opacity shrink-0 mt-0.5" onClick={handleRefreshStyleSuggestions}>
                 <img src={refreshIcon} alt="Refresh" className="w-4 h-4" />
               </span>
+            </div>
+          </div>
+
+          {/* Difficulty Selector */}
+          <div className="lg:mx-5 mt-6 lg:mt-10">
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.difficulty', 'Difficulty Level')}</div>
+            <div className="bg-[#F2F3F5] rounded-lg p-1 relative">
+              {/* 滑动指示器 */}
+              <div
+                className={`absolute rounded-md transition-all duration-200 bg-white shadow-sm ${
+                  selectedDifficulty === 'toddler' ? 'w-[calc(25%-4px)] h-[calc(100%-8px)] left-[4px] top-[4px]' :
+                  selectedDifficulty === 'children' ? 'w-[calc(25%-4px)] h-[calc(100%-8px)] left-[calc(25%+2px)] top-[4px]' :
+                  selectedDifficulty === 'teen' ? 'w-[calc(25%-4px)] h-[calc(100%-8px)] left-[calc(50%+2px)] top-[4px]' :
+                  selectedDifficulty === 'adult' ? 'w-[calc(25%-6px)] h-[calc(100%-8px)] left-[calc(75%+2px)] top-[4px]' :
+                  'w-0 opacity-0'
+                }`}
+              ></div>
+              
+              {/* 难度选项 */}
+              <div className="grid grid-cols-4 gap-0 relative z-10">
+                <button
+                  className={`h-16 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedDifficulty === 'toddler' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
+                  onClick={() => setSelectedDifficulty('toddler')}
+                >
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.toddler', '幼儿')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.toddlerAge', '2-5岁')}</div>
+                  </div>
+                </button>
+                <button
+                  className={`h-16 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedDifficulty === 'children' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
+                  onClick={() => setSelectedDifficulty('children')}
+                >
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.children', '儿童')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.childrenAge', '5-10岁')}</div>
+                  </div>
+                </button>
+                <button
+                  className={`h-16 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedDifficulty === 'teen' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
+                  onClick={() => setSelectedDifficulty('teen')}
+                >
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.teen', '青少年')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.teenAge', '10-18岁')}</div>
+                  </div>
+                </button>
+                <button
+                  className={`h-16 flex flex-col items-center justify-center text-xs font-medium leading-none transition-all duration-200 ${
+                    selectedDifficulty === 'adult' ? 'text-[#FF5C07]' : 'text-[#6B7280] hover:text-[#161616]'
+                  }`}
+                  onClick={() => setSelectedDifficulty('adult')}
+                >
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.adult', '成人')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.adultAge', '18+岁')}</div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 

@@ -58,11 +58,22 @@
     "clickToUpload": "点击上传"
   },
   "settings": {
+    "difficulty": "难度等级",
     "ratio": "画面比例",
     "visibility": "公开可见",
     "private": "仅自己可见",
     "public": "所有人可见",
     "visibilityTip": "启用后，您生成的图片将可能在公共画廊中对其他用户可见。禁用后，只有您能看到您的图片。"
+  },
+  "difficulty": {
+    "toddler": "幼儿",
+    "toddlerAge": "2-5岁",
+    "children": "儿童", 
+    "childrenAge": "5-10岁",
+    "teen": "青少年",
+    "teenAge": "10-18岁",
+    "adult": "成人",
+    "adultAge": "18+岁"
   },
   "history": {
     "title": "生成历史",

@@ -213,6 +213,7 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const hiddenRef = useRef<HTMLDivElement>(null);
 
+
   useEffect(() => {
     // 延迟计算确保DOM完全渲染
     const timer = setTimeout(() => {
@@ -250,7 +251,8 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
           visibility: 'hidden',
           pointerEvents: 'none',
           zIndex: -1,
-          fontSize: '18px'
+          fontSize: '18px',
+          whiteSpace: 'pre-line'
         }}
       >
         {content}
@@ -270,13 +272,12 @@ const ExpandableContent: React.FC<ExpandableContentProps> = ({
         {/* 根据需要显示省略或完整内容 */}
         {isInitialized && (
           <div
-            className={`${
-              !isExpanded && needsExpansion ? 'overflow-hidden' : ''
-            }`}
             style={{
+              whiteSpace: isExpanded || !needsExpansion ? 'pre-line' : 'normal',
               display: !isExpanded && needsExpansion ? '-webkit-box' : 'block',
               WebkitLineClamp: !isExpanded && needsExpansion ? maxLines : 'none',
               WebkitBoxOrient: 'vertical' as const,
+              overflow: !isExpanded && needsExpansion ? 'hidden' : 'visible',
               paddingRight: !isExpanded && needsExpansion ? '110px' : '0px'
             }}
           >
@@ -423,18 +424,18 @@ const CategoriesDetailPage: React.FC = () => {
         const allCategories = await CategoriesService.getCategories(language);
         updateCategoryMappings(allCategories);
 
-        // 确定实际的分类ID
+        // 确定实际的分类ID并从全量数据中查找分类
         let actualCategoryId: string;
         let foundCategory: any = null;
 
         if (isCategoryName(categoryId)) {
           // 如果是SEO友好名称，转换为实际ID
           actualCategoryId = getCategoryIdByName(categoryId);
-          foundCategory = await CategoriesService.getCategoryById(actualCategoryId, language);
+          foundCategory = allCategories.find(cat => cat.categoryId === actualCategoryId);
         } else if (isCategoryId(categoryId)) {
           // 如果是实际的分类ID，直接使用
           actualCategoryId = categoryId;
-          foundCategory = await CategoriesService.getCategoryById(actualCategoryId, language);
+          foundCategory = allCategories.find(cat => cat.categoryId === actualCategoryId);
         } else {
           // 🔧 新增：如果映射表中没有找到，尝试在全量数据中按名称模糊匹配
           const categoryName = categoryId.toLowerCase();
@@ -717,13 +718,13 @@ const CategoriesDetailPage: React.FC = () => {
                 const descriptionText = getLocalizedText(category.description, language);
                 
                 // 按 <h2> 标签分段
-                const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.trim());
+                const sections = descriptionText.split(/<h2[^>]*>/).filter(section => section.length > 0);
                 
                 // 解析每个段落
                 const descriptionSections = sections.map((section, index) => {
                   const titleMatch = section.match(/^([^<]*)<\/h2>/);
                   const title = titleMatch ? titleMatch[1].trim() : '';
-                  const content = section.replace(/^[^<]*<\/h2>/, '').trim();
+                  const content = section.replace(/^[^<]*<\/h2>/, '').replace(/^\s+/, '').replace(/\s+$/, '');
                   
                   return {
                     index,

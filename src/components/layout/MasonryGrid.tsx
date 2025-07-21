@@ -134,14 +134,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
   const mobileImageColumns = distributeToColumns(images, mobileColumns);
   const tabletImageColumns = distributeToColumns(images, tabletColumns);
 
-  // 网格整体居中对齐
-  const getJustifyClass = (imageCount: number) => {
-    return 'justify-center'; // 网格整体居中显示
-  };
-
-  const desktopJustifyClass = getJustifyClass(images.length);
-  const mobileJustifyClass = getJustifyClass(images.length);
-  const tabletJustifyClass = getJustifyClass(images.length);
+  const desktopJustifyClass = 'justify-center';
+  const mobileJustifyClass = 'justify-center';
+  const tabletJustifyClass = 'justify-center';
 
   return (
     <div className={`w-full ${className}`} data-masonry-version="v2.0">

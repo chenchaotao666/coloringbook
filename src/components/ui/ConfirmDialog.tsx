@@ -72,7 +72,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {/* 取消按钮 */}
           <button
             onClick={onClose}
-            className="w-[120px] h-12 border border-[#A5A5A5] rounded-lg text-[#161616] text-lg font-bold hover:bg-gray-50 transition-colors"
+            className="px-6 h-12 border border-[#A5A5A5] rounded-lg text-[#161616] text-lg font-bold hover:bg-gray-50 transition-colors"
           >
             {cancelText}
           </button>
@@ -80,7 +80,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {/* 确认按钮 */}
           <button
             onClick={handleConfirm}
-            className={`w-[120px] h-12 rounded-lg text-white text-lg font-bold transition-colors ${
+            className={`px-6 h-12 rounded-lg text-white text-lg font-bold transition-colors ${
               confirmButtonVariant === 'danger' 
                 ? 'bg-gradient-to-r from-[#FF9D00] to-[#FF5907] hover:from-[#FF8A00] hover:to-[#FF4500]'
                 : 'bg-gradient-to-r from-[#FF9D00] to-[#FF5907] hover:from-[#FF8A00] hover:to-[#FF4500]'

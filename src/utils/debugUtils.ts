@@ -81,7 +81,7 @@ const debugUtils = {
           username: user.username,
           email: user.email,
           credits: user.credits,
-          userType: user.userType
+          userType: user.membershipLevel
         });
         return { success: true, user };
       } else {

@@ -1011,12 +1011,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   const handleVisibilityToggle = (isText: boolean) => {
     // Check if user is not premium (free or expired membership)
-    const isNotPremium = !user?.membershipExpiry || user?.userType === 'free';
+    const isNotPremium = !user?.membershipLevel || user?.membershipLevel === 'free';
     
     if (isNotPremium) {
       // If trying to set to private, redirect to pricing page
       if ((isText && textPublicVisibility) || (!isText && imagePublicVisibility)) {
-        navigate('/pricing');
         return;
       }
       // Non-premium users can't set to private, ignore the toggle
@@ -1118,7 +1117,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   selectedTab === 'text' 
                     ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') 
                     : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')
-                } ${!user?.membershipExpiry || user?.userType === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                } ${!user?.membershipLevel || user?.membershipLevel === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => handleVisibilityToggle(selectedTab === 'text')}
               >
                 <div
@@ -1195,7 +1194,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       selectedTab === 'text' 
                         ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') 
                         : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')
-                    } ${!user?.membershipExpiry || user?.userType === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    } ${!user?.membershipLevel || user?.membershipLevel === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     onClick={() => handleVisibilityToggle(selectedTab === 'text')}
                   >
                     <div

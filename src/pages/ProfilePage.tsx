@@ -8,6 +8,7 @@ import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
 import Layout from '../components/layout/Layout';
+import PasswordInput from '../components/ui/PasswordInput';
 
 const ProfilePage: React.FC = () => {
   const { t } = useAsyncTranslation('profile');
@@ -417,7 +418,7 @@ const ProfilePage: React.FC = () => {
               <div className="flex items-center gap-4">
                 <div className="px-4 py-2 bg-gray-50 rounded-lg">
                   <span className="text-sm font-medium text-gray-700">
-                    {t(`subscription.${user?.userType}`, user?.userType === 'free' ? '免费' : user?.userType === 'lite' ? 'Lite' : 'Pro')}
+                    {t(`subscription.${user?.membershipLevel}`, user?.membershipLevel === 'free' ? '免费' : user?.membershipLevel === 'lite' ? 'Lite' : 'Pro')}
                   </span>
                 </div>
                 
@@ -431,7 +432,7 @@ const ProfilePage: React.FC = () => {
                   </button>
                   <button
                     onClick={handleCancelSubscription}
-                    disabled={user?.userType === 'free' || isLoading}
+                    disabled={user?.membershipLevel === 'free' || isLoading}
                     className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {t('buttons.cancelSubscription', '取消订阅')}
@@ -611,16 +612,14 @@ const ProfilePage: React.FC = () => {
                       {t('fields.currentPassword', '当前密码')}
                     </label>
                     <div className="mt-1">
-                      <input
+                      <PasswordInput
                         id="currentPassword"
                         name="currentPassword"
-                        type="password"
                         value={formData.currentPassword}
                         onChange={handleInputChange}
-                        className={`block w-full px-3 py-2 border ${
-                          errors.currentPassword ? 'border-red-300' : 'border-gray-300'
-                        } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                         placeholder={t('placeholders.currentPassword', '请输入当前密码')}
+                        error={errors.currentPassword}
+                        className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
                       <div className="mt-1 h-5">
                         {errors.currentPassword && (
@@ -636,16 +635,14 @@ const ProfilePage: React.FC = () => {
                       {t('fields.newPassword', '新密码')}
                     </label>
                     <div className="mt-1">
-                      <input
+                      <PasswordInput
                         id="newPassword"
                         name="newPassword"
-                        type="password"
                         value={formData.newPassword}
                         onChange={handleInputChange}
-                        className={`block w-full px-3 py-2 border ${
-                          errors.newPassword ? 'border-red-300' : 'border-gray-300'
-                        } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                         placeholder={t('placeholders.newPassword', '请输入新密码（至少6个字符）')}
+                        error={errors.newPassword}
+                        className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
                       <div className="mt-1 h-5">
                         {errors.newPassword && (
@@ -661,16 +658,14 @@ const ProfilePage: React.FC = () => {
                       {t('fields.confirmPassword', '确认新密码')}
                     </label>
                     <div className="mt-1">
-                      <input
+                      <PasswordInput
                         id="confirmPassword"
                         name="confirmPassword"
-                        type="password"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`block w-full px-3 py-2 border ${
-                          errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                        } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                         placeholder={t('placeholders.confirmPassword', '请再次输入新密码')}
+                        error={errors.confirmPassword}
+                        className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
                       <div className="mt-1 h-5">
                         {errors.confirmPassword && (

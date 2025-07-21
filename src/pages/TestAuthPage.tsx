@@ -75,7 +75,7 @@ const TestAuthPage: React.FC = () => {
                     <img src={creditsIcon} alt="积分" className="w-4 h-4" />
                     <span className="text-sm font-medium text-orange-600">{user.credits}</span>
                   </div>
-                  <p className="text-green-700 mt-1">用户类型: {user.userType}</p>
+                  <p className="text-green-700 mt-1">用户类型: {user.membershipLevel}</p>
                 </div>
               </div>
               

@@ -8,7 +8,7 @@ export interface User {
   email: string;
   avatar: string | null;
   credits: number;
-  userType: 'free' | 'lite' | 'pro';
+  membershipLevel: 'free' | 'lite' | 'pro';
   membershipExpiry: string | null;
   createdAt: string;
   updatedAt?: string;
@@ -277,7 +277,7 @@ export class UserService {
       const user = await this.getCurrentUser();
       if (!user) return false;
       
-      return user.userType === 'lite' || user.userType === 'pro';
+      return user.membershipLevel === 'lite' || user.membershipLevel === 'pro';
     } catch (error) {
       return false;
     }

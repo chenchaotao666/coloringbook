@@ -4,6 +4,7 @@ import { UserService } from '../services/userService';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { ApiError } from '../utils/apiUtils';
 import SEOHead from '../components/common/SEOHead';
+import PasswordInput from '../components/ui/PasswordInput';
 
 const ResetPasswordPage: React.FC = () => {
   const { t: tForms } = useAsyncTranslation('forms');
@@ -314,18 +315,14 @@ const ResetPasswordPage: React.FC = () => {
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
                   <span className="text-red-500 mr-1">*</span>{tForms('auth.newPassword', '新密码')}
                 </label>
-                <input
+                <PasswordInput
                   id="password"
                   name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-3 text-sm border ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
-                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
                   placeholder={tForms('placeholders.password', '请输入密码')}
+                  required
+                  error={errors.password}
                 />
                 <div className="h-4 mt-1">
                   {errors.password && (
@@ -339,18 +336,14 @@ const ResetPasswordPage: React.FC = () => {
                 <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900">
                   <span className="text-red-500 mr-1">*</span>{tForms('auth.confirmNewPassword', '确认新密码')}
                 </label>
-                <input
+                <PasswordInput
                   id="confirmPassword"
                   name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-3 text-sm border ${
-                    errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                  } rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none`}
                   placeholder={tForms('placeholders.confirmPassword', '请再次输入密码')}
+                  required
+                  error={errors.confirmPassword}
                 />
                 <div className="h-4 mt-1">
                   {errors.confirmPassword && (

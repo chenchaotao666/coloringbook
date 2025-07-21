@@ -37,6 +37,7 @@ export interface HomeImage {
   categoryId: string;
   size: string;
   additionalInfo: string;
+  difficulty?: 'toddler' | 'children' | 'teen' | 'adult';
 }
 
 // 搜索结果接口

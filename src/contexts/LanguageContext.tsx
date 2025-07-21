@@ -224,6 +224,11 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'auth.loginSuccess': '登录成功',
     'auth.registerSuccess': '注册成功',
     'auth.logoutSuccess': '退出成功',
+    
+    // 难度标签
+    'difficulty.easy': '容易',
+    'difficulty.medium': '中等难度',
+    'difficulty.advanced': '进阶',
   },
   en: {
     // Navigation - maintain backward compatibility
@@ -419,6 +424,11 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'auth.loginSuccess': 'Login successful',
     'auth.registerSuccess': 'Registration successful',
     'auth.logoutSuccess': 'Logout successful',
+    
+    // 难度标签
+    'difficulty.easy': 'Easy',
+    'difficulty.medium': 'Medium',
+    'difficulty.advanced': 'Advanced',
   },
   ja: {
     // 暂时复制英文翻译作为占位符，后续可以补充日语翻译
@@ -504,6 +514,11 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'auth.loginSuccess': 'ログイン成功',
     'auth.registerSuccess': '登録成功',
     'auth.logoutSuccess': 'ログアウト成功',
+    
+    // 難度ラベル
+    'difficulty.easy': '簡単',
+    'difficulty.medium': '中級',
+    'difficulty.advanced': '上級',
   },
 };
 

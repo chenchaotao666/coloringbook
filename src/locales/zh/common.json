@@ -130,5 +130,10 @@
     "mb": "MB",
     "kb": "KB",
     "gb": "GB"
+  },
+  "difficulty": {
+    "easy": "容易",
+    "medium": "中等难度",
+    "advanced": "进阶"
   }
 } 

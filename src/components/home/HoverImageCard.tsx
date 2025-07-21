@@ -28,11 +28,38 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   onClick
 }) => {
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [isDownloadingPng, setIsDownloadingPng] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pngHovered, setPngHovered] = useState(false);
   const [pdfHovered, setPdfHovered] = useState(false);
+
+  // 难度标签文本和样式映射
+  const getDifficultyLabel = (difficulty?: string) => {
+    switch (difficulty) {
+      case 'toddler':
+        return { 
+          text: t('difficulty.easy'), 
+          bgColor: 'bg-green-100', 
+          textColor: 'text-green-800' 
+        };
+      case 'children':
+      case 'teen':
+        return { 
+          text: t('difficulty.medium'), 
+          bgColor: 'bg-green-100', 
+          textColor: 'text-green-800' 
+        };
+      case 'adult':
+        return { 
+          text: t('difficulty.advanced'), 
+          bgColor: 'bg-green-100', 
+          textColor: 'text-green-800' 
+        };
+      default:
+        return null;
+    }
+  };
 
   const handleDownload = async (format: 'png' | 'pdf', event?: React.MouseEvent) => {
     // 阻止事件冒泡，避免触发卡片点击
@@ -121,6 +148,12 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
           >
             {title}
           </h3>
+          {/* 难度标签 */}
+          {getDifficultyLabel(image.difficulty) && (
+            <span className={`inline-block px-3 py-1 text-xs font-normal rounded-full mt-2 ${getDifficultyLabel(image.difficulty)?.bgColor} ${getDifficultyLabel(image.difficulty)?.textColor}`}>
+              {getDifficultyLabel(image.difficulty)?.text}
+            </span>
+          )}
         </div>
         
         {/* 标签 */}

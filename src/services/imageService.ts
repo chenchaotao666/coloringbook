@@ -61,6 +61,8 @@ export interface SearchParams {
   currentPage?: number;
   pageSize?: number;
   isRelated?: boolean;
+  sortBy?: 'createdAt' | 'hotness' | 'name';
+  sortOrder?: 'asc' | 'desc';
 }
 
 // 用户图片查询参数接口
@@ -106,7 +108,9 @@ export class ImageService {
       isPublic,
       currentPage,
       pageSize,
-      isRelated = false
+      isRelated = false,
+      sortBy = 'hotness',
+      sortOrder = 'desc'
     } = params;
 
     try {
@@ -125,6 +129,8 @@ export class ImageService {
       
       if (currentPage) searchParams.append('currentPage', currentPage.toString());
       if (pageSize) searchParams.append('pageSize', pageSize.toString());
+      if (sortBy) searchParams.append('sortBy', sortBy);
+      if (sortOrder) searchParams.append('sortOrder', sortOrder);
 
       const response = await ApiUtils.get<{images: HomeImage[], total: number}>(`/api/images?${searchParams.toString()}`);
       

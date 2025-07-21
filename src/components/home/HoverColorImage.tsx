@@ -6,13 +6,15 @@ interface HoverColorImageProps {
   className?: string;
   style?: React.CSSProperties;
   alt?: string;
+  onLoad?: () => void;
 }
 
 const HoverColorImage: React.FC<HoverColorImageProps> = ({ 
   homeImage,
   className = '', 
   style = {},
-  alt = 'Coloring Page'
+  alt = 'Coloring Page',
+  onLoad
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -61,6 +63,7 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
         className={`w-full h-auto object-cover transition-opacity duration-500 ease-in-out ${
           shouldShowColor ? 'opacity-0' : 'opacity-100'
         }`}
+        onLoad={onLoad}
         onError={handleImageError}
       />
       

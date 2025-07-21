@@ -5,7 +5,7 @@ import MasonryGrid from '../components/layout/MasonryGrid';
 import CreationImageCard from '../components/creations/CreationImageCard';
 import { useAuth } from '../contexts/AuthContext';
 import { ImageService, HomeImage } from '../services/imageService';
-import ConfirmDialog from '../components/ui/ConfirmDialog';
+import DeleteImageConfirmDialog from '../components/ui/DeleteImageConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
@@ -174,11 +174,6 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
     setShowDeleteConfirm(imageId);
   };
 
-  // 处理举报确认
-  // const handleReportConfirm = (imageId: string) => {
-  //   setShowReportDialog(imageId);
-  // };
-
   // 自定义渲染卡片
   const renderCard = (image: HomeImage, _index: number) => (
     <CreationImageCard
@@ -199,7 +194,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
         noIndex={true}
       />
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* 页面标题 */}
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('title', 'My Creations')}</h1>
@@ -236,7 +231,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                Image to Image ({typeCounts.image2image})
+                {t('filters.imageToImage', 'Image to Image')} ({typeCounts.image2image})
               </button>
             </div>
           </div>
@@ -250,29 +245,27 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
 
           {/* 内容区域 */}
           {loading ? null : (
-            <MasonryGrid
-              images={images}
-              isLoading={false}
-              emptyState={{
-                icon: noResultIcon,
-                title: "No creations yet",
-                description: "Start creating your first coloring page!"
-              }}
-              renderCard={renderCard}
-            />
+            <div className="mb-8 lg:mb-20">
+              <MasonryGrid
+                images={images}
+                isLoading={false}
+                emptyState={{
+                  icon: noResultIcon,
+                  title: "No creations yet",
+                  description: "Start creating your first coloring page!"
+                }}
+                renderCard={renderCard}
+              />
+            </div>
           )}
         </div>
       </div>
 
       {/* 删除确认对话框 */}
-      <ConfirmDialog
+      <DeleteImageConfirmDialog
         isOpen={!!showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(null)}
         onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
-        message="Are you sure you want to delete this image? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
-        confirmButtonVariant="danger"
       />
 
       {/* 举报对话框 */}

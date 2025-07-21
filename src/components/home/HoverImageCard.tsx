@@ -33,6 +33,7 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pngHovered, setPngHovered] = useState(false);
   const [pdfHovered, setPdfHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // 难度标签文本和样式映射
   const getDifficultyLabel = (difficulty?: string) => {
@@ -116,26 +117,31 @@ const HoverImageCard: React.FC<HoverImageCardProps> = ({
     >
       <div className="w-full flex flex-col gap-4">
         {/* 图片区域 */}
-        <div className="w-full overflow-hidden rounded-t-2xl">
+        <div className={`w-full overflow-hidden rounded-t-2xl ${!imageLoaded ? 'aspect-square' : ''}`}>
           {variant === 'category' ? (
             /* 分类卡片：直接显示图片，不需要hover效果 */
             <img 
               src={image.defaultUrl}
               alt={title}
-              className="w-full h-auto object-cover"
+              className={`w-full object-cover ${imageLoaded ? 'h-auto' : 'h-full'}`}
+              onLoad={() => setImageLoaded(true)}
               onError={(e) => {
                 // 如果图片加载失败，使用占位符
                 const target = e.target as HTMLImageElement;
                 target.src = `https://placehold.co/276x276/F2F3F5/6B7280?text=${encodeURIComponent(title)}`;
+                setImageLoaded(true);
               }}
             />
           ) : (
             /* 默认：使用hover效果 */
-            <HoverColorImage 
-              homeImage={image}
-              className="w-full h-auto"
-              alt={title}
-            />
+            <div className={`w-full ${imageLoaded ? 'h-auto' : 'h-full'}`}>
+              <HoverColorImage 
+                homeImage={image}
+                className="w-full h-full object-cover"
+                alt={title}
+                onLoad={() => setImageLoaded(true)}
+              />
+            </div>
           )}
         </div>
         

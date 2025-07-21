@@ -21,6 +21,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileShowColor, setMobileShowColor] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { language } = useLanguage();
   const { t } = useAsyncTranslation('categories');
 
@@ -105,7 +106,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       <div className="w-full flex flex-col justify-start items-center gap-4">
         {/* 图片区域 */}
         <div 
-          className="w-full px-[1px] rounded-t-2xl overflow-hidden relative cursor-pointer"
+          className={`w-full px-[1px] rounded-t-2xl overflow-hidden relative cursor-pointer ${!imageLoaded ? 'aspect-square' : ''}`}
           style={{
             WebkitTapHighlightColor: 'transparent'
           }}
@@ -117,14 +118,18 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         >
           {/* 黑白图片 - defaultUrl (默认显示) */}
           <img 
-            className={`w-full h-auto object-cover rounded-t-2xl ${
+            className={`w-full object-cover rounded-t-2xl ${imageLoaded ? 'h-auto' : 'h-full'} ${
               displayCategory.coloringUrl 
                 ? `transition-opacity duration-500 ease-in-out ${shouldShowColor ? 'opacity-0' : 'opacity-100'}` 
                 : ''
             }`}
             src={displayCategory.defaultUrl}
             alt={getLocalizedText(displayCategory.displayName, language)}
-            onError={handleImageError}
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              handleImageError(e);
+              setImageLoaded(true);
+            }}
           />
           
           {/* 彩色图片 - coloringUrl (悬停或点击时显示) */}

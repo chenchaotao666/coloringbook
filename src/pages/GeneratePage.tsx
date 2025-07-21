@@ -5,7 +5,7 @@ import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import { getLocalizedText } from '../utils/textUtils';
 import CircularProgress from '../components/ui/CircularProgress';
-import ConfirmDialog from '../components/ui/ConfirmDialog';
+import DeleteImageConfirmDialog from '../components/ui/DeleteImageConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
 
@@ -1279,14 +1279,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       </div>
 
       {/* 删除确认对话框 */}
-      <ConfirmDialog
+      <DeleteImageConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleConfirmDelete}
-        message={t('dialogs.deleteConfirm.message', 'Are you sure you want to delete this item?')}
-        confirmText={t('dialogs.deleteConfirm.confirm', 'Delete')}
-        cancelText={t('dialogs.deleteConfirm.cancel', 'Cancel')}
-        confirmButtonVariant="danger"
       />
 
       {/* 回到顶部按钮 - 移动端使用专用滚动容器 */}

@@ -30,6 +30,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
   const [pngHovered, setPngHovered] = useState(false);
   const [pdfHovered, setPdfHovered] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleDownload = async (format: 'png' | 'pdf', event?: React.MouseEvent) => {
     // 阻止事件冒泡，避免触发卡片点击
@@ -152,21 +153,24 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
     >
       <div className="w-full flex flex-col gap-4">
         {/* 图片区域 */}
-        <div className="w-full overflow-hidden rounded-t-2xl relative">
+        <div className={`w-full overflow-hidden rounded-t-2xl relative ${!imageLoaded ? 'aspect-square' : ''}`}>
           {image.type === 'image2image' ? (
             <HoverColorImage 
               homeImage={{
                 ...image,
                 coloringUrl: image.colorUrl || image.defaultUrl // 使用colorUrl作为hover效果的图片
               }}
-              className="w-full h-auto"
+              className={`w-full ${imageLoaded ? 'h-auto' : 'h-full'}`}
               alt={getLocalizedText(image.title, language) || getLocalizedText(image.description, language)}
+              onLoad={() => setImageLoaded(true)}
             />
           ) : (
             <img 
               src={image.defaultUrl}
-              className="w-full h-auto"
+              className={`w-full object-cover ${imageLoaded ? 'h-auto' : 'h-full'}`}
               alt={getLocalizedText(image.title, language) || getLocalizedText(image.description, language)}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)}
             />
           )}
           
@@ -183,7 +187,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
           {/* 比例标签 - 只对text2image显示 */}
           {image.ratio && image.type === 'text2image' && (
             <div className="absolute top-2 right-2">
-              <span className="bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+              <span className="bg-black bg-opacity-30 text-white px-2 py-1 rounded text-xs">
                 {image.ratio}
               </span>
             </div>
@@ -336,7 +340,7 @@ const CreationImageCard: React.FC<CreationImageCardProps> = ({
                     onClick={handleDelete}
                     className="w-full px-3 py-2 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2 text-xs"
                   >
-                    <img src={deleteIcon} alt="Delete" className="w-3 h-3" />
+                    <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
                     Delete
                   </button>
                   {/* <button

@@ -90,10 +90,10 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
   const cardRenderer = renderCard || defaultRenderCard;
 
-  // 动态计算列数，避免空列
+  // 固定列数，保持布局一致性
   const getColumnCount = (imageCount: number, maxColumns: number = 4) => {
     if (imageCount === 0) return 1;
-    return Math.min(imageCount, maxColumns);
+    return maxColumns; // 始终使用最大列数
   };
 
   const desktopColumns = getColumnCount(images.length, 4);
@@ -104,16 +104,8 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
   const distributeToColumns = (images: HomeImage[], columnCount: number) => {
     if (images.length === 0) return [];
     
-    // 智能决定实际列数
-    let actualColumnCount;
-    if (images.length <= 2) {
-      actualColumnCount = images.length;
-    } else if (images.length <= 4) {
-      actualColumnCount = Math.min(images.length, columnCount);
-    } else {
-      // 对于5个以上的图片，尽量使用更多列以获得更好的布局
-      actualColumnCount = columnCount;
-    }
+    // 始终使用完整的列数，保持布局一致性
+    const actualColumnCount = columnCount;
     
     const actualColumns: HomeImage[][] = Array.from({ length: actualColumnCount }, () => []);
     
@@ -142,9 +134,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
   const mobileImageColumns = distributeToColumns(images, mobileColumns);
   const tabletImageColumns = distributeToColumns(images, tabletColumns);
 
-  // 根据图片数量决定对齐方式：少于4个时左对齐，4个及以上时居中对齐
+  // 网格整体居中对齐
   const getJustifyClass = (imageCount: number) => {
-    return imageCount < 4 ? 'justify-start' : 'justify-center';
+    return 'justify-center'; // 网格整体居中显示
   };
 
   const desktopJustifyClass = getJustifyClass(images.length);
@@ -159,7 +151,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
           {desktopImageColumns.map((columnImages, columnIndex) => (
             <div 
               key={`desktop-column-${columnIndex}`} 
-              className="space-y-4 xl:space-y-6 flex-1 max-w-[320px]"
+              className="space-y-4 xl:space-y-6 w-[320px] flex-shrink-0"
             >
               {columnImages.map((image, imageIndex) => (
                 <div key={`${image.id}-desktop-${columnIndex}-${imageIndex}`} className="w-full">
@@ -177,7 +169,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
           {tabletImageColumns.map((columnImages, columnIndex) => (
             <div 
               key={`tablet-column-${columnIndex}`} 
-              className="space-y-3 flex-1 max-w-[240px]"
+              className="space-y-3 w-[240px] flex-shrink-0"
             >
               {columnImages.map((image, imageIndex) => (
                 <div key={`${image.id}-tablet-${columnIndex}-${imageIndex}`} className="w-full">
@@ -195,8 +187,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
           {mobileImageColumns.map((columnImages, columnIndex) => (
             <div 
               key={`mobile-column-${columnIndex}`} 
-              className="space-y-2 sm:space-y-3 flex-1"
-              style={{ maxWidth: '180px' }}
+              className="space-y-2 sm:space-y-3 w-[180px] flex-shrink-0"
             >
               {columnImages.map((image, imageIndex) => (
                 <div key={`${image.id}-mobile-${columnIndex}-${imageIndex}`} className="w-full">

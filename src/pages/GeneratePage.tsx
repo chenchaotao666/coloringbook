@@ -8,6 +8,12 @@ import CircularProgress from '../components/ui/CircularProgress';
 import DeleteImageConfirmDialog from '../components/ui/DeleteImageConfirmDialog';
 import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
+import TextToColoringPage from '../components/common/TextToColoringPage';
+import WhyChoose from '../components/common/WhyChoose';
+import CanCreate, { CategoryItem } from '../components/common/CanCreate';
+import HowToCreate from '../components/common/HowToCreate';
+import UserSaying from '../components/common/UserSaying';
+import { sampleTestimonials } from '../components/common/UserSaying.example';
 
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
@@ -106,6 +112,86 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   } = useGeneratePage(initialTab, refreshUser);
 
   const { uploadedImage: globalUploadedImage, setUploadedImage: setGlobalUploadedImage } = useUploadImage();
+
+  // Categories data for CanCreate component
+  const categories: CategoryItem[] = [
+    {
+      id: 'animals',
+      title: 'Animals',
+      description: 'A cat playing guitar under the stars',
+      image: '/images/cancreate/image-1.png'
+    },
+    {
+      id: 'robots',
+      title: 'Robots',
+      description: 'A robot making pancakes for breakfast',
+      image: '/images/cancreate/image-2.png'
+    },
+    {
+      id: 'fairy-tales',
+      title: 'Fairy Tales',
+      description: 'A princess and a dragon playing chess',
+      image: '/images/cancreate/image-3.png'
+    },
+    {
+      id: 'circus',
+      title: 'Circus',
+      description: 'A bear riding a unicycle in a circus',
+      image: '/images/cancreate/image-4.png'
+    },
+    {
+      id: 'adventure',
+      title: 'Adventure',
+      description: 'A pirate ship sailing through the clouds',
+      image: '/images/cancreate/image-5.png'
+    },
+    {
+      id: 'forest-party',
+      title: 'Forest Party',
+      description: 'A family of squirrels having a tea party in a treehouse',
+      image: '/images/cancreate/image-6.png'
+    }
+  ];
+
+  // Second categories data for second CanCreate component
+  const categories2: CategoryItem[] = [
+    {
+      id: 'parents-teachers-kids',
+      title: 'Parents, Teachers, and Kids',
+      description: 'Children have boundless creativity, and this tool helps them turn their ideas into reality. Parents can create personalized, screen-free activities, while teachers can design custom worksheets that align with their lesson plans.',
+      image: '/images/cancreate/image-7.png'
+    },
+    {
+      id: 'creatives-wellness',
+      title: 'Creatives and Wellness Seekers',
+      description: 'Adults can relieve stress and improve concentration. Therapists and counselors also use it as a gentle way for clients to express feelings and explore difficult topics in a safe, creative format.',
+      image: '/images/cancreate/image-8.png'
+    },
+    {
+      id: 'entrepreneurs-event-hosts',
+      title: 'Entrepreneurs and Event Hosts',
+      description: 'Quickly create unique products and experiences. Design custom coloring pages for birthday parties and school events, or even bundle and sell your own themed coloring books online for profit.',
+      image: '/images/cancreate/image-9.png'
+    },
+    {
+      id: 'homeschooling-families',
+      title: 'Homeschooling Families',
+      description: 'Easily integrate art and literacy into your curriculum with almost no prep time. You can tailor unlimited coloring pages to any theme or subject you happen to be covering at home.',
+      image: '/images/cancreate/image-10.png'
+    },
+    {
+      id: 'therapists-counselors',
+      title: 'Therapists & Child Counselors',
+      description: 'Use prompt-based drawing as a gentle and effective way for children to express feelings, tell stories, or explore difficult topics in a completely safe and creative format.',
+      image: '/images/cancreate/image-11.png'
+    },
+    {
+      id: 'activity-planners',
+      title: 'Activity Planners & Event Hosts',
+      description: 'Make custom coloring pages for birthday parties, camps, or school events. You can add names, specific themes, or story-based designs for an extra touch of personalized fun.',
+      image: '/images/cancreate/image-12.png'
+    }
+  ];
 
   // 当有全局上传的图片时，自动设置到组件状态
   useEffect(() => {
@@ -1055,11 +1141,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
       )} */}
 
-      <div className="flex flex-col lg:flex-row h-screen bg-[#F9FAFB] relative">
+      <div className="flex flex-col bg-[#F9FAFB] relative">
+        <div className="flex flex-col lg:flex-row h-[1200px] bg-[#F9FAFB] relative">
         {/* Left Sidebar - 移动端隐藏，桌面端显示 */}
-        <div className="hidden lg:block w-[600px] bg-white pb-[88px] overflow-y-auto h-full">
-          {/* Tab Selector */}
-          <div className="mx-5">
+        <div className="hidden lg:block w-[600px] bg-white h-[1200px] relative flex flex-col">
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto">
+            {/* Tab Selector */}
+            <div className="mx-5">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative">
               <div
                 className={`h-10 rounded-lg absolute transition-all duration-200 ${selectedTab === 'text' ? 'w-[calc(50%-4px)] bg-white left-1' :
@@ -1130,10 +1219,39 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               </button>
             </div>
           </div>
+          </div>
+
+          {/* Desktop Generate Button - Fixed at bottom of 1200px sidebar */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white p-5 border-t border-gray-100">
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
+              className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
+                  ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
+                  : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
+                }`}
+            >
+              <img
+                src={(isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
+                  ? subtractIcon
+                  : subtractColorIcon
+                }
+                alt="Subtract"
+                className="w-5 h-5 mr-1"
+              />
+              <span className="font-bold text-lg">20</span>
+              <span className="font-bold text-lg">
+                {isGenerating ? t('generating.title', 'Generating...') : 
+                 error ? t('actions.regenerate', 'Regenerate') :
+                 t('actions.generate', 'Generate')}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* 移动端主要内容区域 */}
-        <div className="flex flex-col lg:hidden h-full bg-white">          
+        <div className="flex flex-col lg:hidden h-[1200px] bg-white">          
           {/* 移动端标签选择器 */}
           <div className="bg-white px-4 pb-4 border-b border-gray-200 flex-shrink-0">
             <div className="bg-[#F2F3F5] h-12 rounded-lg flex items-center relative max-w-md mx-auto">
@@ -1240,7 +1358,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         </div>
 
         {/* 桌面端中间内容区域 */}
-        <div className="hidden lg:flex lg:flex-1">
+        <div className="hidden lg:flex lg:flex-1 lg:h-[1200px]">
           {renderContent(selectedTab)}
         </div>
 
@@ -1249,34 +1367,53 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {renderRightSidebar()}
         </div>
 
-        {/* 桌面端生成按钮 */}
-        <div className="hidden lg:flex fixed bottom-0 left-0 w-[600px] h-[88px] bg-white items-center justify-center px-5">
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
-            className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-              (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
-                ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
-                : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
-              }`}
-          >
-            <img
-              src={(isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
-                ? subtractIcon
-                : subtractColorIcon
-              }
-              alt="Subtract"
-              className="w-5 h-5 mr-1"
-            />
-            <span className="font-bold text-lg">20</span>
-            <span className="font-bold text-lg">
-              {isGenerating ? t('generating.title', 'Generating...') : 
-               error ? t('actions.regenerate', 'Regenerate') :
-               t('actions.generate', 'Generate')}
-            </span>
-          </button>
         </div>
       </div>
+
+      {/* TextToColoringPage and WhyChoose components - Full width below main layout */}
+      <div className="w-full bg-white">
+          {/* TextToColoringPage component - only show for text mode */}
+          {selectedTab === 'text' && (
+            <div className="py-8 lg:py-16">
+              <TextToColoringPage />
+            </div>
+          )}
+
+          {/* WhyChoose component - only show for text mode */}
+          {selectedTab === 'text' && (
+            <div className="py-8 lg:py-16 bg-white">
+              <WhyChoose />
+            </div>
+          )}
+
+          {/* CanCreate component - only show for text mode */}
+          {selectedTab === 'text' && (
+            <div className="py-8 lg:py-16 bg-white">
+              <CanCreate categories={categories} />
+            </div>
+          )}
+
+          {/* HowToCreate component - only show for text mode */}
+          {selectedTab === 'text' && (
+            <div className="py-8 lg:py-16 bg-white">
+              <HowToCreate />
+            </div>
+          )}
+
+          {/* Second CanCreate component - only show for text mode */}
+          {selectedTab === 'text' && (
+            <div className="py-8 lg:py-16 bg-white">
+              <CanCreate categories={categories2} />
+            </div>
+          )}
+
+          {/* UserSaying component - only show for text mode */}
+          {selectedTab === 'text' && (
+            <div className="py-8 lg:py-16 bg-white">
+              <UserSaying testimonials={sampleTestimonials} />
+            </div>
+          )}
+        </div>
 
       {/* 删除确认对话框 */}
       <DeleteImageConfirmDialog

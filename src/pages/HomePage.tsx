@@ -5,14 +5,14 @@ import Gallery from '../components/home/Gallery';
 import Testimonials from '../components/home/Testimonials';
 import HowToCreate from '../components/home/HowToCreate';
 import FAQ from '../components/home/FAQ';
-import CallToAction from '../components/home/CallToAction';
+import TryNow from '../components/common/TryNow';
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { ImageService } from '../services/imageService';
 import { useState, useEffect } from 'react';
 
 const HomePage = () => {
-  const { loading } = useAsyncTranslation('home');
+  const { loading, t } = useAsyncTranslation('home');
   const { t: tCommon } = useAsyncTranslation('common');
   const [imageCount, setImageCount] = useState<number>(0); // 默认值
   
@@ -62,7 +62,12 @@ const HomePage = () => {
           <Testimonials />
           <HowToCreate />
           <FAQ />
-          <CallToAction />
+          <TryNow
+            title={t('cta.title', 'Get Your Coloring Pages')}
+            description={t('cta.description', 'One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.')}
+            buttonText={t('cta.tryNow', 'Try Now')}
+            buttonLink="/text-coloring-page"
+          />
         </div>
       </Layout>
     </div>

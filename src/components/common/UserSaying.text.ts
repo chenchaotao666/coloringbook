@@ -1,4 +1,3 @@
-// Example usage of UserSaying component with public/images/usersaying images
 import { TestimonialItem } from './UserSaying';
 
 export const sampleTestimonials: TestimonialItem[] = [
@@ -75,5 +74,3 @@ export const sampleTestimonials: TestimonialItem[] = [
     image: '/images/usersaying/image-9.png'
   }
 ];
-
-export default sampleTestimonials;

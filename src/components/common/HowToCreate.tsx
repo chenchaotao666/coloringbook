@@ -1,50 +1,43 @@
 import React from 'react';
 
-interface HowToCreateProps {
-  className?: string;
-}
-
-interface StepItem {
+export interface StepItem {
   id: string;
   number: string;
   title: string;
   description: string;
 }
 
+export interface HowToCreateData {
+  title: string;
+  subtitle: string;
+  image?: string;
+  images?: {
+    top: string;
+    bottom: string;
+  };
+  steps: StepItem[];
+}
+
+interface HowToCreateProps {
+  className?: string;
+  data: HowToCreateData;
+}
+
 const HowToCreate: React.FC<HowToCreateProps> = ({ 
-  className = "" 
+  className = "",
+  data
 }) => {
-  const steps: StepItem[] = [
-    {
-      id: 'enter-idea',
-      number: '01',
-      title: 'Enter Your Idea',
-      description: 'Type any scene you can imagine. Be descriptive! For example: "a happy cat napping in a sunbeam" and so on.'
-    },
-    {
-      id: 'click-generate',
-      number: '02', 
-      title: 'Click "Generate"',
-      description: 'Our AI will instantly turn your text into a unique black-and-white illustration.'
-    },
-    {
-      id: 'download-color',
-      number: '03',
-      title: 'Download & Color',
-      description: 'Your new coloring page is ready! Download to print or color digitally. Perfect for relaxing, classroom activities, or a unique gift.'
-    }
-  ];
 
   return (
     <div className={`w-full max-w-[1170px] mx-auto px-4 py-16 ${className}`}>
       {/* Header Section */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616] capitalize leading-tight mb-8 max-w-[1000px] mx-auto">
-          How to create your coloring page with our Text to Coloring Page Generator?
+          {data.title}
         </h2>
         
         <p className="text-lg text-[#6B7280] max-w-[900px] mx-auto">
-          Simply follow these 3 steps to create your coloring page.
+          {data.subtitle}
         </p>
       </div>
 
@@ -52,16 +45,33 @@ const HowToCreate: React.FC<HowToCreateProps> = ({
       <div className="flex flex-col lg:flex-row gap-12 items-center">
         {/* Left Side - Image */}
         <div className="w-full lg:w-[500px] flex-shrink-0">
-          <img 
-            src="/images/howtocreate/image-1.png"
-            alt="Coloring page creation process"
-            className="w-full h-[400px] lg:h-[600px] object-cover rounded-2xl border border-[#EDEEF0]"
-          />
+          {data.images ? (
+            // Two images for comparison (color vs line art)
+            <div className="w-full h-[400px] lg:h-[600px] relative overflow-hidden rounded-2xl border border-[#EDEEF0]">
+              <img 
+                src={data.images.top}
+                alt="Original colored image"
+                className="absolute top-0 left-0 w-full h-1/2 object-cover object-top"
+              />
+              <img 
+                src={data.images.bottom}
+                alt="Line art coloring page"
+                className="absolute bottom-0 left-0 w-full h-1/2 object-cover object-top"
+              />
+            </div>
+          ) : (
+            // Single image
+            <img 
+              src={data.image}
+              alt="Coloring page creation process"
+              className="w-full h-[400px] lg:h-[600px] object-cover rounded-2xl border border-[#EDEEF0]"
+            />
+          )}
         </div>
 
         {/* Right Side - Steps */}
         <div className="flex-1 space-y-12">
-          {steps.map((step) => (
+          {data.steps.map((step) => (
             <div key={step.id} className="flex items-start gap-4">
               {/* Step Number Background */}
               <div className="relative flex-shrink-0">

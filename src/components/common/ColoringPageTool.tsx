@@ -1,11 +1,28 @@
 import React from 'react';
 
-interface TextToColoringPageProps {
-  className?: string;
+export interface ColoringPageToolData {
+  title: string;
+  subtitle: string;
+  description: string;
+  images: {
+    center: string;
+    topLeft: string;
+    topRight: string;
+    bottomLeft: string;
+    bottomRight: string;
+    farLeft: string;
+    farRight: string;
+  };
 }
 
-const TextToColoringPage: React.FC<TextToColoringPageProps> = ({ 
-  className = "" 
+interface ColoringPageToolProps {
+  className?: string;
+  data: ColoringPageToolData;
+}
+
+const ColoringPageTool: React.FC<ColoringPageToolProps> = ({ 
+  className = "",
+  data
 }) => {
   return (
     <div className={`w-full max-w-[1170px] mx-auto px-4 ${className}`}>
@@ -13,21 +30,21 @@ const TextToColoringPage: React.FC<TextToColoringPageProps> = ({
         {/* Title */}
         <div className="text-center mb-6">
           <h2 className="text-[46px] font-bold text-[#161616] capitalize leading-tight">
-            What Is a Text to Coloring Page Tool?
+            {data.title}
           </h2>
         </div>
         
         {/* Subtitle */}
         <div className="text-center mb-8">
           <p className="text-lg text-[#161616] max-w-[900px] mx-auto">
-            AI makes it easier than ever to create coloring pages from your words.
+            {data.subtitle}
           </p>
         </div>
         
         {/* Description */}
         <div className="text-center mb-12">
           <p className="text-lg text-[#6B7280] leading-[27px] max-w-[900px] mx-auto">
-            Our Text to Coloring Page tool transforms simple text descriptions into unique, hand-drawn-style coloring pages. It's great for parents, teachers, creative explorers, or anyone who loves to imagine! This tool opens a world of fun, learning, and creativity, turning your words into black-and-white line drawings ready to print or share.
+            {data.description}
           </p>
         </div>
         
@@ -39,7 +56,7 @@ const TextToColoringPage: React.FC<TextToColoringPageProps> = ({
             {/* Main center image */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <img 
-                src="/images/text2image/left-7.png" 
+                src={data.images.center} 
                 alt="Main coloring page example"
                 className="w-[360px] h-[360px] rounded-2xl border border-[#EDEEF0] object-cover"
               />
@@ -54,42 +71,42 @@ const TextToColoringPage: React.FC<TextToColoringPageProps> = ({
             
             {/* Top left images */}
             <img 
-              src="/images/text2image/left-1.png" 
+              src={data.images.topLeft} 
               alt="Coloring page example"
               className="absolute left-[193px] top-11 w-[200px] h-[100px] rounded-2xl border border-[#EDEEF0] object-cover"
             />
             
             {/* Top right images */}
             <img 
-              src="/images/text2image/left-2.png" 
+              src={data.images.topRight} 
               alt="Coloring page example"
               className="absolute right-[193px] top-11 w-[200px] h-[100px] rounded-2xl border border-[#EDEEF0] object-cover"
             />
             
             {/* Bottom left images */}
             <img 
-              src="/images/text2image/left-3.png" 
+              src={data.images.bottomLeft} 
               alt="Coloring page example"
               className="absolute left-[193px] bottom-[42px] w-[200px] h-[200px] rounded-2xl border border-[#EDEEF0] object-cover"
             />
             
             {/* Bottom right images */}
             <img 
-              src="/images/text2image/left-4.png" 
+              src={data.images.bottomRight} 
               alt="Coloring page example"
               className="absolute right-[193px] bottom-[42px] w-[200px] h-[200px] rounded-2xl border border-[#EDEEF0] object-cover"
             />
             
             {/* Far left image */}
             <img 
-              src="/images/text2image/left-5.png" 
+              src={data.images.farLeft} 
               alt="Coloring page example"
               className="absolute left-5 top-1/2 transform -translate-y-1/2 w-[160px] h-[160px] rounded-2xl border border-[#EDEEF0] object-cover"
             />
             
             {/* Far right image */}
             <img 
-              src="/images/text2image/left-6.png" 
+              src={data.images.farRight} 
               alt="Coloring page example"
               className="absolute right-5 top-1/2 transform -translate-y-1/2 w-[160px] h-[160px] rounded-2xl border border-[#EDEEF0] object-cover"
             />
@@ -100,4 +117,4 @@ const TextToColoringPage: React.FC<TextToColoringPageProps> = ({
   );
 };
 
-export default TextToColoringPage;
+export default ColoringPageTool;

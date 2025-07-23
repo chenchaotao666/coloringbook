@@ -1,10 +1,5 @@
 import React from 'react';
 
-interface CanCreateProps {
-  className?: string;
-  categories: CategoryItem[];
-}
-
 export interface CategoryItem {
   id: string;
   title: string;
@@ -12,9 +7,20 @@ export interface CategoryItem {
   image: string;
 }
 
+export interface CanCreateData {
+  title: string;
+  subtitle: string;
+  categories: CategoryItem[];
+}
+
+interface CanCreateProps {
+  className?: string;
+  data: CanCreateData;
+}
+
 const CanCreate: React.FC<CanCreateProps> = ({ 
   className = "",
-  categories
+  data
 }) => {
 
   return (
@@ -22,18 +28,18 @@ const CanCreate: React.FC<CanCreateProps> = ({
       <div className="text-center mb-16">
         {/* Title */}
         <h2 className="text-[46px] font-bold text-[#161616] capitalize mb-6">
-          What Can You Create?
+          {data.title}
         </h2>
         
         {/* Subtitle */}
         <p className="text-lg text-[#6B7280] max-w-[900px] mx-auto">
-          Turn your wildest ideas into unique coloring pages.
+          {data.subtitle}
         </p>
       </div>
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[21px]">
-        {categories.map((category) => (
+        {data.categories.map((category) => (
           <div key={category.id} className="flex flex-col">
             {/* Image */}
             <div className="w-full aspect-square rounded-2xl border border-[#EDEEF0] overflow-hidden mb-6">

@@ -10,7 +10,7 @@ import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
 import ColoringPageTool, { ColoringPageToolData } from '../components/common/ColoringPageTool';
 import WhyChoose, { WhyChooseData } from '../components/common/WhyChoose';
-import CanCreate, { CategoryItem, CanCreateData } from '../components/common/CanCreate';
+import CanCreate, { CanCreateData } from '../components/common/CanCreate';
 import HowToCreate, { HowToCreateData } from '../components/common/HowToCreate';
 import UserSaying, { TestimonialItem } from '../components/common/UserSaying';
 import { sampleTestimonials } from '../components/common/UserSaying.text';

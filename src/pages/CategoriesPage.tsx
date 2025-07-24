@@ -253,11 +253,6 @@ const CategoriesPage: React.FC = () => {
     }
   ];
 
-  // TryNow data
-  const tryNowData = {
-    title: "Ready to Start Coloring?",
-    description: "Whether you're a parent looking for an engaging activity for your child, a teacher seeking fun classroom resources, or an adult who enjoys the relaxing art of coloring, our free printable pages are perfect for you. With hundreds of designs and new ones added regularly, the creative fun never ends!"
-  };
   
   // 状态管理
   const [categories, setCategories] = useState<Category[]>([]);

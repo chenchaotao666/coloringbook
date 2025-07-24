@@ -39,7 +39,7 @@ const WhyChoose: React.FC<WhyChooseProps> = ({
 
       {/* Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.features.map((feature, index) => (
+        {data.features.map((feature) => (
           <div
             key={feature.id}
             className="bg-[#F9FAFB] rounded-2xl p-9 h-[336px] flex flex-col"

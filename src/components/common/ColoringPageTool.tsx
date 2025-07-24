@@ -5,7 +5,7 @@ export interface ColoringPageToolData {
   subtitle: string;
   description: string;
   images: {
-    center: string;
+    center: string | { left: string; right: string };
     topLeft: string;
     topRight: string;
     bottomLeft: string;
@@ -51,22 +51,87 @@ const ColoringPageTool: React.FC<ColoringPageToolProps> = ({
         {/* Gallery Section */}
         <div className="relative">
           {/* Background container */}
-          <div className="w-full h-[400px] bg-[#F9FAFB] rounded-2xl relative overflow-hidden">
+          <div className="w-[1170px] h-[400px] bg-[#F9FAFB] rounded-2xl relative overflow-hidden">
+            
+            {/* Created by badge - positioned at top-right corner of container */}
+            <button 
+              className="absolute top-4 right-4 z-10 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                paddingTop: '12px',
+                paddingBottom: '12px',
+                background: 'rgba(255, 92, 7, 0.10)',
+                borderRadius: '8px',
+                backdropFilter: 'blur(5px)',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '4px',
+                display: 'inline-flex',
+                border: 'none'
+              }}>
+              <img 
+                src="/images/text2image/star-2.svg" 
+                alt="Colorpages logo"
+                className="w-4 h-4"
+              />
+              <div style={{
+                color: '#FF5C07',
+                fontSize: '14px',
+                fontFamily: 'Inter',
+                fontWeight: 700,
+                lineHeight: '21px',
+                wordWrap: 'break-word'
+              }}>
+                Created By Colorpages
+              </div>
+            </button>
             
             {/* Main center image */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img 
-                src={data.images.center} 
-                alt="Main coloring page example"
-                className="w-[360px] h-[360px] rounded-2xl border border-[#EDEEF0] object-cover"
-              />
-              
-              {/* Created by badge */}
-              <div className="absolute top-0 right-[-86px] bg-[rgba(255,92,7,0.10)] backdrop-blur-[5px] rounded-lg px-5 py-3">
-                <span className="text-[#FF5C07] text-sm font-bold">
-                  Created By Colorpages
-                </span>
-              </div>
+              {typeof data.images.center === 'string' ? (
+                // Single image
+                <img 
+                  src={data.images.center} 
+                  alt="Main coloring page example"
+                  className="w-[360px] h-[360px] rounded-2xl border border-[#EDEEF0] object-cover"
+                />
+              ) : (
+                // Split image - left and right comparison
+                <div className="w-[360px] h-[360px] rounded-2xl border border-[#EDEEF0] relative" style={{ overflow: 'hidden' }}>
+                  {/* Left half - colored image */}
+                  <div 
+                    className="absolute left-0 top-0 w-full h-full"
+                    style={{
+                      clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)'
+                    }}
+                  >
+                    <img 
+                      src={data.images.center.left} 
+                      alt="Colored version"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Right half - line art */}
+                  <div 
+                    className="absolute left-0 top-0 w-full h-full"
+                    style={{
+                      clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)'
+                    }}
+                  >
+                    <img 
+                      src={data.images.center.right} 
+                      alt="Line art version"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Divider line */}
+                  <div className="absolute left-1/2 top-0 w-px h-full bg-white/50 z-10 transform -translate-x-px"></div>
+                </div>
+              )}
             </div>
             
             {/* Top left images */}

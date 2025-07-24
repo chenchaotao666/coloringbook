@@ -123,13 +123,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     subtitle: "AI makes it easier than ever to create coloring pages from your words.",
     description: "Our Text to Coloring Page tool transforms simple text descriptions into unique, hand-drawn-style coloring pages. It's great for parents, teachers, creative explorers, or anyone who loves to imagine! This tool opens a world of fun, learning, and creativity, turning your words into black-and-white line drawings ready to print or share.",
     images: {
-      center: "/images/text2image/left-7.png",
-      topLeft: "/images/text2image/left-1.png",
-      topRight: "/images/text2image/left-2.png",
+      center: "/images/text2image/left-4.png",
+      topLeft: "/images/text2image/left-2.png",
+      topRight: "/images/text2image/left-5.png",
       bottomLeft: "/images/text2image/left-3.png",
-      bottomRight: "/images/text2image/left-4.png",
-      farLeft: "/images/text2image/left-5.png",
-      farRight: "/images/text2image/left-6.png"
+      bottomRight: "/images/text2image/left-6.png",
+      farLeft: "/images/text2image/left-1.png",
+      farRight: "/images/text2image/left-7.png"
     }
   };
 
@@ -139,13 +139,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     subtitle: "AI makes it easier than ever to create coloring pages from your words.",
     description: "Our Text to Coloring Page tool transforms simple text descriptions into unique, hand-drawn-style coloring pages. It's great for parents, teachers, creative explorers, or anyone who loves to imagine! This tool opens a world of fun, learning, and creativity, turning your words into black-and-white line drawings ready to print or share.",
     images: {
-      center: "/images/image2image/left-7.png",
-      topLeft: "/images/image2image/left-1.png",
-      topRight: "/images/image2image/left-2.png",
+      center: { left: "/images/image2image/left-4-color.png", right: "/images/image2image/left-4-line.png" },
+      topLeft: "/images/image2image/left-2.png",
+      topRight: "/images/image2image/left-5.png",
       bottomLeft: "/images/image2image/left-3.png",
-      bottomRight: "/images/image2image/left-4.png",
-      farLeft: "/images/image2image/left-5.png",
-      farRight: "/images/image2image/left-6.png"
+      bottomRight: "/images/image2image/left-6.png",
+      farLeft: "/images/image2image/left-1.png",
+      farRight: "/images/image2image/left-7.png"
     }
   };
 
@@ -1821,14 +1821,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       <div className="w-full bg-white">
           {/* ColoringPageTool component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16">
+            <div className="py-8 lg:pb-16 lg:pt-32">
               <ColoringPageTool data={textColoringPageToolData} />
             </div>
           )}
 
           {/* ColoringPageTool component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16">
+            <div className="py-8 lg:pb-16 lg:pt-32">
               <ColoringPageTool data={imageColoringPageToolData} />
             </div>
           )}
@@ -1927,8 +1927,19 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             />
           )}
 
+          {/* TryNow component - only show for image mode */}
+          {selectedTab === 'image' && (
+            <TryNow
+              title="Ready to Turn Your Image into a Coloring Page?"
+              description="Whether you're a parent turning a family photo into a fun activity, an 
+              + artist exploring a new composition, or simply looking to create a unique gift, our tool is here for you. Start transforming your favorite images now and unleash your inner artist!"
+              buttonText="Try Now"
+              buttonLink="#upload-section"
+            />
+          )}
+
           {/* Footer component - only show for text mode */}
-          {selectedTab === 'text' && (
+          {(selectedTab === 'text' || selectedTab === 'image') && (
             <Footer />
           )}
 

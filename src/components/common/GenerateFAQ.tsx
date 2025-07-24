@@ -65,7 +65,7 @@ const GenerateFAQ: React.FC<GenerateFAQProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-[970px] mx-auto px-4 py-16 ${className}`}>
+    <div className={`w-full max-w-[970px] mx-auto px-4 pb-16 ${className}`}>
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616]">

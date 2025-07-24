@@ -11,6 +11,12 @@ import { useAsyncTranslation } from '../contexts/LanguageContext';
 import SEOHead from '../components/common/SEOHead';
 import { getCategoryNameById, updateCategoryMappings } from '../utils/categoryUtils';
 import { navigateWithLanguage } from '../utils/navigationUtils';
+import WhyChooseColoringPages from '../components/common/WhyChooseColoringPages';
+import ColoringPagesFor from '../components/common/ColoringPagesFor';
+import HowToCreate, { HowToCreateData } from '../components/common/HowToCreate';
+import UserSaying, { TestimonialItem } from '../components/common/UserSaying';
+import GenerateFAQ, { FAQData } from '../components/common/GenerateFAQ';
+import TryNow from '../components/common/TryNow';
 const noResultIcon = '/images/no-result.svg';
 
 
@@ -20,6 +26,238 @@ const CategoriesPage: React.FC = () => {
   const { t: tCommon } = useAsyncTranslation('common');
   const navigate = useNavigate();
   const { language } = useLanguage();
+
+  // WhyChooseColoringPages data
+  const whyChooseColoringPagesData = {
+    title: "Why Choose Free Coloring Pages?",
+    subtitle: "Coloring isn't just fun—it's a powerful tool for growth and relaxation.",
+    features: [
+      {
+        id: 'creative-play',
+        title: 'Creative Play for the Imagination',
+        description: 'Coloring sparks imagination and storytelling, turning simple pages into a world of adventure and creativity for kids and adults alike.',
+        image: '/images/whychoosecoloringpage/image-1.png',
+        buttonText: 'Download Now - Free',
+        buttonLink: '#download-section'
+      },
+      {
+        id: 'educational-skills',
+        title: 'Boost Educational Skills',
+        description: 'Enhance fine motor skills, color recognition, and concentration through fun, engaging coloring activities for kids—perfect for learning and play.',
+        image: '/images/whychoosecoloringpage/image-2.png',
+        buttonText: 'Download Now - Free',
+        buttonLink: '#download-section'
+      },
+      {
+        id: 'stress-relief',
+        title: 'Instant Stress Relief',
+        description: 'Coloring is a great stress-relief activity for adults, offering a calming, screen-free break to unwind and relax after a busy day.',
+        image: '/images/whychoosecoloringpage/image-3.png',
+        buttonText: 'Download Now - Free',
+        buttonLink: '#download-section'
+      },
+      {
+        id: 'bonding-activity',
+        title: 'A Fun Bonding Activity',
+        description: 'Create special moments with family, friends, or students through shared coloring activities—perfect for bonding and nurturing creativity.',
+        image: '/images/whychoosecoloringpage/image-4.png',
+        buttonText: 'Download Now - Free',
+        buttonLink: '#download-section'
+      },
+      {
+        id: 'absolutely-free',
+        title: 'Absolutely Free to Use',
+        description: 'Download and print your favorite coloring pages instantly for free—no signup required, no hidden costs. Fun, easy, and stress-free!',
+        image: '/images/whychoosecoloringpage/image-5.png',
+        buttonText: 'Download Now - Free',
+        buttonLink: '#download-section'
+      }
+    ]
+  };
+
+  // ColoringPagesFor data
+  const coloringPagesForData = {
+    title: "Who Are These Free Coloring Pages For?",
+    audiences: [
+      {
+        id: 'preschool',
+        title: 'Preschool & Elementary Children',
+        description: 'Designed specifically for little hands, our pages feature bold outlines and fun themes that kids love. These free, printable coloring sheets are a fantastic tool for boosting creativity, improving concentration, and developing essential fine motor skills, making learning a joyful adventure.',
+        image: '/images/coloringpagefor/image-1.png'
+      },
+      {
+        id: 'teachers',
+        title: 'Teachers & Homeschoolers',
+        description: 'Supplement your lesson plans with our free educational resources. These printable coloring pages are perfect for classroom activities, homeschool art sessions, or quiet take-home assignments. They are a simple, no-cost way to keep students engaged, reinforce learning, and provide a creative outlet during the school day.',
+        image: '/images/coloringpagefor/image-2.png'
+      },
+      {
+        id: 'parents',
+        title: 'Parents & Caregivers',
+        description: 'Searching for a simple and fun screen-free activity? Our coloring pages are the perfect solution for rainy days, quiet afternoons, or a relaxing family evening. It\'s a wonderful way to bond with your children, spark their imagination, and create beautiful keepsakes together without any prep work.',
+        image: '/images/coloringpagefor/image-3.png'
+      }
+    ]
+  };
+
+  // HowToCreate data
+  const howToCreateData: HowToCreateData = {
+    title: "How to Get Started with Your Free Coloring Pages?",
+    subtitle: "Getting your printable pages is easy and completely free. Just follow these simple steps:",
+    image: "/images/categorieshowtocreate/image-1.png",
+    steps: [
+      {
+        id: 'download',
+        number: '01',
+        title: 'Download Your Collection',
+        description: 'Instantly save the entire PDF collection with a single click. No registration required.'
+      },
+      {
+        id: 'print',
+        number: '02',
+        title: 'Print from Home',
+        description: 'Our pages are optimized for standard paper. Easily print your favorite designs on any home printer.'
+      },
+      {
+        id: 'color',
+        number: '03',
+        title: 'Grab Your Colors',
+        description: 'Grab your crayons, markers, or colored pencils. These designs are perfect for any coloring tool, so get creative!'
+      },
+      {
+        id: 'share',
+        number: '04',
+        title: 'Repeat & Share the Fun',
+        description: 'Print your favorite designs as many times as you want. Feel free to share this free coloring fun with friends, family, and students.'
+      }
+    ]
+  };
+
+  // UserSaying data
+  const categoriesTestimonials: TestimonialItem[] = [
+    {
+      id: 'testimonial-1',
+      name: 'Marty Behr',
+      date: 'Oct 20, 2024',
+      avatar: '/images/categoriesusersaying/avatar-1.png',
+      content: '"I downloaded the free coloring pages for my 5-year-old daughter, and she hasn\'t stopped coloring since! The designs are adorable and easy for her to enjoy on her own."',
+      image: '/images/categoriesusersaying/image-1.png'
+    },
+    {
+      id: 'testimonial-2',
+      name: 'Judith Madrid',
+      date: 'Mar 18, 2025',
+      avatar: '/images/categoriesusersaying/avatar-2.png',
+      content: '"As a preschool teacher, I\'m always hunting for quality printables. These free coloring pages are a lifesaver—perfect for morning activities and quiet time. The kids love the variety, and I love how quickly I can print them out!"',
+      image: '/images/categoriesusersaying/image-2.png'
+    },
+    {
+      id: 'testimonial-3',
+      name: 'Ruth Cox',
+      date: 'Aug 15, 2024',
+      avatar: '/images/categoriesusersaying/avatar-3.png',
+      content: '"I never thought I\'d enjoy coloring as an adult, but the mandala pages are so calming! I print a few each week for my own relaxation. It\'s a perfect way to unwind after a long day."',
+      image: '/images/categoriesusersaying/image-3.png'
+    },
+    {
+      id: 'testimonial-4',
+      name: 'Irving Dunne',
+      date: 'May 12, 2024',
+      avatar: '/images/categoriesusersaying/avatar-4.png',
+      content: '"I was searching for a last-minute printable for my son\'s playdate, and this collection was perfect. Easy to download, and the kids were entertained for hours. I\'ll definitely be coming back for more!"',
+      image: '/images/categoriesusersaying/image-4.png'
+    },
+    {
+      id: 'testimonial-5',
+      name: 'Megan Dubreuil',
+      date: 'Dec 10, 2024',
+      avatar: '/images/categoriesusersaying/avatar-5.png',
+      content: '"We used the Christmas-themed free coloring pages for our family holiday gathering. Even the adults joined in—it was such a fun bonding moment! Everyone, young and old, enjoyed it, and it added a special touch to our celebrations."',
+      image: '/images/categoriesusersaying/image-5.png'
+    },
+    {
+      id: 'testimonial-6',
+      name: 'Valarie Jones',
+      date: 'Sep 5, 2024',
+      avatar: '/images/categoriesusersaying/avatar-6.png',
+      content: '"The variety is amazing! From animals to holiday themes, these free coloring pages have something for every child in my classroom. The kids really love the wide selection, and it\'s so easy to print them out as needed."',
+      image: '/images/categoriesusersaying/image-6.png'
+    },
+    {
+      id: 'testimonial-7',
+      name: 'Brady Briseno',
+      date: 'Mar 22, 2025',
+      avatar: '/images/categoriesusersaying/avatar-7.png',
+      content: '"My son loves dinosaurs, so these free coloring pages have been a huge hit! He colors them every day, and it\'s a great way to keep him entertained during quiet time. He can even recognize some of the dinosaurs by name!"',
+      image: '/images/categoriesusersaying/image-7.png'
+    },
+    {
+      id: 'testimonial-8',
+      name: 'Evelyn Phipps',
+      date: 'Jun 18, 2025',
+      avatar: '/images/categoriesusersaying/avatar-8.png',
+      content: '"As a mom of twins, I\'m always looking for activities that keep them engaged. These coloring pages are perfect—easy to print, and they love all the fun designs! It\'s nice to have something simple to keep them busy."',
+      image: '/images/categoriesusersaying/image-8.png'
+    },
+    {
+      id: 'testimonial-9',
+      name: 'Mary Martin',
+      date: 'Sep 14, 2024',
+      avatar: '/images/categoriesusersaying/avatar-9.png',
+      content: '"These animal-themed coloring pages are a huge hit in our house! My daughter loves the variety and can\'t wait to color a new one every day. It\'s such a wonderful way to encourage her creativity!"',
+      image: '/images/categoriesusersaying/image-9.png'
+    }
+  ];
+
+  // GenerateFAQ data
+  const categoriesFAQData: FAQData[] = [
+    {
+      question: "What ages are the free coloring pages suitable for?",
+      answer: "Our free printable coloring pages are designed for a wide range of ages. For younger children, such as toddlers and preschoolers, we offer simple and large designs that help with fine motor skills. Older kids and adults can enjoy more intricate patterns like mandalas, animals, and holiday-themed designs. Our collection includes something for everyone, ensuring all ages can find engaging coloring pages for kids or adults to enjoy!"
+    },
+    {
+      question: "Do I need to sign up to download the pages?",
+      answer: "No registration required! Our free coloring pages can be downloaded instantly without creating an account. Simply browse our collection, click on the pages you like, and start printing immediately. We believe in keeping things simple and accessible for everyone."
+    },
+    {
+      question: "Are the coloring pages printable?",
+      answer: "Absolutely! All our coloring pages are specifically designed for printing at home. They're optimized for standard 8.5x11 inch paper and work perfectly with any home printer. The high-quality line art ensures crisp, clear prints every time."
+    },
+    {
+      question: "Can I use these for classroom or group activities?",
+      answer: "Yes! Our free coloring pages are perfect for educational settings. Teachers, homeschoolers, and group leaders are welcome to print and use these pages for classroom activities, lesson plans, quiet time, or group projects. There's no limit on how many you can print for educational purposes."
+    },
+    {
+      question: "How often do you update the collection?",
+      answer: "We regularly add new coloring pages to our collection! New designs are added weekly, including seasonal themes, trending characters, and user-requested designs. Follow us or check back frequently to discover the latest additions to our free library."
+    },
+    {
+      question: "Can I share these coloring pages with my friends or family?",
+      answer: "Of course! We encourage sharing the joy of coloring. You can share our coloring pages with friends, family members, or anyone who might enjoy them. You can also share the link to our website so others can access the full collection of free printable pages."
+    },
+    {
+      question: "Are these coloring pages suitable for digital coloring?",
+      answer: "Yes! While our pages are designed primarily for printing and traditional coloring, they work great for digital coloring too. You can download the images and use them with tablets, coloring apps, or digital art software. The clean line art translates perfectly to digital formats."
+    },
+    {
+      question: "Can I suggest a theme or request a specific design?",
+      answer: "We love hearing from our users! While we can't guarantee every request will be fulfilled, we do consider popular suggestions for future additions. Feel free to contact us with your ideas – many of our most popular designs came from user suggestions."
+    },
+    {
+      question: "Are there any copyright restrictions on the coloring pages?",
+      answer: "Our original coloring pages are free for personal, educational, and non-commercial use. You can print them for home, school, or personal enjoyment. However, please don't redistribute them commercially or claim them as your own work. If you're unsure about a specific use case, feel free to contact us."
+    },
+    {
+      question: "What if I encounter any problems downloading or printing the pages?",
+      answer: "If you experience any technical issues, first try refreshing your browser or clearing your cache. Make sure your printer settings are set to 'Fit to Page' or '100% scale' for best results. If problems persist, please contact our support team – we're here to help ensure you have a smooth coloring experience!"
+    }
+  ];
+
+  // TryNow data
+  const tryNowData = {
+    title: "Ready to Start Coloring?",
+    description: "Whether you're a parent looking for an engaging activity for your child, a teacher seeking fun classroom resources, or an adult who enjoys the relaxing art of coloring, our free printable pages are perfect for you. With hundreds of designs and new ones added regularly, the creative fun never ends!"
+  };
   
   // 状态管理
   const [categories, setCategories] = useState<Category[]>([]);
@@ -162,6 +400,39 @@ const CategoriesPage: React.FC = () => {
           />
         </div>
       </div>
+      
+      {/* Why Choose Coloring Pages Section */}
+      <div className="w-full bg-white py-16 lg:pt-32">
+        <WhyChooseColoringPages data={whyChooseColoringPagesData} />
+      </div>
+      
+      {/* Coloring Pages For Section */}
+      <div className="w-full bg-white py-16 lg:py-16">
+        <ColoringPagesFor data={coloringPagesForData} />
+      </div>
+      
+      {/* How To Create Section */}
+      <div className="w-full bg-white py-16 lg:py-16">
+        <HowToCreate data={howToCreateData} />
+      </div>
+      
+      {/* User Saying Section */}
+      <div className="w-full bg-white py-16 lg:py-16">
+        <UserSaying testimonials={categoriesTestimonials} />
+      </div>
+      
+      {/* FAQ Section */}
+      <div className="w-full bg-white py-16 lg:py-16">
+        <GenerateFAQ faqData={categoriesFAQData} />
+      </div>
+      
+      {/* TryNow Section */}
+      <TryNow 
+        title="Ready to Start Coloring?"
+        description="Whether you're a parent looking for a fun activity for your kids, a teacher needing classroom resources, or an adult who enjoys the therapeutic benefits of coloring, our collection is here for you. Start exploring today and bring joy, calm, and creativity into your day!"
+        buttonText="Try Now"
+        buttonLink="/generate"
+      />
     </Layout>
   );
 };

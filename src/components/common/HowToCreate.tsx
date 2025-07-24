@@ -29,7 +29,7 @@ const HowToCreate: React.FC<HowToCreateProps> = ({
 }) => {
 
   return (
-    <div className={`w-full max-w-[1170px] mx-auto px-4 py-16 ${className}`}>
+    <div className={`w-full max-w-[1170px] mx-auto px-4 ${className}`}>
       {/* Header Section */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616] capitalize leading-tight mb-8 max-w-[1000px] mx-auto">
@@ -84,7 +84,7 @@ const HowToCreate: React.FC<HowToCreateProps> = ({
               </div>
 
               {/* Step Content */}
-              <div className="flex-1 pt-2">
+              <div className="flex-1 mt-[-4px]">
                 <h3 className="text-xl font-medium text-[#161616] mb-4">
                   {step.title}
                 </h3>

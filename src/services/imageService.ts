@@ -59,6 +59,7 @@ export interface SearchParams {
   type?: 'text2image' | 'image2image' | 'image2coloring';
   userId?: string;
   isPublic?: boolean;
+  isOnline?: boolean;
   currentPage?: number;
   pageSize?: number;
   isRelated?: boolean;
@@ -107,6 +108,7 @@ export class ImageService {
       type,
       userId,
       isPublic,
+      isOnline,
       currentPage,
       pageSize,
       isRelated = false,
@@ -126,6 +128,7 @@ export class ImageService {
       if (type) searchParams.append('type', type);
       if (userId) searchParams.append('userId', userId);
       if (isPublic !== undefined) searchParams.append('isPublic', isPublic.toString());
+      if (isOnline !== undefined) searchParams.append('isOnline', isOnline.toString());
       if (isRelated) searchParams.append('isRelated', isRelated.toString());
       
       if (currentPage) searchParams.append('currentPage', currentPage.toString());

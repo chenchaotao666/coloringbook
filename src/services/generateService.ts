@@ -169,6 +169,8 @@ class GenerateService {
       const result = await ImageService.searchImages({
         type: searchType,
         isPublic: true,
+        isOnline: true,
+        currentPage: 1,
         pageSize: pageSize
       });
       

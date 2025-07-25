@@ -9,6 +9,7 @@ import DeleteImageConfirmDialog from '../components/ui/DeleteImageConfirmDialog'
 import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
 import ColoringPageTool, { ColoringPageToolData } from '../components/common/ColoringPageTool';
+import GenerateExample from '../components/common/GenerateExample';
 import WhyChoose, { WhyChooseData } from '../components/common/WhyChoose';
 import CanCreate, { CanCreateData } from '../components/common/CanCreate';
 import HowToCreate, { HowToCreateData } from '../components/common/HowToCreate';
@@ -20,13 +21,11 @@ import Footer from '../components/layout/Footer';
 import ColoringPageConversion, { ColoringPageConversionData } from '../components/common/ColoringPageConversion';
 
 import SEOHead from '../components/common/SEOHead';
-import { useAsyncTranslation } from '../contexts/LanguageContext';
+import { useAsyncTranslation, useLanguage } from '../contexts/LanguageContext';
 import {
   getCenterImageSize,
-  getImageSize,
   getImageContainerSize,
   getGeneratingContainerSize,
-  EXAMPLE_IMAGE_DIMENSIONS,
 } from '../utils/imageUtils';
 const addImageIcon = '/images/add-image.svg';
 const refreshIcon = '/images/refresh.svg';
@@ -50,6 +49,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   // 获取翻译函数
   const { t } = useAsyncTranslation('generate');
   const { t: tCommon } = useAsyncTranslation('common');
+  const { language } = useLanguage();
   
   // 获取导航函数
   const navigate = useNavigate();
@@ -107,10 +107,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setSelectedImage,
     setUploadedImageWithDimensions,
     generateImages,
-    recreateExample,
     downloadImage,
     clearError,
-    refreshExamples,
     refreshStyleSuggestions,
     deleteImage,
   } = useGeneratePage(initialTab, refreshUser);
@@ -714,7 +712,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     if (selectedImageData) {
       // 回填 prompt（仅对 text to image 有效，且没有URL参数时才回填）
       if (selectedTab === 'text' && !hasPromptParam) {
-        const promptValue = getLocalizedText(selectedImageData.prompt, 'zh');
+        const promptValue = getLocalizedText(selectedImageData.prompt, language);
         setPrompt(promptValue);
       }
       
@@ -822,9 +820,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   };
 
-  const handleRecreateExample = async (exampleId: string) => {
-    await recreateExample(exampleId);
-  };
 
   const handleStyleSuggestionClick = (styleContent: string) => {
     setPrompt(styleContent);
@@ -1022,88 +1017,32 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               // 只有在初始数据加载完成后才决定是否显示 example 图片
               // Text to Image 模式：用户没有 text to image 历史时显示 example
               // Image to Image 模式：用户没有 image to image 历史时显示 example
-              isInitialDataLoaded && ((mode === 'text' && !hasTextToImageHistory) || (mode === 'image' && !hasImageToImageHistory)) && (
-                <div>
-                  {/* 固定的文字部分 - 只在显示Example时显示 */}
-                  <div className="text-center lg:pb-8">
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#161616] capitalize px-4">{config[mode].title}</h1>
-                    <p className="text-[#6B7280] text-sm mt-2 max-w-[600px] mx-auto">
-                      {config[mode].description}
-                    </p>
-                  </div>
-
-                  {/* Example 标题栏 */}
-                  <div className="w-full max-w-[795px] mx-auto flex justify-between items-center mb-3">
-                    <div className="text-[#6B7280] font-medium text-sm">{t('examples.title', 'Example')}</div>
-                    <div className="flex items-center text-[#6B7280] text-sm cursor-pointer hover:bg-gray-100 transition-colors duration-200 px-2 py-1 rounded-md" onClick={refreshExamples}>
-                      {t('examples.change', 'Change')}
-                      <img src={refreshIcon} alt="Change" className="w-4 h-4 ml-1" />
-                    </div>
-                  </div>
-
-                  {/* Example Images */}
-                  <div className="flex flex-row justify-center gap-2 sm:gap-6">
-                    {currentExampleImages.length > 0 ? currentExampleImages.slice(0, window.innerWidth < 640 ? 2 : currentExampleImages.length).map((example) => {
-                      // 使用 getImageSize 替代 getExampleImageSize
-                      // 移动端和桌面端使用不同的尺寸限制
-                      const imageUrl = mode === 'image' ? example.colorUrl : example.defaultUrl;
-                      const isMobile = window.innerWidth < 640;
-                      const maxWidth = isMobile ? 215 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
-                      const maxHeight = isMobile ? 240 : EXAMPLE_IMAGE_DIMENSIONS.FIXED_WIDTH;
-                      
-                      // 设置合理的最小尺寸
-                      const minWidth = isMobile ? 100 : 150;
-                      const minHeight = isMobile ? 120 : 150;
-                      
-                      const imageSize = getImageSize(
-                        example.id, 
-                        imageUrl, 
-                        maxWidth, 
-                        maxHeight,
-                        minWidth, 
-                        minHeight, 
-                        dynamicImageDimensions, 
-                        setDynamicImageDimensions
-                      );
-                      
-                      return (
-                        <div
-                          key={example.id}
-                          className={`relative bg-white rounded-2xl border border-[#EDEEF0]`}
-                          style={{ width: imageSize.width, height: imageSize.height }}
-                        >
-                          <img
-                            src={mode === 'image' ? example.colorUrl : example.defaultUrl}
-                            alt={getLocalizedText(example.description, 'zh') || `Example ${example.id}`}
-                            className={`w-full h-full object-cover rounded-2xl`}
-                          />
-                          <button
-                            onClick={() => handleRecreateExample(example.id)}
-                            className="absolute top-3 left-3 inline-flex items-center justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-[#FF9D00] to-[#FF5907] text-white hover:from-[#FFB84D] hover:to-[#FF7A47] transition-all duration-300 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer"
-                          >
-                            {t('examples.recreate', 'Recreate')}
-                          </button>
-                        </div>
-                      );
-                    }) : (
-                      // 空状态 - 没有示例图片
-                      <div className="w-full flex flex-col items-center justify-center lg:py-16">
-                        <div className="text-center">
-                          <div className="mb-6">
-                            <img 
-                              src="/images/no-result.svg" 
-                              alt="No example images" 
-                              className="w-[305px] h-[200px] mx-auto"
-                            />
-                          </div>
-                          <p className="text-[#6B7280] text-base font-normal leading-6">
-                            {t('examples.noExamples', 'No example images.')}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+              // Text mode - 使用 GenerateExample 组件
+              isInitialDataLoaded && mode === 'text' && !hasTextToImageHistory && (
+                <GenerateExample 
+                  type="text"
+                  title={config[mode].title}
+                  description={config[mode].description}
+                  images={currentExampleImages.map(example => ({
+                    url: example.defaultUrl,
+                    prompt: getLocalizedText(example.description, language) || `Example ${example.id}`
+                  }))}
+                />
+              )
+            ) || (
+              // Image mode - 使用 GenerateExample 组件
+              isInitialDataLoaded && mode === 'image' && !hasImageToImageHistory && (
+                <GenerateExample 
+                  type="image"
+                  title={config[mode].title}
+                  description={config[mode].description}
+                  images={currentExampleImages.map(example => ({
+                    url: example.defaultUrl,
+                    colorUrl: example.colorUrl,
+                    coloringUrl: example.coloringUrl,
+                    prompt: getLocalizedText(example.description, language) || `Example ${example.id}`
+                  }))}
+                />
               )
             )}
           </div>
@@ -1139,7 +1078,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                     >
                       <img
                         src={image.defaultUrl}
-                        alt={getLocalizedText(image.description, 'zh') || `Generated ${index + 1}`}
+                        alt={getLocalizedText(image.description, language) || `Generated ${index + 1}`}
                         className="w-full h-full rounded-md object-cover"
                       />
                     </div>
@@ -1526,7 +1465,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 >
                   <img
                     src={image.defaultUrl}
-                    alt={getLocalizedText(image.description, 'zh') || `Generated ${index + 1}`}
+                    alt={getLocalizedText(image.description, language) || `Generated ${index + 1}`}
                     className="w-full h-full rounded-lg object-cover"
                   />
                 </div>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56" fill="none">
+  <!-- Orange gradient circle background -->
+  <circle cx="28" cy="28" r="28" fill="url(#paint0_linear_3216_3743)"/>
+  
+  <!-- White arrow/share icon centered -->
+  <g transform="translate(14, 14)">
+    <path d="M14.7188 1.25577C15.1546 1.07523 15.6566 1.17522 15.9902 1.5087L26.4902 12.0087C26.713 12.2315 26.8365 12.5354 26.832 12.8505C26.8274 13.1654 26.6957 13.4652 26.4668 13.6815L15.9668 23.5976C15.6282 23.9174 15.1318 24.0055 14.7041 23.8212C14.2764 23.6368 13.999 23.2157 13.999 22.7499V17.5702C10.9734 17.9306 8.72529 19.6575 7.15137 21.4735C6.26937 22.4913 5.62074 23.5138 5.19336 24.2831C4.98041 24.6664 4.82411 24.9837 4.72266 25.2011C4.67207 25.3095 4.63564 25.3931 4.6123 25.4472C4.60064 25.4742 4.59181 25.4949 4.58691 25.5067C4.58468 25.5121 4.58277 25.5157 4.58203 25.5175C4.37418 26.0363 3.82721 26.335 3.27832 26.2294C2.72936 26.1235 2.33212 25.643 2.33203 25.0839C2.33203 20.0545 3.06412 15.6964 5.06934 12.5683C6.96335 9.61392 9.90315 7.89149 13.999 7.621V2.33389C13.999 1.86216 14.283 1.43644 14.7188 1.25577Z" fill="url(#paint0_linear_3216_3744)"/>
+  </g>
+  
+  <defs>
+    <!-- Orange gradient for background circle -->
+    <linearGradient id="paint0_linear_3216_3743" x1="0" y1="28" x2="56" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF9D00"/>
+      <stop offset="1" stop-color="#FF5907"/>
+    </linearGradient>
+    <!-- White gradient for arrow icon -->
+    <linearGradient id="paint0_linear_3216_3744" x1="23.3325" y1="6.65834" x2="3.5" y2="24.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+</svg>

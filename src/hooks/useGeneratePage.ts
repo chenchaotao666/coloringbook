@@ -729,8 +729,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
             textExampleCache.current.isLoading = true;
             setState(prev => ({ ...prev, isLoadingTextExamples: true, error: null }));
             
-            const examples = await GenerateServiceInstance.getExampleImages('text', 21);
-            const randomImages = getRandomImages(examples);
+            const examples = await GenerateServiceInstance.getExampleImages('text', 6);
             
             // 更新缓存
             textExampleCache.current = {
@@ -741,7 +740,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
             
             setState(prev => ({ 
               ...prev, 
-              textExampleImages: randomImages, 
+              textExampleImages: examples, 
               isLoadingTextExamples: false 
             }));
           } catch (error) {
@@ -782,8 +781,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
             imageExampleCache.current.isLoading = true;
             setState(prev => ({ ...prev, isLoadingImageExamples: true, error: null }));
             
-            const examples = await GenerateServiceInstance.getExampleImages('image', 21);
-            const randomImages = getRandomImages(examples);
+            const examples = await GenerateServiceInstance.getExampleImages('image', 6);
             
             // 更新缓存
             imageExampleCache.current = {
@@ -794,7 +792,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
             
             setState(prev => ({ 
               ...prev, 
-              imageExampleImages: randomImages, 
+              imageExampleImages: examples, 
               isLoadingImageExamples: false 
             }));
           } catch (error) {

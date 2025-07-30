@@ -33,7 +33,7 @@ const Hero: React.FC<HeroProps> = ({ imageCount }) => {
           {/* 左侧内容区域 */}
           <div className="w-full lg:w-auto flex flex-col items-center lg:items-start gap-6 sm:gap-9 min-w-[800px]">
             <div className="flex flex-col gap-4 sm:gap-6 text-center lg:text-left">
-              <h1 className="mt-6 sm:mt-0 text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[64px] font-bold capitalize leading-tight">
+              <h1 className="mt-6 sm:mt-0 text-3xl sm:text-4xl md:text-5xl text-[56px] font-bold capitalize leading-tight">
                 <span className="text-[#161616]">{t('hero.aiTitle', 'AI ')} </span>
                 <span className="text-[#6200E2]">{t('hero.coloringPages', 'Coloring Pages')}</span>
                 <span className="text-[#FF9C01]"> </span><br />

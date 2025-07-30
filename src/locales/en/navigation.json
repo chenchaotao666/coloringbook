@@ -17,6 +17,9 @@
     "teenColoringPages": "Teen Coloring Pages",
     "adultColoringPages": "Adult Coloring Pages"
   },
+  "categories": {
+    "popularColoringPages": "Popular Coloring Pages"
+  },
   "breadcrumb": {
     "home": "Home",
     "categories": "Categories",

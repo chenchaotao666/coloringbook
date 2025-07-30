@@ -13,6 +13,9 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
 import CreationsPage from './pages/CreationsPage';
 import TestAuthPage from './pages/TestAuthPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import RefundPolicyPage from './pages/RefundPolicyPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
@@ -60,6 +63,9 @@ function AppContent() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/creations" element={<CreationsPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
         <Route path="/test-auth" element={<TestAuthPage />} />
 
         {/* 中文路由（/zh 前缀） */}
@@ -78,6 +84,9 @@ function AppContent() {
         <Route path="/zh/reset-password" element={<ResetPasswordPage />} />
         <Route path="/zh/profile" element={<ProfilePage />} />
         <Route path="/zh/creations" element={<CreationsPage />} />
+        <Route path="/zh/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/zh/terms" element={<TermsPage />} />
+        <Route path="/zh/refund-policy" element={<RefundPolicyPage />} />
         <Route path="/zh/test-auth" element={<TestAuthPage />} />
 
         {/* 日文路由（/ja 前缀） */}
@@ -96,6 +105,9 @@ function AppContent() {
         <Route path="/ja/reset-password" element={<ResetPasswordPage />} />
         <Route path="/ja/profile" element={<ProfilePage />} />
         <Route path="/ja/creations" element={<CreationsPage />} />
+        <Route path="/ja/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/ja/terms" element={<TermsPage />} />
+        <Route path="/ja/refund-policy" element={<RefundPolicyPage />} />
         <Route path="/ja/test-auth" element={<TestAuthPage />} />
       </Routes>
       </LanguageSyncProvider>

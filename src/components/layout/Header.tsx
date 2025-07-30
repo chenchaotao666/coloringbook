@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { useLanguage, Language } from '../../contexts/LanguageContext';
+import { useLanguage, Language, useAsyncTranslation } from '../../contexts/LanguageContext';
 import { generateLanguagePath } from '../common/LanguageRouter';
+import { useCategories } from '../../hooks/useCategories';
+import { Category } from '../../services/categoriesService';
+import { getLocalizedText } from '../../utils/textUtils';
 
 // 导入图标 - 使用正确的 public 路径
 const logo = '/images/logo.svg';
@@ -19,6 +22,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const { t: navT } = useAsyncTranslation('navigation');
+  const { categories, loading: categoriesLoading } = useCategories();
   // const location = useLocation(); // 暂时不需要
 
   // 生成带语言前缀的链接
@@ -180,45 +185,25 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
     setIsMobileMenuOpen(false);
   };
 
-  // 分类菜单数据
-  const categoriesMenuData = [
-    {
-      title: t('footer.sections.disney', 'Disney'),
-      links: [
-        { label: t('footer.links.mickeyMouse', 'Mickey Mouse'), url: '/category/mickey-mouse' },
-        { label: t('footer.links.minnieMouse', 'Minnie Mouse'), url: '/category/minnie-mouse' },
-        { label: t('footer.links.donaldDuck', 'Donald Duck'), url: '/category/donald-duck' },
-        { label: t('footer.links.daisyDuck', 'Daisy Duck'), url: '/category/daisy-duck' },
-        { label: t('footer.links.goofy', 'Goofy'), url: '/category/goofy' },
-        { label: t('footer.links.snowWhite', 'Snow White'), url: '/category/snow-white' },
-        { label: t('footer.links.cinderella', 'Cinderella'), url: '/category/cinderella' },
-      ],
-    },
-    {
-      title: t('footer.sections.star', 'Star'),
-      links: [
-        { label: t('footer.links.taylorSwift', 'Taylor Swift'), url: '/category/taylor-swift' },
-        { label: t('footer.links.billieEilish', 'Billie Eilish'), url: '/category/billie-eilish' },
-        { label: t('footer.links.scarlettJohansson', 'Scarlett Johansson'), url: '/category/scarlett-johansson' },
-        { label: t('footer.links.galGadot', 'Gal Gadot'), url: '/category/gal-gadot' },
-        { label: t('footer.links.bradPitt', 'Brad Pitt'), url: '/category/brad-pitt' },
-        { label: t('footer.links.zendaya', 'Zendaya'), url: '/category/zendaya' },
-        { label: t('footer.links.timotheeChalamet', 'Timothée Chalamet'), url: '/category/timothee-chalamet' },
-      ],
-    },
-    {
-      title: t('footer.sections.animal', 'Animal'),
-      links: [
-        { label: t('footer.links.dog', 'Dog'), url: '/category/dog' },
-        { label: t('footer.links.cat', 'Cat'), url: '/category/cat' },
-        { label: t('footer.links.tiger', 'Tiger'), url: '/category/tiger' },
-        { label: t('footer.links.butterfly', 'Butterfly'), url: '/category/butterfly' },
-        { label: t('footer.links.bird', 'Bird'), url: '/category/bird' },
-        { label: t('footer.links.giraffe', 'Giraffe'), url: '/category/giraffe' },
-        { label: t('footer.links.horse', 'Horse'), url: '/category/horse' },
-      ],
-    },
-  ];
+  // 将API数据转换为菜单显示格式
+  const getCategoriesMenuData = () => {
+    if (categoriesLoading || categories.length === 0) {
+      return { title: '', links: [] };
+    }
+
+    // 取前21个分类（3列 × 7个）
+    const displayCategories = categories.slice(0, 21);
+    
+    return {
+      title: navT('categories.popularColoringPages', 'Popular Coloring Pages'),
+      links: displayCategories.map((category: Category) => ({
+        label: getLocalizedText(category.displayName, language) || category.name,
+        url: `/categories/${category.categoryId}`
+      }))
+    };
+  };
+
+  const categoriesMenuData = getCategoriesMenuData();
 
   const bgClass = backgroundColor === 'white' ? 'bg-white' : 'bg-transparent';
 
@@ -255,7 +240,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
         {/* 桌面端导航菜单 */}
         <div className="hidden lg:flex relative z-10 max-h-6 justify-start items-start gap-10 flex-wrap">
           <Link to={createLocalizedLink("/")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
-            {t('navigation.menu.home')}
+            {navT('menu.home', 'Home')}
           </Link>
           
           {/* 免费涂色页 - 带下拉菜单 */}
@@ -269,7 +254,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               to={createLocalizedLink("/categories")} 
               className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 flex items-center gap-1 group"
             >
-              {t('navigation.menu.coloringPagesFree')}
+              {navT('menu.coloringPagesFree', 'Coloring Pages Free')}
               <svg 
                 className="w-5 h-5 transition-colors duration-200 group-hover:text-[#FF5C07]" 
                 fill="currentColor" 
@@ -285,26 +270,38 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               style={{boxShadow: '0px 0px 20px 0px rgba(0, 0, 0, 0.10)'}}
               >
                 <div className="p-5">
+                  <p className="mb-4 text-base font-semibold text-black">
+                    {categoriesMenuData.title}
+                  </p>
                   <div className="grid grid-cols-3 gap-6">
-                    {categoriesMenuData.map((section, index) => (
-                      <div key={index}>
-                        <p className="mb-4 text-base font-semibold text-black">
-                          {section.title}
-                        </p>
-                        <ul className="space-y-2">
-                          {section.links.map((link, linkIndex) => (
-                            <li key={linkIndex}>
-                              <Link 
-                                to={createLocalizedLink(link.url)} 
-                                className="block py-2 px-3 -mx-3 text-gray-500 hover:text-orange-600 hover:bg-gray-50 transition-colors duration-200 text-sm rounded-md"
-                              >
-                                {link.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                    {(() => {
+                      // 将链接分成3列
+                      const links = categoriesMenuData.links;
+                      const itemsPerColumn = Math.ceil(links.length / 3);
+                      const columns = [];
+                      
+                      for (let i = 0; i < 3; i++) {
+                        const columnLinks = links.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn);
+                        columns.push(
+                          <div key={i}>
+                            <ul className="space-y-2">
+                              {columnLinks.map((link, linkIndex) => (
+                                <li key={linkIndex}>
+                                  <Link 
+                                    to={createLocalizedLink(link.url)} 
+                                    className="block py-2 px-3 -mx-3 text-gray-500 hover:text-orange-600 hover:bg-gray-50 transition-colors duration-200 text-sm rounded-md"
+                                  >
+                                    {link.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      }
+                      
+                      return columns;
+                    })()}
                   </div>
                 </div>
               </div>
@@ -312,13 +309,13 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           </div>
 
           <Link to={createLocalizedLink("/text-coloring-page")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
-            {t('navigation.menu.textColoringPage')}
+            {navT('menu.textColoringPage', 'Text Coloring Page')}
           </Link>
           <Link to={createLocalizedLink("/image-coloring-page")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
-            {t('navigation.menu.imageColoringPage')}
+            {navT('menu.imageColoringPage', 'Image Coloring Page')}
           </Link>
           <Link to={createLocalizedLink("/price")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
-            {t('navigation.menu.pricing')}
+            {navT('menu.pricing', 'Pricing')}
           </Link>
         </div>
 
@@ -332,9 +329,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
             >
               <img src={intlIcon} alt="Language" className="w-5 h-5 flex-shrink-0" />
               <span className="text-[#161616] text-base font-medium leading-6 whitespace-nowrap flex-shrink-0">
-                {language === 'zh' ? t('navigation.language.chinese') : 
-                 language === 'ja' ? t('navigation.language.japanese') : 
-                 t('navigation.language.english')}
+                {language === 'zh' ? navT('language.chinese', '简体中文') : 
+                 language === 'ja' ? navT('language.japanese', '日本語') : 
+                 navT('language.english', 'English')}
               </span>
               <svg 
                 className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${isDesktopLanguageDropdownOpen ? 'rotate-180' : ''}`} 
@@ -356,19 +353,19 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   className="px-4 py-1.5 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('en')}
                 >
-                  {t('navigation.language.english')}
+                  {navT('language.english', 'English')}
                 </div>
                 <div
                   className="px-4 py-1.5 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('zh')}
                 >
-                  {t('navigation.language.chinese')}
+                  {navT('language.chinese', '简体中文')}
                 </div>
                 {/* <div
                   className="px-4 py-1.5 text-[#161616] text-base font-medium hover:bg-gray-100 cursor-pointer transition-colors duration-200 whitespace-nowrap"
                   onClick={() => handleLanguageSelect('ja')}
                 >
-                  {t('navigation.language.japanese')}
+                  {navT('language.japanese', '日本語')}
                 </div> */}
               </div>
             )}
@@ -431,7 +428,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span>{t('navigation.menu.profile')}</span>
+                      <span>{navT('menu.profile', 'Profile')}</span>
                     </Link>
                     
                     <Link
@@ -442,7 +439,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span>{t('navigation.menu.myCreations')}</span>
+                      <span>{navT('menu.myCreations', 'My Creations')}</span>
                     </Link>
                     
                     {/* <Link
@@ -464,7 +461,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>{t('navigation.menu.logout')}</span>
+                        <span>{navT('menu.logout', 'Logout')}</span>
                       </button>
                     </div>
                   </div>
@@ -477,7 +474,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
               to={createLocalizedLink("/login")}
               className="inline-flex items-center px-4 py-1 border border-black text-sm font-medium rounded-md text-black hover:bg-gray-50 transition-colors duration-200"
             >
-              {t('navigation.menu.login')}
+              {navT('menu.login', 'Login')}
             </Link>
           )}
         </div>
@@ -578,9 +575,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   }}
                 >
                   <span className="whitespace-nowrap">
-                    {language === 'zh' ? t('navigation.language.chinese') : 
-                     language === 'ja' ? t('navigation.language.japanese') : 
-                     t('navigation.language.english')}
+                    {language === 'zh' ? navT('language.chinese', '简体中文') : 
+                     language === 'ja' ? navT('language.japanese', '日本語') : 
+                     navT('language.english', 'English')}
                   </span>
                   <svg 
                     className={`w-5 h-5 transition-all duration-200 ${isMobileLanguageDropdownOpen ? 'rotate-180' : ''}`} 
@@ -607,7 +604,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       }}
                       className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
                     >
-                      {t('navigation.language.chinese')} {language === 'zh' ? '✓' : ''}
+                      {navT('language.chinese', '简体中文')} {language === 'zh' ? '✓' : ''}
                     </button>
                     <button
                       onMouseDown={(e) => {
@@ -618,7 +615,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       }}
                       className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
                     >
-                      {t('navigation.language.english')} {language === 'en' ? '✓' : ''}
+                      {navT('language.english', 'English')} {language === 'en' ? '✓' : ''}
                     </button>
                     <button
                       onMouseDown={(e) => {
@@ -629,7 +626,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                       }}
                       className="block w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
                     >
-                      {t('navigation.language.japanese')} {language === 'ja' ? '✓' : ''}
+                      {navT('language.japanese', '日本語')} {language === 'ja' ? '✓' : ''}
                     </button>
                   </div>
                 )}
@@ -643,7 +640,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('navigation.menu.home')}
+                {navT('menu.home', 'Home')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -652,7 +649,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('navigation.menu.coloringPagesFree')}
+                {navT('menu.coloringPagesFree', 'Coloring Pages Free')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -661,7 +658,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('navigation.menu.imageColoringPage')}
+                {navT('menu.imageColoringPage', 'Image Coloring Page')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -670,7 +667,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('navigation.menu.textColoringPage')}
+                {navT('menu.textColoringPage', 'Text Coloring Page')}
               </Link>
             </div>
             <div className="border-b border-gray-200">
@@ -679,7 +676,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                 onClick={handleMobileLinkClick}
               >
-                {t('navigation.menu.pricing')}
+                {navT('menu.pricing', 'Pricing')}
               </Link>
             </div>
 
@@ -692,7 +689,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
-                    {t('navigation.menu.profile')}
+                    {navT('menu.profile', 'Profile')}
                   </Link>
                 </div>
                 <div className="border-b border-gray-200">
@@ -701,7 +698,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
                     onClick={handleMobileLinkClick}
                   >
-                    {t('navigation.menu.myCreations')}
+                    {navT('menu.myCreations', 'My Creations')}
                   </Link>
                 </div>
                 <div>
@@ -709,7 +706,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                     onClick={handleLogout}
                     className="block w-full text-left px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   >
-                    {t('navigation.menu.logout')}
+                    {navT('menu.logout', 'Logout')}
                   </button>
                 </div>
               </>
@@ -720,7 +717,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                   className="block px-3 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-200"
                   onClick={handleMobileLinkClick}
                 >
-                  {t('navigation.menu.login')}
+                  {navT('menu.login', 'Login')}
                 </Link>
               </div>
             )}

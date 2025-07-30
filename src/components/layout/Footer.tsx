@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAsyncTranslation } from '../../contexts/LanguageContext';
+import { useAsyncTranslation, useLanguage } from '../../contexts/LanguageContext';
+import { useCategories } from '../../hooks/useCategories';
+import { getLocalizedText } from '../../utils/textUtils';
 
 const logo = '/images/logo.svg';
 const socialIcon1 = '/images/Link → SVG-1.svg';
@@ -22,7 +24,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({ title, links }) => {
   return (
     <div className="w-full lg:w-[200px] flex flex-col gap-3 lg:gap-6">
       <div className="text-[#161616] text-sm lg:text-sm font-semibold">
-        {title}
+        {title || '\u00A0'}
       </div>
       <div className="flex flex-col gap-2 lg:gap-6">
         {links.map((link, index) => (
@@ -41,6 +43,9 @@ const FooterSection: React.FC<FooterSectionProps> = ({ title, links }) => {
 
 const Footer = () => {
   const { t } = useAsyncTranslation('navigation');
+  const { language } = useLanguage();
+  const { categories, loading: categoriesLoading } = useCategories();
+
 
   const sections = [
     {
@@ -51,42 +56,35 @@ const Footer = () => {
         { label: t('footer.links.coloringPagesFree', 'Coloring Pages Free'), url: '/categories' },
       ],
     },
-    {
-      title: t('footer.sections.disney', 'Disney'),
-      links: [
-        { label: t('footer.links.mickeyMouse', 'Mickey Mouse'), url: '/category/mickey-mouse' },
-        { label: t('footer.links.minnieMouse', 'Minnie Mouse'), url: '/category/minnie-mouse' },
-        { label: t('footer.links.donaldDuck', 'Donald Duck'), url: '/category/donald-duck' },
-        { label: t('footer.links.daisyDuck', 'Daisy Duck'), url: '/category/daisy-duck' },
-        { label: t('footer.links.goofy', 'Goofy'), url: '/category/goofy' },
-        { label: t('footer.links.snowWhite', 'Snow White'), url: '/category/snow-white' },
-        { label: t('footer.links.cinderella', 'Cinderella'), url: '/category/cinderella' },
-      ],
-    },
-    {
-      title: t('footer.sections.star', 'Star'),
-      links: [
-        { label: t('footer.links.taylorSwift', 'Taylor Swift'), url: '/category/taylor-swift' },
-        { label: t('footer.links.billieEilish', 'Billie Eilish'), url: '/category/billie-eilish' },
-        { label: t('footer.links.scarlettJohansson', 'Scarlett Johansson'), url: '/category/scarlett-johansson' },
-        { label: t('footer.links.galGadot', 'Gal Gadot'), url: '/category/gal-gadot' },
-        { label: t('footer.links.bradPitt', 'Brad Pitt'), url: '/category/brad-pitt' },
-        { label: t('footer.links.zendaya', 'Zendaya'), url: '/category/zendaya' },
-        { label: t('footer.links.timotheeChalamet', 'Timothée Chalamet'), url: '/category/timothee-chalamet' },
-      ],
-    },
-    {
-      title: t('footer.sections.animal', 'Animal'),
-      links: [
-        { label: t('footer.links.dog', 'Dog'), url: '/category/dog' },
-        { label: t('footer.links.cat', 'Cat'), url: '/category/cat' },
-        { label: t('footer.links.tiger', 'Tiger'), url: '/category/tiger' },
-        { label: t('footer.links.butterfly', 'Butterfly'), url: '/category/butterfly' },
-        { label: t('footer.links.bird', 'Bird'), url: '/category/bird' },
-        { label: t('footer.links.giraffe', 'Giraffe'), url: '/category/giraffe' },
-        { label: t('footer.links.horse', 'Horse'), url: '/category/horse' },
-      ],
-    },
+    // 使用前21个分类，分成3组，每组7个，与Header保持一致
+    ...(!categoriesLoading && categories.length > 0 ? [
+      {
+        title: t('categories.popularColoringPages', 'Popular Coloring Pages'),
+        links: categories.slice(0, 7).map(category => ({
+          label: getLocalizedText(category.displayName, language) || category.name,
+          url: `/categories/${category.categoryId}`
+        }))
+      },
+      {
+        title: '',
+        links: categories.slice(7, 14).map(category => ({
+          label: getLocalizedText(category.displayName, language) || category.name,
+          url: `/categories/${category.categoryId}`
+        }))
+      },
+      {
+        title: '',
+        links: categories.slice(14, 21).map(category => ({
+          label: getLocalizedText(category.displayName, language) || category.name,
+          url: `/categories/${category.categoryId}`
+        }))
+      }
+    ] : [
+      // 加载中时显示空组，避免布局跳动
+      { title: t('categories.popularColoringPages', 'Popular Coloring Pages'), links: [] },
+      { title: '', links: [] },
+      { title: '', links: [] }
+    ]),
     {
       title: t('footer.sections.company', 'Company'),
       links: [

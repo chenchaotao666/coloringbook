@@ -196,7 +196,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         {/* 底部按钮 */}
         <div className="self-stretch px-3 flex justify-start items-center gap-2">
           <button 
-            className="w-[254px] py-1.5 rounded border border-[#EDEEF0] hover:border-[#FF5C07] hover:bg-gray-50 flex justify-center items-center gap-1 transition-colors duration-200 cursor-pointer group"
+            className="w-[295px] py-1.5 rounded border border-[#EDEEF0] hover:border-[#FF5C07] hover:bg-gray-50 flex justify-center items-center gap-1 transition-colors duration-200 cursor-pointer group"
             onClick={handleClick}
           >
             <div className="text-[#6B7280] group-hover:text-[#FF5C07] text-sm font-normal leading-4 break-words transition-colors duration-200">

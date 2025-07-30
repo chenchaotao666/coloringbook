@@ -26,8 +26,6 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-
-
 // 基础翻译资源（后向兼容，逐步迁移到文件中）
 const baseTranslations: Record<Language, Record<string, string>> = {
   zh: {

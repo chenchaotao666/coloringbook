@@ -17,6 +17,9 @@
     "teenColoringPages": "青少年填色页",
     "adultColoringPages": "成人填色页"
   },
+  "categories": {
+    "popularColoringPages": "热门涂色页"
+  },
   "breadcrumb": {
     "home": "首页",
     "categories": "分类",

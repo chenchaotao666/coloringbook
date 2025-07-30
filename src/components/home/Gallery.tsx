@@ -40,7 +40,7 @@ const Gallery: React.FC<GalleryProps> = ({ imageCount }) => {
     loadCategories();
   }, [language]);
 
-  const displayCategories = categories.slice(0, 8); // 显示前8个分类
+  const displayCategories = categories.slice(0, imageCount); // 使用传入的imageCount参数
 
   const handleCategoryClick = (category: Category) => {
     // 使用映射表获取SEO友好的名称
@@ -53,7 +53,7 @@ const Gallery: React.FC<GalleryProps> = ({ imageCount }) => {
     <div className="w-full bg-[#F9FAFB] pb-12 sm:pb-16 md:pb-20 lg:pb-[120px] pt-12 sm:pt-16 md:pt-20 lg:pt-[120px]">
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="text-center text-[#161616] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] font-bold capitalize mb-8 sm:mb-10 md:mb-12 lg:mb-[48px] leading-relaxed lg:leading-[1.6] px-4 sm:px-0 max-w-[1200px] mx-auto">
-          {t('gallery.titlePrefix', 'Browse our')} {imageCount > 0 ? imageCount.toLocaleString() : ''} {t('gallery.titleSuffix', 'free coloring pages; printable in PDF and PNG formats!')}
+          {t('gallery.title', 'Browse our')} 
         </h2>
         
         <CategoryGrid 

@@ -40,36 +40,68 @@ const Testimonials = () => {
           {t('testimonials.title', 'What Our Users Say')}
         </h2>
         
-        <div className="w-full max-w-[1200px] flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8">
-          <div className="w-full flex justify-center border-b lg:border-b-0 lg:border-r border-[#F0F0F0] pb-6 lg:pb-0">
+        <div className="w-full max-w-[1200px] grid grid-cols-1 lg:grid-cols-2 lg:divide-x lg:divide-[#F0F0F0]">
+          <div className="w-full flex justify-center border-b lg:border-b-0 border-[#F0F0F0] pb-6 lg:pb-0 lg:pr-4">
             <TestimonialItem 
-              content={t('testimonials.user1.content', 'FlowBite provides a robust set of design tokens and components based on the popular Tailwind CSS framework. From the most used UI components like forms and navigation bars to th')}
-              name={t('testimonials.user1.name', 'Neil Sims')}
-              position={t('testimonials.user1.position', 'CEO, Flowbite')}
+              content={t('testimonials.user1.content', 'This tool is like magic for my 6-year-old. She just types in \'unicorn on a skateboard\' and it turns into a printable coloring page instantly. We\'ve made a whole binder full of her ideas!')}
+              name={t('testimonials.user1.name', 'Emily')}
+              position={t('testimonials.user1.position', 'Parent')}
             />
           </div>
           
-          <div className="w-full flex justify-center border-b lg:border-b-0 border-[#F0F0F0] pb-6 lg:pb-0">
+          <div className="w-full flex justify-center border-b lg:border-b-0 border-[#F0F0F0] pb-6 lg:pb-0 lg:pl-4">
             <TestimonialItem 
-              content={t('testimonials.user2.content', 'FlowBite provides a robust set of design tokens and components based on the popular Tailwind CSS framework. From the most used UI components like forms and navigation bars to th')}
-              name={t('testimonials.user2.name', 'Neil Sims')}
-              position={t('testimonials.user2.position', 'CEO, Flowbite')}
+              content={t('testimonials.user2.content', 'I use it every week in my elementary art class. The kids love seeing their wild ideas turned into something they can color. It saves me hours of prep time!')}
+              name={t('testimonials.user2.name', 'Brian')}
+              position={t('testimonials.user2.position', 'Art Teacher')}
             />
           </div>
           
-          <div className="w-full flex justify-center border-b lg:border-t lg:border-r border-[#F0F0F0] pb-6 lg:pb-0 lg:pt-6">
+          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] pb-6 lg:pb-0 lg:pt-6 lg:pr-4">
             <TestimonialItem 
-              content={t('testimonials.user3.content', 'FlowBite provides a robust set of design tokens and components based on the popular Tailwind CSS framework. From the most used UI components like forms and navigation bars to th')}
-              name={t('testimonials.user3.name', 'Neil Sims')}
-              position={t('testimonials.user3.position', 'CEO, Flowbite')}
+              content={t('testimonials.user3.content', 'As a therapist, I often incorporate creative tools into sessions. This has been a wonderful, low-pressure way for kids to express themselves visually.')}
+              name={t('testimonials.user3.name', 'Lauren')}
+              position={t('testimonials.user3.position', 'Child Therapist')}
             />
           </div>
           
-          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] lg:pt-6">
+          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] pb-6 lg:pb-0 lg:pt-6 lg:pl-4">
             <TestimonialItem 
-              content={t('testimonials.user4.content', 'FlowBite provides a robust set of design tokens and components based on the popular Tailwind CSS framework. From the most used UI components like forms and navigation bars to th')}
-              name={t('testimonials.user4.name', 'Neil Sims')}
-              position={t('testimonials.user4.position', 'CEO, Flowbite')}
+              content={t('testimonials.user4.content', 'I uploaded an old photo of my dog and turned it into a coloring page — then I colored it with my daughter. It\'s now hanging on our fridge!')}
+              name={t('testimonials.user4.name', 'Marcus')}
+              position={t('testimonials.user4.position', 'Dad & Pet Owner')}
+            />
+          </div>
+          
+          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] lg:pt-6 lg:pr-4">
+            <TestimonialItem 
+              content={t('testimonials.user5.content', 'I\'m a digital artist and I actually use this to generate quick outline inspiration when I\'m sketching new characters. It\'s surprisingly clean and usable.')}
+              name={t('testimonials.user5.name', 'Tara')}
+              position={t('testimonials.user5.position', 'Freelance Illustrator')}
+            />
+          </div>
+          
+          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] lg:pt-6 lg:pl-4">
+            <TestimonialItem 
+              content={t('testimonials.user6.content', 'I run a summer camp and we used this to create custom coloring books for each camper — with their names and favorite animals. Huge hit!')}
+              name={t('testimonials.user6.name', 'Kelly')}
+              position={t('testimonials.user6.position', 'Camp Director')}
+            />
+          </div>
+          
+          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] lg:pt-6 lg:pr-4">
+            <TestimonialItem 
+              content={t('testimonials.user7.content', 'I never thought I\'d enjoy coloring as an adult, but this tool makes it feel personal. I typed in \'peaceful forest with a cat\' and spent the evening relaxing while coloring it in.')}
+              name={t('testimonials.user7.name', 'David')}
+              position={t('testimonials.user7.position', 'Adult Colorer')}
+            />
+          </div>
+          
+          <div className="w-full flex justify-center lg:border-t border-[#F0F0F0] lg:pt-6 lg:pl-4">
+            <TestimonialItem 
+              content={t('testimonials.user8.content', 'What I love most is that I don\'t need to install anything. I used it on my tablet, created a coloring page of my son\'s drawing, and printed it in two minutes. So convenient!')}
+              name={t('testimonials.user8.name', 'Jenny')}
+              position={t('testimonials.user8.position', 'Mom & Homeschooler')}
             />
           </div>
         </div>

@@ -135,5 +135,17 @@
     "easy": "容易",
     "medium": "中等难度",
     "advanced": "进阶"
+  },
+  "blog": {
+    "title": "博客",
+    "author": "作者",
+    "readMore": "阅读更多",
+    "backToBlog": "返回博客",
+    "totalArticles": "共 {count} 篇文章",
+    "seo": {
+      "title": "博客 - AI 涂色页面",
+      "description": "发现关于AI涂色页面、数字艺术和创意技术的最新见解、提示和教程。",
+      "keywords": "博客, AI涂色页面, 数字艺术, 教程, 提示"
+    }
   }
 } 

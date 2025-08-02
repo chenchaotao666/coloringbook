@@ -137,7 +137,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     subtitle: "AI makes it easier than ever to create coloring pages from your words.",
     description: "Our Text to Coloring Page tool transforms simple text descriptions into unique, hand-drawn-style coloring pages. It's great for parents, teachers, creative explorers, or anyone who loves to imagine! This tool opens a world of fun, learning, and creativity, turning your words into black-and-white line drawings ready to print or share.",
     images: {
-      center: { left: "/images/image2image/left-4-color.png", right: "/images/image2image/left-4-line.png" },
+      center: { left: "/images/image2image/left-4-color.jpg", right: "/images/image2image/left-4-line.png" },
       topLeft: "/images/image2image/left-2.png",
       topRight: "/images/image2image/left-5.png",
       bottomLeft: "/images/image2image/left-3.png",
@@ -199,7 +199,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Apr 15, 2025',
       avatar: '/images/imageusersaying/avatar-1.png',
       content: '"I was honestly a bit skeptical, figuring the result would be a blurry mess. But I uploaded a simple phone picture of our golden retriever, and what this tool generated was a genuinely perfect, clean outline. My 6-year-old saw it printing and went absolutely wild. We\'ve now made an entire \'Adventures of Gus\' coloring book with photos from the park. It\'s her favorite activity."',
-      image: '/images/imageusersaying/image-1.png'
+      image: '/images/imageusersaying/santas-magical-workshop_f1e6324f.jpg'
     },
     {
       id: '2',
@@ -207,7 +207,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Dec 5, 2024',
       avatar: '/images/imageusersaying/avatar-2.png',
       content: '"In a 3rd-grade art class, engagement is everything. This tool has been a game-changer for me. I had students do a self-portrait sketch, and then we used this to turn each one into a professional-looking coloring page. The pride on their faces when they got to color their own artwork was priceless. It\'s my go-to for quick, deeply personal activities."',
-      image: '/images/imageusersaying/image-2.png'
+      image: '/images/imageusersaying/schoolyard-adventures_33bcf68a.jpg'
     },
     {
       id: '3',
@@ -215,7 +215,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'May 2, 2025',
       avatar: '/images/imageusersaying/avatar-3.png',
       content: '"As a freelance illustrator, my workflow is all about speed and efficiency. Sometimes I just need to see how a composition feels in simple black and white without committing to inking a sketch. This tool is surprisingly effective for that. I can upload a reference photo or a rough digital painting and get clean, usable linework in seconds. It\'s a genuine time-saver."',
-      image: '/images/imageusersaying/image-3.png'
+      image: '/images/imageusersaying/sky-high-adventures_ffecf70d.jpg'
     },
     {
       id: '4',
@@ -223,7 +223,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Jul 28, 2024',
       avatar: '/images/imageusersaying/avatar-4.png',
       content: '"On a whim, I decided to make a mini coloring book of our favorite wedding photos to use as a funny keepsake for our first anniversary. I uploaded about ten pictures, and the results were so good I printed them out. I honestly didn\'t expect people to color them at the party, but they did—and it was an absolute hit. Such a unique way to relive the memories."',
-      image: '/images/imageusersaying/image-4.png'
+      image: '/images/imageusersaying/teddy-bear-picnic_74149362.jpg'
     },
     {
       id: '5',
@@ -231,7 +231,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Mar 21, 2025',
       avatar: '/images/imageusersaying/avatar-5.png',
       content: '"My son is on the autism spectrum and responds incredibly well to structured, visual activities like coloring. This tool lets me take photos of things he\'s currently fascinated with—a specific type of train, his favorite stuffed octopus, the family car—and instantly turn them into an engaging activity that feels familiar and safe for him. It\'s an invaluable resource for us."',
-      image: '/images/imageusersaying/image-5.png'
+      image: '/images/imageusersaying/sleepy-puppy-dreams_25051a9d.jpg'
     },
     {
       id: '6',
@@ -239,7 +239,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Oct 19, 2024',
       avatar: '/images/imageusersaying/avatar-6.png',
       content: '"I\'ve tried a few of these \'image to coloring page\' websites for college projects, and most are bogged down with ads, require a signup, or just crash with a larger file. This one is different. It just works. Upload, convert, download. No fuss, no watermarks, no nonsense. It\'s perfect for when I need a quick, clean outline for a presentation without any hassle."',
-      image: '/images/imageusersaying/image-6.png'
+      image: '/images/imageusersaying/whimsical-amusement-park_1fb03126.jpg'
     },
     {
       id: '7',
@@ -247,7 +247,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Feb 8, 2025',
       avatar: '/images/imageusersaying/avatar-7.png',
       content: '"I\'m a huge craft enthusiast and use this tool for my scrapbooking and journaling. I can take a photo of a flower from my garden or a cool architectural detail and turn it into a perfect outline. It\'s like having a custom stamp maker without any of the expensive gear. It has totally elevated my DIY projects and I\'m completely in love with it."',
-      image: '/images/imageusersaying/image-7.png'
+      image: '/images/imageusersaying/robot-cityscape_22843043.jpg'
     },
     {
       id: '8',
@@ -255,7 +255,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'Sep 14, 2024',
       avatar: '/images/imageusersaying/avatar-8.png',
       content: '"My 4-year-old\'s doodles are wild, abstract, and wonderful. I started taking pictures of her best crayon drawings and using this tool to convert them into clean, black-and-white line art. We printed them out and made her a \'My First Art Book.\' The moment she realized she was coloring her own creations, she felt like a real, published artist. It was pure magic."',
-      image: '/images/imageusersaying/image-8.png'
+      image: '/images/imageusersaying/vintage-car-parade_2f8c318c.jpg'
     },
     {
       id: '9',
@@ -263,7 +263,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       date: 'May 18, 2025',
       avatar: '/images/imageusersaying/avatar-9.png',
       content: '"We run a small neighborhood cafe and were looking for something to keep kids entertained. I took a photo of our logo—a smiling cartoon coffee cup—and used this tool to create a stack of coloring pages. Now, it\'s the first thing families grab when they come in. It\'s been a simple, free way to make our space more family-friendly and our customers absolutely love it."',
-      image: '/images/imageusersaying/image-9.png'
+      image: '/images/imageusersaying/race-day-excitement_90125dee.jpg'
     }
   ];
 
@@ -366,7 +366,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     title: "How to Create a Coloring Page from Any Image?",
     subtitle: "Simply follow these 3 easy steps to convert your picture into a printable coloring page.",
     images: {
-      top: "/images/imagehowtocreate/iamge-1-up.png",
+      top: "/images/imagehowtocreate/iamge-1-up.jpg",
       bottom: "/images/imagehowtocreate/iamge-1-down.png"
     },
     steps: [

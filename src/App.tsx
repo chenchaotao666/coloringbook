@@ -16,6 +16,8 @@ import TestAuthPage from './pages/TestAuthPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
+import BlogPage from './pages/BlogPage';
+import BlogDetailPage from './pages/BlogDetailPage';
 import ScrollToTop from './components/common/ScrollToTop';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
@@ -66,6 +68,8 @@ function AppContent() {
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/refund-policy" element={<RefundPolicyPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogDetailPage />} />
         <Route path="/test-auth" element={<TestAuthPage />} />
 
         {/* 中文路由（/zh 前缀） */}
@@ -87,6 +91,8 @@ function AppContent() {
         <Route path="/zh/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/zh/terms" element={<TermsPage />} />
         <Route path="/zh/refund-policy" element={<RefundPolicyPage />} />
+        <Route path="/zh/blog" element={<BlogPage />} />
+        <Route path="/zh/blog/:slug" element={<BlogDetailPage />} />
         <Route path="/zh/test-auth" element={<TestAuthPage />} />
 
         {/* 日文路由（/ja 前缀） */}
@@ -108,6 +114,8 @@ function AppContent() {
         <Route path="/ja/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/ja/terms" element={<TermsPage />} />
         <Route path="/ja/refund-policy" element={<RefundPolicyPage />} />
+        <Route path="/ja/blog" element={<BlogPage />} />
+        <Route path="/ja/blog/:slug" element={<BlogDetailPage />} />
         <Route path="/ja/test-auth" element={<TestAuthPage />} />
       </Routes>
       </LanguageSyncProvider>

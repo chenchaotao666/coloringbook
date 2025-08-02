@@ -41,14 +41,14 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const currentImage = images[currentImageIndex];
+  const currentImage = images?.[currentImageIndex];
 
   const handleDotClick = (index: number) => {
     setCurrentImageIndex(index);
   };
 
   const handlePrevClick = () => {
-    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : Math.max(0, images.length - 1)));
   };
 
   const handleNextClick = () => {
@@ -102,16 +102,18 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
                 {type === 'text' ? (
                   <>
                     {/* Text mode - Single image */}
-                    <img 
-                      src={currentImage.url}
-                      alt={`Coloring page: ${currentImage.prompt}`}
-                      className="block rounded-2xl border border-[#EDEEF0]"
-                      style={{
-                        height: '560px',
-                        width: 'auto',
-                        objectFit: 'cover'
-                      }}
-                    />
+                    {currentImage && (
+                      <img 
+                        src={currentImage.url}
+                        alt={`Coloring page: ${currentImage.prompt}`}
+                        className="block rounded-2xl border border-[#EDEEF0]"
+                        style={{
+                          height: '560px',
+                          width: 'auto',
+                          objectFit: 'cover'
+                        }}
+                      />
+                    )}
 
                     {/* Left logo - AI icon (一半在图片上，一半在外面) */}
                     <img 
@@ -211,7 +213,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
                 )}
 
                 {/* Prompt text background - only show for text mode */}
-                {type === 'text' && (
+                {type === 'text' && currentImage && (
                   <div 
                     className="absolute"
                     style={{

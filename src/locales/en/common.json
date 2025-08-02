@@ -135,5 +135,17 @@
     "easy": "Easy",
     "medium": "Medium",
     "advanced": "Advanced"
+  },
+  "blog": {
+    "title": "Blog",
+    "author": "By",
+    "readMore": "Read More",
+    "backToBlog": "Back to Blog",
+    "totalArticles": "Total {count} articles",
+    "seo": {
+      "title": "Blog - AI Coloring Pages",
+      "description": "Discover the latest insights, tips, and tutorials about AI coloring pages, digital art, and creative technology.",
+      "keywords": "blog, AI coloring pages, digital art, tutorials, tips"
+    }
   }
 } 

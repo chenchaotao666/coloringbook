@@ -40,7 +40,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
             <img 
               src={homeIcon} 
               alt="Home" 
-              className="w-4 h-4 flex-shrink-0" 
+              className="w-4 h-4 flex-shrink-0 mb-[4px]" 
             />
           )}
           {item.current ? (

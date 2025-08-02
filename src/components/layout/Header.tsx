@@ -317,6 +317,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
           <Link to={createLocalizedLink("/price")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
             {navT('menu.pricing', 'Pricing')}
           </Link>
+          <Link to={createLocalizedLink("/blog")} className="px-4 py-4 -mx-4 -my-4 text-[#161616] text-base font-medium leading-6 hover:text-[#FF5C07] transition-colors duration-200 block">
+            {navT('menu.blog', 'Blog')}
+          </Link>
         </div>
 
         {/* 桌面端右侧菜单 */}
@@ -677,6 +680,15 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
                 onClick={handleMobileLinkClick}
               >
                 {navT('menu.pricing', 'Pricing')}
+              </Link>
+            </div>
+            <div className="border-b border-gray-200">
+              <Link 
+                to={createLocalizedLink("/blog")} 
+                className="block px-3 py-3 text-sm font-normal text-gray-700 hover:text-[#FF5C07] hover:bg-gray-50 transition-colors duration-200"
+                onClick={handleMobileLinkClick}
+              >
+                {navT('menu.blog', 'Blog')}
               </Link>
             </div>
 

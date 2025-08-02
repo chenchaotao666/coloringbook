@@ -7,7 +7,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Nov 18, 2024',
     avatar: '/images/usersaying/avatar-1.png',
     content: '"My daughter has an incredible imagination for creating silly animals, and this tool is the first thing we\'ve found that actually brings them to life! We used to search for specific coloring books, but now she can just describe her \'butterfly-kittens\' or \'dino-puppies\' and have a brand new page to color in seconds. It\'s absolutely magical to watch."',
-    image: '/images/usersaying/image-1.png'
+    image: '/images/usersaying/pirate-chickens-treasure-hunt_b7b2977b.jpg'
   },
   {
     id: '2',
@@ -15,7 +15,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Sep 14, 2024',
     avatar: '/images/usersaying/avatar-2.png',
     content: '"Great for indoor activities. On rainy days, instead of just turning on the TV, we have \'Invention Time.\' The best part is there\'s zero prep time for me and endless variety for the kids. Simple, creative, and a genuine lifesaver."',
-    image: '/images/usersaying/image-2.png'
+    image: '/images/usersaying/frog-princes-lily-pad-throne_58752d8a.jpg'
   },
   {
     id: '3',
@@ -23,7 +23,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Jun 29, 2025',
     avatar: '/images/usersaying/avatar-3.png',
     content: '"Finally, a website for kids that respects your time. No sign-in, no ads, no pop-ups, no nonsense. It just works. It\'s pure, simple creativity, and I can let my three kids use it without hovering over them."',
-    image: '/images/usersaying/image-3.png'
+    image: '/images/usersaying/fruit-basket-bonanza_325d8977.jpg'
   },
   {
     id: '4',
@@ -31,7 +31,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Oct 25, 2024',
     avatar: '/images/usersaying/avatar-4.png',
     content: '"As an ESL teacher, finding engaging materials is a constant challenge. I started using this to make art pages based on our weekly vocabulary words, and the difference has been night and day. When kids can color a \'courageous firefighter\' or a \'mysterious jungle,\' the words stick. It\'s an invaluable classroom resource."',
-    image: '/images/usersaying/image-4.png'
+    image: '/images/usersaying/jungle-fiesta_140bfed0.jpg'
   },
   {
     id: '5',
@@ -39,7 +39,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Aug 20, 2024',
     avatar: '/images/usersaying/avatar-5.png',
     content: '"This tool has become an invaluable asset in my child therapy practice. For kids who struggle to verbalize their feelings, asking them to create a page for \'a happy place\' or \'a monster that feels sad\' is a gentle way to open a dialogue. It\'s a wonderful bridge for communication."',
-    image: '/images/usersaying/image-5.png'
+    image: '/images/usersaying/little-girls-magical-tea-party_79fc1c63.jpg'
   },
   {
     id: '6',
@@ -47,7 +47,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'May 16, 2025',
     avatar: '/images/usersaying/avatar-6.png',
     content: '"My kindergarten students now see this as our special Friday reward. We gather on the rug and come up with a silly prompt together on the smartboard. The collective gasp and giggle when the drawing appears is the best sound in the world. It\'s perfect for cooperative learning."',
-    image: '/images/usersaying/image-6.png'
+    image: '/images/usersaying/majestic-lion-king_61df3c4d.jpg'
   },
   {
     id: '7',
@@ -55,7 +55,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Dec 02, 2024',
     avatar: '/images/usersaying/avatar-7.png',
     content: '"My 7-year-old daughter Lucy is obsessed. She screamed with delight, \'I wrote \'a pirate chicken\' and got the funniest drawing ever!\' It has completely replaced her tablet time because she\'d rather be inventing and printing her own characters. I couldn\'t be happier."',
-    image: '/images/usersaying/image-7.png'
+    image: '/images/usersaying/mandala-bloom-symphony_de39e571.jpg'
   },
   {
     id: '8',
@@ -63,7 +63,7 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Jul 07, 2024',
     avatar: '/images/usersaying/avater-8.png',
     content: '"I made personalized coloring pages as party favors for my daughter\'s 8th birthday. Each one was based on the guest\'s favorite animal doing something funny. They were a massive hit! Multiple parents messaged me afterward asking for the link. It made the party feel so unique and special."',
-    image: '/images/usersaying/image-8.png'
+    image: '/images/usersaying/mushroom-village_205c1700.jpg'
   },
   {
     id: '9',
@@ -71,6 +71,6 @@ export const sampleTestimonials: TestimonialItem[] = [
     date: 'Apr 22, 2025',
     avatar: '/images/usersaying/avater-9.png',
     content: '"After a long day at work, I don\'t always have the energy for a complex hobby. I use this to create my own mandala-style patterns or simple nature scenes like \'a quiet forest stream.\' It\'s incredibly therapeutic to color something that I brought into existence myself. It\'s my go-to for de-stressing."',
-    image: '/images/usersaying/image-9.png'
+    image: '/images/usersaying/otters-family-picnic_906ccd94.jpg'
   }
 ];

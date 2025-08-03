@@ -1,8 +1,10 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface UserSayingProps {
   className?: string;
   testimonials: TestimonialItem[];
+  title?: string;
 }
 
 export interface TestimonialItem {
@@ -16,8 +18,10 @@ export interface TestimonialItem {
 
 const UserSaying: React.FC<UserSayingProps> = ({ 
   className = "",
-  testimonials
+  testimonials,
+  title
 }) => {
+  const { t } = useLanguage();
   // Split testimonials into three columns for masonry layout
   const columnCount = 3;
   const columns: TestimonialItem[][] = Array.from({ length: columnCount }, () => []);
@@ -31,7 +35,7 @@ const UserSaying: React.FC<UserSayingProps> = ({
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616] capitalize">
-          What Users Are Saying
+          {title || t('testimonials.title', 'What Users Are Saying')}
         </h2>
       </div>
 

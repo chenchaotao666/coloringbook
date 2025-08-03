@@ -31,7 +31,8 @@ const ColoringPagesFor: React.FC<ColoringPagesForProps> = ({
       }}>
         {/* Title */}
         <div style={{
-          left: '127px',
+          left: '0px',
+          right: '0px',
           top: '0px',
           position: 'absolute',
           textAlign: 'center',

@@ -97,5 +97,449 @@
   "states": {
     "noTextToImageYet": "No text to image yet",
     "noImageToImageYet": "No image to image yet"
+  },
+  "textWhyChoose": {
+    "title": "Why Choose This Tool?",
+    "subtitle": "Here's why our Text to Coloring Page generator is the ultimate choice for creative fun:",
+    "features": {
+      "creativeFreedom": {
+        "title": "Creative Freedom",
+        "description": "Unleash your imagination! Whether it's a wild adventure or a whimsical dream, transform any idea into a visual coloring experience that both kids and adults can enjoy. Watch your ideas come to life on paper with just a few words."
+      },
+      "kidFriendly": {
+        "title": "Kid-Friendly & Safe",
+        "description": "Designed with young users in mind, our tool features simple navigation and secure filters, making it easy and safe for children to explore their creativity, whether independently or under supervision."
+      },
+      "educationalValue": {
+        "title": "Educational Value",
+        "description": "Combine the best of both worlds—literacy and art. Our tool encourages storytelling, language development, fine motor skills, and cognitive growth, making learning fun and interactive for all ages."
+      },
+      "instantHassleFree": {
+        "title": "Instant & Hassle-Free",
+        "description": "No need for signups or waiting! Simply type your idea, hit generate, and in seconds you'll have a printable coloring page ready to go. It's quick, easy, and stress-free."
+      },
+      "readyToPrint": {
+        "title": "Ready to Print or Share",
+        "description": "Download your high-resolution coloring page instantly. It's perfect for printing at home, sharing with friends, or using on digital devices—flexible for any activity."
+      },
+      "freeForever": {
+        "title": "100% Free, Forever",
+        "description": "Enjoy unlimited creative fun without any hidden fees or trials. Generate as many pages as you want, anytime, all for free. No strings attached."
+      }
+    }
+  },
+  "imageWhyChoose": {
+    "title": "Why Choose This Tool?",
+    "subtitle": "Turning an image to a coloring page has never been easier — here's what makes our tool stand out:",
+    "features": {
+      "noDesignSkills": {
+        "title": "No Design Skills Needed",
+        "description": "No artist or tech skills? No problem. Simply upload any image and our AI instantly handles the complex work, delivering a perfect coloring page in seconds."
+      },
+      "printReadyQuality": {
+        "title": "Get Print-Ready Quality",
+        "description": "Quality matters. Every coloring page is generated in high-resolution with crisp, clean lines, perfectly optimized for your home printer for a professional result."
+      },
+      "anyImageType": {
+        "title": "Works with Any Kind of Image",
+        "description": "From high-resolution photos to hand-drawn sketches and digital art, our tool handles it all. It intelligently converts any visual into a clean, printable coloring page."
+      },
+      "totallyFree": {
+        "title": "Totally Free, No Watermarks",
+        "description": "Enjoy complete creative freedom with no strings attached. Our tool is 100% free—no hidden costs, signups, or watermarks on your finished coloring page."
+      },
+      "kidSafe": {
+        "title": "Kid-Safe and Family-Friendly",
+        "description": "Designed for the whole family, our simple interface is 100% ad-free and easy enough for kids to use on their own. Enjoy pure, distraction-free creative fun."
+      },
+      "creativeFreedom": {
+        "title": "Unlock Your Creative Freedom",
+        "description": "The possibilities are endless. Create personalized coloring books from family photos, design unique gifts for friends, or turn any image into a relaxing art activity."
+      }
+    }
+  },
+  "coloringPageConversion": {
+    "title": "What's a Good Photo for an Image to Coloring Page Conversion?",
+    "subtitle": "Easily create printable coloring pages from any image, from personal photos to complex scenes. Here are some popular ideas:",
+    "categories": {
+      "petPortraits": {
+        "title": "Pet Portraits",
+        "description": "Turn a photo of your beloved pet into a cherished keepsake that captures their unique personality."
+      },
+      "familyPhotos": {
+        "title": "Family Photos",
+        "description": "Create a fun activity and personalized gifts by turning your favorite family photos into coloring pages."
+      },
+      "natureLandscape": {
+        "title": "Nature & Landscape",
+        "description": "Transform a beautiful landscape or travel photo into a detailed coloring sheet, a relaxing way for adults to unwind."
+      },
+      "floralBotanical": {
+        "title": "Floral & Botanical",
+        "description": "Convert a close-up image of a flower or plant into an elegant line drawing, perfect for botanical art lovers."
+      },
+      "toysObjects": {
+        "title": "Toys & Objects",
+        "description": "Let kids color their favorite things! Turn a photo of a beloved toy or LEGO creation into a fun, creative activity."
+      },
+      "vehicle": {
+        "title": "Vehicle",
+        "description": "For the car, train, and plane enthusiast. Convert a photo of any vehicle into an exciting coloring page they'll love."
+      }
+    }
+  },
+  "imageHowToCreate": {
+    "title": "How to Create a Coloring Page from Any Image?",
+    "subtitle": "Simply follow these 3 easy steps to convert your picture into a printable coloring page.",
+    "steps": {
+      "step1": {
+        "number": "01",
+        "title": "Upload Your Image",
+        "description": "Choose any image from your device (JPG, PNG supported)."
+      },
+      "step2": {
+        "number": "02",
+        "title": "Instant AI Conversion",
+        "description": "Click the button and our AI will instantly turn your image into clean line art."
+      },
+      "step3": {
+        "number": "03",
+        "title": "Preview & Download",
+        "description": "Your coloring sheet is ready! Save the high-quality file to your device. Perfect format for printing drawings at home"
+      }
+    }
+  },
+  "imageCanCreate": {
+    "title": "Who Is This Image to Coloring Page Tool For?",
+    "subtitle": "Our tool is designed for anyone who wants to turn their photos into creative art, no matter their age or experience.",
+    "categories": {
+      "parentsFamilies": {
+        "title": "Parents & Families",
+        "description": "Create personalized coloring activities from family photos, pet pictures, or vacation memories."
+      },
+      "teachersEducators": {
+        "title": "Teachers & Educators",
+        "description": "Transform educational images into engaging coloring exercises for students of all ages."
+      },
+      "artistsCreatives": {
+        "title": "Artists & Creatives",
+        "description": "Convert reference photos into line art for sketching practice or creative inspiration."
+      },
+      "kidsCreators": {
+        "title": "Kids & Young Creators",
+        "description": "Children have boundless creativity! Empower them by letting them turn their own drawings and doodles into \"official\" coloring pages. It builds confidence and shows them how their ideas can become real, printable art."
+      },
+      "craftersDiy": {
+        "title": "Crafters & DIY Lovers",
+        "description": "Take your DIY projects to the next level. Turn any custom design or image into a perfect outline for scrapbooking, journaling, wood burning, or even creating personalized greeting cards. It's a versatile tool for any crafter's toolbox."
+      },
+      "hobbyistsCasual": {
+        "title": "Hobbyists & Casual Creators",
+        "description": "You don't need a big project to have fun. If you simply enjoy discovering easy-to-use creative tools, our generator is for you. Turn any image into a coloring page just for the joy of it—it's instant, satisfying, and free."
+      }
+    }
+  },
+  "textHowToCreate": {
+    "title": "How to create your coloring page with our Text to Coloring Page Generator?",
+    "subtitle": "Simply follow these 3 steps to create your coloring page.",
+    "steps": {
+      "describe": {
+        "number": "01",
+        "title": "Describe Your Idea",
+        "description": "Type what you want to see in your coloring page. Be as creative as you like!"
+      },
+      "generate": {
+        "number": "02",
+        "title": "AI Creates Your Design",
+        "description": "Our AI transforms your words into a beautiful, printable coloring page in seconds."
+      },
+      "download": {
+        "number": "03",
+        "title": "Download & Enjoy",
+        "description": "Get your custom coloring page instantly. Download and print to start coloring!"
+      }
+    }
+  },
+  "textCanCreate": {
+    "title": "What Can You Create?",
+    "subtitle": "Turn your wildest ideas into unique coloring pages.",
+    "categories": {
+      "animals": {
+        "title": "Animals & Pets",
+        "description": "From cute puppies to wild safari animals, create any creature you can imagine."
+      },
+      "fantasy": {
+        "title": "Fantasy & Magic",
+        "description": "Dragons, unicorns, castles, and magical creatures come to life in your coloring pages."
+      },
+      "vehicles": {
+        "title": "Vehicles & Transport",
+        "description": "Cars, trucks, airplanes, spaceships, and any vehicle your child dreams of driving."
+      },
+      "nature": {
+        "title": "Nature & Outdoors",
+        "description": "Beautiful flowers, trees, landscapes, and outdoor scenes perfect for relaxing coloring."
+      },
+      "robots": {
+        "title": "Robots",
+        "description": "A robot making pancakes for breakfast"
+      },
+      "circus": {
+        "title": "Circus",
+        "description": "A bear riding a unicycle in a circus"
+      }
+    }
+  },
+  "textCanCreate2": {
+    "title": "Who Can Use This Tool?",
+    "subtitle": "Our text-to-coloring page generator is perfect for everyone.",
+    "categories": {
+      "parentsTeachersKids": {
+        "title": "Parents, Teachers & Kids",
+        "description": "Create educational and fun coloring activities that spark creativity and learning."
+      },
+      "adultColoringFans": {
+        "title": "Adult Coloring Enthusiasts",
+        "description": "Design intricate patterns and detailed scenes for relaxing, stress-free coloring sessions."
+      },
+      "creativeIndividuals": {
+        "title": "Creative Individuals",
+        "description": "Artists, crafters, and creative minds who want custom designs for their projects."
+      },
+      "homeschoolingFamilies": {
+        "title": "Homeschooling Families",
+        "description": "Easily integrate art and literacy into your curriculum with almost no prep time. You can tailor unlimited coloring pages to any theme or subject you happen to be covering at home."
+      },
+      "therapistsCounselors": {
+        "title": "Therapists & Child Counselors",
+        "description": "Use prompt-based drawing as a gentle and effective way for children to express feelings, tell stories, or explore difficult topics in a completely safe and creative format."
+      },
+      "activityPlanners": {
+        "title": "Activity Planners & Event Hosts",
+        "description": "Make custom coloring pages for birthday parties, camps, or school events. You can add names, specific themes, or story-based designs for an extra touch of personalized fun."
+      }
+    }
+  },
+  "textColoringPageTool": {
+    "title": "What Is a Text to Coloring Page Tool?",
+    "subtitle": "AI makes it easier than ever to create coloring pages from your words.",
+    "description": "Our Text to Coloring Page tool transforms simple text descriptions into unique, hand-drawn-style coloring pages. It's great for parents, teachers, creative explorers, or anyone who loves to imagine! This tool opens a world of fun, learning, and creativity, turning your words into black-and-white line drawings ready to print or share."
+  },
+  "imageColoringPageTool": {
+    "title": "What Is an Image to Coloring Page Tool?",
+    "subtitle": "AI makes it easier than ever to create coloring pages from your images.",
+    "description": "Our Image to Coloring Page tool transforms your photos and images into clean, printable coloring pages. Perfect for turning family photos, pet pictures, or any image into a fun coloring activity. The AI intelligently converts complex images into simple line art that's perfect for coloring."
+  },
+  "imageUserSayingTestimonials": {
+    "1": {
+      "content": "\"I was honestly a bit skeptical, figuring the result would be a blurry mess. But I uploaded a simple phone picture of our golden retriever, and what this tool generated was a genuinely perfect, clean outline. My 6-year-old saw it printing and went absolutely wild. We've now made an entire 'Adventures of Gus' coloring book with photos from the park. It's her favorite activity.\""
+    },
+    "2": {
+      "content": "\"In a 3rd-grade art class, engagement is everything. This tool has been a game-changer for me. I had students do a self-portrait sketch, and then we used this to turn each one into a professional-looking coloring page. The pride on their faces when they got to color their own artwork was priceless. It's my go-to for quick, deeply personal activities.\""
+    },
+    "3": {
+      "content": "\"As a freelance illustrator, my workflow is all about speed and efficiency. Sometimes I just need to see how a composition feels in simple black and white without committing to inking a sketch. This tool is surprisingly effective for that. I can upload a reference photo or a rough digital painting and get clean, usable linework in seconds. It's a genuine time-saver.\""
+    },
+    "4": {
+      "content": "\"On a whim, I decided to make a mini coloring book of our favorite wedding photos to use as a funny keepsake for our first anniversary. I uploaded about ten pictures, and the results were so good I printed them out. I honestly didn't expect people to color them at the party, but they did—and it was an absolute hit. Such a unique way to relive the memories.\""
+    },
+    "5": {
+      "content": "\"My son is on the autism spectrum and responds incredibly well to structured, visual activities like coloring. This tool lets me take photos of things he's currently fascinated with—a specific type of train, his favorite stuffed octopus, the family car—and instantly turn them into an engaging activity that feels familiar and safe for him. It's an invaluable resource for us.\""
+    },
+    "6": {
+      "content": "\"I've tried a few of these 'image to coloring page' websites for college projects, and most are bogged down with ads, require a signup, or just crash with a larger file. This one is different. It just works. Upload, convert, download. No fuss, no watermarks, no nonsense. It's perfect for when I need a quick, clean outline for a presentation without any hassle.\""
+    },
+    "7": {
+      "content": "\"I'm a huge craft enthusiast and use this tool for my scrapbooking and journaling. I can take a photo of a flower from my garden or a cool architectural detail and turn it into a perfect outline. It's like having a custom stamp maker without any of the expensive gear. It has totally elevated my DIY projects and I'm completely in love with it.\""
+    },
+    "8": {
+      "content": "\"My 4-year-old's doodles are wild, abstract, and wonderful. I started taking pictures of her best crayon drawings and using this tool to convert them into clean, black-and-white line art. We printed them out and made her a 'My First Art Book.' The moment she realized she was coloring her own creations, she felt like a real, published artist. It was pure magic.\""
+    },
+    "9": {
+      "content": "\"We run a small neighborhood cafe and were looking for something to keep kids entertained. I took a photo of our logo—a smiling cartoon coffee cup—and used this tool to create a stack of coloring pages. Now, it's the first thing families grab when they come in. It's been a simple, free way to make our space more family-friendly and our customers absolutely love it.\""
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions"
+  },
+  "testimonials": {
+    "title": "What Users Are Saying"
+  },
+  "sampleTestimonials": {
+    "1": {
+      "content": "\"My daughter has an incredible imagination for creating silly animals, and this tool is the first thing we've found that actually brings them to life! We used to search for specific coloring books, but now she can just describe her 'butterfly-kittens' or 'dino-puppies' and have a brand new page to color in seconds. It's absolutely magical to watch.\""
+    },
+    "2": {
+      "content": "\"Great for indoor activities. On rainy days, instead of just turning on the TV, we have 'Invention Time.' The best part is there's zero prep time for me and endless variety for the kids. Simple, creative, and a genuine lifesaver.\""
+    },
+    "3": {
+      "content": "\"Finally, a website for kids that respects your time. No sign-in, no ads, no pop-ups, no nonsense. It just works. It's pure, simple creativity, and I can let my three kids use it without hovering over them.\""
+    },
+    "4": {
+      "content": "\"As an ESL teacher, finding engaging materials is a constant challenge. I started using this to make art pages based on our weekly vocabulary words, and the difference has been night and day. When kids can color a 'courageous firefighter' or a 'mysterious jungle,' the words stick. It's an invaluable classroom resource.\""
+    },
+    "5": {
+      "content": "\"This tool has become an invaluable asset in my child therapy practice. For kids who struggle to verbalize their feelings, asking them to create a page for 'a happy place' or 'a monster that feels sad' is a gentle way to open a dialogue. It's a wonderful bridge for communication.\""
+    },
+    "6": {
+      "content": "\"My kindergarten students now see this as our special Friday reward. We gather on the rug and come up with a silly prompt together on the smartboard. The collective gasp and giggle when the drawing appears is the best sound in the world. It's perfect for cooperative learning.\""
+    },
+    "7": {
+      "content": "\"My 7-year-old daughter Lucy is obsessed. She screamed with delight, 'I wrote 'a pirate chicken' and got the funniest drawing ever!' It has completely replaced her tablet time because she'd rather be inventing and printing her own characters. I couldn't be happier.\""
+    },
+    "8": {
+      "content": "\"I made personalized coloring pages as party favors for my daughter's 8th birthday. Each one was based on the guest's favorite animal doing something funny. They were a massive hit! Multiple parents messaged me afterward asking for the link. It made the party feel so unique and special.\""
+    },
+    "9": {
+      "content": "\"After a long day at work, I don't always have the energy for a complex hobby. I use this to create my own mandala-style patterns or simple nature scenes like 'a quiet forest stream.' It's incredibly therapeutic to color something that I brought into existence myself. It's my go-to for de-stressing.\""
+    }
+  },
+  "textFAQ": {
+    "0": {
+      "question": "Is this Text to Coloring Page tool really free?",
+      "answer": "Absolutely! Our tool is 100% free to use. There are no hidden fees, subscription costs, or limits on how many pages you can generate. Create to your heart's content."
+    },
+    "1": {
+      "question": "What kind of prompts can I type into the generator?",
+      "answer": "You can type virtually anything! Try simple descriptions like 'a happy cat', detailed scenes like 'a dragon flying over a medieval castle', or creative combinations like 'a robot cooking pancakes'. The AI works best with clear, descriptive prompts that specify what you want to see in your coloring page."
+    },
+    "2": {
+      "question": "Can I use the images I create for commercial purposes?",
+      "answer": "Yes! All coloring pages you generate are yours to use however you'd like, including for commercial purposes. You can print them, share them, sell them, or use them in your business without any restrictions or royalty fees."
+    },
+    "3": {
+      "question": "Can I download and print the coloring pages?",
+      "answer": "Absolutely! Every coloring page can be downloaded in high-quality PNG or PDF format. They're optimized for standard 8.5x11 inch paper and print beautifully on any home printer. The clean, black line art uses minimal ink while providing crisp details."
+    },
+    "4": {
+      "question": "What is the quality of the generated images?",
+      "answer": "Our AI generates high-resolution coloring pages with clean, professional line art. Each image is optimized for printing with clear outlines, appropriate detail levels, and smooth curves that are perfect for coloring with crayons, markers, or colored pencils."
+    },
+    "5": {
+      "question": "Is this tool safe for my kids to use?",
+      "answer": "Yes! Our tool is completely child-safe. We have built-in content filters that prevent inappropriate content from being generated. The interface is simple and intuitive, making it easy for kids to use independently while parents can feel confident about the safety of the content."
+    },
+    "6": {
+      "question": "What happens if someone types an inappropriate prompt?",
+      "answer": "Our advanced content filtering system automatically detects and blocks inappropriate prompts. If an unsuitable prompt is entered, the system will politely ask the user to try a different, family-friendly description instead. This keeps the platform safe for users of all ages."
+    },
+    "7": {
+      "question": "Can I use the generator on my mobile phone or tablet?",
+      "answer": "Yes! Our generator is fully responsive and works perfectly on smartphones, tablets, and desktop computers. The interface adapts to your screen size, making it easy to create and download coloring pages from any device with an internet connection."
+    },
+    "8": {
+      "question": "Do you save my prompts or the images I create?",
+      "answer": "Your privacy is important to us. While we may temporarily store images for technical purposes, we don't permanently save your personal creations or prompts unless you specifically choose to share them publicly. You have full control over your content and privacy settings."
+    },
+    "9": {
+      "question": "What languages does the generator support?",
+      "answer": "Currently, our generator works best with English prompts, but it can understand and process descriptions in multiple languages including Spanish, French, German, and others. For the best results, we recommend using clear, simple language regardless of which language you choose."
+    }
+  },
+  "imageFAQ": {
+    "0": {
+      "question": "What types of images work best for the image to coloring page conversion?",
+      "answer": "For the best results, use photos with clear subjects, good lighting, and strong contrast between the subject and the background. Simple drawings or graphics with bold lines also work wonderfully. While our AI is powerful, very dark, blurry, or overly complex photos might lose some detail in the conversion process."
+    },
+    "1": {
+      "question": "Can I upload colored photos, or do they need to be black and white first?",
+      "answer": "You can absolutely upload colored photos! Our AI automatically processes full-color images and converts them into clean, black-and-white line art. There's no need to convert your photos to black and white beforehand – just upload your original colored images and let our tool handle the rest."
+    },
+    "2": {
+      "question": "Is this image to coloring page tool really free to use?",
+      "answer": "Yes, our image to coloring page converter is completely free to use! There are no hidden fees, subscriptions, or limits on how many coloring pages you can create. Simply upload your image, convert it, and download your coloring page – all at no cost."
+    },
+    "3": {
+      "question": "Do I need to install any software on my computer?",
+      "answer": "No software installation required! Our tool runs entirely in your web browser. Simply visit our website, upload your image, and start creating coloring pages immediately. It works on any device with internet access and a modern web browser."
+    },
+    "4": {
+      "question": "Can I print the coloring pages I create?",
+      "answer": "Absolutely! All coloring pages are generated in high-quality, print-ready format. You can download them as PNG or PDF files and print them at home on standard 8.5x11 paper or any size you prefer. The line art is optimized for crisp printing results."
+    },
+    "5": {
+      "question": "What happens to the photos I upload? Are they kept private?",
+      "answer": "Your privacy is our priority. Uploaded images are processed securely and temporarily to create your coloring page. We don't store your personal photos on our servers, and they're automatically deleted after processing. Your images are never shared or used for any other purpose."
+    },
+    "6": {
+      "question": "What file formats does the tool support?",
+      "answer": "Our tool supports the most common image formats including JPG/JPEG, PNG, GIF, and WebP. For best results, we recommend using JPG or PNG files. The tool can handle images up to 10MB in size, which covers most standard photos and graphics."
+    },
+    "7": {
+      "question": "Does this work on my phone or tablet?",
+      "answer": "Yes! Our image to coloring page tool is fully responsive and works perfectly on smartphones, tablets, and desktop computers. You can upload photos directly from your phone's camera or photo gallery and create coloring pages on the go."
+    },
+    "8": {
+      "question": "Can I use coloring pages for my business or to sell?",
+      "answer": "You can use the coloring pages you create for personal, educational, and most commercial purposes. However, please ensure you have the rights to the original images you upload. If you're using copyrighted images, make sure you have permission for commercial use."
+    },
+    "9": {
+      "question": "Can I edit the coloring page after it's been created?",
+      "answer": "Once downloaded, you can edit the coloring page using any image editing software like Photoshop, GIMP, or even simple paint programs. The files are standard image formats that can be modified, cropped, or enhanced as needed for your specific projects."
+    }
+  },
+  "textTestimonials": [
+    {
+      "id": "1",
+      "name": "Chantal Allison",
+      "date": "Nov 18, 2024",
+      "avatar": "/images/avatar/avatar27.png",
+      "content": "\"My daughter has an incredible imagination for creating silly animals, and this tool is the first thing we've found that actually brings them to life! We used to search for specific coloring books, but now she can just describe her 'butterfly-kittens' or 'dino-puppies' and have a brand new page to color in seconds. It's absolutely magical to watch.\"",
+      "image": "/images/usersaying/pirate-chickens-treasure-hunt_b7b2977b.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Sharon Thompson",
+      "date": "Sep 14, 2024",
+      "avatar": "/images/avatar/avatar28.png",
+      "content": "\"Great for indoor activities. On rainy days, instead of just turning on the TV, we have 'Invention Time.' The best part is there's zero prep time for me and endless variety for the kids. Simple, creative, and a genuine lifesaver.\"",
+      "image": "/images/usersaying/frog-princes-lily-pad-throne_58752d8a.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Natalie Wardle",
+      "date": "Jun 29, 2025",
+      "avatar": "/images/avatar/avatar29.png",
+      "content": "\"Finally, a website for kids that respects your time. No sign-in, no ads, no pop-ups, no nonsense. It just works. It's pure, simple creativity, and I can let my three kids use it without hovering over them.\"",
+      "image": "/images/usersaying/fruit-basket-bonanza_325d8977.jpg"
+    }
+  ],
+  "imageTestimonials": [
+    {
+      "id": "1",
+      "name": "Megan Thompson",
+      "date": "Apr 15, 2025",
+      "avatar": "/images/avatar/avatar18.png",
+      "content": "\"I was honestly a bit skeptical, figuring the result would be a blurry mess. But I uploaded a simple phone picture of our golden retriever, and what this tool generated was a genuinely perfect, clean outline. My 6-year-old saw it printing and went absolutely wild. We've now made an entire 'Adventures of Gus' coloring book with photos from the park. It's her favorite activity.\"",
+      "image": "/images/imageusersaying/santas-magical-workshop_f1e6324f.jpg"
+    },
+    {
+      "id": "2",
+      "name": "David Alvarez",
+      "date": "Dec 5, 2024",
+      "avatar": "/images/avatar/avatar19.png",
+      "content": "\"In a 3rd-grade art class, engagement is everything. This tool has been a game-changer for me. I had students do a self-portrait sketch, and then we used this to turn each one into a professional-looking coloring page. The pride on their faces when they got to color their own artwork was priceless. It's my go-to for quick, deeply personal activities.\"",
+      "image": "/images/imageusersaying/schoolyard-adventures_33bcf68a.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Sasha Williams",
+      "date": "May 2, 2025",
+      "avatar": "/images/avatar/avatar20.png",
+      "content": "\"As a freelance illustrator, my workflow is all about speed and efficiency. Sometimes I just need to see how a composition feels in simple black and white without committing to inking a sketch. This tool is surprisingly effective for that. I can upload a reference photo or a rough digital painting and get clean, usable linework in seconds. It's a genuine time-saver.\"",
+      "image": "/images/imageusersaying/sky-high-adventures_ffecf70d.jpg"
+    }
+  ],
+  "tryNow": {
+    "text": {
+      "title": "Start Creating Your Coloring Pages Today",
+      "description": "Let your imagination run wild with our Text to Coloring Page tool. Whether you're a parent bringing a flying elephant to life for your kids, an artist seeking inspiration from a dancing taco, or simply want to see a knight riding a turtle, we're here to draw it for you. Start creating your collection now and unleash your inner artist!",
+      "buttonText": "Try Now"
+    },
+    "image": {
+      "title": "Ready to Turn Your Image into a Coloring Page?",
+      "description": "Whether you're a parent turning a family photo into a fun activity, an artist exploring a new composition, or simply looking to create a unique gift, our tool is here for you. Start transforming your favorite images now and unleash your inner artist!",
+      "buttonText": "Try Now"
+    }
   }
 } 

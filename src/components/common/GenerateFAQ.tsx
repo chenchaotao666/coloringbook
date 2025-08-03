@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const expandDefaultIcon = '/images/expand-default.svg';
 const expandColorIcon = '/images/expand-color.svg';
@@ -18,6 +19,7 @@ export interface FAQData {
 interface GenerateFAQProps {
   className?: string;
   faqData: FAQData[];
+  title?: string;
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen = false, onClick }) => {
@@ -48,8 +50,10 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen = false, onC
 
 const GenerateFAQ: React.FC<GenerateFAQProps> = ({ 
   className = "",
-  faqData
+  faqData,
+  title
 }) => {
+  const { t } = useLanguage();
   const [openItems, setOpenItems] = useState<number[]>([0]); // 默认打开第一个
 
   const handleClick = (index: number) => {
@@ -69,7 +73,7 @@ const GenerateFAQ: React.FC<GenerateFAQProps> = ({
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616]">
-          Frequently Asked Questions
+          {title || t('faq.title', 'Frequently Asked Questions')}
         </h2>
       </div>
 

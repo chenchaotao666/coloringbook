@@ -227,6 +227,10 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'difficulty.easy': '容易',
     'difficulty.medium': '中等难度',
     'difficulty.advanced': '进阶',
+    
+    // 通用组件标题
+    'testimonials.title': '用户这样说',
+    'faq.title': '常见问题',
   },
   en: {
     // Navigation - maintain backward compatibility
@@ -427,6 +431,10 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'difficulty.easy': 'Easy',
     'difficulty.medium': 'Medium',
     'difficulty.advanced': 'Advanced',
+    
+    // 通用组件标题
+    'testimonials.title': 'What Users Are Saying',
+    'faq.title': 'Frequently Asked Questions',
   },
   ja: {
     // 暂时复制英文翻译作为占位符，后续可以补充日语翻译
@@ -517,6 +525,10 @@ const baseTranslations: Record<Language, Record<string, string>> = {
     'difficulty.easy': '簡単',
     'difficulty.medium': '中級',
     'difficulty.advanced': '上級',
+    
+    // 共通コンポーネントタイトル
+    'testimonials.title': 'ユーザーの声',
+    'faq.title': 'よくある質問',
   },
 };
 

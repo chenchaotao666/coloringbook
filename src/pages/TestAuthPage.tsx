@@ -88,7 +88,7 @@ const TestAuthPage: React.FC = () => {
                 </button>
                 
                 <button
-                  onClick={() => window.location.href = '/generate'}
+                  onClick={() => window.location.href = '/text-coloring-page'}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                 >
                   测试生成功能

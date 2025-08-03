@@ -52,7 +52,6 @@ function AppContent() {
         {/* 英文路由（默认路径，无语言前缀） */}
         <Route path="/" element={<HomePage />} />
         <Route path="/price" element={<PricingPage />} />
-        <Route path="/generate" element={<GeneratePage initialTab="text" />} />
         <Route path="/text-coloring-page" element={<GeneratePage initialTab="text" />} />
         <Route path="/image-coloring-page" element={<GeneratePage initialTab="image" />} />
         <Route path="/categories" element={<CategoriesPage />} />
@@ -75,7 +74,6 @@ function AppContent() {
         {/* 中文路由（/zh 前缀） */}
         <Route path="/zh" element={<HomePage />} />
         <Route path="/zh/price" element={<PricingPage />} />
-        <Route path="/zh/generate" element={<GeneratePage initialTab="text" />} />
         <Route path="/zh/text-coloring-page" element={<GeneratePage initialTab="text" />} />
         <Route path="/zh/image-coloring-page" element={<GeneratePage initialTab="image" />} />
         <Route path="/zh/categories" element={<CategoriesPage />} />
@@ -98,7 +96,6 @@ function AppContent() {
         {/* 日文路由（/ja 前缀） */}
         <Route path="/ja" element={<HomePage />} />
         <Route path="/ja/price" element={<PricingPage />} />
-        <Route path="/ja/generate" element={<GeneratePage initialTab="text" />} />
         <Route path="/ja/text-coloring-page" element={<GeneratePage initialTab="text" />} />
         <Route path="/ja/image-coloring-page" element={<GeneratePage initialTab="image" />} />
         <Route path="/ja/categories" element={<CategoriesPage />} />

@@ -62,7 +62,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
       const params = new URLSearchParams();
       params.set('prompt', generatePrompt);
       params.set('ratio', selectedRatio);
-      navigateWithLanguage(navigate, `/generate?${params.toString()}`);
+      navigateWithLanguage(navigate, `/text-coloring-page?${params.toString()}`);
     } else if (uploadedImage) {
       // 设置全局上传图片状态
       setGlobalUploadedImage(uploadedImage);

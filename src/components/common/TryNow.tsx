@@ -8,7 +8,8 @@ interface TryNowProps {
   title: string;
   description: string;
   buttonText: string;
-  buttonLink: string;
+  buttonLink?: string;
+  onButtonClick?: () => void;
 }
 
 const TryNow: React.FC<TryNowProps> = ({
@@ -16,7 +17,8 @@ const TryNow: React.FC<TryNowProps> = ({
   title,
   description,
   buttonText,
-  buttonLink
+  buttonLink,
+  onButtonClick
 }) => {
   return (
     <div className={`w-full py-12 lg:py-16 sm:py-20 lg:py-24 bg-[#F9FAFB] border-y border-[#F3F4F6] ${className}`}>
@@ -30,15 +32,26 @@ const TryNow: React.FC<TryNowProps> = ({
             {description}
           </p>
           
-          <Link to={buttonLink} className="w-auto">
+          {onButtonClick ? (
             <Button 
               variant="gradient"
               className="w-[200px] sm:w-[200px] h-12 sm:h-14 px-4 sm:px-5 py-2.5 rounded-lg flex justify-center items-center gap-2 text-lg sm:text-xl font-bold"
+              onClick={onButtonClick}
             >
               {buttonText}
               <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
-          </Link>
+          ) : (
+            <Link to={buttonLink || '#'} className="w-auto">
+              <Button 
+                variant="gradient"
+                className="w-[200px] sm:w-[200px] h-12 sm:h-14 px-4 sm:px-5 py-2.5 rounded-lg flex justify-center items-center gap-2 text-lg sm:text-xl font-bold"
+              >
+                {buttonText}
+                <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4 sm:w-5 sm:h-5" />
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

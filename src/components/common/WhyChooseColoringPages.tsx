@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface FeatureItem {
   id: string;
@@ -24,6 +25,7 @@ const WhyChooseColoringPages: React.FC<WhyChooseColoringPagesProps> = ({
   className = "",
   data
 }) => {
+  const navigate = useNavigate();
   return (
     <div className={`w-full max-w-[1170px] mx-auto px-4 ${className}`}>
       <div style={{
@@ -128,7 +130,7 @@ const WhyChooseColoringPages: React.FC<WhyChooseColoringPagesProps> = ({
                             element.scrollIntoView({ behavior: 'smooth' });
                           }
                         } else {
-                          window.location.href = feature.buttonLink;
+                          navigate(feature.buttonLink);
                         }
                       }}
                       style={{
@@ -257,7 +259,7 @@ const WhyChooseColoringPages: React.FC<WhyChooseColoringPagesProps> = ({
                             element.scrollIntoView({ behavior: 'smooth' });
                           }
                         } else {
-                          window.location.href = feature.buttonLink;
+                          navigate(feature.buttonLink);
                         }
                       }}
                       style={{

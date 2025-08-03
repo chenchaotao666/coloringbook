@@ -197,7 +197,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '1',
       name: 'Megan Thompson',
       date: 'Apr 15, 2025',
-      avatar: '/images/imageusersaying/avatar-1.png',
+      avatar: '/images/avatar/avatar18.png',
       content: '"I was honestly a bit skeptical, figuring the result would be a blurry mess. But I uploaded a simple phone picture of our golden retriever, and what this tool generated was a genuinely perfect, clean outline. My 6-year-old saw it printing and went absolutely wild. We\'ve now made an entire \'Adventures of Gus\' coloring book with photos from the park. It\'s her favorite activity."',
       image: '/images/imageusersaying/santas-magical-workshop_f1e6324f.jpg'
     },
@@ -205,7 +205,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '2',
       name: 'David Alvarez',
       date: 'Dec 5, 2024',
-      avatar: '/images/imageusersaying/avatar-2.png',
+      avatar: '/images/avatar/avatar19.png',
       content: '"In a 3rd-grade art class, engagement is everything. This tool has been a game-changer for me. I had students do a self-portrait sketch, and then we used this to turn each one into a professional-looking coloring page. The pride on their faces when they got to color their own artwork was priceless. It\'s my go-to for quick, deeply personal activities."',
       image: '/images/imageusersaying/schoolyard-adventures_33bcf68a.jpg'
     },
@@ -213,7 +213,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '3',
       name: 'Sasha Williams',
       date: 'May 2, 2025',
-      avatar: '/images/imageusersaying/avatar-3.png',
+      avatar: '/images/avatar/avatar20.png',
       content: '"As a freelance illustrator, my workflow is all about speed and efficiency. Sometimes I just need to see how a composition feels in simple black and white without committing to inking a sketch. This tool is surprisingly effective for that. I can upload a reference photo or a rough digital painting and get clean, usable linework in seconds. It\'s a genuine time-saver."',
       image: '/images/imageusersaying/sky-high-adventures_ffecf70d.jpg'
     },
@@ -221,7 +221,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '4',
       name: 'Jordan Foster',
       date: 'Jul 28, 2024',
-      avatar: '/images/imageusersaying/avatar-4.png',
+      avatar: '/images/avatar/avatar21.png',
       content: '"On a whim, I decided to make a mini coloring book of our favorite wedding photos to use as a funny keepsake for our first anniversary. I uploaded about ten pictures, and the results were so good I printed them out. I honestly didn\'t expect people to color them at the party, but they did—and it was an absolute hit. Such a unique way to relive the memories."',
       image: '/images/imageusersaying/teddy-bear-picnic_74149362.jpg'
     },
@@ -229,7 +229,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '5',
       name: 'Danielle Lee',
       date: 'Mar 21, 2025',
-      avatar: '/images/imageusersaying/avatar-5.png',
+      avatar: '/images/avatar/avatar22.png',
       content: '"My son is on the autism spectrum and responds incredibly well to structured, visual activities like coloring. This tool lets me take photos of things he\'s currently fascinated with—a specific type of train, his favorite stuffed octopus, the family car—and instantly turn them into an engaging activity that feels familiar and safe for him. It\'s an invaluable resource for us."',
       image: '/images/imageusersaying/sleepy-puppy-dreams_25051a9d.jpg'
     },
@@ -237,7 +237,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '6',
       name: 'Liam Carter',
       date: 'Oct 19, 2024',
-      avatar: '/images/imageusersaying/avatar-6.png',
+      avatar: '/images/avatar/avatar23.png',
       content: '"I\'ve tried a few of these \'image to coloring page\' websites for college projects, and most are bogged down with ads, require a signup, or just crash with a larger file. This one is different. It just works. Upload, convert, download. No fuss, no watermarks, no nonsense. It\'s perfect for when I need a quick, clean outline for a presentation without any hassle."',
       image: '/images/imageusersaying/whimsical-amusement-park_1fb03126.jpg'
     },
@@ -245,7 +245,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '7',
       name: 'Angela Perez',
       date: 'Feb 8, 2025',
-      avatar: '/images/imageusersaying/avatar-7.png',
+      avatar: '/images/avatar/avatar24.png',
       content: '"I\'m a huge craft enthusiast and use this tool for my scrapbooking and journaling. I can take a photo of a flower from my garden or a cool architectural detail and turn it into a perfect outline. It\'s like having a custom stamp maker without any of the expensive gear. It has totally elevated my DIY projects and I\'m completely in love with it."',
       image: '/images/imageusersaying/robot-cityscape_22843043.jpg'
     },
@@ -253,7 +253,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '8',
       name: 'Emily Rodriguez',
       date: 'Sep 14, 2024',
-      avatar: '/images/imageusersaying/avatar-8.png',
+      avatar: '/images/avatar/avatar25.png',
       content: '"My 4-year-old\'s doodles are wild, abstract, and wonderful. I started taking pictures of her best crayon drawings and using this tool to convert them into clean, black-and-white line art. We printed them out and made her a \'My First Art Book.\' The moment she realized she was coloring her own creations, she felt like a real, published artist. It was pure magic."',
       image: '/images/imageusersaying/vintage-car-parade_2f8c318c.jpg'
     },
@@ -261,7 +261,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       id: '9',
       name: 'Mark Chen',
       date: 'May 18, 2025',
-      avatar: '/images/imageusersaying/avatar-9.png',
+      avatar: '/images/avatar/avatar26.png',
       content: '"We run a small neighborhood cafe and were looking for something to keep kids entertained. I took a photo of our logo—a smiling cartoon coffee cup—and used this tool to create a stack of coloring pages. Now, it\'s the first thing families grab when they come in. It\'s been a simple, free way to make our space more family-friendly and our customers absolutely love it."',
       image: '/images/imageusersaying/race-day-excitement_90125dee.jpg'
     }
@@ -1862,7 +1862,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               title="Start Creating Your Coloring Pages Today"
               description="Let your imagination run wild with our Text to Coloring Page tool. Whether you're a parent bringing a flying elephant to life for your kids, an artist seeking inspiration from a dancing taco, or simply want to see a knight riding a turtle, we're here to draw it for you. Start creating your collection now and unleash your inner artist!"
               buttonText="Try Now"
-              buttonLink="/text-coloring-page"
+              onButtonClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           )}
 
@@ -1870,10 +1870,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {selectedTab === 'image' && (
             <TryNow
               title="Ready to Turn Your Image into a Coloring Page?"
-              description="Whether you're a parent turning a family photo into a fun activity, an 
-              + artist exploring a new composition, or simply looking to create a unique gift, our tool is here for you. Start transforming your favorite images now and unleash your inner artist!"
+              description="Whether you're a parent turning a family photo into a fun activity, an artist exploring a new composition, or simply looking to create a unique gift, our tool is here for you. Start transforming your favorite images now and unleash your inner artist!"
               buttonText="Try Now"
-              buttonLink="#upload-section"
+              onButtonClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           )}
 

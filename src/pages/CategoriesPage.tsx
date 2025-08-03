@@ -37,40 +37,40 @@ const CategoriesPage: React.FC = () => {
         title: 'Creative Play for the Imagination',
         description: 'Coloring sparks imagination and storytelling, turning simple pages into a world of adventure and creativity for kids and adults alike.',
         image: '/images/whychoosecoloringpage/image-1.png',
-        buttonText: 'Download Now - Free',
-        buttonLink: '#download-section'
+        buttonText: 'Try Now',
+        buttonLink: '/text-coloring-page'
       },
       {
         id: 'educational-skills',
         title: 'Boost Educational Skills',
         description: 'Enhance fine motor skills, color recognition, and concentration through fun, engaging coloring activities for kids—perfect for learning and play.',
         image: '/images/whychoosecoloringpage/image-2.png',
-        buttonText: 'Download Now - Free',
-        buttonLink: '#download-section'
+        buttonText: 'Try Now',
+        buttonLink: '/text-coloring-page'
       },
       {
         id: 'stress-relief',
         title: 'Instant Stress Relief',
         description: 'Coloring is a great stress-relief activity for adults, offering a calming, screen-free break to unwind and relax after a busy day.',
         image: '/images/whychoosecoloringpage/image-3.png',
-        buttonText: 'Download Now - Free',
-        buttonLink: '#download-section'
+        buttonText: 'Try Now',
+        buttonLink: '/text-coloring-page'
       },
       {
         id: 'bonding-activity',
         title: 'A Fun Bonding Activity',
         description: 'Create special moments with family, friends, or students through shared coloring activities—perfect for bonding and nurturing creativity.',
         image: '/images/whychoosecoloringpage/image-4.png',
-        buttonText: 'Download Now - Free',
-        buttonLink: '#download-section'
+        buttonText: 'Try Now',
+        buttonLink: '/text-coloring-page'
       },
       {
         id: 'absolutely-free',
         title: 'Absolutely Free to Use',
         description: 'Download and print your favorite coloring pages instantly for free—no signup required, no hidden costs. Fun, easy, and stress-free!',
         image: '/images/whychoosecoloringpage/image-5.png',
-        buttonText: 'Download Now - Free',
-        buttonLink: '#download-section'
+        buttonText: 'Try Now',
+        buttonLink: '/text-coloring-page'
       }
     ]
   };
@@ -139,7 +139,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-1',
       name: 'Marty Behr',
       date: 'Oct 20, 2024',
-      avatar: '/images/categoriesusersaying/avatar-1.png',
+      avatar: '/images/avatar/avatar9.png',
       content: '"I downloaded the free coloring pages for my 5-year-old daughter, and she hasn\'t stopped coloring since! The designs are adorable and easy for her to enjoy on her own."',
       image: '/images/categoriesusersaying/friendly-robot-friends_faae1c8a.jpg'
     },
@@ -147,7 +147,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-2',
       name: 'Judith Madrid',
       date: 'Mar 18, 2025',
-      avatar: '/images/categoriesusersaying/avatar-2.png',
+      avatar: '/images/avatar/avatar10.png',
       content: '"As a preschool teacher, I\'m always hunting for quality printables. These free coloring pages are a lifesaver—perfect for morning activities and quiet time. The kids love the variety, and I love how quickly I can print them out!"',
       image: '/images/categoriesusersaying/birthday-cake-extravaganza_6a09bd9b.jpg'
     },
@@ -155,7 +155,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-3',
       name: 'Ruth Cox',
       date: 'Aug 15, 2024',
-      avatar: '/images/categoriesusersaying/avatar-3.png',
+      avatar: '/images/avatar/avatar11.png',
       content: '"I never thought I\'d enjoy coloring as an adult, but the mandala pages are so calming! I print a few each week for my own relaxation. It\'s a perfect way to unwind after a long day."',
       image: '/images/categoriesusersaying/brave-firefighters-in-action_ab7d9d79.jpg'
     },
@@ -163,7 +163,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-4',
       name: 'Irving Dunne',
       date: 'May 12, 2024',
-      avatar: '/images/categoriesusersaying/avatar-4.png',
+      avatar: '/images/avatar/avatar12.png',
       content: '"I was searching for a last-minute printable for my son\'s playdate, and this collection was perfect. Easy to download, and the kids were entertained for hours. I\'ll definitely be coming back for more!"',
       image: '/images/categoriesusersaying/pirate-chickens-treasure-hunt_b7b2977b.jpg'
     },
@@ -171,7 +171,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-5',
       name: 'Megan Dubreuil',
       date: 'Dec 10, 2024',
-      avatar: '/images/categoriesusersaying/avatar-5.png',
+      avatar: '/images/avatar/avatar13.png',
       content: '"We used the Christmas-themed free coloring pages for our family holiday gathering. Even the adults joined in—it was such a fun bonding moment! Everyone, young and old, enjoyed it, and it added a special touch to our celebrations."',
       image: '/images/categoriesusersaying/cat-cafe-delights_da202c11.jpg'
     },
@@ -179,7 +179,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-6',
       name: 'Valarie Jones',
       date: 'Sep 5, 2024',
-      avatar: '/images/categoriesusersaying/avatar-6.png',
+      avatar: '/images/avatar/avatar14.png',
       content: '"The variety is amazing! From animals to holiday themes, these free coloring pages have something for every child in my classroom. The kids really love the wide selection, and it\'s so easy to print them out as needed."',
       image: '/images/categoriesusersaying/classroom-creativity_a0658ea9.jpg'
     },
@@ -187,7 +187,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-7',
       name: 'Brady Briseno',
       date: 'Mar 22, 2025',
-      avatar: '/images/categoriesusersaying/avatar-7.png',
+      avatar: '/images/avatar/avatar15.png',
       content: '"My son loves dinosaurs, so these free coloring pages have been a huge hit! He colors them every day, and it\'s a great way to keep him entertained during quiet time. He can even recognize some of the dinosaurs by name!"',
       image: '/images/categoriesusersaying/dino-playtime_9f0887a3.jpg'
     },
@@ -195,7 +195,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-8',
       name: 'Evelyn Phipps',
       date: 'Jun 18, 2025',
-      avatar: '/images/categoriesusersaying/avatar-8.png',
+      avatar: '/images/avatar/avatar16.png',
       content: '"As a mom of twins, I\'m always looking for activities that keep them engaged. These coloring pages are perfect—easy to print, and they love all the fun designs! It\'s nice to have something simple to keep them busy."',
       image: '/images/categoriesusersaying/sleepy-bear-in-the-moonlight_081ab799.jpg'
     },
@@ -203,7 +203,7 @@ const CategoriesPage: React.FC = () => {
       id: 'testimonial-9',
       name: 'Mary Martin',
       date: 'Sep 14, 2024',
-      avatar: '/images/categoriesusersaying/avatar-9.png',
+      avatar: '/images/avatar/avatar17.png',
       content: '"These animal-themed coloring pages are a huge hit in our house! My daughter loves the variety and can\'t wait to color a new one every day. It\'s such a wonderful way to encourage her creativity!"',
       image: '/images/categoriesusersaying/enchanted-dollhouse_ff09403a.jpg'
     }
@@ -426,7 +426,7 @@ const CategoriesPage: React.FC = () => {
         title="Ready to Start Coloring?"
         description="Whether you're a parent looking for a fun activity for your kids, a teacher needing classroom resources, or an adult who enjoys the therapeutic benefits of coloring, our collection is here for you. Start exploring today and bring joy, calm, and creativity into your day!"
         buttonText="Try Now"
-        buttonLink="/generate"
+        buttonLink="/text-coloring-page"
       />
     </Layout>
   );

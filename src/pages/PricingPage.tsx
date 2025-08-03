@@ -148,7 +148,7 @@ const PayPalModal = ({
                 onClose();
                 // 这里可以显示成功弹窗
                 alert(t('payment.success.message', '支付成功！获得 {credits} 积分', { credits }));
-                navigate('/generate');
+                navigate('/text-coloring-page');
               }
             } catch (error) {
               console.error('捕获支付失败:', error);
@@ -403,7 +403,7 @@ const PricingPage: React.FC = () => {
   // 处理购买按钮点击
   const handleBuyClick = (planTitle: string) => {
     if (planTitle === 'Free') {
-      navigate('/generate');
+      navigate('/text-coloring-page');
       return;
     }
 
@@ -434,7 +434,7 @@ const PricingPage: React.FC = () => {
   // 处理开始创作按钮点击
   const handleStartCreating = () => {
     setShowSuccessModal(false);
-    navigate('/generate');
+    navigate('/text-coloring-page');
   };
 
   // Features for pricing plans - 直接从翻译文件获取数组
@@ -561,7 +561,7 @@ const PricingPage: React.FC = () => {
               <Button 
                 variant="gradient"
                 className="h-12 sm:h-14 px-4 sm:px-5 py-2.5 text-lg sm:text-xl font-bold flex items-center gap-2"
-                onClick={() => window.location.href = '/generate'}
+                onClick={() => window.location.href = '/text-coloring-page'}
               >
                 {t('cta.button', 'Try Now')}
                 <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4 sm:w-5 sm:h-5" />

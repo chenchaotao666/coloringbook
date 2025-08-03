@@ -8,7 +8,7 @@ const AIGenerateGuide: React.FC = () => {
   const navigate = useNavigate();
 
   const handleTextToImageClick = () => {
-    navigateWithLanguage(navigate, '/generate');
+    navigateWithLanguage(navigate, '/text-coloring-page');
   };
 
   const handleImageToImageClick = () => {

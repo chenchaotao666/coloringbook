@@ -138,10 +138,17 @@
   },
   "blog": {
     "title": "Blog",
+    "by": "By",
     "author": "By",
+    "publishedOn": "Published on",
     "readMore": "Read More",
     "backToBlog": "Back to Blog",
     "totalArticles": "Total {count} articles",
+    "noPosts": "No blog posts found.",
+    "notFound": "Article not found",
+    "notFoundMessage": "The article you are looking for does not exist.",
+    "errorLoading": "Error loading article",
+    "errorMessage": "Failed to load the article. Please try again.",
     "seo": {
       "title": "Blog - AI Coloring Pages",
       "description": "Discover the latest insights, tips, and tutorials about AI coloring pages, digital art, and creative technology.",

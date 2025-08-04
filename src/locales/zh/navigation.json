@@ -4,6 +4,7 @@
     "textColoringPage": "文字涂色页",
     "imageColoringPage": "图片涂色页",
     "pricing": "价格",
+    "blog": "博客",
     "login": "登录",
     "register": "注册",
     "profile": "个人中心",
@@ -30,7 +31,8 @@
     "creations": "我的作品",
     "generate": "创作",
     "textToImage": "文字生图",
-    "imageToImage": "图片生图"
+    "imageToImage": "图片生图",
+    "blog": "博客"
   },
   "footer": {
     "sections": {

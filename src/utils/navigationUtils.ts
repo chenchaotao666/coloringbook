@@ -23,13 +23,14 @@ export const isPublicPath = (path: string): boolean => {
     '/reset-password',
     '/price',
     '/text-coloring-page',
-    '/text-coloring-page',
-    '/image-coloring-page'
+    '/image-coloring-page',
+    '/blog'
   ];
   
   return publicPaths.some(publicPath => pathWithoutLanguage === publicPath) || 
          pathWithoutLanguage.startsWith('/categories/') || 
-         pathWithoutLanguage.startsWith('/image/');
+         pathWithoutLanguage.startsWith('/image/') ||
+         pathWithoutLanguage.startsWith('/blog/');
 };
 
 /**

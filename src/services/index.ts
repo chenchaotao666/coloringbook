@@ -50,6 +50,14 @@ export type {
   CaptureOrderResponse 
 } from './pricingService';
 
+// 博客文章服务
+export { PostsService, postsService } from './postsService';
+export type { 
+  Post, 
+  PostsSearchParams, 
+  PostsSearchResult 
+} from './postsService';
+
 // API 工具和错误处理
 export { ApiUtils, ApiError } from '../utils/apiUtils';
 export type { 

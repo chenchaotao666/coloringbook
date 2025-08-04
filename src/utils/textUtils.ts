@@ -4,8 +4,8 @@ export interface LocalizedText {
   zh: string;
 }
 
-// 语言类型
-export type Language = 'zh' | 'en' | 'ja';
+// 语言类型 - 扩展为支持任意语言代码
+export type Language = string;
 
 /**
  * 安全地获取国际化文本
@@ -32,7 +32,16 @@ export const getLocalizedText = (textObj: any, language: Language = 'en'): strin
         return '';
       }
       
-      const result = textObj[language] || textObj['en'] || textObj['zh'] || textObj['ja'] || '';
+      // 尝试当前语言，然后回退到英文，最后尝试其他可用语言
+      let result = textObj[language];
+      if (!result && textObj['en']) {
+        result = textObj['en'];
+      }
+      if (!result) {
+        // 回退到第一个可用的语言
+        const availableKeys = Object.keys(textObj).filter(key => textObj[key]);
+        result = availableKeys.length > 0 ? textObj[availableKeys[0]] : '';
+      }
       // 确保结果是字符串，并再次检查是否为对象
       if (typeof result === 'string') {
         return result;

@@ -129,10 +129,17 @@
   },
   "blog": {
     "title": "ブログ",
+    "by": "著者",
     "author": "著者",
+    "publishedOn": "公開日",
     "readMore": "続きを読む",
     "backToBlog": "ブログに戻る",
     "totalArticles": "全 {count} 記事",
+    "noPosts": "ブログ記事が見つかりません。",
+    "notFound": "記事が見つかりません",
+    "notFoundMessage": "お探しの記事は存在しません。",
+    "errorLoading": "記事の読み込みエラー",
+    "errorMessage": "記事の読み込みに失敗しました。再試行してください。",
     "seo": {
       "title": "ブログ - AI ぬりえページ",
       "description": "AIぬりえページ、デジタルアート、クリエイティブテクノロジーに関する最新の洞察、ヒント、チュートリアルを発見してください。",

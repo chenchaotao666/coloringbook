@@ -4,6 +4,7 @@
     "textColoringPage": "Text Coloring Page",
     "imageColoringPage": "Image Coloring Page",
     "pricing": "Pricing",
+    "blog": "Blog",
     "login": "Login",
     "register": "Register",
     "profile": "Profile",
@@ -30,7 +31,8 @@
     "creations": "My Creations",
     "generate": "Create",
     "textToImage": "Text to Image",
-    "imageToImage": "Image to Image"
+    "imageToImage": "Image to Image",
+    "blog": "Blog"
   },
   "footer": {
     "sections": {

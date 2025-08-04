@@ -138,10 +138,17 @@
   },
   "blog": {
     "title": "博客",
+    "by": "作者",
     "author": "作者",
+    "publishedOn": "发布于",
     "readMore": "阅读更多",
     "backToBlog": "返回博客",
     "totalArticles": "共 {count} 篇文章",
+    "noPosts": "未找到博客文章。",
+    "notFound": "文章未找到",
+    "notFoundMessage": "您要查找的文章不存在。",
+    "errorLoading": "加载文章出错",
+    "errorMessage": "加载文章失败，请重试。",
     "seo": {
       "title": "博客 - AI 涂色页面",
       "description": "发现关于AI涂色页面、数字艺术和创意技术的最新见解、提示和教程。",

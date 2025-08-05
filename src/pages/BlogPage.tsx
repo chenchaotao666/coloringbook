@@ -9,7 +9,7 @@ import { getLocalizedText } from '../utils/textUtils';
 
 
 
-const ITEMS_PER_PAGE = 2; // 临时设置为2，便于测试分页功能
+const ITEMS_PER_PAGE = 20; // 临时设置为2，便于测试分页功能
 
 const BlogPage = () => {
   const { t } = useAsyncTranslation('common');

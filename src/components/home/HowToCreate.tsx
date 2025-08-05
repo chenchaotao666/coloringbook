@@ -25,7 +25,7 @@ const HowToCreate = () => {
   const { t } = useAsyncTranslation('home');
   
   return (
-    <div className="w-full container mx-auto px-4 sm:px-6">
+    <div className="w-full container mx-auto px-4 sm:px-6 mb-[6rem]">
       <h2 className="text-center text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold capitalize mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-0">
         {t('howItWorks.title', 'How to make coloring pages')}
       </h2>

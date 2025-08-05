@@ -40,7 +40,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen = false, onC
       </div>
       
       {isOpen && (
-        <div className="text-[#6B7280] text-base leading-6 mt-4 pr-10 cursor-text select-text">
+        <div className="text-[#6B7280] text-base leading-6 mt-8 pr-10 cursor-text select-text">
           {answer}
         </div>
       )}
@@ -69,7 +69,7 @@ const GenerateFAQ: React.FC<GenerateFAQProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-[970px] mx-auto px-4 pb-16 ${className}`}>
+    <div className={`w-full max-w-[970px] mx-auto px-4 pb-[6rem] ${className}`}>
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616]">

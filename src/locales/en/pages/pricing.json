@@ -102,5 +102,32 @@
     "title": "Get Your Coloring Pages",
     "description": "One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.",
     "button": "Try Now"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "question1": {
+      "q": "How long does it take to generate a coloring page?",
+      "a": "Our AI-powered tool can generate your coloring pages in a matter of seconds. You don't have to worry about long wait times, so you can confidently rely on it to create beautiful coloring pages instantly without any delays."
+    },
+    "question2": {
+      "q": "Is this coloring page generator free to use?",
+      "a": "Yes, we offer a free tier with basic features. However, for advanced features and higher usage limits, we have premium plans available with more credits and enhanced capabilities."
+    },
+    "question3": {
+      "q": "Will using AI compromise the quality of the coloring pages?",
+      "a": "No, our AI is designed to maintain high quality while creating unique and engaging coloring pages. Each generated page is optimized for printing and coloring."
+    },
+    "question4": {
+      "q": "Can I really create unlimited coloring pages with the premium plan?",
+      "a": "Our premium plans provide generous credit allowances that let you create many coloring pages. The credits refresh monthly, giving you consistent access to our generation tools."
+    },
+    "question5": {
+      "q": "Will the generated coloring pages be suitable for printing?",
+      "a": "Yes, all our coloring pages are optimized for printing in high resolution. They work perfectly with standard home printers on regular paper."
+    },
+    "question6": {
+      "q": "How many different styles and themes are supported?",
+      "a": "We support a wide variety of themes including animals, nature, characters, patterns, and more. Premium users get access to additional style options and customization features."
+    }
   }
 } 

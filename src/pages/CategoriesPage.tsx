@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import Breadcrumb from '../components/common/Breadcrumb';
-import { CategoriesService, Category } from '../services/categoriesService';
+import { Category } from '../services/categoriesService';
 import CategoryGrid from '../components/layout/CategoryGrid';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
+import { useCategories } from '../contexts/CategoriesContext';
 import SEOHead from '../components/common/SEOHead';
-import { getCategoryNameById, updateCategoryMappings } from '../utils/categoryUtils';
+import { getCategoryNameById } from '../utils/categoryUtils';
 import { navigateWithLanguage } from '../utils/navigationUtils';
 import WhyChooseColoringPages from '../components/common/WhyChooseColoringPages';
 import ColoringPagesFor from '../components/common/ColoringPagesFor';
@@ -255,40 +256,22 @@ const CategoriesPage: React.FC = () => {
 
   
   // 状态管理
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const { categories, loading: isLoadingCategories } = useCategories();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
 
-  // 加载分类数据
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        setIsLoadingCategories(true);
-        const categoriesData = await CategoriesService.getCategories(language);
-        
-        // 更新分类映射表
-        updateCategoryMappings(categoriesData);
-        
-        setCategories(categoriesData);
-        setFilteredCategories(categoriesData);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      } finally {
-        setIsLoadingCategories(false);
-      }
-    };
-
-    loadCategories();
-  }, [language]);
-
-  // 当分类数据加载完成时，重置过滤结果
-  useEffect(() => {
-    if (!isSearchActive) {
-      setFilteredCategories(categories);
+  // 计算过滤后的分类
+  const filteredCategories = React.useMemo(() => {
+    if (!isSearchActive || !searchQuery.trim()) {
+      return categories;
     }
-  }, [categories, isSearchActive]);
+    return categories.filter(category => {
+      const displayName = getLocalizedText(category.displayName, language);
+      const name = category.name || '';
+      return displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+  }, [categories, isSearchActive, searchQuery, language]);
 
   // 处理分类点击 - 导航到详情页面（使用英文名称）
   const handleCategoryClick = (category: Category) => {
@@ -300,20 +283,7 @@ const CategoriesPage: React.FC = () => {
 
   // 执行搜索
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      setIsSearchActive(true);
-      // 手动执行搜索过滤
-      const filtered = categories.filter(category => {
-        const displayName = getLocalizedText(category.displayName, language);
-        const name = category.name || '';
-        return displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-               name.toLowerCase().includes(searchQuery.toLowerCase());
-      });
-      setFilteredCategories(filtered);
-    } else {
-      setIsSearchActive(false);
-      setFilteredCategories(categories);
-    }
+    setIsSearchActive(searchQuery.trim() !== '');
   };
 
   // 搜索输入处理
@@ -364,9 +334,9 @@ const CategoriesPage: React.FC = () => {
             <Button 
               type="submit"
               variant="gradient"
-              className="absolute right-0 top-0 h-[60px] w-[122px] font-bold text-xl rounded-r-lg"
+              className="absolute right-0 top-0 h-[60px] w-[122px] font-bold text-xl rounded-r-lg rounded-l-none"
             >
-{t('search.button', 'Search')}
+              {t('search.button', 'Search')}
             </Button>
           </form>
         </div>
@@ -377,7 +347,7 @@ const CategoriesPage: React.FC = () => {
             categories={filteredCategories}
             isLoading={isLoadingCategories}
             emptyState={
-              filteredCategories.length === 0
+              filteredCategories.length === 0 && !isLoadingCategories
                 ? isSearchActive
                   ? {
                       icon: noResultIcon,

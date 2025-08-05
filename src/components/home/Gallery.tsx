@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { CategoriesService, Category } from '../../services/categoriesService';
+import { Category } from '../../services/categoriesService';
 import CategoryGrid from '../layout/CategoryGrid';
 import { useLanguage, useAsyncTranslation } from '../../contexts/LanguageContext';
-import { getCategoryNameById, updateCategoryMappings } from '../../utils/categoryUtils';
+import { useCategories } from '../../contexts/CategoriesContext';
+import { getCategoryNameById } from '../../utils/categoryUtils';
 import { navigateWithLanguage } from '../../utils/navigationUtils';
 
 interface GalleryProps {
@@ -12,52 +13,25 @@ interface GalleryProps {
 }
 
 const Gallery: React.FC<GalleryProps> = ({ imageCount }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { language } = useLanguage();
+  const { categories, loading: isLoading } = useCategories(imageCount);
   const { t } = useAsyncTranslation('home');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        setIsLoading(true);
-        const categoriesData = await CategoriesService.getCategories(language);
-        
-        // 更新分类映射表
-        updateCategoryMappings(categoriesData);
-        
-        // 按热度排序，热度高的在前
-        const sortedCategories = categoriesData.sort((a, b) => b.hotness - a.hotness);
-        setCategories(sortedCategories);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadCategories();
-  }, [language]);
-
-  const displayCategories = categories.slice(0, imageCount); // 使用传入的imageCount参数
 
   const handleCategoryClick = (category: Category) => {
     // 使用映射表获取SEO友好的名称
     const categoryPath = getCategoryNameById(category.categoryId);
-    console.log('分类ID:', category.categoryId, '→ SEO路径:', categoryPath);
     navigateWithLanguage(navigate, `/categories/${categoryPath}`);
   };
 
   return (
-    <div className="w-full bg-[#F9FAFB] pb-12 sm:pb-16 md:pb-20 lg:pb-[120px] pt-12 sm:pt-16 md:pt-20 lg:pt-[120px]">
+    <div className="w-full bg-[#F9FAFB] pb-12 sm:pb-16 md:pb-20 lg:pb-[6rem] pt-12 sm:pt-16 md:pt-20 lg:pt-[6rem]">
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="text-center text-[#161616] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] font-bold capitalize mb-8 sm:mb-10 md:mb-12 lg:mb-[48px] leading-relaxed lg:leading-[1.6] px-4 sm:px-0 max-w-[1200px] mx-auto">
           {t('gallery.title', 'Browse our')} 
         </h2>
         
         <CategoryGrid 
-          categories={displayCategories}
+          categories={categories}
           isLoading={isLoading}
           onCategoryClick={handleCategoryClick}
           maxColumns={{ desktop: 4, tablet: 3, mobile: 2 }}

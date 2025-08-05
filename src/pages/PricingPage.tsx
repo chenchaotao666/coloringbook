@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loadScript as loadScriptPaypal } from "@paypal/paypal-js";
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
-import FAQ from '../components/home/FAQ';
+import GenerateFAQ, { FAQData } from '../components/common/GenerateFAQ';
 import { useAuth } from '../contexts/AuthContext';
 import { PricingService } from '../services/pricingService';
 import { ApiError } from '../utils/apiUtils';
@@ -360,6 +360,34 @@ const PricingPage: React.FC = () => {
   const { t } = useAsyncTranslation('pricing');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+
+  // FAQ 数据
+  const pricingFAQData: FAQData[] = [
+    {
+      question: t('faq.question1.q', 'How long does it take to generate a coloring page?'),
+      answer: t('faq.question1.a', 'Our AI-powered tool can generate your coloring pages in a matter of seconds. You don\'t have to worry about long wait times, so you can confidently rely on it to create beautiful coloring pages instantly without any delays.')
+    },
+    {
+      question: t('faq.question2.q', 'Is this coloring page generator free to use?'),
+      answer: t('faq.question2.a', 'Yes, we offer a free tier with basic features. However, for advanced features and higher usage limits, we have premium plans available with more credits and enhanced capabilities.')
+    },
+    {
+      question: t('faq.question3.q', 'Will using AI compromise the quality of the coloring pages?'),
+      answer: t('faq.question3.a', 'No, our AI is designed to maintain high quality while creating unique and engaging coloring pages. Each generated page is optimized for printing and coloring.')
+    },
+    {
+      question: t('faq.question4.q', 'Can I really create unlimited coloring pages with the premium plan?'),
+      answer: t('faq.question4.a', 'Our premium plans provide generous credit allowances that let you create many coloring pages. The credits refresh monthly, giving you consistent access to our generation tools.')
+    },
+    {
+      question: t('faq.question5.q', 'Will the generated coloring pages be suitable for printing?'),
+      answer: t('faq.question5.a', 'Yes, all our coloring pages are optimized for printing in high resolution. They work perfectly with standard home printers on regular paper.')
+    },
+    {
+      question: t('faq.question6.q', 'How many different styles and themes are supported?'),
+      answer: t('faq.question6.a', 'We support a wide variety of themes including animals, nature, characters, patterns, and more. Premium users get access to additional style options and customization features.')
+    }
+  ];
   
   // 默认选择Pro计划和月付
   const [selectedPlan, setSelectedPlan] = useState('Pro');
@@ -549,7 +577,10 @@ const PricingPage: React.FC = () => {
           </div>
           
           {/* FAQ Section */}
-          <FAQ />
+          <GenerateFAQ 
+            faqData={pricingFAQData} 
+            title={t('faq.title', 'Frequently Asked Questions')}
+          />
           
           {/* CTA Section */}
           <div className="w-full bg-[#F9FAFB] py-12 sm:py-16 md:py-24 border-t border-b border-[#F3F4F6]">

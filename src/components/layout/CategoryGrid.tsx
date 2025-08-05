@@ -89,7 +89,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   const tabletColumns = getColumnCount(categories.length, maxColumns.tablet);
   const mobileColumns = getColumnCount(categories.length, maxColumns.mobile);
 
-  // 智能分配分类到各列，确保均匀分布
+  // 按行排序分配分类到各列
   const distributeToColumns = (categories: Category[], columnCount: number) => {
     if (categories.length === 0) return [];
     
@@ -105,23 +105,11 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
     
     const actualColumns: Category[][] = Array.from({ length: actualColumnCount }, () => []);
     
-    // 计算每列应该有多少个分类
-    const baseItemsPerColumn = Math.floor(categories.length / actualColumnCount);
-    const extraItems = categories.length % actualColumnCount;
-    
-    let categoryIndex = 0;
-    
-    // 为每列分配分类
-    for (let colIndex = 0; colIndex < actualColumnCount; colIndex++) {
-      const itemsInThisColumn = baseItemsPerColumn + (colIndex < extraItems ? 1 : 0);
-      
-      for (let i = 0; i < itemsInThisColumn; i++) {
-        if (categoryIndex < categories.length) {
-          actualColumns[colIndex].push(categories[categoryIndex]);
-          categoryIndex++;
-        }
-      }
-    }
+    // 按行排序：第一行填满第1-N列，第二行填满第1-N列，以此类推
+    categories.forEach((category, index) => {
+      const columnIndex = index % actualColumnCount;
+      actualColumns[columnIndex].push(category);
+    });
     
     return actualColumns;
   };

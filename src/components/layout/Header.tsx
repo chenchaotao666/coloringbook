@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage, Language, useAsyncTranslation } from '../../contexts/LanguageContext';
 import { generateLanguagePath } from '../common/LanguageRouter';
-import { useCategories } from '../../hooks/useCategories';
 import { Category } from '../../services/categoriesService';
 import { getLocalizedText } from '../../utils/textUtils';
 
@@ -17,13 +16,14 @@ const colorPaletteIcon = '/images/color-palette.png';
 
 interface HeaderProps {
   backgroundColor?: 'transparent' | 'white';
+  categories: Category[];
+  categoriesLoading: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
+const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', categories, categoriesLoading }) => {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const { t: navT } = useAsyncTranslation('navigation');
-  const { categories, loading: categoriesLoading } = useCategories();
   // const location = useLocation(); // 暂时不需要
 
   // 生成带语言前缀的链接
@@ -187,7 +187,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent' }) => {
 
   // 将API数据转换为菜单显示格式
   const getCategoriesMenuData = () => {
-    if (categoriesLoading || categories.length === 0) {
+    if (categoriesLoading || !categories || categories.length === 0) {
       return { title: '', links: [] };
     }
 

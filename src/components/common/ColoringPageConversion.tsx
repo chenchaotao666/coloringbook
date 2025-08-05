@@ -27,7 +27,7 @@ const ColoringPageConversion: React.FC<ColoringPageConversionProps> = ({
     <div className={`w-full max-w-[1170px] mx-auto px-4 ${className}`}>
       {/* Header */}
       <div className="text-center mb-16">
-        <h2 className="text-[46px] font-bold text-[#161616] capitalize leading-tight mb-8 max-w-[1000px] mx-auto">
+        <h2 className="text-[46px] font-bold text-[#161616] capitalize leading-tight mb-8 max-w-[1200px] mx-auto">
           {data.title}
         </h2>
         <p className="text-lg text-[#6B7280] max-w-[900px] mx-auto">

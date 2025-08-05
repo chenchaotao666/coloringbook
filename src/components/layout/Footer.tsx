@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAsyncTranslation, useLanguage } from '../../contexts/LanguageContext';
-import { useCategories } from '../../hooks/useCategories';
 import { getLocalizedText } from '../../utils/textUtils';
+import { Category } from '../../services/categoriesService';
 
 const logo = '/images/logo.svg';
 const socialIcon1 = '/images/Link → SVG-1.svg';
@@ -41,10 +41,14 @@ const FooterSection: React.FC<FooterSectionProps> = ({ title, links }) => {
   );
 };
 
-const Footer = () => {
+interface FooterProps {
+  categories: Category[];
+  categoriesLoading: boolean;
+}
+
+const Footer: React.FC<FooterProps> = ({ categories, categoriesLoading }) => {
   const { t } = useAsyncTranslation('navigation');
   const { language } = useLanguage();
-  const { categories, loading: categoriesLoading } = useCategories();
 
 
   const sections = [

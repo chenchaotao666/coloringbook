@@ -41,9 +41,9 @@ export class CategoriesService {
   }
 
   // 获取所有分类
-  static async getCategories(lang: 'zh' | 'en' | 'ja' = 'zh'): Promise<Category[]> {
+  static async getCategories(): Promise<Category[]> {
     try {
-      const data = await ApiUtils.get<Category[]>('/api/images/categories', { lang });
+      const data = await ApiUtils.get<Category[]>('/api/images/categories');
       const rawCategories = data || [];
       
       // 处理分类缩略图URL，确保都是绝对路径
@@ -58,9 +58,9 @@ export class CategoriesService {
   }
 
   // 根据分类名称获取分类详情
-  static async getCategoryByName(categoryName: string, lang: 'zh' | 'en' | 'ja' = 'zh'): Promise<Category | null> {
+  static async getCategoryByName(categoryName: string): Promise<Category | null> {
     try {
-      const categories = await this.getCategories(lang);
+      const categories = await this.getCategories();
       // 查找匹配的分类（支持name字段）
       const category = categories.find(cat => 
         cat.name && cat.name.toLowerCase() === categoryName.toLowerCase()
@@ -73,9 +73,9 @@ export class CategoriesService {
   }
 
   // 根据分类ID获取分类详情
-  static async getCategoryById(categoryId: string, lang: 'zh' | 'en' | 'ja' = 'zh'): Promise<Category | null> {
+  static async getCategoryById(categoryId: string): Promise<Category | null> {
     try {
-      const categories = await this.getCategories(lang);
+      const categories = await this.getCategories();
       const category = categories.find(cat => cat.categoryId === categoryId);
       return category || null;
     } catch (error) {

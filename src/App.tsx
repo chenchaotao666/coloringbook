@@ -23,6 +23,7 @@ import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
 import { AuthProvider } from './contexts/AuthContext';
 import { UploadImageProvider } from './contexts/UploadImageContext';
+import { CategoriesProvider } from './contexts/CategoriesContext';
 
 // 应用内容组件，处理语言加载状态
 function AppContent() {
@@ -126,7 +127,9 @@ function App() {
     <LanguageProvider>
       <AuthProvider>
         <UploadImageProvider>
-          <AppContent />
+          <CategoriesProvider>
+            <AppContent />
+          </CategoriesProvider>
         </UploadImageProvider>
       </AuthProvider>
     </LanguageProvider>

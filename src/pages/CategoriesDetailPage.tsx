@@ -6,11 +6,12 @@ import MasonryGrid from '../components/layout/MasonryGrid';
 import RatioSelector from '../components/ui/RatioSelector';
 import Breadcrumb from '../components/common/Breadcrumb';
 import { CategoriesService, Category, TagCount } from '../services/categoriesService';
+import { useCategories } from '../contexts/CategoriesContext';
 import { HomeImage, AspectRatio } from '../services/imageService';
 import { useLanguage, Language } from '../contexts/LanguageContext';
 import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
-import { getCategoryIdByName, getCategoryNameById, isCategoryName, updateCategoryMappings, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
+import { getCategoryIdByName, getCategoryNameById, isCategoryName, isCategoryId, convertDisplayNameToPath } from '../utils/categoryUtils';
 import { getImageNameById, updateImageMappings } from '../utils/imageUtils';
 import { navigateWithLanguage } from '../utils/navigationUtils';
 import SEOHead from '../components/common/SEOHead';
@@ -356,6 +357,7 @@ const CategoriesDetailPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { categories: allCategories, loading: categoriesLoading } = useCategories();
 
   const [category, setCategory] = useState<Category | null>(null);
   const [, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
@@ -402,14 +404,17 @@ const CategoriesDetailPage: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log('🔄 useEffect triggered for loadCategoryData', { categoryId, language });
     
     const loadCategoryData = async () => {
-      console.log('🚀 loadCategoryData called', { categoryId, language });
       if (!categoryId) return;
+      
+      // 等待分类数据加载完成
+      if (categoriesLoading || allCategories.length === 0) {
+        return;
+      }
 
-      // 防止重复加载：如果已经为当前categoryId和language组合正在加载，则跳过
-      const currentKey = `${categoryId}-${language}`;
+      // 防止重复加载：如果已经为当前categoryId正在加载，则跳过
+      const currentKey = `${categoryId}`;
       if (loadingRef.current === currentKey) {
         console.log('⚠️ Skipping - already loading for this key');
         return;
@@ -421,9 +426,7 @@ const CategoriesDetailPage: React.FC = () => {
       try {
         setIsCategoryLoading(true);
 
-        // 🔧 优化：先获取所有分类数据并更新映射表，确保F5刷新时能正确工作
-        const allCategories = await CategoriesService.getCategories(language);
-        updateCategoryMappings(allCategories);
+        // 🔧 优化：使用全局分类数据，无需重复获取
 
         // 确定实际的分类ID并从全量数据中查找分类
         let actualCategoryId: string;
@@ -454,8 +457,7 @@ const CategoriesDetailPage: React.FC = () => {
 
           if (foundCategory) {
             actualCategoryId = foundCategory.categoryId;
-            // 更新映射表以包含找到的分类
-            updateCategoryMappings([foundCategory, ...allCategories]);
+            // 找到分类，无需更新映射表（已在CategoriesContext中处理）
           }
         }
 
@@ -515,7 +517,7 @@ const CategoriesDetailPage: React.FC = () => {
     };
 
     loadCategoryData();
-  }, [categoryId, language]);
+  }, [categoryId, categoriesLoading, allCategories]);
 
   // 监听标签选择变化，重新应用过滤
   useEffect(() => {

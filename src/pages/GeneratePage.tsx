@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LayoutNoFooter from '../components/layout/LayoutNoFooter';
+import Layout from '../components/layout/Layout';
 import useGeneratePage from '../hooks/useGeneratePage';
 import { useAuth } from '../contexts/AuthContext';
 import { getLocalizedText } from '../utils/textUtils';
 import CircularProgress from '../components/ui/CircularProgress';
 import DeleteImageConfirmDialog from '../components/ui/DeleteImageConfirmDialog';
-import BackToTop from '../components/common/BackToTop';
 import Tooltip from '../components/ui/Tooltip';
 import ColoringPageTool, { ColoringPageToolData } from '../components/common/ColoringPageTool';
 import GenerateExample from '../components/common/GenerateExample';
@@ -16,7 +15,6 @@ import HowToCreate, { HowToCreateData } from '../components/common/HowToCreate';
 import UserSaying, { TestimonialItem } from '../components/common/UserSaying';
 import GenerateFAQ, { FAQData } from '../components/common/GenerateFAQ';
 import TryNow from '../components/common/TryNow';
-import Footer from '../components/layout/Footer';
 import ColoringPageConversion, { ColoringPageConversionData } from '../components/common/ColoringPageConversion';
 
 import SEOHead from '../components/common/SEOHead';
@@ -1578,7 +1576,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   };
 
   return (
-    <LayoutNoFooter>
+    <Layout>
       <SEOHead
         title={tCommon('seo.generate.title', 'AI Coloring Page Generator - Create Custom Coloring Pages from Text & Images')}
         description={tCommon('seo.generate.description', 'Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.')}
@@ -1835,98 +1833,98 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       <div className="w-full bg-white">
           {/* ColoringPageTool component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:pb-16 lg:pt-32">
+            <div className="py-8 lg:pb-12 lg:pt-24">
               <ColoringPageTool data={textColoringPageToolData} />
             </div>
           )}
 
           {/* ColoringPageTool component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:pb-16 lg:pt-32">
+            <div className="py-8 lg:pb-12 lg:pt-24">
               <ColoringPageTool data={imageColoringPageToolData} />
             </div>
           )}
 
           {/* WhyChoose component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <WhyChoose data={textWhyChooseData} />
             </div>
           )}
 
           {/* WhyChoose component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <WhyChoose data={imageWhyChooseData} />
             </div>
           )}
 
           {/* ColoringPageConversion component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <ColoringPageConversion data={coloringPageConversionData} />
             </div>
           )}
 
           {/* HowToCreate component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <HowToCreate data={imageHowToCreateData} />
             </div>
           )}
 
           {/* CanCreate component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <CanCreate data={imageCanCreateData} />
             </div>
           )}
 
           {/* UserSaying component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <UserSaying testimonials={imageUserSayingTestimonials} />
             </div>
           )}
 
           {/* GenerateFAQ component - only show for image mode */}
           {selectedTab === 'image' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <GenerateFAQ faqData={imageFAQData} />
             </div>
           )}
 
           {/* CanCreate component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <CanCreate data={textCanCreateData} />
             </div>
           )}
 
           {/* HowToCreate component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <HowToCreate data={howToCreateData} />
             </div>
           )}
 
           {/* Second CanCreate component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="py-8 lg:py-12 bg-white">
               <CanCreate data={textCanCreateData2} />
             </div>
           )}
 
           {/* UserSaying component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="pt-8 lg:pt-12 bg-white">
               <UserSaying testimonials={sampleTestimonials} />
             </div>
           )}
 
           {/* GenerateFAQ component - only show for text mode */}
           {selectedTab === 'text' && (
-            <div className="py-8 lg:py-16 bg-white">
+            <div className="pt-8 lg:pt-12 bg-white">
               <GenerateFAQ faqData={textFAQData} />
             </div>
           )}
@@ -1951,10 +1949,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
             />
           )}
 
-          {/* Footer component - only show for text mode */}
-          {(selectedTab === 'text' || selectedTab === 'image') && (
-            <Footer />
-          )}
 
         </div>
 
@@ -1965,15 +1959,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         onConfirm={handleConfirmDelete}
       />
 
-      {/* 回到顶部按钮 - 移动端使用专用滚动容器 */}
-      <div className="lg:hidden">
-        <BackToTop scrollContainer={mobileContentRef.current} />
-      </div>
-      {/* 桌面端使用默认的window滚动 */}
-      <div className="hidden lg:block">
-        <BackToTop />
-      </div>
-    </LayoutNoFooter>
+    </Layout>
   );
 };
 

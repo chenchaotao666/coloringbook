@@ -541,5 +541,12 @@
       "description": "Whether you're a parent turning a family photo into a fun activity, an artist exploring a new composition, or simply looking to create a unique gift, our tool is here for you. Start transforming your favorite images now and unleash your inner artist!",
       "buttonText": "Try Now"
     }
+  },
+  "seo": {
+    "generate": {
+      "title": "AI Coloring Page Generator - Create Custom Coloring Pages from Text & Images",
+      "description": "Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.",
+      "keywords": "AI coloring generator, text to coloring page, image to coloring page, custom coloring pages, AI art generator, printable coloring pages"
+    }
   }
 } 

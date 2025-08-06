@@ -22,9 +22,9 @@ const DeleteImageConfirmDialog: React.FC<DeleteImageConfirmDialogProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
-      message={t('messages.confirmDelete', 'Are you sure you want to delete this image? This action cannot be undone.')}
-      confirmText={isDeleting ? t('status.processing', 'Deleting...') : t('buttons.delete', 'Delete')}
-      cancelText={t('buttons.cancel', 'Cancel')}
+      message={t('messages.confirmDelete')}
+      confirmText={isDeleting ? t('status.processing') : t('buttons.delete')}
+      cancelText={t('buttons.cancel')}
       confirmButtonVariant="danger"
     />
   );

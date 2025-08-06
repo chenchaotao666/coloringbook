@@ -22,8 +22,8 @@ const AIGenerateGuide: React.FC = () => {
         <div className="col-span-1 bg-white border border-[#E5E7EB] rounded-xl p-5 w-[660px] h-[380px]" style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 15px 0px' }}>
           <div className="relative">
             <img 
-              src="/images/guide2.png" 
-              alt={t('detail.aiGuide.textToImage.alt', 'Text to Image')}
+              src="/images/guide2.jpg" 
+              alt={t('detail.aiGuide.textToImage.alt')}
               className="w-full h-auto rounded-lg"
             />
             <span className="absolute flex items-center gap-1 px-4 py-2 bottom-3 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm">
@@ -41,24 +41,24 @@ const AIGenerateGuide: React.FC = () => {
                 </defs>
               </svg>
               <span className="text-sm font-medium text-[#111827]">
-                {t('detail.aiGuide.textToImage.badge', '独角兽在云端跳舞')}
+                {t('detail.aiGuide.textToImage.badge')}
               </span>
             </span>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4 mt-4 sm:flex-nowrap">
             <div>
               <p className="text-lg text-[#111827] font-semibold">
-                {t('detail.aiGuide.textToImage.title', '文字转填色页工具')}
+                {t('detail.aiGuide.textToImage.title')}
               </p>
               <p className="text-sm mt-1 text-[#6B7280]">
-                {t('detail.aiGuide.textToImage.description', '从幼儿到成人，支持4种难度的选择')}
+                {t('detail.aiGuide.textToImage.description')}
               </p>
             </div>
             <button
               onClick={handleTextToImageClick}
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-[#FF9D00] to-[#FF5907] text-white hover:from-[#FFB84D] hover:to-[#FF7A47] transition-all duration-300 h-12 px-6 py-2 text-base font-bold flex-shrink-0 w-full sm:w-auto"
             >
-              {t('detail.aiGuide.textToImage.button', '立即生成')}
+              {t('detail.aiGuide.textToImage.button')}
             </button>
           </div>
         </div>
@@ -67,8 +67,8 @@ const AIGenerateGuide: React.FC = () => {
         <div className="col-span-1 bg-white border border-[#E5E7EB] rounded-xl p-5 w-[660px] h-[380px]" style={{ boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 15px 0px' }}>
           <div className="relative">
             <img 
-              src="/images/guide1.png" 
-              alt={t('detail.aiGuide.imageToImage.alt', 'Image to Image')}
+              src="/images/guide1.jpg" 
+              alt={t('detail.aiGuide.imageToImage.alt')}
               className="w-full h-auto rounded-lg"
             />
             <span className="absolute flex items-center gap-1 px-4 py-2 bottom-3 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm">
@@ -86,24 +86,24 @@ const AIGenerateGuide: React.FC = () => {
                 </defs>
               </svg>
               <span className="text-sm font-medium text-[#111827]">
-                {t('detail.aiGuide.imageToImage.badge', '一键转换')}
+                {t('detail.aiGuide.imageToImage.badge')}
               </span>
             </span>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4 mt-4 sm:flex-nowrap">
             <div>
               <p className="text-lg text-[#111827] font-semibold">
-                {t('detail.aiGuide.imageToImage.title', '图片变成填色页工具')}
+                {t('detail.aiGuide.imageToImage.title')}
               </p>
               <p className="text-sm mt-1 text-[#6B7280]">
-                {t('detail.aiGuide.imageToImage.description', '把你的图片，变成填色页')}
+                {t('detail.aiGuide.imageToImage.description')}
               </p>
             </div>
             <button
               onClick={handleImageToImageClick}
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-[#FF9D00] to-[#FF5907] text-white hover:from-[#FFB84D] hover:to-[#FF7A47] transition-all duration-300 h-12 px-6 py-2 text-base font-bold flex-shrink-0 w-full sm:w-auto"
             >
-              {t('detail.aiGuide.imageToImage.button', '立即生成')}
+              {t('detail.aiGuide.imageToImage.button')}
             </button>
           </div>
         </div>

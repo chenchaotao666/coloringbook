@@ -47,8 +47,8 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
   const { setUploadedImage: setGlobalUploadedImage } = useUploadImage();
 
   // 检查文本是否已加载
-  const titleText = t('detail.generateSection.title', '', {
-    category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory', '')
+  const titleText = t('detail.generateSection.title', undefined, {
+    category: category ? getLocalizedText(category.displayName, language) : t('detail.generateSection.customCategory')
   });
   
   // 当文本加载完成时设置状态
@@ -117,7 +117,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
               activeTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
             }`}
           >
-            {t('detail.generateSection.textTab', '文字转图片')}
+            {t('detail.generateSection.textTab')}
           </button>
           <button
             onClick={() => setActiveTab('image')}
@@ -125,7 +125,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
               activeTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
             }`}
           >
-            {t('detail.generateSection.imageTab', '图片转图片')}
+            {t('detail.generateSection.imageTab')}
           </button>
         </div>
       </div>
@@ -135,7 +135,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
           <textarea
             value={generatePrompt}
             onChange={(e) => setGeneratePrompt(e.target.value)}
-            placeholder={t('detail.generatePrompt.placeholder', '')}
+            placeholder={t('detail.generatePrompt.placeholder')}
             className="w-full h-32 resize-none border-none outline-none text-base text-[#161616] placeholder-[#A4A4A4]"
           />
         ) : (
@@ -165,7 +165,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-[46px] lg:h-[46px] mb-3 sm:mb-4">
                   <img src="/images/add-image.svg" alt="Upload" className="w-full h-full" />
                 </div>
-                <div className="text-[#A4A4A4] text-xs sm:text-sm">{t('detail.generatePrompt.uploadImage', '点击上传')}</div>
+                <div className="text-[#A4A4A4] text-xs sm:text-sm">{t('detail.generatePrompt.uploadImage')}</div>
               </>
             )}
             <input
@@ -194,7 +194,7 @@ const GenerateSection: React.FC<GenerateSectionProps> = ({ category, language, t
             className="px-6 py-2 text-base font-bold"
             disabled={activeTab === 'image' && !uploadedImage}
           >
-            {t('detail.generatePrompt.button', '')}
+            {t('detail.generatePrompt.button')}
           </Button>
         </div>
       </div>
@@ -341,8 +341,8 @@ const DescriptionSection = React.memo<{ element: any; t: any }>(({ element, t })
           <ExpandableContent
             content={element.section.content}
             maxLines={element.maxLines || 1}
-            viewMoreText={t('detail.viewMore', '')}
-            collapseText={t('detail.collapse', '')}
+            viewMoreText={t('detail.viewMore')}
+            collapseText={t('detail.collapse')}
             className={element.contentClassName || ''}
           />
         )}
@@ -547,8 +547,8 @@ const CategoriesDetailPage: React.FC = () => {
   // 获取基础面包屑（即使分类还在加载也可以显示）
   const getBreadcrumbPathEarly = () => {
     return [
-      { label: t('breadcrumb.home', 'Home'), path: '/' },
-      { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
+      { label: t('breadcrumb.home'), path: '/' },
+      { label: t('breadcrumb.categories'), path: '/categories' },
       { label: category ? getLocalizedText(category.displayName, language) : '', current: true }
     ];
   };
@@ -562,9 +562,9 @@ const CategoriesDetailPage: React.FC = () => {
           <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1380px]">
             <Breadcrumb
               items={[
-                { label: t('breadcrumb.home', 'Home'), path: '/' },
-                { label: t('breadcrumb.categories', 'Coloring Pages Free'), path: '/categories' },
-                { label: t('detail.notFound.title', 'Category not found'), current: true }
+                { label: t('breadcrumb.home'), path: '/' },
+                { label: t('breadcrumb.categories'), path: '/categories' },
+                { label: t('detail.notFound.title'), current: true }
               ]}
             />
           </div>
@@ -573,12 +573,12 @@ const CategoriesDetailPage: React.FC = () => {
             <div className="flex flex-col items-center justify-center py-16">
               <div className="text-center">
                 <div className="text-6xl mb-4">❌</div>
-                <h3 className="text-xl font-semibold text-[#161616] mb-2">{t('detail.notFound.title', 'Category not found')}</h3>
+                <h3 className="text-xl font-semibold text-[#161616] mb-2">{t('detail.notFound.title')}</h3>
                 <p className="text-[#6B7280] text-sm max-w-md mb-6">
-                  {t('detail.notFound.description', "The category you're looking for doesn't exist or has been removed.")}
+                  {t('detail.notFound.description')}
                 </p>
                 <Button onClick={handleBackToCategories} variant="gradient">
-                  {t('detail.notFound.backButton', 'Back to Categories')}
+                  {t('detail.notFound.backButton')}
                 </Button>
               </div>
             </div>
@@ -615,7 +615,7 @@ const CategoriesDetailPage: React.FC = () => {
             <>
               {/* Category Title */}
               <h1 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1]">
-                {t('detail.pageTitle', '', { 
+                {t('detail.pageTitle', undefined, { 
                   count: categoryImages.length, 
                   category: getLocalizedText(category.displayName, language) 
                 })}
@@ -625,7 +625,7 @@ const CategoriesDetailPage: React.FC = () => {
               <div className="mx-auto mb-12">
                 <div className="mb-4">
                   <p className="text-[#161616] text-lg font-medium">
-                    {t('detail.categoryIntro.imageCount', '', { count: categoryImages.length, category: getLocalizedText(category.displayName, language) })}
+                    {t('detail.categoryIntro.imageCount', undefined, { count: categoryImages.length, category: getLocalizedText(category.displayName, language) })}
                   </p>
                 </div>
 
@@ -633,16 +633,16 @@ const CategoriesDetailPage: React.FC = () => {
                   content={
                     <div className="text-left">
                       <p className="mb-4">
-                        {t('detail.categoryIntro.description', '')}
+                        {t('detail.categoryIntro.description')}
                       </p>
                       <p>
-                        {t('detail.categoryIntro.downloadInfo', '', { category: getLocalizedText(category.displayName, language) })}
+                        {t('detail.categoryIntro.downloadInfo', undefined, { category: getLocalizedText(category.displayName, language) })}
                       </p>
                     </div>
                   }
                   maxLines={1}
-                  viewMoreText={t('detail.viewMore', '')}
-                  collapseText={t('detail.collapse', '')}
+                  viewMoreText={t('detail.viewMore')}
+                  collapseText={t('detail.collapse')}
                   className="text-base lg:text-lg leading-relaxed"
                 />
               </div>

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { CategoriesService, Category } from '../services/categoriesService';
-import { useLanguage } from '../contexts/LanguageContext';
 
 interface UseCategoriesReturn {
   categories: Category[];

@@ -25,7 +25,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({ title, description, images, l
         variant="gradient"
         className="w-[160px] sm:w-[170px] h-[50px] sm:h-[60px] px-6 sm:px-11 py-3 sm:py-[18px] rounded-lg text-lg sm:text-xl font-bold"
       >
-        {t('features.tryNow', 'Try Now')}
+        {t('features.tryNow')}
       </Button>
     </Link>
   );
@@ -119,21 +119,21 @@ const Features = () => {
       <div className="bg-white container mx-auto pt-4 pb-12 sm:px-6 sm:py-20 lg:py-[100px] xl:py-[120px] flex flex-col items-center gap-12 sm:gap-16 lg:gap-20">
         <div className="text-center px-4 sm:px-0">
           <h2 className="text-[#161616] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] xl:text-[52px] font-bold capitalize leading-tight">
-            {t('features.title', 'Discover our tools\' amazing feats!')}
+            {t('features.title')}
           </h2>
         </div>
 
         <div className="w-full flex flex-col gap-16 sm:gap-20 lg:gap-24 xl:gap-[120px]">
           <FeatureItem
-            title={t('features.textToImage.title', 'Generate high-quality coloring pages from text')}
-            description={t('features.textToImage.description', 'Enter words like \'Dinosaur\', \'Mickey\', or \'SpongeBob\', and the AI will instantly turn them into art.')}
+            title={t('features.textToImage.title')}
+            description={t('features.textToImage.description')}
             images={[homeFeatureAlt, homeFeature]}
             linkTo="/text-coloring-page"
           />
 
           <FeatureItem
-            title={t('features.imageToColoring.title', 'Convert images to coloring pages')}
-            description={t('features.imageToColoring.description', 'Upload any photo or image, and our AI will transform it into a beautiful coloring page outline.')}
+            title={t('features.imageToColoring.title')}
+            description={t('features.imageToColoring.description')}
             images={[coloringPrincess, coloringmMickeyMouse]}
             linkTo="/image-coloring-page"
             isReversed={true}

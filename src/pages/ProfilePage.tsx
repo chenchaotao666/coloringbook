@@ -52,7 +52,7 @@ const ProfilePage: React.FC = () => {
       setAvatarPreview(authUser.avatar || '');
     } catch (error) {
       console.error('Failed to load user profile:', error);
-      setErrors({ general: t('messages.loadUserFailed', '加载用户信息失败，请刷新页面重试') });
+      setErrors({ general: t('messages.loadUserFailed') });
     } finally {
       setIsLoadingUser(false);
     }
@@ -86,7 +86,7 @@ const ProfilePage: React.FC = () => {
       navigateWithLanguage(navigate, '/login', { 
         state: { 
           from: { pathname: '/profile' },
-          message: t('messages.loginRequired', '请先登录以访问个人资料')
+          message: t('messages.loginRequired')
         }
       });
       return;
@@ -108,34 +108,34 @@ const ProfilePage: React.FC = () => {
     const newErrors: {[key: string]: string} = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = t('errors.username.required', '请输入用户名');
+      newErrors.username = t('errors.username.required');
     } else if (formData.username.length < 2) {
-      newErrors.username = t('errors.username.minLength', '用户名至少需要2个字符');
+      newErrors.username = t('errors.username.minLength');
     } else if (formData.username.length > 20) {
-      newErrors.username = t('errors.username.maxLength', '用户名不能超过20个字符');
+      newErrors.username = t('errors.username.maxLength');
     }
 
     if (formData.newPassword || formData.currentPassword || formData.confirmPassword) {
       if (!formData.currentPassword) {
-        newErrors.currentPassword = t('errors.password.currentRequired', '请输入当前密码');
+        newErrors.currentPassword = t('errors.password.currentRequired');
       }
 
       if (!formData.newPassword) {
-        newErrors.newPassword = t('errors.password.newRequired', '请输入新密码');
+        newErrors.newPassword = t('errors.password.newRequired');
       } else if (formData.newPassword.length < 6) {
-        newErrors.newPassword = t('errors.password.minLength', '新密码至少需要6个字符');
+        newErrors.newPassword = t('errors.password.minLength');
       } else if (formData.newPassword.length > 50) {
-        newErrors.newPassword = t('errors.password.maxLength', '新密码不能超过50个字符');
+        newErrors.newPassword = t('errors.password.maxLength');
       }
 
       if (!formData.confirmPassword) {
-        newErrors.confirmPassword = t('errors.password.confirmRequired', '请确认新密码');
+        newErrors.confirmPassword = t('errors.password.confirmRequired');
       } else if (formData.newPassword !== formData.confirmPassword) {
-        newErrors.confirmPassword = t('errors.password.confirmMismatch', '两次输入的新密码不一致');
+        newErrors.confirmPassword = t('errors.password.confirmMismatch');
       }
 
       if (formData.currentPassword === formData.newPassword) {
-        newErrors.newPassword = t('errors.password.samePassword', '新密码不能与当前密码相同');
+        newErrors.newPassword = t('errors.password.samePassword');
       }
     }
 
@@ -156,16 +156,16 @@ const ProfilePage: React.FC = () => {
       const newErrors: {[key: string]: string} = {};
       
       if (value && value.length < 6) {
-        newErrors.newPassword = t('errors.password.minLength', '新密码至少需要6个字符');
+        newErrors.newPassword = t('errors.password.minLength');
       } else if (value && value.length > 50) {
-        newErrors.newPassword = t('errors.password.maxLength', '新密码不能超过50个字符');
+        newErrors.newPassword = t('errors.password.maxLength');
       } else if (value && formData.currentPassword && value === formData.currentPassword) {
-        newErrors.newPassword = t('errors.password.samePassword', '新密码不能与当前密码相同');
+        newErrors.newPassword = t('errors.password.samePassword');
       }
       
       // 如果确认新密码已经输入，检查是否匹配
       if (formData.confirmPassword && value !== formData.confirmPassword) {
-        newErrors.confirmPassword = t('errors.password.confirmMismatch', '两次输入的新密码不一致');
+        newErrors.confirmPassword = t('errors.password.confirmMismatch');
       } else if (formData.confirmPassword && value === formData.confirmPassword) {
         // 密码匹配时清除确认密码错误
         setErrors(prev => ({
@@ -184,7 +184,7 @@ const ProfilePage: React.FC = () => {
       const newErrors: {[key: string]: string} = {};
       
       if (value && formData.newPassword !== value) {
-        newErrors.confirmPassword = t('errors.password.confirmMismatch', '两次输入的新密码不一致');
+        newErrors.confirmPassword = t('errors.password.confirmMismatch');
       }
       
       setErrors(prev => ({
@@ -212,12 +212,12 @@ const ProfilePage: React.FC = () => {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      setErrors({ avatar: t('errors.avatar.fileType', '请选择图片文件') });
+      setErrors({ avatar: t('errors.avatar.fileType') });
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrors({ avatar: t('errors.avatar.fileSize', '图片大小不能超过5MB') });
+      setErrors({ avatar: t('errors.avatar.fileSize') });
       return;
     }
 
@@ -249,7 +249,7 @@ const ProfilePage: React.FC = () => {
 
   // 取消订阅
   const handleCancelSubscription = async () => {
-    if (!confirm(t('messages.confirmCancelSubscription', '确定要取消订阅吗？'))) {
+    if (!confirm(t('messages.confirmCancelSubscription'))) {
       return;
     }
 
@@ -257,13 +257,13 @@ const ProfilePage: React.FC = () => {
       setIsLoading(true);
       await UserService.cancelSubscription();
       await refreshUser();
-      setSuccessMessage(t('messages.subscriptionCancelled', '订阅已取消'));
+      setSuccessMessage(t('messages.subscriptionCancelled'));
     } catch (error) {
       console.error('Cancel subscription failed:', error);
       if (error instanceof ApiError) {
         setErrors({ general: error.message });
       } else {
-        setErrors({ general: t('messages.cancelSubscriptionFailed', '取消订阅失败，请稍后重试') });
+        setErrors({ general: t('messages.cancelSubscriptionFailed') });
       }
     } finally {
       setIsLoading(false);
@@ -306,29 +306,29 @@ const ProfilePage: React.FC = () => {
       }));
       setSelectedAvatarFile(null);
 
-      setSuccessMessage(t('messages.success', '个人信息更新成功！'));
+      setSuccessMessage(t('messages.success'));
     } catch (error) {
       console.error('Update profile failed:', error);
       
       if (error instanceof ApiError) {
         switch (error.errorCode) {
           case '1002':
-            setErrors({ username: t('errors.username.exists', '该用户名已被使用') });
+            setErrors({ username: t('errors.username.exists') });
             break;
           case '1005':
-            setErrors({ currentPassword: t('errors.password.currentIncorrect', '当前密码错误') });
+            setErrors({ currentPassword: t('errors.password.currentIncorrect') });
             break;
           case '1003':
-            setErrors({ general: t('errors.format', '输入信息格式不正确，请检查后重试') });
+            setErrors({ general: t('errors.format') });
             break;
           case '3001':
-            setErrors({ avatar: t('errors.avatar.uploadFailed', '头像上传失败，请重试') });
+            setErrors({ avatar: t('errors.avatar.uploadFailed') });
             break;
           default:
-            setErrors({ general: error.message || t('errors.updateFailed', '更新失败，请稍后重试') });
+            setErrors({ general: error.message || t('errors.updateFailed') });
         }
       } else {
-        setErrors({ general: t('messages.networkError', '网络错误，请检查网络连接后重试') });
+        setErrors({ general: t('messages.networkError') });
       }
     } finally {
       setIsLoading(false);
@@ -348,15 +348,15 @@ const ProfilePage: React.FC = () => {
   const getOrderStatusDisplay = (status: string) => {
     switch (status) {
       case 'completed':
-        return { text: t('orderTable.paid', '已支付'), className: 'bg-green-100 text-green-800' };
+        return { text: t('orderTable.paid'), className: 'bg-green-100 text-green-800' };
       case 'failed':
-        return { text: t('orderTable.failed', '支付失败'), className: 'bg-red-100 text-red-800' };
+        return { text: t('orderTable.failed'), className: 'bg-red-100 text-red-800' };
       case 'pending':
-        return { text: t('orderTable.pending', '待支付'), className: 'bg-yellow-100 text-yellow-800' };
+        return { text: t('orderTable.pending'), className: 'bg-yellow-100 text-yellow-800' };
       case 'cancelled':
-        return { text: t('orderTable.cancelled', '已取消'), className: 'bg-gray-100 text-gray-800' };
+        return { text: t('orderTable.cancelled'), className: 'bg-gray-100 text-gray-800' };
       default:
-        return { text: t('orderTable.unpaid', '未支付'), className: 'bg-red-100 text-red-800' };
+        return { text: t('orderTable.unpaid'), className: 'bg-red-100 text-red-800' };
     }
   };
 
@@ -370,8 +370,8 @@ const ProfilePage: React.FC = () => {
   return (
     <Layout>
       <SEOHead 
-        title={tCommon('seo.profile.title', '个人资料')} 
-        description={tCommon('seo.profile.description', '管理您的账户信息和设置')} 
+        title={tCommon('seo.profile.title')} 
+        description={tCommon('seo.profile.description')} 
       />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-screen-xl px-4 pt-6 pb-10 mx-auto">
@@ -386,7 +386,7 @@ const ProfilePage: React.FC = () => {
                     <img
                       className="w-16 h-16 rounded-full object-cover"
                       src={avatarPreview || user?.avatar || '/images/default-avatar.svg'}
-                      alt={t('avatar', '头像')}
+                      alt={t('avatar')}
                     />
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
@@ -408,7 +408,7 @@ const ProfilePage: React.FC = () => {
                   <h3 className="text-xl font-semibold text-gray-900">{user?.username}</h3>
                   <p className="text-gray-600">{user?.email}</p>
                   <div className="flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-lg mt-2 inline-flex" style={{backgroundColor: '#F9FAFB'}}>
-                    <img src="/images/credits.svg" alt={t('credits', '积分')} className="w-4 h-4" />
+                    <img src="/images/credits.svg" alt={t('credits')} className="w-4 h-4" />
                     <span className="text-sm font-medium text-orange-600">{user?.credits}</span>
                   </div>
                 </div>
@@ -418,7 +418,7 @@ const ProfilePage: React.FC = () => {
               <div className="flex items-center gap-4">
                 <div className="px-4 py-2 bg-gray-50 rounded-lg">
                   <span className="text-sm font-medium text-gray-700">
-                    {t(`subscription.${user?.membershipLevel}`, user?.membershipLevel === 'free' ? '免费' : user?.membershipLevel === 'lite' ? 'Lite' : 'Pro')}
+                    {t(`subscription.${user?.membershipLevel}`)}
                   </span>
                 </div>
                 
@@ -428,14 +428,14 @@ const ProfilePage: React.FC = () => {
                     onClick={handleChangePlan}
                     className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    {t('buttons.changePlan', '更换套餐')}
+                    {t('buttons.changePlan')}
                   </button>
                   <button
                     onClick={handleCancelSubscription}
                     disabled={user?.membershipLevel === 'free' || isLoading}
                     className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {t('buttons.cancelSubscription', '取消订阅')}
+                    {t('buttons.cancelSubscription')}
                   </button>
                 </div>
               </div>
@@ -446,7 +446,7 @@ const ProfilePage: React.FC = () => {
         {/* 订单记录 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">{t('sections.orderHistory', '订单记录')}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('sections.orderHistory')}</h3>
           </div>
           <div className="px-6 py-4">
             {isLoadingOrders ? null : (
@@ -456,19 +456,19 @@ const ProfilePage: React.FC = () => {
                     <thead>
                       <tr className="bg-gray-50">
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                          {t('orderTable.orderId', '订单ID')}
+                          {t('orderTable.orderId')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                          {t('orderTable.planInfo', '套餐信息')}
+                          {t('orderTable.planInfo')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                          {t('orderTable.amount', '金额')}
+                          {t('orderTable.amount')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                          {t('orderTable.createdAt', '创建时间')}
+                          {t('orderTable.createdAt')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
-                          {t('orderTable.paymentStatus', '支付状态')}
+                          {t('orderTable.paymentStatus')}
                         </th>
                       </tr>
                     </thead>
@@ -507,7 +507,7 @@ const ProfilePage: React.FC = () => {
                         ) : (
                           <tr>
                             <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                              {t('orderTable.noOrders', '暂无订单记录')}
+                              {t('orderTable.noOrders')}
                             </td>
                           </tr>
                         )
@@ -523,7 +523,7 @@ const ProfilePage: React.FC = () => {
         {/* 基本信息和密码修改 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">{t('sections.basicInfo', '基本信息')}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('sections.basicInfo')}</h3>
           </div>
           <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
             {successMessage && (
@@ -546,7 +546,7 @@ const ProfilePage: React.FC = () => {
             {/* 用户名 */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                {t('fields.username', '用户名')}
+                {t('fields.username')}
               </label>
               <div className="mt-1">
                 <input
@@ -559,7 +559,7 @@ const ProfilePage: React.FC = () => {
                   className={`block w-full px-3 py-2 border ${
                     errors.username ? 'border-red-300' : 'border-gray-300'
                   } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                  placeholder={t('placeholders.username', '请输入用户名')}
+                  placeholder={t('placeholders.username')}
                 />
                 {errors.username && (
                   <p className="mt-1 text-sm text-red-600">{errors.username}</p>
@@ -570,7 +570,7 @@ const ProfilePage: React.FC = () => {
             {/* 邮箱（只读） */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                {t('fields.email', '邮箱地址')}
+                {t('fields.email')}
               </label>
               <div className="mt-1">
                 <input
@@ -581,7 +581,7 @@ const ProfilePage: React.FC = () => {
                   disabled
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 sm:text-sm"
                 />
-                <p className="mt-1 text-xs text-gray-500">{t('hints.emailReadonly', '邮箱地址无法修改')}</p>
+                <p className="mt-1 text-xs text-gray-500">{t('hints.emailReadonly')}</p>
               </div>
             </div>
 
@@ -592,7 +592,7 @@ const ProfilePage: React.FC = () => {
                 onClick={() => setIsPasswordSectionOpen(!isPasswordSectionOpen)}
                 className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
               >
-                <h4 className="text-md font-medium text-gray-900">{t('sections.changePassword', '修改密码')}</h4>
+                <h4 className="text-md font-medium text-gray-900">{t('sections.changePassword')}</h4>
                 <svg
                   className={`h-5 w-5 text-gray-500 transition-transform ${isPasswordSectionOpen ? 'rotate-180' : ''}`}
                   xmlns="http://www.w3.org/2000/svg"
@@ -609,7 +609,7 @@ const ProfilePage: React.FC = () => {
                   {/* 当前密码 */}
                   <div>
                     <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mt-4">
-                      {t('fields.currentPassword', '当前密码')}
+                      {t('fields.currentPassword')}
                     </label>
                     <div className="mt-1">
                       <PasswordInput
@@ -617,7 +617,7 @@ const ProfilePage: React.FC = () => {
                         name="currentPassword"
                         value={formData.currentPassword}
                         onChange={handleInputChange}
-                        placeholder={t('placeholders.currentPassword', '请输入当前密码')}
+                        placeholder={t('placeholders.currentPassword')}
                         error={errors.currentPassword}
                         className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -632,7 +632,7 @@ const ProfilePage: React.FC = () => {
                   {/* 新密码 */}
                   <div>
                     <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                      {t('fields.newPassword', '新密码')}
+                      {t('fields.newPassword')}
                     </label>
                     <div className="mt-1">
                       <PasswordInput
@@ -640,7 +640,7 @@ const ProfilePage: React.FC = () => {
                         name="newPassword"
                         value={formData.newPassword}
                         onChange={handleInputChange}
-                        placeholder={t('placeholders.newPassword', '请输入新密码（至少6个字符）')}
+                        placeholder={t('placeholders.newPassword')}
                         error={errors.newPassword}
                         className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -655,7 +655,7 @@ const ProfilePage: React.FC = () => {
                   {/* 确认新密码 */}
                   <div>
                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                      {t('fields.confirmPassword', '确认新密码')}
+                      {t('fields.confirmPassword')}
                     </label>
                     <div className="mt-1">
                       <PasswordInput
@@ -663,7 +663,7 @@ const ProfilePage: React.FC = () => {
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        placeholder={t('placeholders.confirmPassword', '请再次输入新密码')}
+                        placeholder={t('placeholders.confirmPassword')}
                         error={errors.confirmPassword}
                         className="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
@@ -685,7 +685,7 @@ const ProfilePage: React.FC = () => {
                 onClick={handleLogout}
                 className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                {t('buttons.logout', '退出登录')}
+                {t('buttons.logout')}
               </button>
               
               <div className="flex space-x-3">
@@ -694,7 +694,7 @@ const ProfilePage: React.FC = () => {
                   onClick={() => navigate(-1)}
                   className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  {t('buttons.cancel', '取消')}
+                  {t('buttons.cancel')}
                 </button>
                 
                 <button
@@ -710,7 +710,7 @@ const ProfilePage: React.FC = () => {
                       </svg>
                     </div>
                   ) : (
-                    t('buttons.save', '保存更改')
+                    t('buttons.save')
                   )}
                 </button>
               </div>

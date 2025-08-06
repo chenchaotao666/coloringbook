@@ -109,18 +109,18 @@ const BlogPage = () => {
   return (
     <Layout>
       <SEOHead
-        title={t('blog.seo.title', 'Blog - AI Coloring Pages')}
-        description={t('blog.seo.description', 'Discover the latest insights, tips, and tutorials about AI coloring pages, digital art, and creative technology.')}
-        keywords={t('blog.seo.keywords', 'blog, AI coloring pages, digital art, tutorials, tips')}
-        ogTitle={t('blog.seo.title', 'Blog - AI Coloring Pages')}
-        ogDescription={t('blog.seo.description', 'Discover the latest insights, tips, and tutorials about AI coloring pages, digital art, and creative technology.')}
+        title={t('blog.seo.title')}
+        description={t('blog.seo.description')}
+        keywords={t('blog.seo.keywords')}
+        ogTitle={t('blog.seo.title')}
+        ogDescription={t('blog.seo.description')}
       />
       
       <div className="min-h-screen bg-white">
         <div className="mx-auto max-w-7xl px-[16px] pb-[60px]">
           {/* Page Title */}
           <h1 className="py-[2.5rem] text-4xl font-bold text-gray-900 px-[1rem]">
-            {t('blog.title', 'Blog')}
+            {t('blog.title')}
           </h1>
           
           {/* Blog Articles Section */}
@@ -137,12 +137,12 @@ const BlogPage = () => {
                     onClick={() => fetchPosts(currentPage)}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                   >
-                    {t('buttons.retry', 'Retry')}
+                    {t('buttons.retry')}
                   </button>
                 </div>
               ) : posts.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600 text-lg">{t('blog.noPosts', 'No blog posts found.')}</p>
+                  <p className="text-gray-600 text-lg">{t('blog.noPosts')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-200">
@@ -162,7 +162,7 @@ const BlogPage = () => {
                             })}
                           </span>
                           <span className="text-gray-400 mt-1 text-xs">
-                            {t('blog.author', 'By')} {article.author}
+                            {t('blog.author')} {article.author}
                           </span>
                         </div>
                         <div className="md:flex-grow">
@@ -173,7 +173,7 @@ const BlogPage = () => {
                             {stripHtmlTags(getLocalizedContent(article.content))}
                           </p>
                           <div className="mt-4 inline-flex items-center text-blue-600 hover:text-blue-500 transition-colors">
-                            {t('blog.readMore', 'Read More')}
+                            {t('blog.readMore')}
                             <svg
                               className="ml-2 h-4 w-4"
                               viewBox="0 0 24 24"
@@ -207,7 +207,7 @@ const BlogPage = () => {
                         : 'bg-gray-700 text-white hover:bg-gray-600'
                     } px-3 py-1 rounded`}
                   >
-                    {t('buttons.previous', 'Previous')}
+                    {t('buttons.previous')}
                   </button>
                   
                   {/* Page Numbers */}
@@ -238,12 +238,12 @@ const BlogPage = () => {
                         : 'bg-gray-700 text-white hover:bg-gray-600'
                     } px-3 py-1 rounded`}
                   >
-                    {t('buttons.next', 'Next')}
+                    {t('buttons.next')}
                   </button>
                   
                   {/* Total Count */}
                   <span className="ml-4 text-sm text-gray-500">
-                    {t('blog.totalArticles', 'Total {count} articles', { count: totalPosts })}
+                    {t('blog.totalArticles', totalPosts.toString())}
                   </span>
                 </div>
               )}

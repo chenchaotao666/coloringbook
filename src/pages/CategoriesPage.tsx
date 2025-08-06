@@ -30,47 +30,47 @@ const CategoriesPage: React.FC = () => {
 
   // WhyChooseColoringPages data
   const whyChooseColoringPagesData = {
-    title: t('whyChoose.title', "Why Choose Free Coloring Pages?"),
-    subtitle: t('whyChoose.subtitle', "Coloring isn't just fun—it's a powerful tool for growth and relaxation."),
+    title: t('whyChoose.title'),
+    subtitle: t('whyChoose.subtitle'),
     features: [
       {
         id: 'creative-play',
-        title: t('whyChoose.features.creativePlay.title', 'Creative Play for the Imagination'),
-        description: t('whyChoose.features.creativePlay.description', 'Coloring sparks imagination and storytelling, turning simple pages into a world of adventure and creativity for kids and adults alike.'),
+        title: t('whyChoose.features.creativePlay.title'),
+        description: t('whyChoose.features.creativePlay.description'),
         image: '/images/whychoosecoloringpage/image-1.png',
-        buttonText: t('whyChoose.features.creativePlay.buttonText', 'Try Now'),
+        buttonText: t('whyChoose.features.creativePlay.buttonText'),
         buttonLink: '/text-coloring-page'
       },
       {
         id: 'educational-skills',
-        title: t('whyChoose.features.educationalSkills.title', 'Boost Educational Skills'),
-        description: t('whyChoose.features.educationalSkills.description', 'Enhance fine motor skills, color recognition, and concentration through fun, engaging coloring activities for kids—perfect for learning and play.'),
+        title: t('whyChoose.features.educationalSkills.title'),
+        description: t('whyChoose.features.educationalSkills.description'),
         image: '/images/whychoosecoloringpage/image-2.png',
-        buttonText: t('whyChoose.features.educationalSkills.buttonText', 'Try Now'),
+        buttonText: t('whyChoose.features.educationalSkills.buttonText'),
         buttonLink: '/text-coloring-page'
       },
       {
         id: 'stress-relief',
-        title: t('whyChoose.features.stressRelief.title', 'Instant Stress Relief'),
-        description: t('whyChoose.features.stressRelief.description', 'Coloring is a great stress-relief activity for adults, offering a calming, screen-free break to unwind and relax after a busy day.'),
+        title: t('whyChoose.features.stressRelief.title'),
+        description: t('whyChoose.features.stressRelief.description'),
         image: '/images/whychoosecoloringpage/image-3.png',
-        buttonText: t('whyChoose.features.stressRelief.buttonText', 'Try Now'),
+        buttonText: t('whyChoose.features.stressRelief.buttonText'),
         buttonLink: '/text-coloring-page'
       },
       {
         id: 'bonding-activity',
-        title: t('whyChoose.features.bondingActivity.title', 'A Fun Bonding Activity'),
-        description: t('whyChoose.features.bondingActivity.description', 'Create special moments with family, friends, or students through shared coloring activities—perfect for bonding and nurturing creativity.'),
+        title: t('whyChoose.features.bondingActivity.title'),
+        description: t('whyChoose.features.bondingActivity.description'),
         image: '/images/whychoosecoloringpage/image-4.png',
-        buttonText: t('whyChoose.features.bondingActivity.buttonText', 'Try Now'),
+        buttonText: t('whyChoose.features.bondingActivity.buttonText'),
         buttonLink: '/text-coloring-page'
       },
       {
         id: 'absolutely-free',
-        title: t('whyChoose.features.absolutelyFree.title', 'Absolutely Free to Use'),
-        description: t('whyChoose.features.absolutelyFree.description', 'Download and print your favorite coloring pages instantly for free—no signup required, no hidden costs. Fun, easy, and stress-free!'),
+        title: t('whyChoose.features.absolutelyFree.title'),
+        description: t('whyChoose.features.absolutelyFree.description'),
         image: '/images/whychoosecoloringpage/image-5.png',
-        buttonText: t('whyChoose.features.absolutelyFree.buttonText', 'Try Now'),
+        buttonText: t('whyChoose.features.absolutelyFree.buttonText'),
         buttonLink: '/text-coloring-page'
       }
     ]
@@ -78,24 +78,24 @@ const CategoriesPage: React.FC = () => {
 
   // ColoringPagesFor data
   const coloringPagesForData = {
-    title: t('coloringPagesFor.title', "Who Are These Free Coloring Pages For?"),
+    title: t('coloringPagesFor.title'),
     audiences: [
       {
         id: 'preschool',
-        title: t('coloringPagesFor.audiences.preschool.title', 'Preschool & Elementary Children'),
-        description: t('coloringPagesFor.audiences.preschool.description', 'Designed specifically for little hands, our pages feature bold outlines and fun themes that kids love. These free, printable coloring sheets are a fantastic tool for boosting creativity, improving concentration, and developing essential fine motor skills, making learning a joyful adventure.'),
+        title: t('coloringPagesFor.audiences.preschool.title'),
+        description: t('coloringPagesFor.audiences.preschool.description'),
         image: '/images/coloringpagefor/image-1.png'
       },
       {
         id: 'teachers',
-        title: t('coloringPagesFor.audiences.teachers.title', 'Teachers & Homeschoolers'),
-        description: t('coloringPagesFor.audiences.teachers.description', 'Supplement your lesson plans with our free educational resources. These printable coloring pages are perfect for classroom activities, homeschool art sessions, or quiet take-home assignments. They are a simple, no-cost way to keep students engaged, reinforce learning, and provide a creative outlet during the school day.'),
+        title: t('coloringPagesFor.audiences.teachers.title'),
+        description: t('coloringPagesFor.audiences.teachers.description'),
         image: '/images/coloringpagefor/image-2.png'
       },
       {
         id: 'parents',
-        title: t('coloringPagesFor.audiences.parents.title', 'Parents & Caregivers'),
-        description: t('coloringPagesFor.audiences.parents.description', 'Searching for a simple and fun screen-free activity? Our coloring pages are the perfect solution for rainy days, quiet afternoons, or a relaxing family evening. It\'s a wonderful way to bond with your children, spark their imagination, and create beautiful keepsakes together without any prep work.'),
+        title: t('coloringPagesFor.audiences.parents.title'),
+        description: t('coloringPagesFor.audiences.parents.description'),
         image: '/images/coloringpagefor/image-3.png'
       }
     ]
@@ -103,33 +103,33 @@ const CategoriesPage: React.FC = () => {
 
   // HowToCreate data
   const howToCreateData: HowToCreateData = {
-    title: t('howToCreate.title', "How to Get Started with Your Free Coloring Pages?"),
-    subtitle: t('howToCreate.subtitle', "Getting your printable pages is easy and completely free. Just follow these simple steps:"),
+    title: t('howToCreate.title'),
+    subtitle: t('howToCreate.subtitle'),
     image: "/images/categorieshowtocreate/image-1.png",
     steps: [
       {
         id: 'download',
         number: '01',
-        title: t('howToCreate.steps.download.title', 'Download Your Collection'),
-        description: t('howToCreate.steps.download.description', 'Instantly save the entire PDF collection with a single click. No registration required.')
+        title: t('howToCreate.steps.download.title'),
+        description: t('howToCreate.steps.download.description')
       },
       {
         id: 'print',
         number: '02',
-        title: t('howToCreate.steps.print.title', 'Print from Home'),
-        description: t('howToCreate.steps.print.description', 'Our pages are optimized for standard paper. Easily print your favorite designs on any home printer.')
+        title: t('howToCreate.steps.print.title'),
+        description: t('howToCreate.steps.print.description')
       },
       {
         id: 'color',
         number: '03',
-        title: t('howToCreate.steps.color.title', 'Grab Your Colors'),
-        description: t('howToCreate.steps.color.description', 'Grab your crayons, markers, or colored pencils. These designs are perfect for any coloring tool, so get creative!')
+        title: t('howToCreate.steps.color.title'),
+        description: t('howToCreate.steps.color.description')
       },
       {
         id: 'share',
         number: '04',
-        title: t('howToCreate.steps.share.title', 'Repeat & Share the Fun'),
-        description: t('howToCreate.steps.share.description', 'Print your favorite designs as many times as you want. Feel free to share this free coloring fun with friends, family, and students.')
+        title: t('howToCreate.steps.share.title'),
+        description: t('howToCreate.steps.share.description')
       }
     ]
   };
@@ -141,7 +141,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Marty Behr',
       date: 'Oct 20, 2024',
       avatar: '/images/avatar/avatar9.png',
-      content: t('testimonials.1.content', '"I downloaded the free coloring pages for my 5-year-old daughter, and she hasn\'t stopped coloring since! The designs are adorable and easy for her to enjoy on her own."'),
+      content: t('testimonials.1.content'),
       image: '/images/categoriesusersaying/friendly-robot-friends_faae1c8a.jpg'
     },
     {
@@ -149,7 +149,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Judith Madrid',
       date: 'Mar 18, 2025',
       avatar: '/images/avatar/avatar10.png',
-      content: t('testimonials.2.content', '"As a preschool teacher, I\'m always hunting for quality printables. These free coloring pages are a lifesaver—perfect for morning activities and quiet time. The kids love the variety, and I love how quickly I can print them out!"'),
+      content: t('testimonials.2.content'),
       image: '/images/categoriesusersaying/birthday-cake-extravaganza_6a09bd9b.jpg'
     },
     {
@@ -157,7 +157,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Ruth Cox',
       date: 'Aug 15, 2024',
       avatar: '/images/avatar/avatar11.png',
-      content: t('testimonials.3.content', '"I never thought I\'d enjoy coloring as an adult, but the mandala pages are so calming! I print a few each week for my own relaxation. It\'s a perfect way to unwind after a long day."'),
+      content: t('testimonials.3.content'),
       image: '/images/categoriesusersaying/brave-firefighters-in-action_ab7d9d79.jpg'
     },
     {
@@ -165,7 +165,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Irving Dunne',
       date: 'May 12, 2024',
       avatar: '/images/avatar/avatar12.png',
-      content: t('testimonials.4.content', '"I was searching for a last-minute printable for my son\'s playdate, and this collection was perfect. Easy to download, and the kids were entertained for hours. I\'ll definitely be coming back for more!"'),
+      content: t('testimonials.4.content'),
       image: '/images/categoriesusersaying/pirate-chickens-treasure-hunt_b7b2977b.jpg'
     },
     {
@@ -173,7 +173,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Megan Dubreuil',
       date: 'Dec 10, 2024',
       avatar: '/images/avatar/avatar13.png',
-      content: t('testimonials.5.content', '"We used the Christmas-themed free coloring pages for our family holiday gathering. Even the adults joined in—it was such a fun bonding moment! Everyone, young and old, enjoyed it, and it added a special touch to our celebrations."'),
+      content: t('testimonials.5.content'),
       image: '/images/categoriesusersaying/cat-cafe-delights_da202c11.jpg'
     },
     {
@@ -181,7 +181,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Valarie Jones',
       date: 'Sep 5, 2024',
       avatar: '/images/avatar/avatar14.png',
-      content: t('testimonials.6.content', '"The variety is amazing! From animals to holiday themes, these free coloring pages have something for every child in my classroom. The kids really love the wide selection, and it\'s so easy to print them out as needed."'),
+      content: t('testimonials.6.content'),
       image: '/images/categoriesusersaying/classroom-creativity_a0658ea9.jpg'
     },
     {
@@ -189,7 +189,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Brady Briseno',
       date: 'Mar 22, 2025',
       avatar: '/images/avatar/avatar15.png',
-      content: t('testimonials.7.content', '"My son loves dinosaurs, so these free coloring pages have been a huge hit! He colors them every day, and it\'s a great way to keep him entertained during quiet time. He can even recognize some of the dinosaurs by name!"'),
+      content: t('testimonials.7.content'),
       image: '/images/categoriesusersaying/dino-playtime_9f0887a3.jpg'
     },
     {
@@ -197,7 +197,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Evelyn Phipps',
       date: 'Jun 18, 2025',
       avatar: '/images/avatar/avatar16.png',
-      content: t('testimonials.8.content', '"As a mom of twins, I\'m always looking for activities that keep them engaged. These coloring pages are perfect—easy to print, and they love all the fun designs! It\'s nice to have something simple to keep them busy."'),
+      content: t('testimonials.8.content'),
       image: '/images/categoriesusersaying/sleepy-bear-in-the-moonlight_081ab799.jpg'
     },
     {
@@ -205,7 +205,7 @@ const CategoriesPage: React.FC = () => {
       name: 'Mary Martin',
       date: 'Sep 14, 2024',
       avatar: '/images/avatar/avatar17.png',
-      content: t('testimonials.9.content', '"These animal-themed coloring pages are a huge hit in our house! My daughter loves the variety and can\'t wait to color a new one every day. It\'s such a wonderful way to encourage her creativity!"'),
+      content: t('testimonials.9.content'),
       image: '/images/categoriesusersaying/enchanted-dollhouse_ff09403a.jpg'
     }
   ];
@@ -213,44 +213,44 @@ const CategoriesPage: React.FC = () => {
   // GenerateFAQ data
   const categoriesFAQData: FAQData[] = [
     {
-      question: t('faq.0.question', "What ages are the free coloring pages suitable for?"),
-      answer: t('faq.0.answer', "Our free printable coloring pages are designed for a wide range of ages. For younger children, such as toddlers and preschoolers, we offer simple and large designs that help with fine motor skills. Older kids and adults can enjoy more intricate patterns like mandalas, animals, and holiday-themed designs. Our collection includes something for everyone, ensuring all ages can find engaging coloring pages for kids or adults to enjoy!")
+      question: t('faq.0.question'),
+      answer: t('faq.0.answer')
     },
     {
-      question: t('faq.1.question', "Do I need to sign up to download the pages?"),
-      answer: t('faq.1.answer', "No registration required! Our free coloring pages can be downloaded instantly without creating an account. Simply browse our collection, click on the pages you like, and start printing immediately. We believe in keeping things simple and accessible for everyone.")
+      question: t('faq.1.question'),
+      answer: t('faq.1.answer')
     },
     {
-      question: t('faq.2.question', "Are the coloring pages printable?"),
-      answer: t('faq.2.answer', "Absolutely! All our coloring pages are specifically designed for printing at home. They're optimized for standard 8.5x11 inch paper and work perfectly with any home printer. The high-quality line art ensures crisp, clear prints every time.")
+      question: t('faq.2.question'),
+      answer: t('faq.2.answer')
     },
     {
-      question: t('faq.3.question', "Can I use these for classroom or group activities?"),
-      answer: t('faq.3.answer', "Yes! Our free coloring pages are perfect for educational settings. Teachers, homeschoolers, and group leaders are welcome to print and use these pages for classroom activities, lesson plans, quiet time, or group projects. There's no limit on how many you can print for educational purposes.")
+      question: t('faq.3.question'),
+      answer: t('faq.3.answer')
     },
     {
-      question: t('faq.4.question', "How often do you update the collection?"),
-      answer: t('faq.4.answer', "We regularly add new coloring pages to our collection! New designs are added weekly, including seasonal themes, trending characters, and user-requested designs. Follow us or check back frequently to discover the latest additions to our free library.")
+      question: t('faq.4.question'),
+      answer: t('faq.4.answer')
     },
     {
-      question: t('faq.5.question', "Can I share these coloring pages with my friends or family?"),
-      answer: t('faq.5.answer', "Of course! We encourage sharing the joy of coloring. You can share our coloring pages with friends, family members, or anyone who might enjoy them. You can also share the link to our website so others can access the full collection of free printable pages.")
+      question: t('faq.5.question'),
+      answer: t('faq.5.answer')
     },
     {
-      question: t('faq.6.question', "Are these coloring pages suitable for digital coloring?"),
-      answer: t('faq.6.answer', "Yes! While our pages are designed primarily for printing and traditional coloring, they work great for digital coloring too. You can download the images and use them with tablets, coloring apps, or digital art software. The clean line art translates perfectly to digital formats.")
+      question: t('faq.6.question'),
+      answer: t('faq.6.answer')
     },
     {
-      question: t('faq.7.question', "Can I suggest a theme or request a specific design?"),
-      answer: t('faq.7.answer', "We love hearing from our users! While we can't guarantee every request will be fulfilled, we do consider popular suggestions for future additions. Feel free to contact us with your ideas – many of our most popular designs came from user suggestions.")
+      question: t('faq.7.question'),
+      answer: t('faq.7.answer')
     },
     {
-      question: t('faq.8.question', "Are there any copyright restrictions on the coloring pages?"),
-      answer: t('faq.8.answer', "Our original coloring pages are free for personal, educational, and non-commercial use. You can print them for home, school, or personal enjoyment. However, please don't redistribute them commercially or claim them as your own work. If you're unsure about a specific use case, feel free to contact us.")
+      question: t('faq.8.question'),
+      answer: t('faq.8.answer')
     },
     {
-      question: t('faq.9.question', "What if I encounter any problems downloading or printing the pages?"),
-      answer: t('faq.9.answer', "If you experience any technical issues, first try refreshing your browser or clearing your cache. Make sure your printer settings are set to 'Fit to Page' or '100% scale' for best results. If problems persist, please contact our support team – we're here to help ensure you have a smooth coloring experience!")
+      question: t('faq.9.question'),
+      answer: t('faq.9.answer')
     }
   ];
 
@@ -296,11 +296,11 @@ const CategoriesPage: React.FC = () => {
   return (
     <Layout>
       <SEOHead
-        title={tCommon('seo.categories.title', 'Free Coloring Page Categories - Disney, Animals, Characters & More')}
-        description={tCommon('seo.categories.description', 'Browse our collection of free printable coloring pages by category. Disney characters, animals, superheroes, and more. Download PDF and PNG formats instantly.')}
-        keywords={tCommon('seo.categories.keywords', 'coloring page categories, Disney coloring pages, animal coloring pages, character coloring pages, free printable coloring pages')}
-        ogTitle={tCommon('seo.categories.title', 'Free Coloring Page Categories - Disney, Animals, Characters & More')}
-        ogDescription={tCommon('seo.categories.description', 'Browse our collection of free printable coloring pages by category. Disney characters, animals, superheroes, and more. Download PDF and PNG formats instantly.')}
+        title={tCommon('seo.categories.title')}
+        description={tCommon('seo.categories.description')}
+        keywords={tCommon('seo.categories.keywords')}
+        ogTitle={tCommon('seo.categories.title')}
+        ogDescription={tCommon('seo.categories.description')}
         noIndex={true}
       />
       <div className="w-full bg-[#F9FAFB] pb-12 md:pb-[120px]">
@@ -308,8 +308,8 @@ const CategoriesPage: React.FC = () => {
         <div className="container mx-auto px-4 py-6 lg:pt-10 lg:pb-8 max-w-[1380px]">
           <Breadcrumb 
             items={[
-              { label: t('breadcrumb.home', 'Home'), path: '/' },
-              { label: t('breadcrumb.categories', 'Coloring Pages Free'), current: true }
+              { label: t('breadcrumb.home'), path: '/' },
+              { label: t('breadcrumb.categories'), current: true }
             ]}
           />
         </div>
@@ -328,7 +328,7 @@ const CategoriesPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('search.placeholder', 'Enter the category to search')}
+              placeholder={t('search.placeholder')}
               className="w-full h-[60px] px-4 py-2 bg-white border border-[#EDEEF0] rounded-lg text-base focus:outline-none focus:border-gray-300 transition-colors"
             />
             <Button 
@@ -336,7 +336,7 @@ const CategoriesPage: React.FC = () => {
               variant="gradient"
               className="absolute right-0 top-0 h-[60px] w-[122px] font-bold text-xl rounded-r-lg rounded-l-none"
             >
-              {t('search.button', 'Search')}
+              {t('search.button')}
             </Button>
           </form>
         </div>
@@ -351,13 +351,13 @@ const CategoriesPage: React.FC = () => {
                 ? isSearchActive
                   ? {
                       icon: noResultIcon,
-                      title: t('emptyState.noResults.title', 'No results found'),
-                      description: t('emptyState.noResults.description', 'No categories found matching your search.')
+                      title: t('emptyState.noResults.title'),
+                      description: t('emptyState.noResults.description')
                     }
                   : {
                       icon: noResultIcon,
-                      title: t('emptyState.noCategories.title', 'No categories found'),
-                      description: t('emptyState.noCategories.description', 'Categories are being loaded. Please wait a moment.')
+                      title: t('emptyState.noCategories.title'),
+                      description: t('emptyState.noCategories.description')
                     }
                 : undefined
             }
@@ -385,23 +385,23 @@ const CategoriesPage: React.FC = () => {
       <div className="w-full bg-white py-16 lg:py-16">
         <UserSaying 
           testimonials={categoriesTestimonials} 
-          title={t('testimonials.title', 'What Users Are Saying')}
+          title={t('testimonials.title')}
         />
       </div>
       
       {/* FAQ Section */}
-      <div className="w-full bg-white py-16 lg:py-16">
+      <div className="w-full bg-white pt-16 lg:pt-16">
         <GenerateFAQ 
           faqData={categoriesFAQData} 
-          title={t('faq.title', 'Frequently Asked Questions')}
+          title={t('faq.title')}
         />
       </div>
       
       {/* TryNow Section */}
       <TryNow 
-        title={t('tryNow.title', "Ready to Start Coloring?")}
-        description={t('tryNow.description', "Whether you're a parent looking for a fun activity for your kids, a teacher needing classroom resources, or an adult who enjoys the therapeutic benefits of coloring, our collection is here for you. Start exploring today and bring joy, calm, and creativity into your day!")}
-        buttonText={t('tryNow.buttonText', "Try Now")}
+        title={t('tryNow.title')}
+        description={t('tryNow.description')}
+        buttonText={t('tryNow.buttonText')}
         buttonLink="/text-coloring-page"
       />
     </Layout>

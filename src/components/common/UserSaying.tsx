@@ -35,7 +35,7 @@ const UserSaying: React.FC<UserSayingProps> = ({
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616] capitalize">
-          {title || t('testimonials.title', 'What Users Are Saying')}
+          {title || t('testimonials.title')}
         </h2>
       </div>
 

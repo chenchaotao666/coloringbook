@@ -453,7 +453,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
                       </svg>
-                      <span>{t('buttons.generate', '生成')}</span>
+                      <span>{t('buttons.generate')}</span>
                     </Link> */}
                     
                     <div className="border-t border-gray-100 mt-1">
@@ -514,7 +514,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
               ref={hamburgerButtonRef}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 flex items-center justify-center"
-              aria-label={t('common.buttons.openMenu', '打开菜单')}
+              aria-label={t('common.buttons.openMenu')}
             >
               <HamburgerIcon />
             </button>

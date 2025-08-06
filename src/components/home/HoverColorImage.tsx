@@ -43,8 +43,11 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
     setMobileShowColor(prev => !prev);
   };
 
-  // 根据设备类型决定显示状态
-  const shouldShowColor = isMobile ? mobileShowColor : isHovered;
+  // 检查是否有coloringUrl
+  const hasColoringUrl = homeImage?.coloringUrl;
+  
+  // 根据设备类型决定显示状态，只有在有coloringUrl时才启用
+  const shouldShowColor = hasColoringUrl && (isMobile ? mobileShowColor : isHovered);
 
   return (
     <div 
@@ -53,8 +56,8 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
         ...style,
         WebkitTapHighlightColor: 'transparent'
       }}
-      onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => !isMobile && setIsHovered(false)}
+      onMouseEnter={() => !isMobile && hasColoringUrl && setIsHovered(true)}
+      onMouseLeave={() => !isMobile && hasColoringUrl && setIsHovered(false)}
     >
       {/* 黑白图片 - 默认显示 */}
       <img
@@ -67,18 +70,20 @@ const HoverColorImage: React.FC<HoverColorImageProps> = ({
         onError={handleImageError}
       />
       
-      {/* 彩色图片 - 悬停或点击时显示 */}
-      <img
-        src={homeImage?.coloringUrl}
-        alt={alt}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
-          shouldShowColor ? 'opacity-100' : 'opacity-0'
-        }`}
-        onError={handleImageError}
-      />
+      {/* 彩色图片 - 悬停或点击时显示，只有在有coloringUrl时才渲染 */}
+      {hasColoringUrl && (
+        <img
+          src={homeImage?.coloringUrl}
+          alt={alt}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
+            shouldShowColor ? 'opacity-100' : 'opacity-0'
+          }`}
+          onError={handleImageError}
+        />
+      )}
       
-      {/* 移动端切换按钮 - 只对 image2image 类型显示 */}
-      {isMobile && homeImage?.type === 'image2image' && (
+      {/* 移动端切换按钮 - 只对 image2image 类型且有coloringUrl时显示 */}
+      {isMobile && homeImage?.type === 'image2image' && hasColoringUrl && (
         <div
            onClick={handleToggleClick}
            className="absolute bottom-1 right-1 max-w-16 max-h-16 rounded-lg shadow-md overflow-hidden transition-all duration-200 z-10 opacity-90 hover:opacity-100 border-2 border-white cursor-pointer"

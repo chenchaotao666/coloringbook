@@ -53,17 +53,17 @@ const Footer: React.FC<FooterProps> = ({ categories, categoriesLoading }) => {
 
   const sections = [
     {
-      title: t('footer.sections.tools', 'Tools'),
+      title: t('footer.sections.tools'),
       links: [
-        { label: t('footer.links.textToColoringPage', 'Text to coloring page'), url: '/text-coloring-page' },
-        { label: t('footer.links.imageToColoringPage', 'Image to coloring page'), url: '/image-coloring-page' },
-        { label: t('footer.links.coloringPagesFree', 'Coloring Pages Free'), url: '/categories' },
+        { label: t('footer.links.textToColoringPage'), url: '/text-coloring-page' },
+        { label: t('footer.links.imageToColoringPage'), url: '/image-coloring-page' },
+        { label: t('footer.links.coloringPagesFree'), url: '/categories' },
       ],
     },
     // 使用前21个分类，分成3组，每组7个，与Header保持一致
     ...(!categoriesLoading && categories.length > 0 ? [
       {
-        title: t('categories.popularColoringPages', 'Popular Coloring Pages'),
+        title: t('categories.popularColoringPages'),
         links: categories.slice(0, 7).map(category => ({
           label: getLocalizedText(category.displayName, language) || category.name,
           url: `/categories/${category.categoryId}`
@@ -85,16 +85,16 @@ const Footer: React.FC<FooterProps> = ({ categories, categoriesLoading }) => {
       }
     ] : [
       // 加载中时显示空组，避免布局跳动
-      { title: t('categories.popularColoringPages', 'Popular Coloring Pages'), links: [] },
+      { title: t('categories.popularColoringPages'), links: [] },
       { title: '', links: [] },
       { title: '', links: [] }
     ]),
     {
-      title: t('footer.sections.company', 'Company'),
+      title: t('footer.sections.company'),
       links: [
-        { label: t('footer.links.privacyPolicy', 'Privacy Policy'), url: '/privacy-policy' },
-        { label: t('footer.links.termsOfService', 'Terms of Service'), url: '/terms' },
-        { label: t('footer.links.refundPolicy', 'Refund Policy'), url: '/refund-policy' },
+        { label: t('footer.links.privacyPolicy'), url: '/privacy-policy' },
+        { label: t('footer.links.termsOfService'), url: '/terms' },
+        { label: t('footer.links.refundPolicy'), url: '/refund-policy' },
       ],
     },
   ];
@@ -120,13 +120,13 @@ const Footer: React.FC<FooterProps> = ({ categories, categoriesLoading }) => {
             </div>
             <div>
               <span className="text-[#6B7280] text-sm leading-6">
-                {t('footer.contact.title', 'Please contact us for use questions：')}<br />
+                {t('footer.contact.title')}<br />
               </span>
               <a 
                 href="mailto:congcong@mail.xinsulv.com" 
                 className="text-[#006FFF] text-sm underline leading-6 hover:text-[#FF5C07] transition-colors duration-200"
               >
-                {t('footer.contact.email', 'congcong@mail.xinsulv.com')}
+                {t('footer.contact.email')}
               </a>
             </div>
             <div className="flex items-center gap-4">
@@ -162,13 +162,13 @@ const Footer: React.FC<FooterProps> = ({ categories, categoriesLoading }) => {
             </div>
             <div>
               <span className="text-[#6B7280] text-sm leading-6">
-                {t('footer.contact.title', 'Please contact us for use questions：')}<br />
+                {t('footer.contact.title')}<br />
               </span>
               <a 
                 href="mailto:congcong@mail.xinsulv.com" 
                 className="text-[#006FFF] text-sm underline leading-6 hover:text-[#FF5C07] transition-colors duration-200"
               >
-                {t('footer.contact.email', 'congcong@mail.xinsulv.com')}
+                {t('footer.contact.email')}
               </a>
             </div>
             <div className="flex items-center gap-5">
@@ -196,7 +196,7 @@ const Footer: React.FC<FooterProps> = ({ categories, categoriesLoading }) => {
 
         <div className="w-full h-[0px] my-6 lg:my-9 border-t border-[#F0F0F0]"></div>
         <div className="text-[#6B7280] text-sm text-center lg:text-left">
-          {t('footer.copyright', '© 2021 - Present Flowrift. All rights reserved.')}
+          {t('footer.copyright')}
         </div>
       </div>
     </div>

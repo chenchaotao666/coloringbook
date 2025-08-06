@@ -154,5 +154,8 @@
       "description": "发现关于AI涂色页面、数字艺术和创意技术的最新见解、提示和教程。",
       "keywords": "博客, AI涂色页面, 数字艺术, 教程, 提示"
     }
+  },
+  "coloringPageTool": {
+    "createdBy": "由 Colorpages 创建"
   }
 } 

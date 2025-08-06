@@ -197,7 +197,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* 页面标题 */}
           <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('title', 'My Creations')}</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('title')}</h1>
           </div>
 
           {/* 筛选标签 */}
@@ -211,7 +211,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {t('filters.all', 'All')} ({typeCounts.all})
+                {t('filters.all')} ({typeCounts.all})
               </button>
               <button
                 onClick={() => setSelectedType('text2image')}
@@ -221,7 +221,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {t('filters.textToImage', 'Text to Image')} ({typeCounts.text2image})
+                {t('filters.textToImage')} ({typeCounts.text2image})
               </button>
               <button
                 onClick={() => setSelectedType('image2image')}
@@ -231,7 +231,7 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {t('filters.imageToImage', 'Image to Image')} ({typeCounts.image2image})
+                {t('filters.imageToImage')} ({typeCounts.image2image})
               </button>
             </div>
           </div>

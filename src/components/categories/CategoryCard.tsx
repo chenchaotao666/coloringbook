@@ -200,7 +200,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             onClick={handleClick}
           >
             <div className="text-[#6B7280] group-hover:text-[#FF5C07] text-sm font-normal leading-4 break-words transition-colors duration-200">
-              {t('viewAllCategories', 'View all categories')}
+              {t('viewAllCategories')}
             </div>
           </button>
         </div>

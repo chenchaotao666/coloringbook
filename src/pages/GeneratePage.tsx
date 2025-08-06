@@ -45,7 +45,6 @@ interface GeneratePageProps {
 const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   // 获取翻译函数
   const { t } = useAsyncTranslation('generate');
-  const { t: tCommon } = useAsyncTranslation('common');
   const { language } = useLanguage();
 
   // Sample testimonials data for text mode (moved from UserSaying.text.ts)
@@ -55,7 +54,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Chantal Allison',
       date: 'Nov 18, 2024',
       avatar: '/images/avatar/avatar27.png',
-      content: t('sampleTestimonials.1.content', '"My daughter has an incredible imagination for creating silly animals, and this tool is the first thing we\'ve found that actually brings them to life! We used to search for specific coloring books, but now she can just describe her \'butterfly-kittens\' or \'dino-puppies\' and have a brand new page to color in seconds. It\'s absolutely magical to watch."'),
+      content: t('sampleTestimonials.1.content'),
       image: '/images/usersaying/pirate-chickens-treasure-hunt_b7b2977b.jpg'
     },
     {
@@ -63,7 +62,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Sharon Thompson',
       date: 'Sep 14, 2024',
       avatar: '/images/avatar/avatar28.png',
-      content: t('sampleTestimonials.2.content', '"Great for indoor activities. On rainy days, instead of just turning on the TV, we have \'Invention Time.\' The best part is there\'s zero prep time for me and endless variety for the kids. Simple, creative, and a genuine lifesaver."'),
+      content: t('sampleTestimonials.2.content'),
       image: '/images/usersaying/frog-princes-lily-pad-throne_58752d8a.jpg'
     },
     {
@@ -71,7 +70,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Natalie Wardle',
       date: 'Jun 29, 2025',
       avatar: '/images/avatar/avatar29.png',
-      content: t('sampleTestimonials.3.content', '"Finally, a website for kids that respects your time. No sign-in, no ads, no pop-ups, no nonsense. It just works. It\'s pure, simple creativity, and I can let my three kids use it without hovering over them."'),
+      content: t('sampleTestimonials.3.content'),
       image: '/images/usersaying/fruit-basket-bonanza_325d8977.jpg'
     },
     {
@@ -79,7 +78,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Hershel Wallace',
       date: 'Oct 25, 2024',
       avatar: '/images/avatar/avatar30.png',
-      content: t('sampleTestimonials.4.content', '"As an ESL teacher, finding engaging materials is a constant challenge. I started using this to make art pages based on our weekly vocabulary words, and the difference has been night and day. When kids can color a \'courageous firefighter\' or a \'mysterious jungle,\' the words stick. It\'s an invaluable classroom resource."'),
+      content: t('sampleTestimonials.4.content'),
       image: '/images/usersaying/jungle-fiesta_140bfed0.jpg'
     },
     {
@@ -87,7 +86,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Valorie Rodriguez',
       date: 'Aug 20, 2024',
       avatar: '/images/avatar/avatar31.png',
-      content: t('sampleTestimonials.5.content', '"This tool has become an invaluable asset in my child therapy practice. For kids who struggle to verbalize their feelings, asking them to create a page for \'a happy place\' or \'a monster that feels sad\' is a gentle way to open a dialogue. It\'s a wonderful bridge for communication."'),
+      content: t('sampleTestimonials.5.content'),
       image: '/images/usersaying/little-girls-magical-tea-party_79fc1c63.jpg'
     },
     {
@@ -95,7 +94,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Mary Murray',
       date: 'May 16, 2025',
       avatar: '/images/avatar/avatar32.png',
-      content: t('sampleTestimonials.6.content', '"My kindergarten students now see this as our special Friday reward. We gather on the rug and come up with a silly prompt together on the smartboard. The collective gasp and giggle when the drawing appears is the best sound in the world. It\'s perfect for cooperative learning."'),
+      content: t('sampleTestimonials.6.content'),
       image: '/images/usersaying/majestic-lion-king_61df3c4d.jpg'
     },
     {
@@ -103,7 +102,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Laura Adamson',
       date: 'Dec 02, 2024',
       avatar: '/images/avatar/avatar33.png',
-      content: t('sampleTestimonials.7.content', '"My 7-year-old daughter Lucy is obsessed. She screamed with delight, \'I wrote \'a pirate chicken\' and got the funniest drawing ever!\' It has completely replaced her tablet time because she\'d rather be inventing and printing her own characters. I couldn\'t be happier."'),
+      content: t('sampleTestimonials.7.content'),
       image: '/images/usersaying/mandala-bloom-symphony_de39e571.jpg'
     },
     {
@@ -111,7 +110,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Fannie Rosales',
       date: 'Jul 07, 2024',
       avatar: '/images/avatar/avatar34.png',
-      content: t('sampleTestimonials.8.content', '"I made personalized coloring pages as party favors for my daughter\'s 8th birthday. Each one was based on the guest\'s favorite animal doing something funny. They were a massive hit! Multiple parents messaged me afterward asking for the link. It made the party feel so unique and special."'),
+      content: t('sampleTestimonials.8.content'),
       image: '/images/usersaying/mushroom-village_205c1700.jpg'
     },
     {
@@ -119,7 +118,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Kerry Bauer',
       date: 'Apr 22, 2025',
       avatar: '/images/avatar/avatar35.png',
-      content: t('sampleTestimonials.9.content', '"After a long day at work, I don\'t always have the energy for a complex hobby. I use this to create my own mandala-style patterns or simple nature scenes like \'a quiet forest stream.\' It\'s incredibly therapeutic to color something that I brought into existence myself. It\'s my go-to for de-stressing."'),
+      content: t('sampleTestimonials.9.content'),
       image: '/images/usersaying/otters-family-picnic_906ccd94.jpg'
     }
   ];
@@ -190,9 +189,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Data for ColoringPageTool component - Text to Image mode
   const textColoringPageToolData: ColoringPageToolData = {
-    title: t('textColoringPageTool.title', 'What Is a Text to Coloring Page Tool?'),
-    subtitle: t('textColoringPageTool.subtitle', 'AI makes it easier than ever to create coloring pages from your words.'),
-    description: t('textColoringPageTool.description', 'Our Text to Coloring Page tool transforms simple text descriptions into unique, hand-drawn-style coloring pages. It\'s great for parents, teachers, creative explorers, or anyone who loves to imagine! This tool opens a world of fun, learning, and creativity, turning your words into black-and-white line drawings ready to print or share.'),
+    title: t('textColoringPageTool.title'),
+    subtitle: t('textColoringPageTool.subtitle'),
+    description: t('textColoringPageTool.description'),
     images: {
       center: "/images/text2image/left-4.png",
       topLeft: "/images/text2image/left-2.png",
@@ -206,9 +205,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Data for ColoringPageTool component - Image to Image mode
   const imageColoringPageToolData: ColoringPageToolData = {
-    title: t('imageColoringPageTool.title', 'What Is an Image to Coloring Page Tool?'),
-    subtitle: t('imageColoringPageTool.subtitle', 'AI makes it easier than ever to create coloring pages from your images.'),
-    description: t('imageColoringPageTool.description', 'Our Image to Coloring Page tool transforms your photos and images into clean, printable coloring pages. Perfect for turning family photos, pet pictures, or any image into a fun coloring activity. The AI intelligently converts complex images into simple line art that\'s perfect for coloring.'),
+    title: t('imageColoringPageTool.title'),
+    subtitle: t('imageColoringPageTool.subtitle'),
+    description: t('imageColoringPageTool.description'),
     images: {
       center: { left: "/images/image2image/left-4-color.jpg", right: "/images/image2image/left-4-line.png" },
       topLeft: "/images/image2image/left-2.png",
@@ -222,44 +221,44 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Data for WhyChoose component - Text mode
   const textWhyChooseData: WhyChooseData = {
-    title: t('textWhyChoose.title', 'Why Choose This Tool?'),
-    subtitle: t('textWhyChoose.subtitle', 'Here\'s why our Text to Coloring Page generator is the ultimate choice for creative fun:'),
+    title: t('textWhyChoose.title'),
+    subtitle: t('textWhyChoose.subtitle'),
     features: [
       {
         id: 'creative-freedom',
         icon: '/images/textwhychoose/logo-1.png',
-        title: t('textWhyChoose.features.creativeFreedom.title', 'Creative Freedom'),
-        description: t('textWhyChoose.features.creativeFreedom.description', 'Unleash your imagination! Whether it\'s a wild adventure or a whimsical dream, transform any idea into a visual coloring experience that both kids and adults can enjoy. Watch your ideas come to life on paper with just a few words.')
+        title: t('textWhyChoose.features.creativeFreedom.title'),
+        description: t('textWhyChoose.features.creativeFreedom.description')
       },
       {
         id: 'kid-friendly',
         icon: '/images/textwhychoose/logo-2.png',
-        title: t('textWhyChoose.features.kidFriendly.title', 'Kid-Friendly & Safe'),
-        description: t('textWhyChoose.features.kidFriendly.description', 'Designed with young users in mind, our tool features simple navigation and secure filters, making it easy and safe for children to explore their creativity, whether independently or under supervision.')
+        title: t('textWhyChoose.features.kidFriendly.title'),
+        description: t('textWhyChoose.features.kidFriendly.description')
       },
       {
         id: 'educational-value',
         icon: '/images/textwhychoose/logo-3.png',
-        title: t('textWhyChoose.features.educationalValue.title', 'Educational Value'),
-        description: t('textWhyChoose.features.educationalValue.description', 'Combine the best of both worlds—literacy and art. Our tool encourages storytelling, language development, fine motor skills, and cognitive growth, making learning fun and interactive for all ages.')
+        title: t('textWhyChoose.features.educationalValue.title'),
+        description: t('textWhyChoose.features.educationalValue.description')
       },
       {
         id: 'instant-hassle-free',
         icon: '/images/textwhychoose/logo-4.png',
-        title: t('textWhyChoose.features.instantHassleFree.title', 'Instant & Hassle-Free'),
-        description: t('textWhyChoose.features.instantHassleFree.description', 'No need for signups or waiting! Simply type your idea, hit generate, and in seconds you\'ll have a printable coloring page ready to go. It\'s quick, easy, and stress-free.')
+        title: t('textWhyChoose.features.instantHassleFree.title'),
+        description: t('textWhyChoose.features.instantHassleFree.description')
       },
       {
         id: 'ready-to-print',
         icon: '/images/textwhychoose/logo-5.png',
-        title: t('textWhyChoose.features.readyToPrint.title', 'Ready to Print or Share'),
-        description: t('textWhyChoose.features.readyToPrint.description', 'Download your high-resolution coloring page instantly. It\'s perfect for printing at home, sharing with friends, or using on digital devices—flexible for any activity.')
+        title: t('textWhyChoose.features.readyToPrint.title'),
+        description: t('textWhyChoose.features.readyToPrint.description')
       },
       {
         id: 'free-forever',
         icon: '/images/textwhychoose/logo-6.png',
-        title: t('textWhyChoose.features.freeForever.title', '100% Free, Forever'),
-        description: t('textWhyChoose.features.freeForever.description', 'Enjoy unlimited creative fun without any hidden fees or trials. Generate as many pages as you want, anytime, all for free. No strings attached.')
+        title: t('textWhyChoose.features.freeForever.title'),
+        description: t('textWhyChoose.features.freeForever.description')
       }
     ]
   };
@@ -271,7 +270,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Megan Thompson',
       date: 'Apr 15, 2025',
       avatar: '/images/avatar/avatar18.png',
-      content: t('imageUserSayingTestimonials.1.content', '"I was honestly a bit skeptical, figuring the result would be a blurry mess. But I uploaded a simple phone picture of our golden retriever, and what this tool generated was a genuinely perfect, clean outline. My 6-year-old saw it printing and went absolutely wild. We\'ve now made an entire \'Adventures of Gus\' coloring book with photos from the park. It\'s her favorite activity."'),
+      content: t('imageUserSayingTestimonials.1.content'),
       image: '/images/imageusersaying/santas-magical-workshop_f1e6324f.jpg'
     },
     {
@@ -279,7 +278,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'David Alvarez',
       date: 'Dec 5, 2024',
       avatar: '/images/avatar/avatar19.png',
-      content: t('imageUserSayingTestimonials.2.content', '"In a 3rd-grade art class, engagement is everything. This tool has been a game-changer for me. I had students do a self-portrait sketch, and then we used this to turn each one into a professional-looking coloring page. The pride on their faces when they got to color their own artwork was priceless. It\'s my go-to for quick, deeply personal activities."'),
+      content: t('imageUserSayingTestimonials.2.content'),
       image: '/images/imageusersaying/schoolyard-adventures_33bcf68a.jpg'
     },
     {
@@ -287,7 +286,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Sasha Williams',
       date: 'May 2, 2025',
       avatar: '/images/avatar/avatar20.png',
-      content: t('imageUserSayingTestimonials.3.content', '"As a freelance illustrator, my workflow is all about speed and efficiency. Sometimes I just need to see how a composition feels in simple black and white without committing to inking a sketch. This tool is surprisingly effective for that. I can upload a reference photo or a rough digital painting and get clean, usable linework in seconds. It\'s a genuine time-saver."'),
+      content: t('imageUserSayingTestimonials.3.content'),
       image: '/images/imageusersaying/sky-high-adventures_ffecf70d.jpg'
     },
     {
@@ -295,7 +294,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Jordan Foster',
       date: 'Jul 28, 2024',
       avatar: '/images/avatar/avatar21.png',
-      content: t('imageUserSayingTestimonials.4.content', '"On a whim, I decided to make a mini coloring book of our favorite wedding photos to use as a funny keepsake for our first anniversary. I uploaded about ten pictures, and the results were so good I printed them out. I honestly didn\'t expect people to color them at the party, but they did—and it was an absolute hit. Such a unique way to relive the memories."'),
+      content: t('imageUserSayingTestimonials.4.content'),
       image: '/images/imageusersaying/teddy-bear-picnic_74149362.jpg'
     },
     {
@@ -303,7 +302,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Danielle Lee',
       date: 'Mar 21, 2025',
       avatar: '/images/avatar/avatar22.png',
-      content: t('imageUserSayingTestimonials.5.content', '"My son is on the autism spectrum and responds incredibly well to structured, visual activities like coloring. This tool lets me take photos of things he\'s currently fascinated with—a specific type of train, his favorite stuffed octopus, the family car—and instantly turn them into an engaging activity that feels familiar and safe for him. It\'s an invaluable resource for us."'),
+      content: t('imageUserSayingTestimonials.5.content'),
       image: '/images/imageusersaying/sleepy-puppy-dreams_25051a9d.jpg'
     },
     {
@@ -311,7 +310,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Liam Carter',
       date: 'Oct 19, 2024',
       avatar: '/images/avatar/avatar23.png',
-      content: t('imageUserSayingTestimonials.6.content', '"I\'ve tried a few of these \'image to coloring page\' websites for college projects, and most are bogged down with ads, require a signup, or just crash with a larger file. This one is different. It just works. Upload, convert, download. No fuss, no watermarks, no nonsense. It\'s perfect for when I need a quick, clean outline for a presentation without any hassle."'),
+      content: t('imageUserSayingTestimonials.6.content'),
       image: '/images/imageusersaying/whimsical-amusement-park_1fb03126.jpg'
     },
     {
@@ -319,7 +318,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Angela Perez',
       date: 'Feb 8, 2025',
       avatar: '/images/avatar/avatar24.png',
-      content: t('imageUserSayingTestimonials.7.content', '"I\'m a huge craft enthusiast and use this tool for my scrapbooking and journaling. I can take a photo of a flower from my garden or a cool architectural detail and turn it into a perfect outline. It\'s like having a custom stamp maker without any of the expensive gear. It has totally elevated my DIY projects and I\'m completely in love with it."'),
+      content: t('imageUserSayingTestimonials.7.content'),
       image: '/images/imageusersaying/robot-cityscape_22843043.jpg'
     },
     {
@@ -327,7 +326,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Emily Rodriguez',
       date: 'Sep 14, 2024',
       avatar: '/images/avatar/avatar25.png',
-      content: t('imageUserSayingTestimonials.8.content', '"My 4-year-old\'s doodles are wild, abstract, and wonderful. I started taking pictures of her best crayon drawings and using this tool to convert them into clean, black-and-white line art. We printed them out and made her a \'My First Art Book.\' The moment she realized she was coloring her own creations, she felt like a real, published artist. It was pure magic."'),
+      content: t('imageUserSayingTestimonials.8.content'),
       image: '/images/imageusersaying/vintage-car-parade_2f8c318c.jpg'
     },
     {
@@ -335,99 +334,99 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       name: 'Mark Chen',
       date: 'May 18, 2025',
       avatar: '/images/avatar/avatar26.png',
-      content: t('imageUserSayingTestimonials.9.content', '"We run a small neighborhood cafe and were looking for something to keep kids entertained. I took a photo of our logo—a smiling cartoon coffee cup—and used this tool to create a stack of coloring pages. Now, it\'s the first thing families grab when they come in. It\'s been a simple, free way to make our space more family-friendly and our customers absolutely love it."'),
+      content: t('imageUserSayingTestimonials.9.content'),
       image: '/images/imageusersaying/race-day-excitement_90125dee.jpg'
     }
   ];
 
   // Data for WhyChoose component - Image mode
   const imageWhyChooseData: WhyChooseData = {
-    title: t('imageWhyChoose.title', 'Why Choose This Tool?'),
-    subtitle: t('imageWhyChoose.subtitle', 'Turning an image to a coloring page has never been easier — here\'s what makes our tool stand out:'),
+    title: t('imageWhyChoose.title'),
+    subtitle: t('imageWhyChoose.subtitle'),
     features: [
       {
         id: 'no-design-skills',
         icon: '/images/imagewhychoose/logo-1.png',
-        title: t('imageWhyChoose.features.noDesignSkills.title', 'No Design Skills Needed'),
-        description: t('imageWhyChoose.features.noDesignSkills.description', 'No artist or tech skills? No problem. Simply upload any image and our AI instantly handles the complex work, delivering a perfect coloring page in seconds.')
+        title: t('imageWhyChoose.features.noDesignSkills.title'),
+        description: t('imageWhyChoose.features.noDesignSkills.description')
       },
       {
         id: 'print-ready-quality',
         icon: '/images/imagewhychoose/logo-2.png',
-        title: t('imageWhyChoose.features.printReadyQuality.title', 'Get Print-Ready Quality'),
-        description: t('imageWhyChoose.features.printReadyQuality.description', 'Quality matters. Every coloring page is generated in high-resolution with crisp, clean lines, perfectly optimized for your home printer for a professional result.')
+        title: t('imageWhyChoose.features.printReadyQuality.title'),
+        description: t('imageWhyChoose.features.printReadyQuality.description')
       },
       {
         id: 'any-image-type',
         icon: '/images/imagewhychoose/logo-3.png',
-        title: t('imageWhyChoose.features.anyImageType.title', 'Works with Any Kind of Image'),
-        description: t('imageWhyChoose.features.anyImageType.description', 'From high-resolution photos to hand-drawn sketches and digital art, our tool handles it all. It intelligently converts any visual into a clean, printable coloring page.')
+        title: t('imageWhyChoose.features.anyImageType.title'),
+        description: t('imageWhyChoose.features.anyImageType.description')
       },
       {
         id: 'totally-free',
         icon: '/images/imagewhychoose/logo-4.png',
-        title: t('imageWhyChoose.features.totallyFree.title', 'Totally Free, No Watermarks'),
-        description: t('imageWhyChoose.features.totallyFree.description', 'Enjoy complete creative freedom with no strings attached. Our tool is 100% free—no hidden costs, signups, or watermarks on your finished coloring page.')
+        title: t('imageWhyChoose.features.totallyFree.title'),
+        description: t('imageWhyChoose.features.totallyFree.description')
       },
       {
         id: 'kid-safe',
         icon: '/images/imagewhychoose/logo-5.png',
-        title: t('imageWhyChoose.features.kidSafe.title', 'Kid-Safe and Family-Friendly'),
-        description: t('imageWhyChoose.features.kidSafe.description', 'Designed for the whole family, our simple interface is 100% ad-free and easy enough for kids to use on their own. Enjoy pure, distraction-free creative fun.')
+        title: t('imageWhyChoose.features.kidSafe.title'),
+        description: t('imageWhyChoose.features.kidSafe.description')
       },
       {
         id: 'creative-freedom',
         icon: '/images/imagewhychoose/logo-6.png',
-        title: t('imageWhyChoose.features.creativeFreedom.title', 'Unlock Your Creative Freedom'),
-        description: t('imageWhyChoose.features.creativeFreedom.description', 'The possibilities are endless. Create personalized coloring books from family photos, design unique gifts for friends, or turn any image into a relaxing art activity.')
+        title: t('imageWhyChoose.features.creativeFreedom.title'),
+        description: t('imageWhyChoose.features.creativeFreedom.description')
       }
     ]
   };
 
   // Data for ColoringPageConversion component
   const coloringPageConversionData: ColoringPageConversionData = {
-    title: t('coloringPageConversion.title', 'What\'s a Good Photo for an Image to Coloring Page Conversion?'),
-    subtitle: t('coloringPageConversion.subtitle', 'Easily create printable coloring pages from any image, from personal photos to complex scenes. Here are some popular ideas:'),
+    title: t('coloringPageConversion.title'),
+    subtitle: t('coloringPageConversion.subtitle'),
     categories: [
       {
         id: 'pet-portraits',
-        title: t('coloringPageConversion.categories.petPortraits.title', 'Pet Portraits'),
-        description: t('coloringPageConversion.categories.petPortraits.description', 'Turn a photo of your beloved pet into a cherished keepsake that captures their unique personality.'),
+        title: t('coloringPageConversion.categories.petPortraits.title'),
+        description: t('coloringPageConversion.categories.petPortraits.description'),
         upImage: '/images/coloringpageconversion/image-1-up.png',
         downImage: '/images/coloringpageconversion/image-1-down.png'
       },
       {
         id: 'family-photos',
-        title: t('coloringPageConversion.categories.familyPhotos.title', 'Family Photos'),
-        description: t('coloringPageConversion.categories.familyPhotos.description', 'Create a fun activity and personalized gifts by turning your favorite family photos into coloring pages.'),
+        title: t('coloringPageConversion.categories.familyPhotos.title'),
+        description: t('coloringPageConversion.categories.familyPhotos.description'),
         upImage: '/images/coloringpageconversion/image-2-up.png',
         downImage: '/images/coloringpageconversion/image-2-down.png'
       },
       {
         id: 'nature-landscape',
-        title: t('coloringPageConversion.categories.natureLandscape.title', 'Nature & Landscape'),
-        description: t('coloringPageConversion.categories.natureLandscape.description', 'Transform a beautiful landscape or travel photo into a detailed coloring sheet, a relaxing way for adults to unwind.'),
+        title: t('coloringPageConversion.categories.natureLandscape.title'),
+        description: t('coloringPageConversion.categories.natureLandscape.description'),
         upImage: '/images/coloringpageconversion/image-3-up.png',
         downImage: '/images/coloringpageconversion/image-3-down.png'
       },
       {
         id: 'floral-botanical',
-        title: t('coloringPageConversion.categories.floralBotanical.title', 'Floral & Botanical'),
-        description: t('coloringPageConversion.categories.floralBotanical.description', 'Convert a close-up image of a flower or plant into an elegant line drawing, perfect for botanical art lovers.'),
+        title: t('coloringPageConversion.categories.floralBotanical.title'),
+        description: t('coloringPageConversion.categories.floralBotanical.description'),
         upImage: '/images/coloringpageconversion/image-4-up.png',
         downImage: '/images/coloringpageconversion/image-4-down.png'
       },
       {
         id: 'toys-objects',
-        title: t('coloringPageConversion.categories.toysObjects.title', 'Toys & Objects'),
-        description: t('coloringPageConversion.categories.toysObjects.description', 'Let kids color their favorite things! Turn a photo of a beloved toy or LEGO creation into a fun, creative activity.'),
+        title: t('coloringPageConversion.categories.toysObjects.title'),
+        description: t('coloringPageConversion.categories.toysObjects.description'),
         upImage: '/images/coloringpageconversion/image-5-up.png',
         downImage: '/images/coloringpageconversion/image-5-down.png'
       },
       {
         id: 'vehicle',
-        title: t('coloringPageConversion.categories.vehicle.title', 'Vehicle'),
-        description: t('coloringPageConversion.categories.vehicle.description', 'For the car, train, and plane enthusiast. Convert a photo of any vehicle into an exciting coloring page they\'ll love.'),
+        title: t('coloringPageConversion.categories.vehicle.title'),
+        description: t('coloringPageConversion.categories.vehicle.description'),
         upImage: '/images/coloringpageconversion/image-6-up.png',
         downImage: '/images/coloringpageconversion/image-6-down.png'
       }
@@ -436,8 +435,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // HowToCreate data for image mode
   const imageHowToCreateData: HowToCreateData = {
-    title: t('imageHowToCreate.title', 'How to Create a Coloring Page from Any Image?'),
-    subtitle: t('imageHowToCreate.subtitle', 'Simply follow these 3 easy steps to convert your picture into a printable coloring page.'),
+    title: t('imageHowToCreate.title'),
+    subtitle: t('imageHowToCreate.subtitle'),
     images: {
       top: "/images/imagehowtocreate/iamge-1-up.jpg",
       bottom: "/images/imagehowtocreate/iamge-1-down.png"
@@ -445,64 +444,64 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     steps: [
       {
         id: "step-1",
-        number: t('imageHowToCreate.steps.step1.number', '01'),
-        title: t('imageHowToCreate.steps.step1.title', 'Upload Your Image'),
-        description: t('imageHowToCreate.steps.step1.description', 'Choose any image from your device (JPG, PNG supported).')
+        number: t('imageHowToCreate.steps.step1.number'),
+        title: t('imageHowToCreate.steps.step1.title'),
+        description: t('imageHowToCreate.steps.step1.description')
       },
       {
         id: "step-2", 
-        number: t('imageHowToCreate.steps.step2.number', '02'),
-        title: t('imageHowToCreate.steps.step2.title', 'Instant AI Conversion'),
-        description: t('imageHowToCreate.steps.step2.description', 'Click the button and our AI will instantly turn your image into clean line art.')
+        number: t('imageHowToCreate.steps.step2.number'),
+        title: t('imageHowToCreate.steps.step2.title'),
+        description: t('imageHowToCreate.steps.step2.description')
       },
       {
         id: "step-3",
-        number: t('imageHowToCreate.steps.step3.number', '03'), 
-        title: t('imageHowToCreate.steps.step3.title', 'Preview & Download'),
-        description: t('imageHowToCreate.steps.step3.description', 'Your coloring sheet is ready! Save the high-quality file to your device. Perfect format for printing drawings at home')
+        number: t('imageHowToCreate.steps.step3.number'), 
+        title: t('imageHowToCreate.steps.step3.title'),
+        description: t('imageHowToCreate.steps.step3.description')
       }
     ]
   };
 
   // CanCreate data for image mode
   const imageCanCreateData: CanCreateData = {
-    title: t('imageCanCreate.title', 'Who Is This Image to Coloring Page Tool For?'),
-    subtitle: t('imageCanCreate.subtitle', 'Our tool is designed for anyone who wants to turn their photos into creative art, no matter their age or experience.'),
+    title: t('imageCanCreate.title'),
+    subtitle: t('imageCanCreate.subtitle'),
     categories: [
       {
         id: 'parents-families',
-        title: t('imageCanCreate.categories.parentsFamilies.title', 'Parents & Families'),
-        description: t('imageCanCreate.categories.parentsFamilies.description', 'Create personalized coloring activities from family photos, pet pictures, or vacation memories.'),
+        title: t('imageCanCreate.categories.parentsFamilies.title'),
+        description: t('imageCanCreate.categories.parentsFamilies.description'),
         image: '/images/whoisimageto/image-1.png'
       },
       {
         id: 'teachers-educators',
-        title: t('imageCanCreate.categories.teachersEducators.title', 'Teachers & Educators'),
-        description: t('imageCanCreate.categories.teachersEducators.description', 'Transform educational images into engaging coloring exercises for students of all ages.'),
+        title: t('imageCanCreate.categories.teachersEducators.title'),
+        description: t('imageCanCreate.categories.teachersEducators.description'),
         image: '/images/whoisimageto/image-2.png'
       },
       {
         id: 'artists-illustrators',
-        title: t('imageCanCreate.categories.artistsCreatives.title', 'Artists & Creatives'),
-        description: t('imageCanCreate.categories.artistsCreatives.description', 'Convert reference photos into line art for sketching practice or creative inspiration.'),
+        title: t('imageCanCreate.categories.artistsCreatives.title'),
+        description: t('imageCanCreate.categories.artistsCreatives.description'),
         image: '/images/whoisimageto/image-3.png'
       },
       {
         id: 'kids-young-creators',
-        title: t('imageCanCreate.categories.kidsCreators.title', 'Kids & Young Creators'),
-        description: t('imageCanCreate.categories.kidsCreators.description', 'Children have boundless creativity! Empower them by letting them turn their own drawings and doodles into "official" coloring pages. It builds confidence and shows them how their ideas can become real, printable art.'),
+        title: t('imageCanCreate.categories.kidsCreators.title'),
+        description: t('imageCanCreate.categories.kidsCreators.description'),
         image: '/images/whoisimageto/image-4.png'
       },
       {
         id: 'crafters-diy-lovers',
-        title: t('imageCanCreate.categories.craftersDiy.title', 'Crafters & DIY Lovers'),
-        description: t('imageCanCreate.categories.craftersDiy.description', 'Take your DIY projects to the next level. Turn any custom design or image into a perfect outline for scrapbooking, journaling, wood burning, or even creating personalized greeting cards. It\'s a versatile tool for any crafter\'s toolbox.'),
+        title: t('imageCanCreate.categories.craftersDiy.title'),
+        description: t('imageCanCreate.categories.craftersDiy.description'),
         image: '/images/whoisimageto/image-5.png'
       },
       {
         id: 'hobbyists-casual-creators',
-        title: t('imageCanCreate.categories.hobbyistsCasual.title', 'Hobbyists & Casual Creators'),
-        description: t('imageCanCreate.categories.hobbyistsCasual.description', 'You don\'t need a big project to have fun. If you simply enjoy discovering easy-to-use creative tools, our generator is for you. Turn any image into a coloring page just for the joy of it—it\'s instant, satisfying, and free.'),
+        title: t('imageCanCreate.categories.hobbyistsCasual.title'),
+        description: t('imageCanCreate.categories.hobbyistsCasual.description'),
         image: '/images/whoisimageto/image-6.png'
       }
     ]
@@ -510,27 +509,27 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Data for HowToCreate component
   const howToCreateData: HowToCreateData = {
-    title: t('textHowToCreate.title', 'How to create your coloring page with our Text to Coloring Page Generator?'),
-    subtitle: t('textHowToCreate.subtitle', 'Simply follow these 3 steps to create your coloring page.'),
+    title: t('textHowToCreate.title'),
+    subtitle: t('textHowToCreate.subtitle'),
     image: "/images/texthowtocreate/image-1.png",
     steps: [
       {
         id: 'enter-idea',
-        number: t('textHowToCreate.steps.describe.number', '01'),
-        title: t('textHowToCreate.steps.describe.title', 'Describe Your Idea'),
-        description: t('textHowToCreate.steps.describe.description', 'Type what you want to see in your coloring page. Be as creative as you like!')
+        number: t('textHowToCreate.steps.describe.number'),
+        title: t('textHowToCreate.steps.describe.title'),
+        description: t('textHowToCreate.steps.describe.description')
       },
       {
         id: 'click-generate',
-        number: t('textHowToCreate.steps.generate.number', '02'), 
-        title: t('textHowToCreate.steps.generate.title', 'AI Creates Your Design'),
-        description: t('textHowToCreate.steps.generate.description', 'Our AI transforms your words into a beautiful, printable coloring page in seconds.')
+        number: t('textHowToCreate.steps.generate.number'), 
+        title: t('textHowToCreate.steps.generate.title'),
+        description: t('textHowToCreate.steps.generate.description')
       },
       {
         id: 'download-color',
-        number: t('textHowToCreate.steps.download.number', '03'),
-        title: t('textHowToCreate.steps.download.title', 'Download & Enjoy'),
-        description: t('textHowToCreate.steps.download.description', 'Get your custom coloring page instantly. Download and print to start coloring!')
+        number: t('textHowToCreate.steps.download.number'),
+        title: t('textHowToCreate.steps.download.title'),
+        description: t('textHowToCreate.steps.download.description')
       }
     ]
   };
@@ -538,130 +537,130 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   // FAQ data for GenerateFAQ component - Text to Image mode
   const textFAQData: FAQData[] = [
     {
-      question: t('textFAQ.0.question', "Is this Text to Coloring Page tool really free?"),
-      answer: t('textFAQ.0.answer', "Absolutely! Our tool is 100% free to use. There are no hidden fees, subscription costs, or limits on how many pages you can generate. Create to your heart's content.")
+      question: t('textFAQ.0.question'),
+      answer: t('textFAQ.0.answer')
     },
     {
-      question: t('textFAQ.1.question', "What kind of prompts can I type into the generator?"),
-      answer: t('textFAQ.1.answer', "You can type virtually anything! Try simple descriptions like 'a happy cat', detailed scenes like 'a dragon flying over a medieval castle', or creative combinations like 'a robot cooking pancakes'. The AI works best with clear, descriptive prompts that specify what you want to see in your coloring page.")
+      question: t('textFAQ.1.question'),
+      answer: t('textFAQ.1.answer')
     },
     {
-      question: t('textFAQ.2.question', "Can I use the images I create for commercial purposes?"),
-      answer: t('textFAQ.2.answer', "Yes! All coloring pages you generate are yours to use however you'd like, including for commercial purposes. You can print them, share them, sell them, or use them in your business without any restrictions or royalty fees.")
+      question: t('textFAQ.2.question'),
+      answer: t('textFAQ.2.answer')
     },
     {
-      question: t('textFAQ.3.question', "Can I download and print the coloring pages?"),
-      answer: t('textFAQ.3.answer', "Absolutely! Every coloring page can be downloaded in high-quality PNG or PDF format. They're optimized for standard 8.5x11 inch paper and print beautifully on any home printer. The clean, black line art uses minimal ink while providing crisp details.")
+      question: t('textFAQ.3.question'),
+      answer: t('textFAQ.3.answer')
     },
     {
-      question: t('textFAQ.4.question', "What is the quality of the generated images?"),
-      answer: t('textFAQ.4.answer', "Our AI generates high-resolution coloring pages with clean, professional line art. Each image is optimized for printing with clear outlines, appropriate detail levels, and smooth curves that are perfect for coloring with crayons, markers, or colored pencils.")
+      question: t('textFAQ.4.question'),
+      answer: t('textFAQ.4.answer')
     },
     {
-      question: t('textFAQ.5.question', "Is this tool safe for my kids to use?"),
-      answer: t('textFAQ.5.answer', "Yes! Our tool is completely child-safe. We have built-in content filters that prevent inappropriate content from being generated. The interface is simple and intuitive, making it easy for kids to use independently while parents can feel confident about the safety of the content.")
+      question: t('textFAQ.5.question'),
+      answer: t('textFAQ.5.answer')
     },
     {
-      question: t('textFAQ.6.question', "What happens if someone types an inappropriate prompt?"),
-      answer: t('textFAQ.6.answer', "Our advanced content filtering system automatically detects and blocks inappropriate prompts. If an unsuitable prompt is entered, the system will politely ask the user to try a different, family-friendly description instead. This keeps the platform safe for users of all ages.")
+      question: t('textFAQ.6.question'),
+      answer: t('textFAQ.6.answer')
     },
     {
-      question: t('textFAQ.7.question', "Can I use the generator on my mobile phone or tablet?"),
-      answer: t('textFAQ.7.answer', "Yes! Our generator is fully responsive and works perfectly on smartphones, tablets, and desktop computers. The interface adapts to your screen size, making it easy to create and download coloring pages from any device with an internet connection.")
+      question: t('textFAQ.7.question'),
+      answer: t('textFAQ.7.answer')
     },
     {
-      question: t('textFAQ.8.question', "Do you save my prompts or the images I create?"),
-      answer: t('textFAQ.8.answer', "Your privacy is important to us. While we may temporarily store images for technical purposes, we don't permanently save your personal creations or prompts unless you specifically choose to share them publicly. You have full control over your content and privacy settings.")
+      question: t('textFAQ.8.question'),
+      answer: t('textFAQ.8.answer')
     },
     {
-      question: t('textFAQ.9.question', "What languages does the generator support?"),
-      answer: t('textFAQ.9.answer', "Currently, our generator works best with English prompts, but it can understand and process descriptions in multiple languages including Spanish, French, German, and others. For the best results, we recommend using clear, simple language regardless of which language you choose.")
+      question: t('textFAQ.9.question'),
+      answer: t('textFAQ.9.answer')
     }
   ];
 
   // FAQ data for GenerateFAQ component - Image to Image mode
   const imageFAQData: FAQData[] = [
     {
-      question: t('imageFAQ.0.question', "What types of images work best for the image to coloring page conversion?"),
-      answer: t('imageFAQ.0.answer', "For the best results, use photos with clear subjects, good lighting, and strong contrast between the subject and the background. Simple drawings or graphics with bold lines also work wonderfully. While our AI is powerful, very dark, blurry, or overly complex photos might lose some detail in the conversion process.")
+      question: t('imageFAQ.0.question'),
+      answer: t('imageFAQ.0.answer')
     },
     {
-      question: t('imageFAQ.1.question', "Can I upload colored photos, or do they need to be black and white first?"),
-      answer: t('imageFAQ.1.answer', "You can absolutely upload colored photos! Our AI automatically processes full-color images and converts them into clean, black-and-white line art. There's no need to convert your photos to black and white beforehand – just upload your original colored images and let our tool handle the rest.")
+      question: t('imageFAQ.1.question'),
+      answer: t('imageFAQ.1.answer')
     },
     {
-      question: t('imageFAQ.2.question', "Is this image to coloring page tool really free to use?"),
-      answer: t('imageFAQ.2.answer', "Yes, our image to coloring page converter is completely free to use! There are no hidden fees, subscriptions, or limits on how many coloring pages you can create. Simply upload your image, convert it, and download your coloring page – all at no cost.")
+      question: t('imageFAQ.2.question'),
+      answer: t('imageFAQ.2.answer')
     },
     {
-      question: t('imageFAQ.3.question', "Do I need to install any software on my computer?"),
-      answer: t('imageFAQ.3.answer', "No software installation required! Our tool runs entirely in your web browser. Simply visit our website, upload your image, and start creating coloring pages immediately. It works on any device with internet access and a modern web browser.")
+      question: t('imageFAQ.3.question'),
+      answer: t('imageFAQ.3.answer')
     },
     {
-      question: t('imageFAQ.4.question', "Can I print the coloring pages I create?"),
-      answer: t('imageFAQ.4.answer', "Absolutely! All coloring pages are generated in high-quality, print-ready format. You can download them as PNG or PDF files and print them at home on standard 8.5x11 paper or any size you prefer. The line art is optimized for crisp printing results.")
+      question: t('imageFAQ.4.question'),
+      answer: t('imageFAQ.4.answer')
     },
     {
-      question: t('imageFAQ.5.question', "What happens to the photos I upload? Are they kept private?"),
-      answer: t('imageFAQ.5.answer', "Your privacy is our priority. Uploaded images are processed securely and temporarily to create your coloring page. We don't store your personal photos on our servers, and they're automatically deleted after processing. Your images are never shared or used for any other purpose.")
+      question: t('imageFAQ.5.question'),
+      answer: t('imageFAQ.5.answer')
     },
     {
-      question: t('imageFAQ.6.question', "What file formats does the tool support?"),
-      answer: t('imageFAQ.6.answer', "Our tool supports the most common image formats including JPG/JPEG, PNG, GIF, and WebP. For best results, we recommend using JPG or PNG files. The tool can handle images up to 10MB in size, which covers most standard photos and graphics.")
+      question: t('imageFAQ.6.question'),
+      answer: t('imageFAQ.6.answer')
     },
     {
-      question: t('imageFAQ.7.question', "Does this work on my phone or tablet?"),
-      answer: t('imageFAQ.7.answer', "Yes! Our image to coloring page tool is fully responsive and works perfectly on smartphones, tablets, and desktop computers. You can upload photos directly from your phone's camera or photo gallery and create coloring pages on the go.")
+      question: t('imageFAQ.7.question'),
+      answer: t('imageFAQ.7.answer')
     },
     {
-      question: t('imageFAQ.8.question', "Can I use coloring pages for my business or to sell?"),
-      answer: t('imageFAQ.8.answer', "You can use the coloring pages you create for personal, educational, and most commercial purposes. However, please ensure you have the rights to the original images you upload. If you're using copyrighted images, make sure you have permission for commercial use.")
+      question: t('imageFAQ.8.question'),
+      answer: t('imageFAQ.8.answer')
     },
     {
-      question: t('imageFAQ.9.question', "Can I edit the coloring page after it's been created?"),
-      answer: t('imageFAQ.9.answer', "Once downloaded, you can edit the coloring page using any image editing software like Photoshop, GIMP, or even simple paint programs. The files are standard image formats that can be modified, cropped, or enhanced as needed for your specific projects.")
+      question: t('imageFAQ.9.question'),
+      answer: t('imageFAQ.9.answer')
     }
   ];
 
   // Categories data for CanCreate component
   const textCanCreateData: CanCreateData = {
-    title: t('textCanCreate.title', 'What Can You Create?'),
-    subtitle: t('textCanCreate.subtitle', 'Turn your wildest ideas into unique coloring pages.'),
+    title: t('textCanCreate.title'),
+    subtitle: t('textCanCreate.subtitle'),
     categories: [
     {
       id: 'animals',
-      title: t('textCanCreate.categories.animals.title', 'Animals & Pets'),
-      description: t('textCanCreate.categories.animals.description', 'From cute puppies to wild safari animals, create any creature you can imagine.'),
+      title: t('textCanCreate.categories.animals.title'),
+      description: t('textCanCreate.categories.animals.description'),
       image: '/images/cancreate/image-1.png'
     },
     {
       id: 'fantasy',
-      title: t('textCanCreate.categories.fantasy.title', 'Fantasy & Magic'),
-      description: t('textCanCreate.categories.fantasy.description', 'Dragons, unicorns, castles, and magical creatures come to life in your coloring pages.'),
+      title: t('textCanCreate.categories.fantasy.title'),
+      description: t('textCanCreate.categories.fantasy.description'),
       image: '/images/cancreate/image-3.png'
     },
     {
       id: 'vehicles',
-      title: t('textCanCreate.categories.vehicles.title', 'Vehicles & Transport'),
-      description: t('textCanCreate.categories.vehicles.description', 'Cars, trucks, airplanes, spaceships, and any vehicle your child dreams of driving.'),
+      title: t('textCanCreate.categories.vehicles.title'),
+      description: t('textCanCreate.categories.vehicles.description'),
       image: '/images/cancreate/image-5.png'
     },
     {
       id: 'nature',
-      title: t('textCanCreate.categories.nature.title', 'Nature & Outdoors'),
-      description: t('textCanCreate.categories.nature.description', 'Beautiful flowers, trees, landscapes, and outdoor scenes perfect for relaxing coloring.'),
+      title: t('textCanCreate.categories.nature.title'),
+      description: t('textCanCreate.categories.nature.description'),
       image: '/images/cancreate/image-6.png'
     },
     {
       id: 'robots',
-      title: t('textCanCreate.categories.robots.title', 'Robots'),
-      description: t('textCanCreate.categories.robots.description', 'A robot making pancakes for breakfast'),
+      title: t('textCanCreate.categories.robots.title'),
+      description: t('textCanCreate.categories.robots.description'),
       image: '/images/cancreate/image-2.png'
     },
     {
       id: 'circus',
-      title: t('textCanCreate.categories.circus.title', 'Circus'),
-      description: t('textCanCreate.categories.circus.description', 'A bear riding a unicycle in a circus'),
+      title: t('textCanCreate.categories.circus.title'),
+      description: t('textCanCreate.categories.circus.description'),
       image: '/images/cancreate/image-4.png'
     }
     ]
@@ -669,43 +668,43 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Second categories data for second CanCreate component
   const textCanCreateData2: CanCreateData = {
-    title: t('textCanCreate2.title', 'Who Can Use This Tool?'),
-    subtitle: t('textCanCreate2.subtitle', 'Our text-to-coloring page generator is perfect for everyone.'),
+    title: t('textCanCreate2.title'),
+    subtitle: t('textCanCreate2.subtitle'),
     categories: [
     {
       id: 'parents-teachers-kids',
-      title: t('textCanCreate2.categories.parentsTeachersKids.title', 'Parents, Teachers & Kids'),
-      description: t('textCanCreate2.categories.parentsTeachersKids.description', 'Create educational and fun coloring activities that spark creativity and learning.'),
+      title: t('textCanCreate2.categories.parentsTeachersKids.title'),
+      description: t('textCanCreate2.categories.parentsTeachersKids.description'),
       image: '/images/cancreate/image-7.png'
     },
     {
       id: 'adult-coloring-fans',
-      title: t('textCanCreate2.categories.adultColoringFans.title', 'Adult Coloring Enthusiasts'),
-      description: t('textCanCreate2.categories.adultColoringFans.description', 'Design intricate patterns and detailed scenes for relaxing, stress-free coloring sessions.'),
+      title: t('textCanCreate2.categories.adultColoringFans.title'),
+      description: t('textCanCreate2.categories.adultColoringFans.description'),
       image: '/images/cancreate/image-8.png'
     },
     {
       id: 'creative-individuals',
-      title: t('textCanCreate2.categories.creativeIndividuals.title', 'Creative Individuals'),
-      description: t('textCanCreate2.categories.creativeIndividuals.description', 'Artists, crafters, and creative minds who want custom designs for their projects.'),
+      title: t('textCanCreate2.categories.creativeIndividuals.title'),
+      description: t('textCanCreate2.categories.creativeIndividuals.description'),
       image: '/images/cancreate/image-9.png'
     },
     {
       id: 'homeschooling-families',
-      title: t('textCanCreate2.categories.homeschoolingFamilies.title', 'Homeschooling Families'),
-      description: t('textCanCreate2.categories.homeschoolingFamilies.description', 'Easily integrate art and literacy into your curriculum with almost no prep time. You can tailor unlimited coloring pages to any theme or subject you happen to be covering at home.'),
+      title: t('textCanCreate2.categories.homeschoolingFamilies.title'),
+      description: t('textCanCreate2.categories.homeschoolingFamilies.description'),
       image: '/images/cancreate/image-10.png'
     },
     {
       id: 'therapists-counselors',
-      title: t('textCanCreate2.categories.therapistsCounselors.title', 'Therapists & Child Counselors'),
-      description: t('textCanCreate2.categories.therapistsCounselors.description', 'Use prompt-based drawing as a gentle and effective way for children to express feelings, tell stories, or explore difficult topics in a completely safe and creative format.'),
+      title: t('textCanCreate2.categories.therapistsCounselors.title'),
+      description: t('textCanCreate2.categories.therapistsCounselors.description'),
       image: '/images/cancreate/image-11.png'
     },
     {
       id: 'activity-planners',
-      title: t('textCanCreate2.categories.activityPlanners.title', 'Activity Planners & Event Hosts'),
-      description: t('textCanCreate2.categories.activityPlanners.description', 'Make custom coloring pages for birthday parties, camps, or school events. You can add names, specific themes, or story-based designs for an extra touch of personalized fun.'),
+      title: t('textCanCreate2.categories.activityPlanners.title'),
+      description: t('textCanCreate2.categories.activityPlanners.description'),
       image: '/images/cancreate/image-12.png'
     }
     ]
@@ -964,12 +963,12 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   const renderContent = (mode: 'text' | 'image') => {
         const config = {
       text: {
-        title: t('textToImage.title', 'Text to coloring page'),
-        description: t('textToImage.description', 'Create high-quality coloring sheets for free with coloring page generator. Spark your kids\' creativity with AI-designed coloring pages.')
+        title: t('textToImage.title'),
+        description: t('textToImage.description')
       },
       image: {
-        title: t('imageToImage.title', 'Image to coloring page'),
-        description: t('imageToImage.description', 'Upload your image and transform your photo into an amazing coloring page in just seconds, unleashing your imagination.')
+        title: t('imageToImage.title'),
+        description: t('imageToImage.description')
       }
     };
 
@@ -989,8 +988,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   <img src={generateFailIcon} alt="Generation failed" className="w-full h-full" />
                 </div>
                 <div className="text-[#6B7280] text-sm leading-relaxed max-w-md">
-                  {t('error.generationFailed', 'The generation failed. Please regenerate it.')}<br />
-                  {t('error.tryAgain', 'If you encounter any problems, please provide feedback to us.')}
+                  {t('error.generationFailed')}<br />
+                  {t('error.tryAgain')}
                 </div>
               </div>
             ) : selectedImage || isGenerating ? (
@@ -1018,7 +1017,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             <div className="text-[#161616] text-2xl font-semibold">
                               {Math.round(generationProgress)}%
                             </div>
-                            <div className="text-[#6B7280] text-sm">{t('generating.description', 'Generating...')}</div>
+                            <div className="text-[#6B7280] text-sm">{t('generating.description')}</div>
                           </div>
                         </div>
                       ) : selectedImage ? (
@@ -1047,7 +1046,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 transition-all duration-200 flex-1 sm:flex-none"
                     >
                       <img src={downloadIcon} alt="Download" className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span className="text-[#161616] text-sm font-medium">{t('formats.png', 'PNG')}</span>
+                      <span className="text-[#161616] text-sm font-medium">{t('formats.png')}</span>
                     </button>
 
                     {/* Download PDF Button */}
@@ -1056,7 +1055,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       className="bg-[#F2F3F5] hover:bg-[#E5E7EB] border border-[#E5E7EB] rounded-lg px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center gap-2 transition-all duration-200 flex-1 sm:flex-none"
                     >
                       <img src={downloadIcon} alt="Download" className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span className="text-[#161616] text-sm font-medium">{t('formats.pdf', 'PDF')}</span>
+                      <span className="text-[#161616] text-sm font-medium">{t('formats.pdf')}</span>
                     </button>
 
                     {/* More Options Button */}
@@ -1076,7 +1075,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                             className="w-full px-4 py-2 text-left text-[#161616] hover:bg-gray-50 flex items-center gap-2 transition-colors"
                           >
                             <img src={deleteIcon} alt="Delete" className="w-4 h-4" />
-                            <span className="text-sm">{t('actions.delete', 'Delete')}</span>
+                            <span className="text-sm">{t('actions.delete')}</span>
                           </button>
                         </div>
                       )}
@@ -1172,11 +1171,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         <>
           {/* Prompt Section */}
           <div className="lg:mx-5 lg:mt-7">
-            <div className="text-sm font-bold text-[#161616] mb-2">{t('prompt.title', 'Prompt')}</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('prompt.title')}</div>
             <div className="relative">
               <textarea
                 className="w-full h-[120px] sm:h-[150px] lg:h-[200px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none"
-                placeholder={t('prompt.placeholder', 'What do you want to create?')}
+                placeholder={t('prompt.placeholder')}
                 value={prompt}
                 onChange={handlePromptChange}
                 maxLength={1000}
@@ -1187,7 +1186,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <button
                   onClick={handleClearPrompt}
                   className="absolute top-3 right-3 w-5 h-5 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
-                  title={t('prompt.clear', 'Clear prompt')}
+                  title={t('prompt.clear')}
                 >
                   <img src="/images/close-x.svg" alt="Clear" className="w-3 h-3" />
                 </button>
@@ -1202,7 +1201,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <span className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2">
                   <img src={aiGenerateIcon} alt="AI Generate" className="w-3 h-3 sm:w-4 sm:h-4" />
                 </span>
-                <span className="text-[#6B7280] text-xs sm:text-sm">{t('prompt.generateWithAI', 'Generate with AI')}</span>
+                <span className="text-[#6B7280] text-xs sm:text-sm">{t('prompt.generateWithAI')}</span>
               </div> */}
             </div>
           </div>
@@ -1211,7 +1210,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="lg:mx-5 mt-5">
             <div className="flex justify-between items-start gap-2">
               <div className="text-[#6B7280] text-xs flex flex-wrap items-center gap-2 flex-1">
-                <span className="shrink-0">{t('prompt.ideas', 'Ideas')}：</span>
+                <span className="shrink-0">{t('prompt.ideas')}：</span>
                 {styleSuggestions.map((style) => (
                   <span
                     key={style.id}
@@ -1230,7 +1229,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
           {/* Difficulty Selector */}
           <div className="lg:mx-5 mt-6 lg:mt-10">
-            <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.difficulty', 'Difficulty Level')}</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.difficulty')}</div>
             <div className="bg-[#F2F3F5] rounded-lg p-1 relative">
               {/* 滑动指示器 */}
               <div
@@ -1252,8 +1251,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   onClick={() => setSelectedDifficulty('toddler')}
                 >
                   <div className="text-center">
-                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.toddler', '幼儿')}</div>
-                    <div className="text-[10px] text-gray-500">{t('difficulty.toddlerAge', '2-5岁')}</div>
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.toddler')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.toddlerAge')}</div>
                   </div>
                 </button>
                 <button
@@ -1263,8 +1262,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   onClick={() => setSelectedDifficulty('children')}
                 >
                   <div className="text-center">
-                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.children', '儿童')}</div>
-                    <div className="text-[10px] text-gray-500">{t('difficulty.childrenAge', '5-10岁')}</div>
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.children')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.childrenAge')}</div>
                   </div>
                 </button>
                 <button
@@ -1274,8 +1273,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   onClick={() => setSelectedDifficulty('teen')}
                 >
                   <div className="text-center">
-                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.teen', '青少年')}</div>
-                    <div className="text-[10px] text-gray-500">{t('difficulty.teenAge', '10-18岁')}</div>
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.teen')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.teenAge')}</div>
                   </div>
                 </button>
                 <button
@@ -1285,8 +1284,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   onClick={() => setSelectedDifficulty('adult')}
                 >
                   <div className="text-center">
-                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.adult', '成人')}</div>
-                    <div className="text-[10px] text-gray-500">{t('difficulty.adultAge', '18+岁')}</div>
+                    <div className="text-lg font-bold text-primary-600 mb-1">{t('difficulty.adult')}</div>
+                    <div className="text-[10px] text-gray-500">{t('difficulty.adultAge')}</div>
                   </div>
                 </button>
               </div>
@@ -1295,7 +1294,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
           {/* Ratio Selector */}
           <div className="lg:mx-5 mt-6 lg:mt-10">
-            <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.ratio', 'Ratio')}</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('settings.ratio')}</div>
             {/* 统一的灰色块包含所有比例选项 */}
             <div className="bg-[#F2F3F5] rounded-lg p-1 relative">
               {/* 滑动指示器 */}
@@ -1428,7 +1427,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         <>
           {/* Image Upload Section */}
           <div className="lg:mx-5 lg:mt-7">
-            <div className="text-sm font-bold text-[#161616] mb-2">{t('upload.title', 'Image')}</div>
+            <div className="text-sm font-bold text-[#161616] mb-2">{t('upload.title')}</div>
             <div
               className="w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"
               onClick={() => document.getElementById('imageUpload')?.click()}
@@ -1455,7 +1454,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-[46px] lg:h-[46px] mb-3 sm:mb-4">
                     <img src={addImageIcon} alt="Upload" className="w-full h-full" />
                   </div>
-                  <div className="text-[#A4A4A4] text-xs sm:text-sm">{t('upload.clickToUpload', 'Click to upload')}</div>
+                  <div className="text-[#A4A4A4] text-xs sm:text-sm">{t('upload.clickToUpload')}</div>
                 </>
               )}
               <input
@@ -1547,7 +1546,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         ) : !isGenerating ? (
           // 空状态 - 根据当前标签页显示不同的提示
           <div className="text-center text-[#6B7280] text-xs mt-8">
-            {selectedTab === 'text' ? t('states.noTextToImageYet', 'No text to image yet') : t('states.noImageToImageYet', 'No image to image yet')}
+            {selectedTab === 'text' ? t('states.noTextToImageYet') : t('states.noImageToImageYet')}
           </div>
         ) : null}
       </div>
@@ -1578,11 +1577,11 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   return (
     <Layout>
       <SEOHead
-        title={tCommon('seo.generate.title', 'AI Coloring Page Generator - Create Custom Coloring Pages from Text & Images')}
-        description={tCommon('seo.generate.description', 'Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.')}
-        keywords={tCommon('seo.generate.keywords', 'AI coloring generator, text to coloring page, image to coloring page, custom coloring pages, AI art generator, printable coloring pages')}
-        ogTitle={tCommon('seo.generate.title', 'AI Coloring Page Generator - Create Custom Coloring Pages from Text & Images')}
-        ogDescription={tCommon('seo.generate.description', 'Generate unique coloring pages with AI! Transform text prompts or upload images to create personalized coloring pages. Fast, free, and printable in high quality.')}
+        title={t('seo.generate.title')}
+        description={t('seo.generate.description')}
+        keywords={t('seo.generate.keywords')}
+        ogTitle={t('seo.generate.title')}
+        ogDescription={t('seo.generate.description')}
         noIndex={true}
       />
       {/* 错误提示 */}
@@ -1619,14 +1618,14 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   }`}
                 onClick={() => setSelectedTab('text')}
               >
-                {t('tabs.textToImage', 'Text to Image')}
+                {t('tabs.textToImage')}
               </button>
               <button
                 className={`flex-1 h-10 z-10 flex items-center justify-center ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
                   }`}
                 onClick={() => setSelectedTab('image')}
               >
-                {t('tabs.imageToImage', 'Image to Image')}
+                {t('tabs.imageToImage')}
               </button>
             </div>
           </div>
@@ -1637,9 +1636,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* Public Visibility - Common for both tabs */}
           <div className="mx-5 mt-5 lg:mt-8 flex items-center justify-between">
             <div className="text-[14px] font-bold text-[#161616] flex items-center">
-              {t('settings.visibility', 'Public Visibility')}
+              {t('settings.visibility')}
               <Tooltip 
-                content={t('settings.visibilityTip', 'When enabled, your generated images may be visible to other users in the public gallery. When disabled, only you can see your generated images.')}
+                content={t('settings.visibilityTip')}
                 side="top"
                 align="start"
                 className="ml-1"
@@ -1701,9 +1700,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               />
               <span className="font-bold text-lg">20</span>
               <span className="font-bold text-lg">
-                {isGenerating ? t('generating.title', 'Generating...') : 
-                 error ? t('actions.regenerate', 'Regenerate') :
-                 t('actions.generate', 'Generate')}
+                {isGenerating ? t('generating.title') : 
+                 error ? t('actions.regenerate') :
+                 t('actions.generate')}
               </span>
             </button>
           </div>
@@ -1721,13 +1720,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => handleMobileTabChange('text')}
               >
-{t('tabs.textToImage', 'Text to Image')}
+{t('tabs.textToImage')}
               </button>
               <button
                 className={`flex-1 h-10 z-10 flex items-center justify-center text-sm ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'}`}
                 onClick={() => handleMobileTabChange('image')}
               >
-{t('tabs.imageToImage', 'Image to Image')}
+{t('tabs.imageToImage')}
               </button>
             </div>
           </div>
@@ -1743,9 +1742,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               {/* Public Visibility - Mobile */}
               <div className="mt-5 flex items-center justify-between">
                 <div className="text-sm font-bold text-[#161616] flex items-center">
-                  {t('settings.visibility', 'Public Visibility')}
+                  {t('settings.visibility')}
                   <Tooltip 
-                    content={t('settings.visibilityTip', 'When enabled, your generated images may be visible to other users in the public gallery. When disabled, only you can see your generated images.')}
+                    content={t('settings.visibilityTip')}
                     side="top"
                     align="start"
                     className="ml-1"
@@ -1808,9 +1807,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               />
               <span className="font-bold text-lg">20</span>
               <span className="font-bold text-lg">
-                {isGenerating ? t('generating.title', 'Generating...') : 
-                 error ? t('actions.regenerate', 'Regenerate') :
-                 t('actions.generate', 'Generate')}
+                {isGenerating ? t('generating.title') : 
+                 error ? t('actions.regenerate') :
+                 t('actions.generate')}
               </span>
             </button>
           </div>
@@ -1932,9 +1931,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* TryNow component - only show for text mode */}
           {selectedTab === 'text' && (
             <TryNow
-              title={t('tryNow.text.title', 'Start Creating Your Coloring Pages Today')}
-              description={t('tryNow.text.description', 'Let your imagination run wild with our Text to Coloring Page tool. Whether you\'re a parent bringing a flying elephant to life for your kids, an artist seeking inspiration from a dancing taco, or simply want to see a knight riding a turtle, we\'re here to draw it for you. Start creating your collection now and unleash your inner artist!')}
-              buttonText={t('tryNow.text.buttonText', 'Try Now')}
+              title={t('tryNow.text.title')}
+              description={t('tryNow.text.description')}
+              buttonText={t('tryNow.text.buttonText')}
               onButtonClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           )}
@@ -1942,9 +1941,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           {/* TryNow component - only show for image mode */}
           {selectedTab === 'image' && (
             <TryNow
-              title={t('tryNow.image.title', 'Ready to Turn Your Image into a Coloring Page?')}
-              description={t('tryNow.image.description', 'Whether you\'re a parent turning a family photo into a fun activity, an artist exploring a new composition, or simply looking to create a unique gift, our tool is here for you. Start transforming your favorite images now and unleash your inner artist!')}
-              buttonText={t('tryNow.image.buttonText', 'Try Now')}
+              title={t('tryNow.image.title')}
+              description={t('tryNow.image.description')}
+              buttonText={t('tryNow.image.buttonText')}
               onButtonClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           )}

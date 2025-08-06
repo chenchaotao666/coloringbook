@@ -123,9 +123,9 @@ const PayPalModal = ({
             } catch (error) {
               console.error('创建订单失败:', error);
               if (error instanceof ApiError) {
-                alert(`${t('payment.errors.createOrderFailed', '创建订单失败')}: ${error.message}`);
+                alert(`${t('payment.errors.createOrderFailed')}: ${error.message}`);
               } else {
-                alert(t('payment.errors.tryAgainLater', '创建订单失败，请稍后重试'));
+                alert(t('payment.errors.tryAgainLater'));
               }
               setIsProcessing(false);
               throw error;
@@ -139,23 +139,23 @@ const PayPalModal = ({
               // 支付成功，刷新用户信息
               await refreshUser();
               
-              // 计算获得的积分
+              // 获取计划配置
               const config = planConfigs[planTitle as keyof typeof planConfigs];
               if (config) {
-                const billingPeriod = planCode.includes('MONTHLY') ? 'monthly' : 'yearly';
-                const credits = config[billingPeriod].credits;
+                // const billingPeriod = planCode.includes('MONTHLY') ? 'monthly' : 'yearly';
+                // const credits = config[billingPeriod].credits; // 未使用的积分变量
                 
                 onClose();
                 // 这里可以显示成功弹窗
-                alert(t('payment.success.message', '支付成功！获得 {credits} 积分', { credits }));
+                alert(t('payment.success.message'));
                 navigate('/text-coloring-page');
               }
             } catch (error) {
               console.error('捕获支付失败:', error);
               if (error instanceof ApiError) {
-                alert(`${t('payment.errors.paymentFailed', '支付失败')}: ${error.message}`);
+                alert(`${t('payment.errors.paymentFailed')}: ${error.message}`);
               } else {
-                alert(t('payment.errors.tryAgainLater', '支付失败，请稍后重试'));
+                alert(t('payment.errors.tryAgainLater'));
               }
             } finally {
               setIsProcessing(false);
@@ -163,7 +163,7 @@ const PayPalModal = ({
           },
           onError: (error: any) => {
             console.error('PayPal错误:', error);
-            alert(t('payment.errors.paypalError', 'PayPal支付过程中发生错误'));
+            alert(t('payment.errors.paypalError'));
             setIsProcessing(false);
           },
           onCancel: () => {
@@ -181,7 +181,7 @@ const PayPalModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full">
         <div className="text-center mb-6">
-          <h3 className="text-lg sm:text-xl font-medium text-[#161616] mb-2">{t('payment.title', 'PayPal支付')}</h3>
+          <h3 className="text-lg sm:text-xl font-medium text-[#161616] mb-2">{t('payment.title')}</h3>
           <p className="text-sm text-[#6B7280]">
             {planTitle} - ${price}
           </p>
@@ -193,7 +193,7 @@ const PayPalModal = ({
 
         {isProcessing && (
           <div className="text-center text-sm text-[#6B7280] mb-4">
-            {t('payment.processing', '处理中，请稍候...')}
+            {t('payment.processing')}
           </div>
         )}
 
@@ -203,7 +203,7 @@ const PayPalModal = ({
             onClick={onClose}
             disabled={isProcessing}
           >
-{t('buttons.cancel', '取消')}
+{t('buttons.cancel')}
           </Button>
         </div>
       </div>
@@ -300,7 +300,7 @@ const PricingCard = ({
     >
       {popular && (
         <div className="absolute -top-1 -right-1 px-4 sm:px-6 py-2 bg-[#6200E2] text-white font-bold italic text-xs sm:text-sm rounded-bl-2xl rounded-tr-2xl">
-          {t('plans.lite.popular', 'Most Popular')}
+          {t('plans.lite.popular')}
         </div>
       )}
       <div className="flex flex-col items-center gap-6 sm:gap-8">
@@ -311,7 +311,7 @@ const PricingCard = ({
           {/* Monthly Price */}
           <div className="mt-4 text-5xl text-black">
             <span className="font-bold">${price}</span>
-            <span className="text-sm text-[#454D59]">/ {t('billing.monthly', 'Month')}</span>
+            <span className="text-sm text-[#454D59]">/ {t('billing.monthly')}</span>
           </div>
           {/* Yearly Price */}
           {priceNote && (
@@ -323,7 +323,7 @@ const PricingCard = ({
             <div className="flex flex-col items-center gap-2">
               <div className="flex justify-center items-center gap-2">
                 <img src={protectIcon} alt="Protect" className="w-3 h-3" />
-                <div className="text-[#FF5C07] text-xs sm:text-sm">{t('cancelAnytime', 'Cancel anytime')}</div>
+                <div className="text-[#FF5C07] text-xs sm:text-sm">{t('cancelAnytime')}</div>
               </div>
             </div>
           )}
@@ -339,7 +339,7 @@ const PricingCard = ({
               if (onBuyClick) onBuyClick();
             }}
           >
-            {title === 'Free' ? t('buttons.tryNow', 'Try Now') : t('buttons.buyNow', 'Buy Now')}
+            {title === 'Free' ? t('buttons.tryNow') : t('buttons.buyNow')}
           </Button>
           <div className="flex flex-col gap-3">
             {features.map((feature, index) => (
@@ -357,35 +357,35 @@ const PricingCard = ({
 };
 
 const PricingPage: React.FC = () => {
-  const { t } = useAsyncTranslation('pricing');
+  const { t, translations } = useAsyncTranslation('pricing');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
   // FAQ 数据
   const pricingFAQData: FAQData[] = [
     {
-      question: t('faq.question1.q', 'How long does it take to generate a coloring page?'),
-      answer: t('faq.question1.a', 'Our AI-powered tool can generate your coloring pages in a matter of seconds. You don\'t have to worry about long wait times, so you can confidently rely on it to create beautiful coloring pages instantly without any delays.')
+      question: t('faq.question1.q'),
+      answer: t('faq.question1.a')
     },
     {
-      question: t('faq.question2.q', 'Is this coloring page generator free to use?'),
-      answer: t('faq.question2.a', 'Yes, we offer a free tier with basic features. However, for advanced features and higher usage limits, we have premium plans available with more credits and enhanced capabilities.')
+      question: t('faq.question2.q'),
+      answer: t('faq.question2.a')
     },
     {
-      question: t('faq.question3.q', 'Will using AI compromise the quality of the coloring pages?'),
-      answer: t('faq.question3.a', 'No, our AI is designed to maintain high quality while creating unique and engaging coloring pages. Each generated page is optimized for printing and coloring.')
+      question: t('faq.question3.q'),
+      answer: t('faq.question3.a')
     },
     {
-      question: t('faq.question4.q', 'Can I really create unlimited coloring pages with the premium plan?'),
-      answer: t('faq.question4.a', 'Our premium plans provide generous credit allowances that let you create many coloring pages. The credits refresh monthly, giving you consistent access to our generation tools.')
+      question: t('faq.question4.q'),
+      answer: t('faq.question4.a')
     },
     {
-      question: t('faq.question5.q', 'Will the generated coloring pages be suitable for printing?'),
-      answer: t('faq.question5.a', 'Yes, all our coloring pages are optimized for printing in high resolution. They work perfectly with standard home printers on regular paper.')
+      question: t('faq.question5.q'),
+      answer: t('faq.question5.a')
     },
     {
-      question: t('faq.question6.q', 'How many different styles and themes are supported?'),
-      answer: t('faq.question6.a', 'We support a wide variety of themes including animals, nature, characters, patterns, and more. Premium users get access to additional style options and customization features.')
+      question: t('faq.question6.q'),
+      answer: t('faq.question6.a')
     }
   ];
   
@@ -465,36 +465,15 @@ const PricingPage: React.FC = () => {
     navigate('/text-coloring-page');
   };
 
-  // Features for pricing plans - 直接从翻译文件获取数组
-  const getFeatures = (planKey: string) => {
+  // Features for pricing plans
+  const getFeatures = (planKey: string): string[] => {
     switch (planKey) {
       case 'Free':
-        return [
-          t('features.free.basic', 'Basic features'),
-          t('features.free.publicOnly', 'Public images only'),
-          t('features.free.limitedCredits', 'Limited credits'),
-        ];
+        return translations?.plans?.free?.features || [];
       case 'Lite':
-        return [
-          t('features.lite.credits', '2000 credits per month'),
-          t('features.lite.allFeatures', 'All basic features'),
-          t('features.lite.privateImages', 'Private images'),
-          t('features.lite.priority', 'Priority support'),
-        ];
+        return translations?.plans?.lite?.features || [];
       case 'Pro':
-        return [
-          t('features.pro.credits', '6000 credits per month'),
-          t('features.pro.allFeatures', 'All Lite features'),
-          t('features.pro.priority', 'High priority support'),
-          t('features.pro.advanced', 'Advanced features'),
-        ];
-      case 'Max':
-        return [
-          t('features.max.credits', '20000 credits per month'),
-          t('features.max.allFeatures', 'All Pro features'),
-          t('features.max.priority', 'VIP support'),
-          t('features.max.exclusive', 'Exclusive features'),
-        ];
+        return translations?.plans?.pro?.features || [];
       default:
         return [];
     }
@@ -503,8 +482,8 @@ const PricingPage: React.FC = () => {
   return (
     <Layout>
       <SEOHead
-        title={t('seo.title', 'Pricing - AI Coloring Book Generator')}
-        description={t('seo.description', 'Choose your plan and start creating amazing coloring pages with AI.')}
+        title={t('seo.title')}
+        description={t('seo.description')}
       />
       {/* Hero Section with Header Gradient - 与HomePage保持一致 */}
       <div className="relative bg-white">
@@ -524,7 +503,7 @@ const PricingPage: React.FC = () => {
         
         {/* Main Content */}
         <div className="relative z-10 pt-4 lg:pt-16 flex flex-col items-center px-4">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#161616] mb-4 sm:mb-12 md:mb-16 text-center">{t('title', 'Plans & Pricing')}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#161616] mb-4 sm:mb-12 md:mb-16 text-center">{t('title')}</h1>
           
           {/* Toggle for Monthly/Yearly */}
           <div className="h-10 sm:h-12 bg-[#F2F3F5] rounded-3xl inline-flex items-center p-1 mb-8 sm:mb-12 md:mb-16">
@@ -535,7 +514,7 @@ const PricingPage: React.FC = () => {
               onClick={() => handleBillingPeriodChange('monthly')}
             >
               <div className={`text-xs sm:text-sm font-bold ${billingPeriod === 'monthly' ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
-                {t('billing.monthly', 'Monthly')}
+                {t('billing.monthly')}
               </div>
             </div>
             <div 
@@ -545,7 +524,7 @@ const PricingPage: React.FC = () => {
               onClick={() => handleBillingPeriodChange('yearly')}
             >
               <div className={`text-xs sm:text-sm ${billingPeriod === 'yearly' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280] font-medium'}`}>
-                {t('billing.yearly', 'Yearly')} {t('billing.discount', '(20% off)')}
+                {t('billing.yearly')} {t('billing.discount')}
               </div>
             </div>
           </div>
@@ -556,8 +535,8 @@ const PricingPage: React.FC = () => {
               <PricingCard
                 key={planKey}
                 title={planKey}
-                price={planKey === 'Free' ? t('pricing.free', 'Free') : billingPeriod === 'monthly' ? plan.monthly.price.toFixed(2) : plan.yearly.monthlyPrice.toFixed(2)}
-                priceNote={billingPeriod === 'yearly' && planKey !== 'Free' ? `$${plan[billingPeriod].price.toFixed(2)}/ ${t('billing.yearly', 'Year')}` : undefined}
+                price={planKey === 'Free' ? t('plans.free.title') : billingPeriod === 'monthly' ? plan.monthly.price.toFixed(2) : plan.yearly.monthlyPrice.toFixed(2)}
+                priceNote={billingPeriod === 'yearly' && planKey !== 'Free' ? `$${plan[billingPeriod].price.toFixed(2)}/ ${t('billing.yearly')}` : undefined}
                 popular={planKey === 'Pro'}
                 features={getFeatures(planKey)}
                 onBuyClick={() => handleBuyClick(planKey)}
@@ -569,32 +548,32 @@ const PricingPage: React.FC = () => {
           
           {/* Payment Methods */}
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-4 sm:mb-16 md:mb-20 px-4">
-            <div className="text-[#6B7280] text-xs sm:text-sm mb-2 sm:mb-0">{t('security.title', 'Secure Payment via PayPal')}</div>
+            <div className="text-[#6B7280] text-xs sm:text-sm mb-2 sm:mb-0">{t('security.title')}</div>
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
               <img src={protectIcon} alt="Secure" className="h-4 sm:h-6" />
-              <div className="text-[#6B7280] text-xs sm:text-sm">{t('security.description', 'SSL Encrypted')}</div>
+              <div className="text-[#6B7280] text-xs sm:text-sm">{t('security.description')}</div>
             </div>
           </div>
           
           {/* FAQ Section */}
           <GenerateFAQ 
             faqData={pricingFAQData} 
-            title={t('faq.title', 'Frequently Asked Questions')}
+            title={t('faq.title')}
           />
           
           {/* CTA Section */}
           <div className="w-full bg-[#F9FAFB] py-12 sm:py-16 md:py-24 border-t border-b border-[#F3F4F6]">
             <div className="max-w-[800px] mx-auto flex flex-col items-center gap-4 sm:gap-6 px-4">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#111928] text-center">{t('cta.title', 'Get Your Coloring Pages')}</h2>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#111928] text-center">{t('cta.title')}</h2>
               <p className="text-[#6B7280] text-center text-sm sm:text-base">
-                {t('cta.description', 'One-click generate coloring pages—print and play! Parent-child storytelling through color, screen-free bonding experience.')}
+                {t('cta.description')}
               </p>
               <Button 
                 variant="gradient"
                 className="h-12 sm:h-14 px-4 sm:px-5 py-2.5 text-lg sm:text-xl font-bold flex items-center gap-2"
                 onClick={() => window.location.href = '/text-coloring-page'}
               >
-                {t('cta.button', 'Try Now')}
+                {t('cta.button')}
                 <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>

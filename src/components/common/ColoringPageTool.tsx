@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAsyncTranslation } from '../../contexts/LanguageContext';
 
 export interface ColoringPageToolData {
   title: string;
@@ -24,6 +25,7 @@ const ColoringPageTool: React.FC<ColoringPageToolProps> = ({
   className = "",
   data
 }) => {
+  const { t } = useAsyncTranslation('common');
   return (
     <div className={`w-full max-w-[1170px] mx-auto px-4 ${className}`}>
       <div className="relative">
@@ -86,7 +88,7 @@ const ColoringPageTool: React.FC<ColoringPageToolProps> = ({
                 lineHeight: '21px',
                 wordWrap: 'break-word'
               }}>
-                Created By Colorpages
+                {t('coloringPageTool.createdBy')}
               </div>
             </button>
             

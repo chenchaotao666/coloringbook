@@ -74,7 +74,7 @@ const BlogDetailPage = () => {
         <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">{t('common.loading', 'Loading...')}</p>
+            <p className="text-gray-600">{t('common.loading')}</p>
           </div>
         </div>
       </Layout>
@@ -87,12 +87,12 @@ const BlogDetailPage = () => {
         <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              {error === 'Article not found' ? t('blog.notFound', 'Article not found') : t('blog.errorLoading', 'Error loading article')}
+              {error === 'Article not found' ? t('blog.notFound') : t('blog.errorLoading')}
             </h1>
             <p className="text-gray-600 mb-6">
               {error === 'Article not found' 
-                ? t('blog.notFoundMessage', 'The article you are looking for does not exist.')
-                : t('blog.errorMessage', 'Failed to load the article. Please try again.')
+                ? t('blog.notFoundMessage')
+                : t('blog.errorMessage')
               }
             </p>
             <div className="space-y-4">
@@ -101,12 +101,12 @@ const BlogDetailPage = () => {
                   onClick={() => slug && fetchPost(slug)}
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors mr-4"
                 >
-                  {t('buttons.retry', 'Retry')}
+                  {t('buttons.retry')}
                 </button>
               )}
               <Link to={createLanguageAwarePath('/blog')}>
                 <Button variant="outline">
-                  {t('blog.backToBlog', 'Back to Blog')}
+                  {t('blog.backToBlog')}
                 </Button>
               </Link>
             </div>
@@ -141,8 +141,8 @@ const BlogDetailPage = () => {
           <div className="mb-8">
             <Breadcrumb
               items={[
-                { label: navT('breadcrumb.home', 'Home'), path: '/' },
-                { label: navT('breadcrumb.blog', 'Blog'), path: '/blog' },
+                { label: navT('breadcrumb.home'), path: '/' },
+                { label: navT('breadcrumb.blog'), path: '/blog' },
                 { label: currentTitle, current: true }
               ]}
             />
@@ -157,12 +157,12 @@ const BlogDetailPage = () => {
             <div className="flex items-center gap-6 text-gray-600">
               <div className="flex items-center gap-2">
                 <span className="text-sm">
-                  {t('blog.by', 'By')} <span className="font-medium">{article.author}</span>
+                  {t('blog.by')} <span className="font-medium">{article.author}</span>
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm">
-                  {t('blog.publishedOn', 'Published on')} {new Date(article.published_date).toLocaleDateString(language, {
+                  {t('blog.publishedOn')} {new Date(article.published_date).toLocaleDateString(language, {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
@@ -202,7 +202,7 @@ const BlogDetailPage = () => {
                 variant="gradient"
                 className="w-[200px] sm:w-[200px] h-12 sm:h-14 px-4 sm:px-5 py-2.5 rounded-lg flex justify-center items-center gap-2 text-lg sm:text-xl font-bold"
               >
-                {t('blog.backToBlog', 'Back to Blog')}
+                {t('blog.backToBlog')}
                 <img src={arrowRightIcon} alt="Arrow right" className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </Link>

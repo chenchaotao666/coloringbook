@@ -73,7 +73,7 @@ const GenerateFAQ: React.FC<GenerateFAQProps> = ({
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[46px] font-bold text-[#161616]">
-          {title || t('faq.title', 'Frequently Asked Questions')}
+          {title || t('faq.title')}
         </h2>
       </div>
 

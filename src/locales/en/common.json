@@ -154,5 +154,8 @@
       "description": "Discover the latest insights, tips, and tutorials about AI coloring pages, digital art, and creative technology.",
       "keywords": "blog, AI coloring pages, digital art, tutorials, tips"
     }
+  },
+  "coloringPageTool": {
+    "createdBy": "Created By Colorpages"
   }
 } 

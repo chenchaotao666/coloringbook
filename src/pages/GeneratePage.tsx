@@ -16,6 +16,7 @@ import UserSaying, { TestimonialItem } from '../components/common/UserSaying';
 import GenerateFAQ, { FAQData } from '../components/common/GenerateFAQ';
 import TryNow from '../components/common/TryNow';
 import ColoringPageConversion, { ColoringPageConversionData } from '../components/common/ColoringPageConversion';
+import PricingSection from '../components/common/PricingSection';
 
 import SEOHead from '../components/common/SEOHead';
 import { useAsyncTranslation, useLanguage } from '../contexts/LanguageContext';
@@ -137,6 +138,41 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // 控制删除确认对话框的显示
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+
+  // 控制定价弹窗的显示
+  const [showPricingModal, setShowPricingModal] = React.useState(false);
+
+  // 处理弹窗显示时的滚动
+  React.useEffect(() => {
+    if (showPricingModal) {
+      // 禁用外层滚动
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      // 也禁用可能的其他容器滚动
+      const htmlElement = document.querySelector('html');
+      if (htmlElement) {
+        htmlElement.style.overflow = 'hidden';
+      }
+    } else {
+      // 恢复外层滚动
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      const htmlElement = document.querySelector('html');
+      if (htmlElement) {
+        htmlElement.style.overflow = '';
+      }
+    }
+    
+    // 清理函数，确保组件卸载时恢复滚动
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      const htmlElement = document.querySelector('html');
+      if (htmlElement) {
+        htmlElement.style.overflow = '';
+      }
+    };
+  }, [showPricingModal]);
 
   // 移动端内容滚动容器的引用
   const mobileContentRef = React.useRef<HTMLDivElement>(null);
@@ -1558,11 +1594,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     const isNotPremium = !user?.membershipLevel || user?.membershipLevel === 'free';
     
     if (isNotPremium) {
-      // If trying to set to private, redirect to pricing page
-      if ((isText && textPublicVisibility) || (!isText && imagePublicVisibility)) {
-        return;
-      }
-      // Non-premium users can't set to private, ignore the toggle
+      // Show pricing modal for free users
+      setShowPricingModal(true);
       return;
     }
 
@@ -1575,7 +1608,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   };
 
   return (
-    <Layout>
+    <>
+    <Layout className={showPricingModal ? "overflow-hidden h-screen" : ""}>
       <SEOHead
         title={t('seo.generate.title')}
         description={t('seo.generate.description')}
@@ -1664,7 +1698,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   selectedTab === 'text' 
                     ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') 
                     : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')
-                } ${!user?.membershipLevel || user?.membershipLevel === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                } cursor-pointer`}
                 onClick={() => handleVisibilityToggle(selectedTab === 'text')}
               >
                 <div
@@ -1770,7 +1804,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                       selectedTab === 'text' 
                         ? (textPublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300') 
                         : (imagePublicVisibility ? 'bg-[#FF5C07]' : 'bg-gray-300')
-                    } ${!user?.membershipLevel || user?.membershipLevel === 'free' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    } cursor-pointer`}
                     onClick={() => handleVisibilityToggle(selectedTab === 'text')}
                   >
                     <div
@@ -1959,6 +1993,30 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       />
 
     </Layout>
+
+    {/* Full Screen Pricing Interface - Outside Layout */}
+    {showPricingModal && (
+      <div className="fixed inset-0 bg-white z-[9999] overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out" style={{ overscrollBehavior: 'contain' }}>
+        {/* Close Button */}
+        <button
+          onClick={() => setShowPricingModal(false)}
+          className="fixed top-4 right-4 w-12 h-12 text-[#6B7280] hover:text-[#161616] transition-all duration-200 z-[10000] bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border border-gray-200"
+        >
+          <svg className="w-6 h-6" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M12.854 4.854a.5.5 0 0 0-.708-.708L8 8.293 3.854 4.146a.5.5 0 1 0-.708.708L7.293 9l-4.147 4.146a.5.5 0 0 0 .708.708L8 9.707l4.146 4.147a.5.5 0 0 0 .708-.708L8.707 9l4.147-4.146z"/>
+          </svg>
+        </button>
+        
+        {/* Full Screen Pricing Section */}
+        <PricingSection 
+          showTitle={true}
+          showGradientBg={true}
+          showFAQ={true}
+          showCTA={true}
+        />
+      </div>
+    )}
+    </>
   );
 };
 

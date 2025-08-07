@@ -145,32 +145,37 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   // 处理弹窗显示时的滚动
   React.useEffect(() => {
     if (showPricingModal) {
+      // 记录原始滚动位置
+      const scrollY = window.scrollY;
+      
       // 禁用外层滚动
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.documentElement.style.overflow = 'hidden';
-      // 也禁用可能的其他容器滚动
-      const htmlElement = document.querySelector('html');
-      if (htmlElement) {
-        htmlElement.style.overflow = 'hidden';
-      }
     } else {
       // 恢复外层滚动
+      const scrollY = document.body.style.top;
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.documentElement.style.overflow = '';
-      const htmlElement = document.querySelector('html');
-      if (htmlElement) {
-        htmlElement.style.overflow = '';
+      
+      // 恢复滚动位置
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
       }
     }
     
     // 清理函数，确保组件卸载时恢复滚动
     return () => {
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.documentElement.style.overflow = '';
-      const htmlElement = document.querySelector('html');
-      if (htmlElement) {
-        htmlElement.style.overflow = '';
-      }
     };
   }, [showPricingModal]);
 
@@ -1609,7 +1614,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   return (
     <>
-    <Layout className={showPricingModal ? "overflow-hidden h-screen" : ""}>
+    <Layout>
       <SEOHead
         title={t('seo.generate.title')}
         description={t('seo.generate.description')}

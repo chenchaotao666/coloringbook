@@ -113,13 +113,7 @@ const ImageDetailPage: React.FC = () => {
             setCategory(foundCategory);
             
             // 步骤3：根据分类ID从后台获取该分类的所有图片
-            console.log('🖼️ Loading images for category:', foundCategory.categoryId);
-            const categoryImagesResult = await CategoriesService.getImagesByCategoryId(foundCategory.categoryId, {
-              currentPage: 1,
-              pageSize: 100 // 获取更多图片以确保能找到目标图片
-            });
-            
-            console.log('📸 Loaded category images:', categoryImagesResult.images.length);
+            const categoryImagesResult = await CategoriesService.getImagesByCategoryId(foundCategory.categoryId);
             
             // 更新图片映射表
             updateImageMappings(categoryImagesResult.images);
@@ -141,7 +135,6 @@ const ImageDetailPage: React.FC = () => {
               }) || null;
               
               if (foundImage) {
-                console.log('✅ Found image by SEO name:', foundImage.id);
                 // 更新映射表
                 updateImageMappings([foundImage]);
               }
@@ -341,9 +334,9 @@ const ImageDetailPage: React.FC = () => {
             /* 图片内容 */
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12 lg:mb-20">
               {/* Left Side - Images */}
-              <div ref={leftImagesRef} className="flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto">
+              <div ref={leftImagesRef} className={`flex gap-2 sm:gap-4 lg:gap-4 w-full lg:w-auto ${!(image.coloringUrl || image.colorUrl) ? 'justify-center' : ''}`}>
                 {/* Black & White Image */}
-                <div className="w-1/2 lg:max-w-[320px] flex items-start justify-center">
+                <div className={`${(image.coloringUrl || image.colorUrl) ? 'w-1/2' : 'w-full max-w-[320px]'} lg:max-w-[320px] flex items-start justify-center`}>
                   <img
                     src={image.defaultUrl}
                     alt={getLocalizedText(image.title, language)}
@@ -352,13 +345,15 @@ const ImageDetailPage: React.FC = () => {
                 </div>
                 
                 {/* Color Image */}
-                <div className="w-1/2 lg:max-w-[320px] flex items-start justify-center">
-                  <img
-                    src={image.coloringUrl}
-                    alt={`${getLocalizedText(image.title, language)} - Colored`}
-                    className="w-full max-w-full h-auto object-contain rounded-lg"
-                  />
-                </div>
+                {(image.coloringUrl || image.colorUrl) && (
+                  <div className="w-1/2 lg:max-w-[320px] flex items-start justify-center">
+                    <img
+                      src={image.coloringUrl || image.colorUrl}
+                      alt={`${getLocalizedText(image.title, language)} - Colored`}
+                      className="w-full max-w-full h-auto object-contain rounded-lg"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Right Side - Details */}
@@ -370,7 +365,7 @@ const ImageDetailPage: React.FC = () => {
                       {getLocalizedText(image.title, language)}
                     </h1>
                     <p className="text-sm text-[#6B7280] leading-5">
-                      {getLocalizedText(image.description, language) || `This picture depicts ${getLocalizedText(image.title, language)}, a beautiful coloring page perfect for all ages. The design features intricate details and patterns that will provide hours of creative enjoyment.`}
+                      {getLocalizedText(image.description, language) || getLocalizedText(image.prompt, language)}
                     </p>
                   </div>
 

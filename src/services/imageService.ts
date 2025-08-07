@@ -216,6 +216,8 @@ export class ImageService {
       const result = await this.searchImages({ 
         categoryId, 
         isPublic: true, // 只返回公开的图片
+        isOnline: true,
+        currentPage: 1,
         pageSize: limit + 1 // 多查询1张，以防过滤后不够
       });
       

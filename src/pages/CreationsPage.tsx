@@ -83,10 +83,6 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
       // 使用新的专用用户图片接口
       const result = await ImageService.getUserOwnImages(searchParams);
       
-      // 添加调试日志
-      console.log('API Response:', result);
-      console.log('First image example:', result.images[0]);
-      
       // 保存所有图片到缓存
       setAllImages(result.images);
       

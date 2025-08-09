@@ -27,23 +27,12 @@ import { CategoriesProvider } from './contexts/CategoriesContext';
 
 // 应用内容组件，处理语言加载状态
 function AppContent() {
-  const { language, isLoading } = useLanguage();
+  const { language } = useLanguage();
 
   // 动态更新HTML lang属性，帮助Google按钮自动选择正确语言
   React.useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
-
-  // 如果语言正在加载，显示最小化的加载状态（几乎瞬间完成）
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-pulse">
-          <div className="w-8 h-8 bg-gray-200 rounded"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Router>

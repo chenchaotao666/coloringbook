@@ -127,9 +127,7 @@ const BlogPage = () => {
           <section className="body-font text-gray-700">
             <div className="container mx-auto">
               {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                </div>
+                null
               ) : error ? (
                 <div className="text-center py-12">
                   <p className="text-red-600 text-lg">{error}</p>

@@ -79,7 +79,7 @@ const Hero: React.FC<HeroProps> = ({ imageCount }) => {
           
           {/* 右侧图片区域 */}
           <div className="flex-shrink-0 w-full lg:w-auto flex justify-center mt-2 lg:mt-0">
-            <div className="relative w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] lg:max-w-[550px]">
+            <div className="relative w-full w-[400px] sm:w-[450px] md:w-[500px] lg:w-[550px]">
               <div className="w-full aspect-square overflow-hidden rounded-[24px] sm:rounded-[32px] lg:rounded-[46px]">
                 <img 
                   src={heroImage}

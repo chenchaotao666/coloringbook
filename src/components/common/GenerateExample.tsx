@@ -20,24 +20,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
   title = "Text to Coloring Page Generator",
   description = "Just type what you imagine—like \"a unicorn surfing on a rainbow\"—and get a printable coloring page in seconds.",
   type = "text",
-  images = [
-    {
-      url: "/images/generateexample/example-1.png",
-      prompt: "Two children, children's theme, ocean scene"
-    },
-    {
-      url: "/images/generateexample/example-2.png",
-      prompt: "A unicorn surfing on a rainbow"
-    },
-    {
-      url: "/images/generateexample/example-3.png", 
-      prompt: "A cat playing guitar under the stars"
-    },
-    {
-      url: "/images/generateexample/example-4.png",
-      prompt: "A pirate ship sailing through the clouds"
-    }
-  ]
+  images
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -48,11 +31,11 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
   };
 
   const handlePrevClick = () => {
-    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : Math.max(0, images.length - 1)));
+    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : Math.max(0, (images?.length ?? 1) - 1)));
   };
 
   const handleNextClick = () => {
-    setCurrentImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+    setCurrentImageIndex((prev) => (prev < (images?.length ?? 1) - 1 ? prev + 1 : 0));
   };
 
   return (
@@ -110,6 +93,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
                         style={{
                           height: '560px',
                           width: 'auto',
+                          minWidth: '400px',
                           objectFit: 'cover'
                         }}
                       />
@@ -156,6 +140,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
                           alt="Image"
                           style={{
                             width: 'auto',
+                            minWidth: '280px',
                             height: '400px',
                             borderRadius: '16px',
                             border: '0.90px #EDEEF0 solid',
@@ -174,6 +159,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
                           alt="Image"
                           style={{
                             width: 'auto',
+                            minWidth: '280px',
                             height: '400px',
                             borderRadius: '16px',
                             border: '0.90px #EDEEF0 solid',
@@ -269,7 +255,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
 
             {/* Navigation dots - 在图片外部下方 */}
             <div className="flex items-center gap-1.5">
-              {images.map((_, index) => (
+              {images?.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => handleDotClick(index)}

@@ -24,7 +24,13 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // 通过同步检查token来设置初始loading状态，减少不必要的加载闪烁
+  const [isLoading, setIsLoading] = useState(() => {
+    // 如果没有token，直接返回false，避免loading状态
+    return UserService.isLoggedIn();
+  });
+  // 单独维护认证状态，基于token存在而不是用户数据存在
+  const [isAuthenticated, setIsAuthenticated] = useState(() => UserService.isLoggedIn());
 
   // 检查用户是否已登录
   useEffect(() => {
@@ -42,6 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('❌ AuthContext: Token已过期事件触发:', event.detail);
       // Token过期，清除用户状态并可能需要重新登录
       setUser(null);
+      setIsAuthenticated(false);
       tokenRefreshService.stop();
       
       // 跳转到首页
@@ -62,17 +69,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      setIsLoading(true);
-      
       // 先检查是否有访问令牌，避免不必要的API请求
       const hasToken = UserService.isLoggedIn();
       
       if (!hasToken) {
         console.log('✅ AuthContext: 无token，用户未登录状态正常');
         setUser(null);
+        setIsAuthenticated(false);
         setIsLoading(false);
         return;
       }
+      
+      // 有token，设置为已认证状态，然后异步获取用户信息
+      setIsAuthenticated(true);
+      setIsLoading(true);
       
       // 有token，尝试获取用户信息
       const userData = await UserService.getCurrentUser();
@@ -85,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // 有token但获取用户信息失败，可能是token过期
         console.log('❌ AuthContext: 有token但获取用户信息失败，token可能已过期');
         setUser(null);
+        setIsAuthenticated(false);
         tokenRefreshService.stop();
         
         // 不要在页面刷新时自动跳转，让用户自己处理
@@ -105,6 +116,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string, rememberMe: boolean = true) => {
     await UserService.login({ email, password }, rememberMe);
+    // 登录成功后立即设置认证状态
+    setIsAuthenticated(true);
+    
     // 登录成功后获取用户信息
     const userData = await UserService.getCurrentUser();
     setUser(userData);
@@ -117,6 +131,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const googleLogin = async (token: string, rememberMe: boolean = true) => {
     await UserService.googleLogin(token, rememberMe);
+    // 登录成功后立即设置认证状态
+    setIsAuthenticated(true);
+    
     // 登录成功后获取用户信息，与普通登录保持一致
     const userData = await UserService.getCurrentUser();
     setUser(userData);
@@ -135,6 +152,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     await UserService.logout();
     setUser(null);
+    setIsAuthenticated(false);
     
     // 登出时停止token自动刷新服务
     tokenRefreshService.stop();
@@ -148,6 +166,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const googleLogout = async () => {
     await UserService.googleLogout();
     setUser(null);
+    setIsAuthenticated(false);
     
     // 登出时停止token自动刷新服务
     tokenRefreshService.stop();
@@ -194,7 +213,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated, // 使用状态而不是实时检查
     login,
     googleLogin,
     register,

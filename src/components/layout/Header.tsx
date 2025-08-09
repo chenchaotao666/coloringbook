@@ -12,6 +12,7 @@ const intlIcon = '/images/intl.svg';
 const expandIcon = '/images/expand.svg';
 const creditsIcon = '/images/credits.svg';
 const defaultAvatar = '/images/default-avatar.svg';
+const googleDefaultAvatar = '/images/default-avatar-g.png';
 const colorPaletteIcon = '/images/color-palette.png';
 
 interface HeaderProps {
@@ -25,6 +26,19 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
   const { language, setLanguage, t } = useLanguage();
   const { t: navT } = useAsyncTranslation('navigation');
   // const location = useLocation(); // 暂时不需要
+
+  // 获取用户头像，如果是谷歌邮箱用户且没有自定义头像，使用谷歌默认头像
+  const getUserAvatar = () => {
+    if (user?.avatar) {
+      return user.avatar;
+    }
+    
+    if (user?.email && user.email.toLowerCase().endsWith('@gmail.com')) {
+      return googleDefaultAvatar;
+    }
+    
+    return defaultAvatar;
+  };
 
   // 生成带语言前缀的链接
   const createLocalizedLink = (path: string) => {
@@ -375,13 +389,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
           </div>
           
           {/* 用户认证区域 */}
-          {isLoading ? (
-            /* 加载状态 - 显示占位符，避免闪烁 */
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-8 rounded-lg animate-pulse"></div>
-              <div className="w-8 h-8 rounded-full animate-pulse"></div>
-            </div>
-          ) : isAuthenticated && user ? (
+          {isAuthenticated ? (
             <div className="flex items-center gap-3">
               {/* 积分显示 */}
               <Link 
@@ -390,18 +398,20 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                 style={{backgroundColor: '#F9FAFB'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-                <span className="text-sm font-medium text-orange-600 tabular-nums">{user.credits}</span>
+                <span className="text-sm font-medium text-orange-600 tabular-nums">
+                  {user ? user.credits : ''}
+                </span>
               </Link>
 
               {/* 用户头像和下拉菜单 */}
-              <div className="relative flex-shrink-0" ref={userDropdownRef}>
+              <div className="relative flex-shrink-0 w-[50px]" ref={userDropdownRef}>
                 <div 
                   className="flex items-center gap-2 hover:opacity-85 transition-opacity duration-200 cursor-pointer"
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                 >
                   <img
                     className="w-6 h-6 rounded-full object-cover"
-                    src={user.avatar || defaultAvatar}
+                    src={getUserAvatar()}
                     alt="头像"
                   />
                   <img 
@@ -419,8 +429,8 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                       : 'opacity-0 -translate-y-1 scale-95'
                   }`}>
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">{user.username}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                      <p className="text-sm font-medium text-gray-900">{user?.username || '...'}</p>
+                      <p className="text-xs text-gray-500">{user?.email || '...'}</p>
                     </div>
                     
                     <Link
@@ -471,7 +481,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                 )}
               </div>
             </div>
-          ) : (
+          ) : !isLoading ? (
             /* 未登录状态 - 显示登录按钮 */
             <Link
               to={createLocalizedLink("/login")}
@@ -479,13 +489,19 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
             >
               {navT('menu.login', 'Login')}
             </Link>
+          ) : (
+            /* 加载状态 - 只在有token但正在验证时显示 */
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-8 rounded-lg bg-gray-200 animate-pulse"></div>
+              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+            </div>
           )}
         </div>
 
         {/* 移动端右侧区域 */}
         <div className="lg:hidden flex items-center">
           {/* 移动端积分显示（仅在已登录时显示） */}
-          {isAuthenticated && user && (
+          {isAuthenticated && (
             <div className="pr-3">
               <Link 
                 to={createLocalizedLink("/price")}
@@ -493,7 +509,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                 style={{backgroundColor: '#FAFBFC'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-                <span className="text-sm font-medium text-orange-600 tabular-nums">{user.credits}</span>
+                <span className="text-sm font-medium text-orange-600 tabular-nums">
+                  {user ? user.credits : ''}
+                </span>
               </Link>
             </div>
           )}
@@ -534,22 +552,22 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
         >
           <div className="bg-white shadow-lg rounded-lg p-1 space-y-0.5 border border-gray-200">
             {/* 用户信息区域 */}
-            {isAuthenticated && user ? (
+            {isAuthenticated ? (
               <div className="py-2 border-b border-gray-200">
                 <div className="px-3 pt-2">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center w-10 h-10">
                       <img
                         className="w-full h-full rounded-full object-cover"
-                        src={user.avatar || defaultAvatar}
+                        src={getUserAvatar()}
                         alt="头像"
                       />
                     </div>
                     <div className="ml-3">
-                      {user.username && (
+                      {user?.username && (
                         <p className="text-base font-semibold leading-normal text-gray-900">{user.username}</p>
                       )}
-                      <p className="text-sm text-gray-600">{user.email}</p>
+                      <p className="text-sm text-gray-600">{user?.email || '...'}</p>
                     </div>
                   </div>
                   <div className="mt-3">
@@ -559,7 +577,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                       onClick={handleMobileLinkClick}
                     >
                       <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-                      <span className="text-sm font-medium text-orange-600 tabular-nums">{user.credits}</span>
+                      <span className="text-sm font-medium text-orange-600 tabular-nums">
+                        {user ? user.credits : ''}
+                      </span>
                     </Link>
                   </div>
                 </div>

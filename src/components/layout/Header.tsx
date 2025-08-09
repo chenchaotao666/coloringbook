@@ -33,7 +33,12 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
       return user.avatar;
     }
     
-    if (user?.email && user.email.toLowerCase().endsWith('@gmail.com')) {
+    // 如果没有邮箱信息，不显示头像
+    if (!user?.email) {
+      return null;
+    }
+    
+    if (user.email.toLowerCase().endsWith('@gmail.com')) {
       return googleDefaultAvatar;
     }
     
@@ -409,11 +414,15 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                   className="flex items-center gap-2 hover:opacity-85 transition-opacity duration-200 cursor-pointer"
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                 >
-                  <img
-                    className="w-6 h-6 rounded-full object-cover"
-                    src={getUserAvatar()}
-                    alt="头像"
-                  />
+                  {getUserAvatar() ? (
+                    <img
+                      className="w-6 h-6 rounded-full object-cover"
+                      src={getUserAvatar()!}
+                      alt="头像"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-gray-200"></div>
+                  )}
                   <img 
                     src={expandIcon} 
                     alt="Expand" 
@@ -557,11 +566,15 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                 <div className="px-3 pt-2">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center w-10 h-10">
-                      <img
-                        className="w-full h-full rounded-full object-cover"
-                        src={getUserAvatar()}
-                        alt="头像"
-                      />
+                      {getUserAvatar() ? (
+                        <img
+                          className="w-full h-full rounded-full object-cover"
+                          src={getUserAvatar()!}
+                          alt="头像"
+                        />
+                      ) : (
+                        <div className="w-full h-full rounded-full bg-gray-200"></div>
+                      )}
                     </div>
                     <div className="ml-3">
                       {user?.username && (

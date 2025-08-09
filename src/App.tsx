@@ -25,6 +25,7 @@ import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
 import { AuthProvider } from './contexts/AuthContext';
 import { UploadImageProvider } from './contexts/UploadImageContext';
 import { CategoriesProvider } from './contexts/CategoriesContext';
+import { LoadingProvider } from './contexts/LoadingContext';
 
 // 应用内容组件，处理语言加载状态
 function AppContent() {
@@ -116,13 +117,15 @@ function AppContent() {
 function App() {
   return (
     <LanguageProvider>
-      <AuthProvider>
-        <UploadImageProvider>
-          <CategoriesProvider>
-            <AppContent />
-          </CategoriesProvider>
-        </UploadImageProvider>
-      </AuthProvider>
+      <LoadingProvider>
+        <AuthProvider>
+          <UploadImageProvider>
+            <CategoriesProvider>
+              <AppContent />
+            </CategoriesProvider>
+          </UploadImageProvider>
+        </AuthProvider>
+      </LoadingProvider>
     </LanguageProvider>
   );
 }

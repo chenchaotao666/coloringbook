@@ -9,10 +9,9 @@ import { useAsyncTranslation, useLanguage } from '../contexts/LanguageContext';
 import { PostsService, Post } from '../services/postsService';
 import { createLanguageAwarePath } from '../utils/navigationUtils';
 import { getLocalizedText } from '../utils/textUtils';
+import { useLoading } from '../contexts/LoadingContext';
 
 const arrowRightIcon = '/images/arrow-right-outline.svg';
-
-
 
 const BlogDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -20,9 +19,9 @@ const BlogDetailPage = () => {
   const { t } = useAsyncTranslation('common');
   const { t: navT } = useAsyncTranslation('navigation');
   const { language } = useLanguage();
-  const [article, setArticle] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { startLoading, finishLoading, isLoading } = useLoading();
+  const [ article, setArticle ] = useState<Post | null>(null);
+
 
   // Helper function to get content in current language using textUtils
   const getLocalizedContent = (content: any) => {
@@ -37,8 +36,8 @@ const BlogDetailPage = () => {
   // Fetch post data by slug
   const fetchPost = async (slug: string) => {
     try {
-      setLoading(true);
-      setError(null);
+      startLoading(); // 开始加载进度条
+      
       const result = await PostsService.getPosts({
         slug: slug,
         status: 'published',
@@ -46,16 +45,15 @@ const BlogDetailPage = () => {
       });
       
       if (!result.posts || result.posts.length === 0) {
-        setError('Article not found');
+        finishLoading();
         return;
       }
       
       setArticle(result.posts[0]);
+      finishLoading(); // 完成进度条
     } catch (err) {
       console.error('Failed to fetch post:', err);
-      setError('Failed to load article');
-    } finally {
-      setLoading(false);
+      finishLoading();
     }
   };
 
@@ -68,52 +66,8 @@ const BlogDetailPage = () => {
     fetchPost(slug);
   }, [slug, navigate, language]);
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">{t('common.loading')}</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error || !article) {
-    return (
-      <Layout>
-        <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              {error === 'Article not found' ? t('blog.notFound') : t('blog.errorLoading')}
-            </h1>
-            <p className="text-gray-600 mb-6">
-              {error === 'Article not found' 
-                ? t('blog.notFoundMessage')
-                : t('blog.errorMessage')
-              }
-            </p>
-            <div className="space-y-4">
-              {error !== 'Article not found' && (
-                <button 
-                  onClick={() => slug && fetchPost(slug)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors mr-4"
-                >
-                  {t('buttons.retry')}
-                </button>
-              )}
-              <Link to={createLanguageAwarePath('/blog')}>
-                <Button variant="outline">
-                  {t('blog.backToBlog')}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
+  if (isLoading || !article) {
+    return null;
   }
 
   // Since API returns content in the requested language, we can use it directly

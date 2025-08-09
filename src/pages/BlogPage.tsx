@@ -6,6 +6,7 @@ import { useAsyncTranslation, useLanguage } from '../contexts/LanguageContext';
 import { PostsService, Post } from '../services/postsService';
 import { createLanguageAwarePath } from '../utils/navigationUtils';
 import { getLocalizedText } from '../utils/textUtils';
+import { useLoading } from '../contexts/LoadingContext';
 
 
 
@@ -14,11 +15,12 @@ const ITEMS_PER_PAGE = 20; // 临时设置为2，便于测试分页功能
 const BlogPage = () => {
   const { t } = useAsyncTranslation('common');
   const { language } = useLanguage();
+  const { startLoading, finishLoading, isLoading } = useLoading();
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   
   // Helper function to strip HTML tags and get plain text
   const stripHtmlTags = (html: string) => {
@@ -35,8 +37,9 @@ const BlogPage = () => {
   // Fetch posts data
   const fetchPosts = async (page: number) => {
     try {
-      setLoading(true);
       setError(null);
+      startLoading(); // 开始加载进度条
+      
       const result = await PostsService.getPublishedPosts({
         currentPage: page,
         pageSize: ITEMS_PER_PAGE,
@@ -44,16 +47,17 @@ const BlogPage = () => {
         sortOrder: 'desc',
         lang: language
       });
+      
       console.log('API返回的posts数据:', result.posts);
       setPosts(result.posts);
       setTotalPosts(result.total);
+      finishLoading(); // 完成进度条
     } catch (err) {
       console.error('Failed to fetch posts:', err);
       setError('Failed to load blog posts');
       setPosts([]);
       setTotalPosts(0);
-    } finally {
-      setLoading(false);
+      finishLoading();
     }
   };
 
@@ -126,7 +130,7 @@ const BlogPage = () => {
           {/* Blog Articles Section */}
           <section className="body-font text-gray-700">
             <div className="container mx-auto">
-              {loading ? (
+              {isLoading ? (
                 null
               ) : error ? (
                 <div className="text-center py-12">
@@ -193,7 +197,7 @@ const BlogPage = () => {
               )}
               
               {/* Pagination */}
-              {!loading && !error && totalPages > 1 && (
+              {!isLoading && !error && totalPages > 1 && (
                 <div className="mt-8 flex items-center justify-center gap-2">
                   {/* Previous Button */}
                   <button

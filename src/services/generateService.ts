@@ -11,6 +11,7 @@ export interface GenerateTextToImageRequest {
   isPublic: boolean;
   style?: string;
   userId?: string;
+  difficulty?: string;
 }
 
 export interface GenerateImageToImageRequest {
@@ -99,6 +100,11 @@ class GenerateService {
       // 如果提供了userId，则添加到请求中
       if (data.userId) {
         requestBody.userId = data.userId;
+      }
+      
+      // 如果提供了difficulty，则添加到请求中
+      if (data.difficulty) {
+        requestBody.difficulty = data.difficulty;
       }
       
       const responseData = await ApiUtils.post<{ taskId: string }>('/api/images/text2imggenerate', requestBody, true);

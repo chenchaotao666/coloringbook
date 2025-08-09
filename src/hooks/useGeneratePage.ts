@@ -551,6 +551,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           ratio: state.selectedRatio,
           isPublic: state.textPublicVisibility,
           userId: user.userId, // 使用真实用户ID
+          difficulty: state.selectedDifficulty,
         });
       } else {
         if (!state.uploadedFile) {

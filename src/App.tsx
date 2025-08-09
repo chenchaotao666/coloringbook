@@ -19,6 +19,7 @@ import RefundPolicyPage from './pages/RefundPolicyPage';
 import BlogPage from './pages/BlogPage';
 import BlogDetailPage from './pages/BlogDetailPage';
 import ScrollToTop from './components/common/ScrollToTop';
+import TopLoadingBar from './components/ui/TopLoadingBar';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { LanguageSyncProvider } from './components/common/LanguageSyncProvider';
 import { AuthProvider } from './contexts/AuthContext';
@@ -36,6 +37,7 @@ function AppContent() {
 
   return (
     <Router>
+      <TopLoadingBar />
       <LanguageSyncProvider>
         <ScrollToTop />
         <Routes>

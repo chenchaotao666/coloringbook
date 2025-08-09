@@ -421,7 +421,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                       alt="头像"
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-200"></div>
+                    <div className="w-6 h-6 rounded-full bg-transparent"></div>
                   )}
                   <img 
                     src={expandIcon} 
@@ -573,7 +573,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                           alt="头像"
                         />
                       ) : (
-                        <div className="w-full h-full rounded-full bg-gray-200"></div>
+                        <div className="w-full h-full rounded-full bg-transparent"></div>
                       )}
                     </div>
                     <div className="ml-3">

@@ -106,6 +106,25 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       link.href = canonicalUrl;
     }
 
+    // 设置favicon
+    const updateOrCreateLink = (rel: string, href: string, type?: string) => {
+      let link = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = rel;
+        if (type) {
+          link.type = type;
+        }
+        document.head.appendChild(link);
+      }
+      link.href = href;
+    };
+
+    // 设置各种尺寸的favicon
+    updateOrCreateLink('icon', '/images/logo.svg', 'image/svg+xml');
+    updateOrCreateLink('apple-touch-icon', '/images/logo.svg');
+    updateOrCreateLink('shortcut icon', '/images/logo.svg');
+
   }, [title, description, keywords, ogTitle, ogDescription, ogImage, canonicalUrl, noIndex, language]);
 
   return null; // 这个组件不渲染任何内容

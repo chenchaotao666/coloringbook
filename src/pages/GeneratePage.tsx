@@ -226,7 +226,21 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     clearError,
     refreshStyleSuggestions,
     deleteImage,
+    checkUserCredits,
+    loadGeneratedImages,
   } = useGeneratePage(initialTab, refreshUser);
+  
+  // 当AuthContext完成初始化且有用户数据时，初始化用户相关数据
+  useEffect(() => {
+    if (user) {
+      checkUserCredits(user);
+      loadGeneratedImages(user);
+    } else {
+      // 用户为空时，清理状态
+      checkUserCredits(null);
+      loadGeneratedImages(null);
+    }
+  }, [user, checkUserCredits, loadGeneratedImages]);
 
   const { uploadedImage: globalUploadedImage, setUploadedImage: setGlobalUploadedImage } = useUploadImage();
 
@@ -973,6 +987,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   const handleStyleSuggestionClick = (styleContent: string) => {
     setPrompt(styleContent);
+    // 清除输入错误状态
+    if (inputError) setInputError('');
   };
 
   const handleRefreshStyleSuggestions = () => {

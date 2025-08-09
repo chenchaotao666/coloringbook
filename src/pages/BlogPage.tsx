@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import SEOHead from '../components/common/SEOHead';
 import BackToTop from '../components/common/BackToTop';
@@ -10,12 +11,13 @@ import { useLoading } from '../contexts/LoadingContext';
 
 
 
-const ITEMS_PER_PAGE = 20; // 临时设置为2，便于测试分页功能
+const ITEMS_PER_PAGE = 20; // 临时设置为20，便于测试分页功能
 
 const BlogPage = () => {
   const { t } = useAsyncTranslation('common');
   const { language } = useLanguage();
   const { startLoading, finishLoading, isLoading } = useLoading();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
@@ -59,6 +61,12 @@ const BlogPage = () => {
       setTotalPosts(0);
       finishLoading();
     }
+  };
+
+  // 处理文章点击导航
+  const handleArticleClick = (slug: string, article: Post) => {
+    const path = createLanguageAwarePath(`/blog/${slug}`);
+    navigate(path, { state: { article } });
   };
 
   useEffect(() => {
@@ -150,9 +158,9 @@ const BlogPage = () => {
                 <div className="divide-y divide-gray-200">
                   {posts.map((article) => (
                     <div key={article.post_id}>
-                      <a
-                        href={createLanguageAwarePath(`/blog/${article.slug}`)}
-                        className={`flex flex-wrap md:flex-nowrap hover:bg-gray-50 transition-colors duration-200 px-4 py-8`}
+                      <div
+                        onClick={() => handleArticleClick(article.slug, article)}
+                        className={`flex flex-wrap md:flex-nowrap hover:bg-gray-50 transition-colors duration-200 px-4 py-8 cursor-pointer`}
                       >
                         <div className="mb-6 flex flex-shrink-0 flex-col md:mb-0 md:w-64">
                           <span className="text-gray-500 mt-1 text-sm">
@@ -190,7 +198,7 @@ const BlogPage = () => {
                             </svg>
                           </div>
                         </div>
-                      </a>
+                      </div>
                     </div>
                   ))}
                 </div>

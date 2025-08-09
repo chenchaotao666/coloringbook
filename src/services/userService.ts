@@ -75,6 +75,9 @@ export interface AvatarUploadResponse {
  * 用户服务类
  */
 export class UserService {
+  // 请求去重机制
+  private static pendingUserRequest: Promise<User | null> | null = null;
+  
   /**
    * 处理用户对象，确保头像URL是绝对路径
    */
@@ -193,13 +196,43 @@ export class UserService {
   }
 
   /**
-   * 获取当前用户信息
+   * 获取当前用户信息 - 带请求去重机制
    */
   static async getCurrentUser(): Promise<User | null> {
     try {
       const token = ApiUtils.getAccessToken();
-      if (!token) return null;
+      if (!token) {
+        this.pendingUserRequest = null;
+        return null;
+      }
       
+      // 如果已经有pending的请求，直接返回该请求
+      if (this.pendingUserRequest) {
+        console.log('🔄 UserService: 复用pending的用户请求');
+        return this.pendingUserRequest;
+      }
+      
+      // 创建新的请求并缓存
+      this.pendingUserRequest = this.fetchCurrentUser();
+      
+      try {
+        const result = await this.pendingUserRequest;
+        return result;
+      } finally {
+        // 请求完成后清除pending状态
+        this.pendingUserRequest = null;
+      }
+    } catch (error) {
+      this.pendingUserRequest = null;
+      throw error;
+    }
+  }
+  
+  /**
+   * 实际获取用户信息的方法
+   */
+  private static async fetchCurrentUser(): Promise<User | null> {
+    try {
       const rawUser = await ApiUtils.get<User>('/api/users/profile', {}, true);
       
       // 处理头像URL，确保是绝对路径

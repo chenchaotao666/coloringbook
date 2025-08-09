@@ -74,11 +74,11 @@ export interface UseGeneratePageActions {
   resetForm: () => void;
   refreshExamples: () => void;
   refreshStyleSuggestions: () => void;
-  loadGeneratedImages: () => Promise<void>;
+  loadGeneratedImages: (user?: any) => Promise<void>;
   deleteImage: (imageId: string) => Promise<boolean>;
   
   // 积分相关操作
-  checkUserCredits: () => Promise<void>;
+  checkUserCredits: (user?: any) => void;
   handleInsufficientCredits: () => void;
 }
 
@@ -401,13 +401,10 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     updateState({ uploadedFile });
   }, [updateState]);
 
-  // 检查用户积分
-  const checkUserCredits = useCallback(async () => {
+  // 检查用户积分 - 优化：使用传入的用户数据而不是重新请求
+  const checkUserCredits = useCallback((user: any = null) => {
     try {
-      const { UserService } = await import('../services/userService');
-      
-      // 先检查是否已登录
-      if (!UserService.isLoggedIn()) {
+      if (!user) {
         updateState({ 
           userCredits: 0, 
           canGenerate: false
@@ -415,20 +412,11 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         return;
       }
       
-      const user = await UserService.getCurrentUser();
-      
-      if (user) {
-        const canGenerate = user.credits >= 20; // 需要20积分
-        updateState({ 
-          userCredits: user.credits, 
-          canGenerate
-        });
-      } else {
-        updateState({ 
-          userCredits: 0, 
-          canGenerate: false
-        });
-      }
+      const canGenerate = user.credits >= 20; // 需要20积分
+      updateState({ 
+        userCredits: user.credits, 
+        canGenerate
+      });
     } catch (error) {
       console.error('Failed to check user credits:', error);
       updateState({ 
@@ -444,51 +432,134 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     window.location.href = '/price';
   }, []);
 
-  // 加载生成历史
-  const loadGeneratedImages = useCallback(async () => {
-    try {
-      const { UserService } = await import('../services/userService');
+  // 从所有图片中随机选择（移动端1张，桌面端3张）
+  const getRandomImages = useCallback((allImages: HomeImage[]): HomeImage[] => {
+    const shuffled = [...allImages].sort(() => 0.5 - Math.random());
+    const isMobile = window.innerWidth < 640;
+    const count = isMobile ? 2 : 3;
+    return shuffled.slice(0, count);
+  }, []);
+
+  // 加载Text to Image示例图片
+  const loadTextExamplesIfNeeded = useCallback(async (hasHistory: boolean) => {
+    if (!textInitialized.current) {
+      textInitialized.current = true;
       
-      // 先检查是否已登录
-      if (!UserService.isLoggedIn()) {
-        // 如果用户未登录，清空生成历史，但不影响示例图片的加载状态
-        updateState({ 
-          generatedImages: [], 
-          textGeneratedImages: [],
-          imageGeneratedImages: [],
-          isInitialDataLoaded: true,  // 即使没有用户也标记为加载完成
-          hasTextToImageHistory: false,
-          hasImageToImageHistory: false
-        });
+      // 如果用户已有Text to Image历史图片，跳过示例加载
+      if (hasHistory) {
+        setState(prev => ({ 
+          ...prev, 
+          textExampleImages: [],
+          isLoadingTextExamples: false 
+        }));
         return;
       }
       
-      // 获取当前用户ID
-      const user = await UserService.getCurrentUser();
+      // 如果缓存中有图片，从缓存中随机选择
+      if (textExampleCache.current.isLoaded && textExampleCache.current.allImages.length > 0) {
+        const randomImages = getRandomImages(textExampleCache.current.allImages);
+        setState(prev => ({ 
+          ...prev, 
+          textExampleImages: randomImages,
+          isLoadingTextExamples: false 
+        }));
+        return;
+      }
       
-      if (user) {
-        // 获取所有生成的图片
-        const images = await GenerateServiceInstance.getUserGeneratedImages(user.userId);
-        
-        // 按类型分离图片
-        const textImages = images.filter(img => img.type === 'text2image');
-        const imageImages = images.filter(img => img.type === 'image2image');
-        
+      // 如果没有缓存且未在加载，开始加载示例
+      if (!textExampleCache.current.isLoading) {
+        try {
+          textExampleCache.current.isLoading = true;
+          setState(prev => ({ ...prev, isLoadingTextExamples: true, error: null }));
+          
+          const examples = await GenerateServiceInstance.getExampleImages('text', 6);
+          
+          // 更新缓存
+          textExampleCache.current = {
+            allImages: examples,
+            isLoaded: true,
+            isLoading: false
+          };
+          
+          setState(prev => ({ 
+            ...prev, 
+            textExampleImages: examples, 
+            isLoadingTextExamples: false 
+          }));
+        } catch (error) {
+          textExampleCache.current.isLoading = false;
+          setState(prev => ({
+            ...prev,
+            error: error instanceof Error ? error.message : 'Failed to load text examples',
+            isLoadingTextExamples: false,
+          }));
+        }
+      }
+    }
+  }, [getRandomImages]);
 
-        
-        // 检查用户是否有不同类型的生成历史
-        const hasTextToImageHistory = textImages.length > 0;
-        const hasImageToImageHistory = imageImages.length > 0;
-        
-        updateState({ 
-          generatedImages: images,  // 保留所有图片用于兼容性
-          textGeneratedImages: textImages,
-          imageGeneratedImages: imageImages,
-          isInitialDataLoaded: true,  // 标记初始数据加载完成
-          hasTextToImageHistory,
-          hasImageToImageHistory
-        });
-      } else {
+  // 加载Image to Image示例图片
+  const loadImageExamplesIfNeeded = useCallback(async (hasHistory: boolean) => {
+    if (!imageInitialized.current) {
+      imageInitialized.current = true;
+      
+      // 如果用户已有Image to Image历史图片，跳过示例加载
+      if (hasHistory) {
+        setState(prev => ({ 
+          ...prev, 
+          imageExampleImages: [],
+          isLoadingImageExamples: false 
+        }));
+        return;
+      }
+      
+      // 如果缓存中有图片，从缓存中随机选择
+      if (imageExampleCache.current.isLoaded && imageExampleCache.current.allImages.length > 0) {
+        const randomImages = getRandomImages(imageExampleCache.current.allImages);
+        setState(prev => ({ 
+          ...prev, 
+          imageExampleImages: randomImages,
+          isLoadingImageExamples: false 
+        }));
+        return;
+      }
+      
+      // 如果没有缓存且未在加载，开始加载示例
+      if (!imageExampleCache.current.isLoading) {
+        try {
+          imageExampleCache.current.isLoading = true;
+          setState(prev => ({ ...prev, isLoadingImageExamples: true, error: null }));
+          
+          const examples = await GenerateServiceInstance.getExampleImages('image', 6);
+          
+          // 更新缓存
+          imageExampleCache.current = {
+            allImages: examples,
+            isLoaded: true,
+            isLoading: false
+          };
+          
+          setState(prev => ({ 
+            ...prev, 
+            imageExampleImages: examples, 
+            isLoadingImageExamples: false 
+          }));
+        } catch (error) {
+          imageExampleCache.current.isLoading = false;
+          setState(prev => ({
+            ...prev,
+            error: error instanceof Error ? error.message : 'Failed to load image examples',
+            isLoadingImageExamples: false,
+          }));
+        }
+      }
+    }
+  }, [getRandomImages]);
+
+  // 加载生成历史 - 优化：使用传入的用户数据而不是重新请求
+  const loadGeneratedImages = useCallback(async (user: any = null) => {
+    try {
+      if (!user) {
         // 如果用户未登录，清空生成历史，但不影响示例图片的加载状态
         updateState({ 
           generatedImages: [], 
@@ -498,6 +569,41 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           hasTextToImageHistory: false,
           hasImageToImageHistory: false
         });
+        
+        // 用户未登录，加载对应的示例图片
+        if (state.selectedTab === 'text') {
+          loadTextExamplesIfNeeded(false);
+        } else if (state.selectedTab === 'image') {
+          loadImageExamplesIfNeeded(false);
+        }
+        return;
+      }
+      
+      // 获取所有生成的图片
+      const images = await GenerateServiceInstance.getUserGeneratedImages(user.userId);
+      
+      // 按类型分离图片
+      const textImages = images.filter(img => img.type === 'text2image');
+      const imageImages = images.filter(img => img.type === 'image2image');
+      
+      // 检查用户是否有不同类型的生成历史
+      const hasTextToImageHistory = textImages.length > 0;
+      const hasImageToImageHistory = imageImages.length > 0;
+      
+      updateState({ 
+        generatedImages: images,  // 保留所有图片用于兼容性
+        textGeneratedImages: textImages,
+        imageGeneratedImages: imageImages,
+        isInitialDataLoaded: true,  // 标记初始数据加载完成
+        hasTextToImageHistory,
+        hasImageToImageHistory
+      });
+      
+      // 历史图片加载完成后，根据当前标签页和历史情况决定是否加载示例
+      if (state.selectedTab === 'text') {
+        loadTextExamplesIfNeeded(hasTextToImageHistory);
+      } else if (state.selectedTab === 'image') {
+        loadImageExamplesIfNeeded(hasImageToImageHistory);
       }
     } catch (error) {
       console.error('Failed to load generated images:', error);
@@ -509,8 +615,15 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
         hasTextToImageHistory: false,
         hasImageToImageHistory: false
       });
+      
+      // 加载出错时，加载对应的示例图片
+      if (state.selectedTab === 'text') {
+        loadTextExamplesIfNeeded(false);
+      } else if (state.selectedTab === 'image') {
+        loadImageExamplesIfNeeded(false);
+      }
     }
-  }, [updateState]);
+  }, [updateState, state.selectedTab, loadTextExamplesIfNeeded, loadImageExamplesIfNeeded]);
 
   // 生成图片
   const generateImages = useCallback(async () => {
@@ -698,118 +811,6 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     // 开始轮询
     poll();
   }, [updateState, loadGeneratedImages, checkUserCredits]);
-
-  // 从所有图片中随机选择（移动端1张，桌面端3张）
-  const getRandomImages = useCallback((allImages: HomeImage[]): HomeImage[] => {
-    const shuffled = [...allImages].sort(() => 0.5 - Math.random());
-    const isMobile = window.innerWidth < 640;
-    const count = isMobile ? 2 : 3;
-    return shuffled.slice(0, count);
-  }, []);
-
-  // Text to Image 示例图片加载
-  useEffect(() => {
-    if (state.selectedTab === 'text' && !textInitialized.current) {
-      textInitialized.current = true;
-      
-      // 如果缓存中有图片，从缓存中随机选择
-      if (textExampleCache.current.isLoaded && textExampleCache.current.allImages.length > 0) {
-        const randomImages = getRandomImages(textExampleCache.current.allImages);
-        setState(prev => ({ 
-          ...prev, 
-          textExampleImages: randomImages,
-          isLoadingTextExamples: false 
-        }));
-        return;
-      }
-      
-      // 如果没有缓存且未在加载，开始加载
-      if (!textExampleCache.current.isLoading) {
-        const loadTextExamples = async () => {
-          try {
-            textExampleCache.current.isLoading = true;
-            setState(prev => ({ ...prev, isLoadingTextExamples: true, error: null }));
-            
-            const examples = await GenerateServiceInstance.getExampleImages('text', 6);
-            
-            // 更新缓存
-            textExampleCache.current = {
-              allImages: examples,
-              isLoaded: true,
-              isLoading: false
-            };
-            
-            setState(prev => ({ 
-              ...prev, 
-              textExampleImages: examples, 
-              isLoadingTextExamples: false 
-            }));
-          } catch (error) {
-            textExampleCache.current.isLoading = false;
-            setState(prev => ({
-              ...prev,
-              error: error instanceof Error ? error.message : 'Failed to load text examples',
-              isLoadingTextExamples: false,
-            }));
-          }
-        };
-        
-        loadTextExamples();
-      }
-    }
-  }, [state.selectedTab, getRandomImages]);
-
-  // Image to Image 示例图片加载
-  useEffect(() => {
-    if (state.selectedTab === 'image' && !imageInitialized.current) {
-      imageInitialized.current = true;
-      
-      // 如果缓存中有图片，从缓存中随机选择
-      if (imageExampleCache.current.isLoaded && imageExampleCache.current.allImages.length > 0) {
-        const randomImages = getRandomImages(imageExampleCache.current.allImages);
-        setState(prev => ({ 
-          ...prev, 
-          imageExampleImages: randomImages,
-          isLoadingImageExamples: false 
-        }));
-        return;
-      }
-      
-      // 如果没有缓存且未在加载，开始加载
-      if (!imageExampleCache.current.isLoading) {
-        const loadImageExamples = async () => {
-          try {
-            imageExampleCache.current.isLoading = true;
-            setState(prev => ({ ...prev, isLoadingImageExamples: true, error: null }));
-            
-            const examples = await GenerateServiceInstance.getExampleImages('image', 6);
-            
-            // 更新缓存
-            imageExampleCache.current = {
-              allImages: examples,
-              isLoaded: true,
-              isLoading: false
-            };
-            
-            setState(prev => ({ 
-              ...prev, 
-              imageExampleImages: examples, 
-              isLoadingImageExamples: false 
-            }));
-          } catch (error) {
-            imageExampleCache.current.isLoading = false;
-            setState(prev => ({
-              ...prev,
-              error: error instanceof Error ? error.message : 'Failed to load image examples',
-              isLoadingImageExamples: false,
-            }));
-          }
-        };
-        
-        loadImageExamples();
-      }
-    }
-  }, [state.selectedTab, getRandomImages]);
 
   // 加载风格建议
   const loadStyleSuggestions = useCallback(async () => {
@@ -1113,21 +1114,25 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
 
   // 初始化加载（只执行一次）
   useEffect(() => {
-    loadGeneratedImages(); // 只在初始化时加载一次
     loadStyleSuggestions(); // 风格建议也只需要加载一次
-    checkUserCredits(); // 检查用户积分
   }, []); // 空依赖数组，确保只执行一次
-
-  // 当标签页切换时重新检查积分
-  useEffect(() => {
-    checkUserCredits();
-  }, [state.selectedTab, checkUserCredits]);
 
   // 当语言切换时重新加载风格建议
   useEffect(() => {
     const randomSuggestions = getRandomSuggestions(STYLE_SUGGESTIONS, 6, language);
     updateState({ styleSuggestions: randomSuggestions });
   }, [language, updateState]);
+
+  // 当标签切换且初始数据已加载时，加载对应的示例图片
+  useEffect(() => {
+    if (state.isInitialDataLoaded) {
+      if (state.selectedTab === 'text') {
+        loadTextExamplesIfNeeded(state.hasTextToImageHistory);
+      } else if (state.selectedTab === 'image') {
+        loadImageExamplesIfNeeded(state.hasImageToImageHistory);
+      }
+    }
+  }, [state.selectedTab, state.isInitialDataLoaded, state.hasTextToImageHistory, state.hasImageToImageHistory, loadTextExamplesIfNeeded, loadImageExamplesIfNeeded]);
 
   // 处理从URL参数中获取的源图片
   useEffect(() => {

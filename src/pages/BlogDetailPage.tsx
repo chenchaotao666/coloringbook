@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import SEOHead from '../components/common/SEOHead';
 import BackToTop from '../components/common/BackToTop';
@@ -16,11 +16,12 @@ const arrowRightIcon = '/images/arrow-right-outline.svg';
 const BlogDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useAsyncTranslation('common');
   const { t: navT } = useAsyncTranslation('navigation');
   const { language } = useLanguage();
   const { startLoading, finishLoading, isLoading } = useLoading();
-  const [ article, setArticle ] = useState<Post | null>(null);
+  const [ article, setArticle ] = useState<Post | null>(location.state?.article || null);
 
 
   // Helper function to get content in current language using textUtils
@@ -63,25 +64,25 @@ const BlogDetailPage = () => {
       return;
     }
 
-    fetchPost(slug);
-  }, [slug, navigate, language]);
+    // 如果已有文章数据（从BlogPage传递过来的），则不需要重新请求
+    if (!article) {
+      fetchPost(slug);
+    }
+  }, [slug, navigate, language, article]);
 
-  if (isLoading || !article) {
-    return null;
-  }
-
-  // Since API returns content in the requested language, we can use it directly
-  // But keep the helper functions for backward compatibility
-  const currentTitle = getLocalizedContent(article.title);
-  const currentContent = getLocalizedContent(article.content);
-  const currentExcerpt = getLocalizedContentOptional(article.excerpt);
-  const currentMetaTitle = getLocalizedContentOptional(article.meta_title);
-  const currentMetaDescription = getLocalizedContentOptional(article.meta_description);
-
+  
   return (
     <Layout>
-      <SEOHead
-        title={currentMetaTitle || currentTitle}
+      {(isLoading || !article) ? null : (() => {
+        const currentTitle = getLocalizedContent(article.title);
+        const currentContent = getLocalizedContent(article.content);
+        const currentExcerpt = getLocalizedContentOptional(article.excerpt);
+        const currentMetaTitle = getLocalizedContentOptional(article.meta_title);
+        const currentMetaDescription = getLocalizedContentOptional(article.meta_description);
+        
+        return (<>
+          <SEOHead
+            title={currentMetaTitle || currentTitle}
         description={currentMetaDescription || currentExcerpt || ''}
         keywords="AI music, blog, tutorial"
         ogTitle={currentMetaTitle || currentTitle}
@@ -164,7 +165,9 @@ const BlogDetailPage = () => {
         </div>
       </div>
 
-      <BackToTop />
+          <BackToTop />
+        </>);
+      })()}
     </Layout>
   );
 };

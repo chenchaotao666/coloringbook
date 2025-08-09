@@ -195,7 +195,7 @@ class GenerateService {
     try {
       const { ImageService } = await import('./imageService');
       // 注意：userId参数现在不被使用，getUserOwnImages会从认证token中自动获取当前用户ID
-      const result = await ImageService.getUserOwnImages({ pageSize: 100 });
+      const result = await ImageService.getUserOwnImages();
       
       return result.images;
     } catch (error) {

@@ -332,8 +332,8 @@ export class ImageService {
       ratio,
       type,
       isPublic,
-      currentPage = 1,
-      pageSize = 20,
+      currentPage,
+      pageSize,
       sortBy = 'createdAt',
       sortOrder = 'desc'
     } = params;
@@ -351,13 +351,13 @@ export class ImageService {
       if (sortBy) searchParams.append('sortBy', sortBy);
       if (sortOrder) searchParams.append('sortOrder', sortOrder);
       
-      searchParams.append('currentPage', currentPage.toString());
-      searchParams.append('pageSize', pageSize.toString());
+      if (currentPage) searchParams.append('currentPage', currentPage.toString());
+      if (pageSize) searchParams.append('pageSize', pageSize.toString());
 
       // 调用专用的用户图片接口，需要认证
       const response = await ApiUtils.get<{images: HomeImage[], total: number}>(
         `/api/images/userImg?${searchParams.toString()}`, 
-        {}, 
+        undefined, 
         true // 需要认证
       );
       

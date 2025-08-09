@@ -200,8 +200,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     imageExampleImages,     // 直接使用分离的变量
     styleSuggestions,
     isGenerating,
-    isLoadingTextExamples,  // 直接使用分离的加载状态
-    isLoadingImageExamples, // 直接使用分离的加载状态
     isInitialDataLoaded,    // 初始数据是否已加载完成
     error,
     generationProgress,
@@ -1125,7 +1123,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 )}
 
               </div>
-            ) : (mode === 'text' ? isLoadingTextExamples : isLoadingImageExamples) ? null : (
+            ) : (
               // 根据当前模式判断是否显示Example
               // 只有在初始数据加载完成后才决定是否显示 example 图片
               // Text to Image 模式：用户没有 text to image 历史时显示 example

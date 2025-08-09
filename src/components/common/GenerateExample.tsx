@@ -25,6 +25,7 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const currentImage = images?.[currentImageIndex];
+  const hasImages = images && images.length > 0;
 
   const handleDotClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -53,25 +54,29 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
             </p>
           </div>
 
-          {/* Left arrow - outside image */}
-          <button
-            onClick={handlePrevClick}
-            className="flex-shrink-0 w-12 h-12 bg-[#D7D8DB] rounded-full flex items-center justify-center hover:bg-gray-400 transition-all duration-200 z-10 absolute left-20 top-1/2 transform -translate-y-1/2"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 6L9 12L15 18" stroke="#FFFAFA" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          {/* Left arrow - outside image (only show when images are loaded) */}
+          {hasImages && (
+            <button
+              onClick={handlePrevClick}
+              className="flex-shrink-0 w-12 h-12 bg-[#D7D8DB] rounded-full flex items-center justify-center hover:bg-gray-400 transition-all duration-200 z-10 absolute left-20 top-1/2 transform -translate-y-1/2"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 6L9 12L15 18" stroke="#FFFAFA" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
 
-          {/* Right arrow - outside image */}
-          <button
-            onClick={handleNextClick}
-            className="flex-shrink-0 w-12 h-12 bg-[#D7D8DB] rounded-full flex items-center justify-center hover:bg-gray-400 transition-all duration-200 z-10 absolute right-20 top-1/2 transform -translate-y-1/2"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 6L15 12L9 18" stroke="#FFFAFA" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          {/* Right arrow - outside image (only show when images are loaded) */}
+          {hasImages && (
+            <button
+              onClick={handleNextClick}
+              className="flex-shrink-0 w-12 h-12 bg-[#D7D8DB] rounded-full flex items-center justify-center hover:bg-gray-400 transition-all duration-200 z-10 absolute right-20 top-1/2 transform -translate-y-1/2"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6L15 12L9 18" stroke="#FFFAFA" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
 
           {/* Bottom - Image carousel */}
           <div className="w-full flex flex-col items-center gap-6">
@@ -79,8 +84,9 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
             {/* Main carousel area */}
             <div className="flex items-center justify-center">
 
-              {/* Image container with decorative elements */}
-              <div className="relative">
+              {hasImages ? (
+                /* Image container with decorative elements */
+                <div className="relative">
                 
                 {type === 'text' ? (
                   <>
@@ -249,24 +255,40 @@ const GenerateExample: React.FC<GenerateExampleProps> = ({
                   </div>
                 )}
 
+                </div>
+              ) : (
+                /* Loading state - show placeholder with loading indicator */
+                <div className="relative">
+                  <div 
+                    className="rounded-2xl flex flex-col items-center justify-center"
+                    style={{
+                      height: type === 'text' ? '592px' : '432px',
+                      width: type === 'text' ? '400px' : '800px',
+                      minWidth: type === 'text' ? '400px' : '800px'
+                    }}
+                  >
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Navigation dots - 在图片外部下方 (only show when images are loaded) */}
+            {hasImages && (
+              <div className="flex items-center gap-1.5">
+                {images?.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleDotClick(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      index === currentImageIndex 
+                        ? 'bg-[#FF5C07]' 
+                        : 'bg-[#DADADA] hover:bg-[#FF5C07] hover:bg-opacity-50'
+                    }`}
+                  />
+                ))}
               </div>
-
-            </div>
-
-            {/* Navigation dots - 在图片外部下方 */}
-            <div className="flex items-center gap-1.5">
-              {images?.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleDotClick(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentImageIndex 
-                      ? 'bg-[#FF5C07]' 
-                      : 'bg-[#DADADA] hover:bg-[#FF5C07] hover:bg-opacity-50'
-                  }`}
-                />
-              ))}
-            </div>
+            )}
 
           </div>
         </div>

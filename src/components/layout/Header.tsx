@@ -386,11 +386,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
               {/* 积分显示 */}
               <Link 
                 to={createLocalizedLink("/price")}
-                className="flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity duration-200 cursor-pointer flex-shrink-0" 
+                className="flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity duration-200 cursor-pointer flex-shrink-0 min-w-[80px]" 
                 style={{backgroundColor: '#F9FAFB'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-                <span className="text-sm font-medium text-orange-600">{user.credits}</span>
+                <span className="text-sm font-medium text-orange-600 tabular-nums">{user.credits}</span>
               </Link>
 
               {/* 用户头像和下拉菜单 */}
@@ -489,11 +489,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
             <div className="pr-3">
               <Link 
                 to={createLocalizedLink("/price")}
-                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity duration-200 cursor-pointer" 
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity duration-200 cursor-pointer min-w-[72px]" 
                 style={{backgroundColor: '#FAFBFC'}}
               >
                 <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-                <span className="text-sm font-medium text-orange-600">{user.credits}</span>
+                <span className="text-sm font-medium text-orange-600 tabular-nums">{user.credits}</span>
               </Link>
             </div>
           )}
@@ -555,11 +555,11 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                   <div className="mt-3">
                     <Link 
                       to={createLocalizedLink("/price")}
-                      className="flex items-center gap-2 hover:opacity-90 transition-opacity duration-200 cursor-pointer inline-flex"
+                      className="flex items-center gap-2 hover:opacity-90 transition-opacity duration-200 cursor-pointer inline-flex min-w-[60px]"
                       onClick={handleMobileLinkClick}
                     >
                       <img src={creditsIcon} alt="积分" className="w-4 h-4" />
-                      <span className="text-sm font-medium text-orange-600">{user.credits}</span>
+                      <span className="text-sm font-medium text-orange-600 tabular-nums">{user.credits}</span>
                     </Link>
                   </div>
                 </div>

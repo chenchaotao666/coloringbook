@@ -1,5 +1,28 @@
 import { Language } from '../contexts/LanguageContext';
 
+// 同步导入所有翻译文件
+import enCommon from '../locales/en/common.json';
+import enNavigation from '../locales/en/navigation.json';
+import enForms from '../locales/en/forms.json';
+import enErrors from '../locales/en/errors.json';
+import enHome from '../locales/en/pages/home.json';
+import enGenerate from '../locales/en/pages/generate.json';
+import enPricing from '../locales/en/pages/pricing.json';
+import enCategories from '../locales/en/pages/categories.json';
+import enCreations from '../locales/en/pages/creations.json';
+import enProfile from '../locales/en/pages/profile.json';
+
+import zhCommon from '../locales/zh/common.json';
+import zhNavigation from '../locales/zh/navigation.json';
+import zhForms from '../locales/zh/forms.json';
+import zhErrors from '../locales/zh/errors.json';
+import zhHome from '../locales/zh/pages/home.json';
+import zhGenerate from '../locales/zh/pages/generate.json';
+import zhPricing from '../locales/zh/pages/pricing.json';
+import zhCategories from '../locales/zh/pages/categories.json';
+import zhCreations from '../locales/zh/pages/creations.json';
+import zhProfile from '../locales/zh/pages/profile.json';
+
 // 翻译资源接口
 interface TranslationModule {
   [key: string]: any;
@@ -11,94 +34,67 @@ interface TranslationCache {
   };
 }
 
+// 静态翻译资源映射
+const translationModules: TranslationCache = {
+  en: {
+    common: enCommon,
+    navigation: enNavigation,
+    forms: enForms,
+    errors: enErrors,
+    home: enHome,
+    generate: enGenerate,
+    pricing: enPricing,
+    categories: enCategories,
+    creations: enCreations,
+    profile: enProfile,
+  },
+  zh: {
+    common: zhCommon,
+    navigation: zhNavigation,
+    forms: zhForms,
+    errors: zhErrors,
+    home: zhHome,
+    generate: zhGenerate,
+    pricing: zhPricing,
+    categories: zhCategories,
+    creations: zhCreations,
+    profile: zhProfile,
+  },
+};
+
 // 翻译资源缓存
 const translationCache: TranslationCache = {};
 
-// 加载状态管理
-const loadingPromises: { [key: string]: Promise<TranslationModule> } = {};
+// 加载状态管理（已不再需要，因为所有资源都是同步可用的）
+// const loadingPromises: { [key: string]: Promise<TranslationModule> } = {};
 
 /**
- * 动态加载翻译模块
+ * 同步加载翻译模块（现在使用预先导入的资源）
  */
 export const loadTranslationModule = async (
   language: Language,
   module: string
 ): Promise<TranslationModule> => {
-  const cacheKey = `${language}-${module}`;
-  
   // 检查缓存
   if (translationCache[language]?.[module]) {
     return translationCache[language][module];
   }
   
-  // 检查是否正在加载
-  if (cacheKey in loadingPromises) {
-    return loadingPromises[cacheKey];
+  // 从预先导入的静态资源中获取翻译
+  const translations = translationModules[language]?.[module];
+  
+  if (!translations) {
+    console.warn(`Translation module not found: ${language}/${module}`);
+    return {};
   }
   
-  // 开始加载
-  const loadPromise = (async () => {
-    try {
-      let translationModule: TranslationModule;
-      
-      // 动态导入翻译文件
-      switch (module) {
-        case 'common':
-          translationModule = await import(`../locales/${language}/common.json`);
-          break;
-        case 'navigation':
-          translationModule = await import(`../locales/${language}/navigation.json`);
-          break;
-        case 'forms':
-          translationModule = await import(`../locales/${language}/forms.json`);
-          break;
-        case 'errors':
-          translationModule = await import(`../locales/${language}/errors.json`);
-          break;
-        case 'home':
-          translationModule = await import(`../locales/${language}/pages/home.json`);
-          break;
-        case 'generate':
-          translationModule = await import(`../locales/${language}/pages/generate.json`);
-          break;
-        case 'pricing':
-          translationModule = await import(`../locales/${language}/pages/pricing.json`);
-          break;
-        case 'categories':
-          translationModule = await import(`../locales/${language}/pages/categories.json`);
-          break;
-        case 'creations':
-          translationModule = await import(`../locales/${language}/pages/creations.json`);
-          break;
-        case 'profile':
-          translationModule = await import(`../locales/${language}/pages/profile.json`);
-          break;
-        default:
-          console.warn(`Unknown translation module: ${module}`);
-          return {};
-      }
-      
-      // 提取default导出（JSON模块通常有default属性）
-      const translations = translationModule.default || translationModule;
-      
-      // 缓存翻译资源
-      if (!translationCache[language]) {
-        translationCache[language] = {};
-      }
-      translationCache[language][module] = translations;
-      
-      return translations;
-    } catch (error) {
-      console.error(`Failed to load translation module ${language}/${module}:`, error);
-      return {};
-    } finally {
-      // 清除加载状态
-      delete loadingPromises[cacheKey];
-    }
-  })();
+  // 缓存翻译资源
+  if (!translationCache[language]) {
+    translationCache[language] = {};
+  }
+  translationCache[language][module] = translations;
   
-  loadingPromises[cacheKey] = loadPromise;
-  return loadPromise;
+  return translations;
 };
 
 /**
@@ -194,23 +190,39 @@ export const clearTranslationCache = (): void => {
 };
 
 /**
- * 同步获取已缓存的翻译模块（用于避免闪烁）
+ * 同步获取翻译模块（现在直接从静态资源获取，无需缓存检查）
  */
 export const getCachedTranslationModule = (
   language: Language,
   module: string
 ): TranslationModule | null => {
-  return translationCache[language]?.[module] || null;
+  // 首先检查缓存
+  if (translationCache[language]?.[module]) {
+    return translationCache[language][module];
+  }
+  
+  // 从静态资源中获取
+  const translations = translationModules[language]?.[module];
+  if (translations) {
+    // 同时缓存起来
+    if (!translationCache[language]) {
+      translationCache[language] = {};
+    }
+    translationCache[language][module] = translations;
+    return translations;
+  }
+  
+  return null;
 };
 
 /**
- * 检查翻译模块是否已缓存
+ * 检查翻译模块是否可用（现在所有模块都是同步可用的）
  */
 export const isTranslationModuleCached = (
   language: Language,
   module: string
 ): boolean => {
-  return !!(translationCache[language]?.[module]);
+  return !!(translationCache[language]?.[module] || translationModules[language]?.[module]);
 };
 
 /**
@@ -222,6 +234,9 @@ export const getTranslationCacheInfo = () => {
       acc[lang] = Object.keys(translationCache[lang]);
       return acc;
     }, {} as { [lang: string]: string[] }),
-    loading: Object.keys(loadingPromises),
+    available: Object.keys(translationModules).reduce((acc, lang) => {
+      acc[lang] = Object.keys(translationModules[lang]);
+      return acc;
+    }, {} as { [lang: string]: string[] }),
   };
 }; 

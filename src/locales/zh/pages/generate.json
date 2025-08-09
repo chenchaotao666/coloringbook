@@ -48,14 +48,16 @@
     "refreshSuggestions": "刷新建议",
     "clear": "清空提示词",
     "generateWithAI": "AI优化",
-    "ideas": "创意"
+    "ideas": "创意",
+    "required": "请输入提示词来生成涂色页"
   },
   "upload": {
     "title": "图片",
     "dragDrop": "拖拽图片到此处，或点击上传",
     "selectFile": "选择文件",
     "supportedFormats": "支持 JPG、PNG、WEBP 格式",
-    "clickToUpload": "点击上传"
+    "clickToUpload": "点击上传",
+    "required": "请上传图片来生成涂色页"
   },
   "settings": {
     "difficulty": "难度等级",

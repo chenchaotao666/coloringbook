@@ -181,6 +181,10 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // 移动端内容滚动容器的引用
   const mobileContentRef = React.useRef<HTMLDivElement>(null);
+  // Prompt输入框的引用
+  const promptInputRef = React.useRef<HTMLTextAreaElement>(null);
+  // 输入验证错误状态
+  const [inputError, setInputError] = React.useState<string>('');
 
   // 使用我们创建的 Hook 来管理状态和 API 调用
   const {
@@ -857,23 +861,39 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     }
   };
 
-  // 标签页切换时的图片选择逻辑
+  // 为每个tab单独维护选中图片的状态
+  const [textSelectedImage, setTextSelectedImage] = React.useState<string | null>(null);
+  const [imageSelectedImage, setImageSelectedImage] = React.useState<string | null>(null);
+
+  // 标签切换时的图片选择逻辑：为每个tab记住其选中状态
   useEffect(() => {
-    if (selectedImage) {
-      // 检查当前选中的图片是否属于当前标签页类型
-      const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
-      const currentImage = currentImages.find(img => img.id === selectedImage);
-      
-      if (!currentImage) {
-        // 当前选中的图片不属于当前标签页类型，清空选择
-        // 不再自动选择历史图片，避免覆盖用户选择
-        setSelectedImage(null);
+    const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
+    const currentSelectedImage = selectedTab === 'text' ? textSelectedImage : imageSelectedImage;
+    
+    // 如果当前tab没有选中的图片，且有历史图片，则选中第一张
+    if (!currentSelectedImage && currentImages.length > 0) {
+      const firstImageId = currentImages[0].id;
+      if (selectedTab === 'text') {
+        setTextSelectedImage(firstImageId);
       } else {
-        // 当前选中的图片属于当前标签页，回填其属性
-        fillImageAttributes(selectedImage);
+        setImageSelectedImage(firstImageId);
       }
+      setSelectedImage(firstImageId);
+    } else if (currentSelectedImage) {
+      // 如果当前tab有选中的图片，则恢复选中状态
+      setSelectedImage(currentSelectedImage);
     }
-  }, [selectedTab, textGeneratedImages, imageGeneratedImages, selectedImage, setSelectedImage]);
+  }, [selectedTab, textGeneratedImages, imageGeneratedImages, textSelectedImage, imageSelectedImage, setSelectedImage]);
+
+  // 当用户选择图片时，更新对应tab的选中状态
+  const handleImageSelectWithTabMemory = (imageId: string) => {
+    if (selectedTab === 'text') {
+      setTextSelectedImage(imageId);
+    } else {
+      setImageSelectedImage(imageId);
+    }
+    handleImageSelect(imageId);
+  };
 
   // Set public visibility to true by default when component mounts
   useEffect(() => {
@@ -910,13 +930,32 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
       return;
     }
 
-    // 2. 检查用户是否有足够积分
+    // 2. 检查输入是否有效
+    if (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) {
+      // 如果是text模式且prompt为空，聚焦到输入框并显示错误
+      setInputError(t('prompt.required') || 'Please enter a prompt to generate coloring pages');
+      setTimeout(() => {
+        promptInputRef.current?.focus();
+      }, 100);
+      return;
+    }
+
+    if (selectedTab === 'image' && !uploadedFile) {
+      // 如果是image模式且没有上传文件，显示错误
+      setInputError(t('upload.required') || 'Please upload an image to generate coloring pages');
+      return;
+    }
+
+    // 清除错误状态
+    setInputError('');
+
+    // 3. 检查用户是否有足够积分
     if (user && user.credits < 20) {
       navigate('/price');
       return;
     }
 
-    // 3. 执行生成逻辑
+    // 4. 执行生成逻辑
     // 清除之前的错误状态
     if (error) {
       clearError();
@@ -936,8 +975,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     setPrompt(styleContent);
   };
 
-  const handleRefreshStyleSuggestions = async () => {
-    await refreshStyleSuggestions();
+  const handleRefreshStyleSuggestions = () => {
+    refreshStyleSuggestions();
   };
 
   const handleMoreMenuToggle = () => {
@@ -996,6 +1035,9 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     
     // 设置选中的标签
     setSelectedTab(tab);
+    
+    // 清除错误状态
+    setInputError('');
   };
 
   // 通用内容渲染方法
@@ -1185,7 +1227,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                           minHeight: 60   // 移动端横向最小高度60px
                         })
                       }}
-                      onClick={() => handleImageSelect(image.id)}
+                      onClick={() => handleImageSelectWithTabMemory(image.id)}
                     >
                       <img
                         src={image.defaultUrl}
@@ -1205,18 +1247,25 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
 
   // Render left sidebar based on selected tab
   const renderLeftSidebar = () => {
-    if (selectedTab === 'text') {
-      return (
-        <>
+    return (
+      <>
+        {/* Text to Image Section */}
+        <div className={`${selectedTab === 'text' ? 'block' : 'hidden'}`}>
           {/* Prompt Section */}
           <div className="lg:mx-5 lg:mt-7">
             <div className="text-sm font-bold text-[#161616] mb-2">{t('prompt.title')}</div>
             <div className="relative">
               <textarea
-                className="w-full h-[120px] sm:h-[150px] lg:h-[200px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none"
+                ref={promptInputRef}
+                className={`w-full h-[120px] sm:h-[150px] lg:h-[200px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] p-3 pr-10 text-sm resize-none focus:outline-none ${
+                  inputError && selectedTab === 'text' ? 'outline outline-1 outline-red-500' : ''
+                }`}
                 placeholder={t('prompt.placeholder')}
                 value={prompt}
-                onChange={handlePromptChange}
+                onChange={(e) => {
+                  handlePromptChange(e);
+                  if (inputError) setInputError('');
+                }}
                 maxLength={1000}
               ></textarea>
 
@@ -1243,6 +1292,13 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 <span className="text-[#6B7280] text-xs sm:text-sm">{t('prompt.generateWithAI')}</span>
               </div> */}
             </div>
+            
+            {/* Error message - show below the prompt input */}
+            {inputError && selectedTab === 'text' && (
+              <div className="mt-2 text-red-500 text-sm px-1">
+                {inputError}
+              </div>
+            )}
           </div>
 
           {/* Ideas Section */}
@@ -1459,16 +1515,17 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               </div>
             </div>
           </div>
-        </>
-      );
-    } else {
-      return (
-        <>
+        </div>
+
+        {/* Image to Image Section */}
+        <div className={`${selectedTab === 'image' ? 'block' : 'hidden'}`}>
           {/* Image Upload Section */}
           <div className="lg:mx-5 lg:mt-7">
             <div className="text-sm font-bold text-[#161616] mb-2">{t('upload.title')}</div>
             <div
-              className="w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative"
+              className={`w-full h-[150px] sm:h-[180px] lg:h-[202px] bg-[#F2F3F5] rounded-lg border border-[#EDEEF0] flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5E7EB] transition-colors relative ${
+                inputError && selectedTab === 'image' ? 'outline outline-1 outline-red-500' : ''
+              }`}
               onClick={() => document.getElementById('imageUpload')?.click()}
             >
               {uploadedFile ? (
@@ -1504,6 +1561,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
+                    // 清除错误状态
+                    if (inputError) setInputError('');
                     // 创建图片对象来获取尺寸
                     const img = new Image();
                     img.onload = () => {
@@ -1522,10 +1581,17 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 }}
               />
             </div>
+            
+            {/* Error message - show below the image upload */}
+            {inputError && selectedTab === 'image' && (
+              <div className="mt-2 text-red-500 text-sm px-1">
+                {inputError}
+              </div>
+            )}
           </div>
-        </>
-      );
-    }
+        </div>
+      </>
+    );
   };
 
   // Render right sidebar with generated images
@@ -1572,7 +1638,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   className={`${isLastImage ? 'mb-12' : 'mb-4'} rounded-lg cursor-pointer relative transition-all border-2 ${isSelected ? 'border-[#FF5C07] shadow-lg' : 'border-transparent hover:border-gray-200'
                     }`}
                   style={getImageContainerSize(image, dynamicImageDimensions, setDynamicImageDimensions)}
-                  onClick={() => handleImageSelect(image.id)}
+                  onClick={() => handleImageSelectWithTabMemory(image.id)}
                 >
                   <img
                     src={image.defaultUrl}
@@ -1582,8 +1648,8 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                 </div>
               );
             })
-        ) : !isGenerating ? (
-          // 空状态 - 根据当前标签页显示不同的提示
+        ) : !isGenerating && isInitialDataLoaded ? (
+          // 空状态 - 只有在初始数据加载完成且确实没有历史图片时才显示
           <div className="text-center text-[#6B7280] text-xs mt-8">
             {selectedTab === 'text' ? t('states.noTextToImageYet') : t('states.noImageToImageYet')}
           </div>
@@ -1651,16 +1717,24 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
                   }`}
               ></div>
               <button
+                type="button"
                 className={`flex-1 h-10 z-10 flex items-center justify-center ${selectedTab === 'text' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
                   }`}
-                onClick={() => setSelectedTab('text')}
+                onClick={() => {
+                  setSelectedTab('text');
+                  setInputError('');
+                }}
               >
                 {t('tabs.textToImage')}
               </button>
               <button
+                type="button"
                 className={`flex-1 h-10 z-10 flex items-center justify-center ${selectedTab === 'image' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280]'
                   }`}
-                onClick={() => setSelectedTab('image')}
+                onClick={() => {
+                  setSelectedTab('image');
+                  setInputError('');
+                }}
               >
                 {t('tabs.imageToImage')}
               </button>
@@ -1720,15 +1794,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="absolute bottom-0 left-0 right-0 bg-white p-5 border-t border-gray-100">
             <button
               onClick={handleGenerate}
-              disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
+              disabled={isGenerating}
               className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
+                isGenerating
                   ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
                   : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
                 }`}
             >
               <img
-                src={(isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
+                src={isGenerating
                   ? subtractIcon
                   : subtractColorIcon
                 }
@@ -1827,15 +1901,15 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
           <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 p-4 z-50">
             <button
               onClick={handleGenerate}
-              disabled={isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile)}
+              disabled={isGenerating}
               className={`w-full h-12 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                (isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
+                isGenerating
                   ? 'bg-[#F2F3F5] text-[#A4A4A4] cursor-not-allowed'
                   : 'bg-[#FF5C07] text-white hover:bg-[#FF7A47]'
                 }`}
             >
               <img
-                src={(isGenerating || (selectedTab === 'text' && !(typeof prompt === 'string' ? prompt.trim() : '')) || (selectedTab === 'image' && !uploadedFile))
+                src={isGenerating
                   ? subtractIcon
                   : subtractColorIcon
                 }

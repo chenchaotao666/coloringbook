@@ -48,14 +48,16 @@
     "refreshSuggestions": "Refresh Suggestions",
     "clear": "Clear prompt",
     "generateWithAI": "Improve with AI",
-    "ideas": "Ideas"
+    "ideas": "Ideas",
+    "required": "Please enter a prompt to generate coloring pages"
   },
   "upload": {
     "title": "Image",
     "dragDrop": "Drag and drop image here, or click to upload",
     "selectFile": "Select File",
     "supportedFormats": "Supports JPG, PNG, WEBP formats",
-    "clickToUpload": "Click to upload"
+    "clickToUpload": "Click to upload",
+    "required": "Please upload an image to generate coloring pages"
   },
   "settings": {
     "difficulty": "Difficulty Level",

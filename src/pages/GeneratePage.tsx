@@ -801,11 +801,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     };
   }, [showMoreMenu]);
 
-  // 检查是否有URL参数（表示从其他页面跳转而来）
-  const hasUrlParameters = () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    return searchParams.has('prompt') || searchParams.has('ratio') || searchParams.has('isPublic') || searchParams.has('sourceImageUrl');
-  };
 
 
   // 回填图片属性的辅助函数

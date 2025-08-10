@@ -653,6 +653,10 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
       }
       
       let response;
+
+      // 立即开始进度推进
+      currentProgress.current = 0;
+      smoothProgressUpdate(20);
       
       if (state.selectedTab === 'text') {
         if (!state.prompt.trim()) {
@@ -697,28 +701,140 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
     }
   }, [state.isGenerating, state.selectedTab, state.prompt, state.selectedRatio, state.textPublicVisibility, state.imagePublicVisibility, state.uploadedFile, state.canGenerate, updateState, handleInsufficientCredits]);
 
+  // 优化的进度管理
+  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+  const targetProgress = useRef<number>(0);
+  const currentProgress = useRef<number>(0);
+
+  const smoothProgressUpdate = useCallback((target: number) => {
+    const previousTarget = targetProgress.current;
+    targetProgress.current = target;
+    
+    if (progressInterval.current) {
+      clearInterval(progressInterval.current);
+    }
+
+    progressInterval.current = setInterval(() => {
+      const current = currentProgress.current;
+      const target = targetProgress.current;
+      
+      if (current < target) {
+        // 逐步增加进度，速度根据距离和目标范围调整
+        const diff = target - current;
+        
+        let increment;
+        if (target <= 10) {
+          // 0-10%: 快速启动
+          increment = Math.max(1, diff * 0.02);
+        } else if (target <= 45) {
+          // 10-45%: 稳定推进
+          increment = Math.max(0.3, diff * 0.08);
+        } else if (target === 50 && previousTarget < 50) {
+          // 跳转到50%: 快速
+          increment = Math.max(2, diff * 0.2);
+        } else if (target <= 95) {
+          // 50-95%: 加快推进
+          increment = Math.max(0.8, diff * 0.15);
+        } else {
+          // 95-100%: 最快完成
+          increment = Math.max(1, diff * 0.3);
+        }
+        
+        currentProgress.current = Math.min(current + increment, target);
+        
+        updateState({
+          generationProgress: Math.round(currentProgress.current),
+        });
+      } else if (current >= target || Math.round(current) >= target) {
+        // 到达目标时停止当前定时器
+        if (progressInterval.current) {
+          clearInterval(progressInterval.current);
+          progressInterval.current = null;
+        }
+      }
+    }, 50); // 每50ms更新一次，更流畅
+  }, [updateState]);
+
   // 轮询任务状态完成后刷新积分
   const pollTaskStatus = useCallback(async (taskId: string, type: 'text2image' | 'image2image' | 'image2coloring') => {
     const maxAttempts = 60; // 最多轮询60次（5分钟）
     let attempts = 0;
+    let hasReceived50 = false;
+    let hasReceived100 = false;
+    
+    // 进度已在generateImages中初始化，这里不再重复
+    
+    // 启动持续的自动推进定时器
+    const autoAdvanceInterval = setInterval(() => {
+      if (!hasReceived50) {
+        // 每500ms推进1%，直到45%
+        const newProgress = Math.min(45, currentProgress.current + 1);
+        if (newProgress > currentProgress.current) {
+          smoothProgressUpdate(newProgress);
+        }
+      } else if (hasReceived50 && !hasReceived100) {
+        // 收到50%后，每300ms推进1.5%，直到95%
+        const newProgress = Math.min(95, currentProgress.current + 1.5);
+        if (newProgress > currentProgress.current) {
+          smoothProgressUpdate(newProgress);
+        }
+      }
+      
+      if (hasReceived100) {
+        clearInterval(autoAdvanceInterval);
+      }
+    }, 300); // 每300ms推进一次
 
     const poll = async () => {
       try {
         attempts++;
         const taskStatus = await GenerateServiceInstance.getTaskStatus(taskId, type);
         
-        updateState({
-          generationProgress: taskStatus.progress || 0,
-        });
+        // 根据后台返回的进度更新目标进度
+        const backendProgress = taskStatus.progress || 0;
+        
+        if (backendProgress >= 100 && !hasReceived100) {
+          // 收到100%，立即完成
+          hasReceived100 = true;
+          smoothProgressUpdate(100);
+        } else if (backendProgress >= 50 && !hasReceived50) {
+          // 收到50%，快进到50%
+          hasReceived50 = true;
+          smoothProgressUpdate(50);
+        }
 
         if (taskStatus.status === 'completed') {
-          // 任务完成，立即将新图片添加到状态中
-          if (taskStatus.result || taskStatus.image) {
-            const completedImage = taskStatus.result || taskStatus.image;
-
+          // 清理自动推进定时器
+          clearInterval(autoAdvanceInterval);
+          
+          // 如果还没有推进到100%，先推进到100%
+          if (!hasReceived100) {
+            hasReceived100 = true;
+            smoothProgressUpdate(100);
+          } else {
+            // 如果已经收到100%，直接设置为100%
+            currentProgress.current = 100;
+            targetProgress.current = 100;
+            updateState({ generationProgress: 100 });
+          }
+          
+          // 等待进度条动画完成后再显示图片
+          setTimeout(async () => {
+            // 清理进度条定时器并确保显示100%
+            if (progressInterval.current) {
+              clearInterval(progressInterval.current);
+              progressInterval.current = null;
+            }
+            currentProgress.current = 100;
+            targetProgress.current = 100;
+            updateState({ generationProgress: 100 });
             
-            // 立即将新图片添加到对应的数组中，并设置为选中状态
-            setState(prevState => {
+            // 任务完成，立即将新图片添加到状态中
+            if (taskStatus.result || taskStatus.image) {
+              const completedImage = taskStatus.result || taskStatus.image;
+              
+              // 立即将新图片添加到对应的数组中，并设置为选中状态
+              setState(prevState => {
               // 确保 completedImage 不为 undefined
               if (!completedImage) {
                 return {
@@ -764,31 +880,44 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
                 currentTaskId: null,
                 generationProgress: 100,
               };
-            });
-          } else {
-            updateState({
-              isGenerating: false,
-              currentTaskId: null,
-              generationProgress: 100,
-            });
-          }
-          
-          // 后台刷新积分和全局状态
-          checkUserCredits();
-          if (refreshUser) {
-            try {
-              await refreshUser();
-            } catch (error) {
-              console.error('Failed to refresh global user state:', error);
+              });
+            } else {
+              updateState({
+                isGenerating: false,
+                currentTaskId: null,
+                generationProgress: 100,
+              });
             }
-          }
+            
+            // 后台刷新积分和全局状态
+            checkUserCredits();
+            if (refreshUser) {
+              try {
+                await refreshUser();
+              } catch (error) {
+                console.error('Failed to refresh global user state:', error);
+              }
+            }
+          }, 500); // 等待500ms让进度条动画完成
         } else if (taskStatus.status === 'failed') {
+          // 清理所有定时器
+          clearInterval(autoAdvanceInterval);
+          if (progressInterval.current) {
+            clearInterval(progressInterval.current);
+            progressInterval.current = null;
+          }
           updateState({
             error: taskStatus.message || 'Generation failed',
             isGenerating: false,
             currentTaskId: null,
           });
         } else if (attempts >= maxAttempts) {
+          // 清理所有定时器
+          clearInterval(autoAdvanceInterval);
+          if (progressInterval.current) {
+            clearInterval(progressInterval.current);
+            progressInterval.current = null;
+          }
           updateState({
             error: 'Generation timeout',
             isGenerating: false,
@@ -796,7 +925,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
           });
         } else {
           // 继续轮询
-          setTimeout(poll, 5000); // 5秒后再次轮询
+          setTimeout(poll, 2000); // 2秒后再次轮询
         }
       } catch (error) {
         console.error('Poll task status error:', error);
@@ -810,7 +939,7 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
 
     // 开始轮询
     poll();
-  }, [updateState, loadGeneratedImages, checkUserCredits]);
+  }, [updateState, loadGeneratedImages, checkUserCredits, smoothProgressUpdate]);
 
   // 加载风格建议
   const loadStyleSuggestions = useCallback(async () => {
@@ -986,6 +1115,14 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
 
   // 重置表单
   const resetForm = useCallback(() => {
+    // 清理进度定时器
+    if (progressInterval.current) {
+      clearInterval(progressInterval.current);
+      progressInterval.current = null;
+    }
+    currentProgress.current = 0;
+    targetProgress.current = 0;
+    
     updateState({
       prompt: '',
       selectedImage: null,
@@ -1181,6 +1318,16 @@ export const useGeneratePage = (initialTab: 'text' | 'image' = 'text', refreshUs
   const loadExampleImages = useCallback(async () => {
     // 这个函数主要用于外部手动调用，实际的自动加载在 useEffect 中处理
     console.log('Manual load example images');
+  }, []);
+
+  // 清理定时器
+  useEffect(() => {
+    return () => {
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+        progressInterval.current = null;
+      }
+    };
   }, []);
 
   // 返回状态和操作

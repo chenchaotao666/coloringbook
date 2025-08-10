@@ -807,25 +807,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
     return searchParams.has('prompt') || searchParams.has('ratio') || searchParams.has('isPublic') || searchParams.has('sourceImageUrl');
   };
 
-  // 自动选择最新生成的图片
-  useEffect(() => {
-    // 只有在初始数据加载完成后才自动选择图片
-    if (!isInitialDataLoaded) return;
-    
-    // 如果有URL参数，说明是从其他页面跳转而来，不要自动选择历史记录
-    if (hasUrlParameters()) return;
-    
-    const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
-    
-    if (currentImages.length > 0 && !isGenerating) {
-      const latestImage = currentImages[0]; // 假设数组已按时间排序
-      // 只有当前没有选中任何图片时，才自动选择最新的图片
-      // 不再检查选中的图片是否在当前类型列表中，避免标签切换时自动选择
-      if (!selectedImage) {
-        setSelectedImage(latestImage.id);
-      }
-    }
-  }, [textGeneratedImages, imageGeneratedImages, selectedTab, isGenerating, selectedImage, setSelectedImage, isInitialDataLoaded]);
 
   // 回填图片属性的辅助函数
   const fillImageAttributes = (imageId: string) => {
@@ -879,23 +860,68 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
   const [textSelectedImage, setTextSelectedImage] = React.useState<string | null>(null);
   const [imageSelectedImage, setImageSelectedImage] = React.useState<string | null>(null);
 
-  // 标签切换时的图片选择逻辑：为每个tab记住其选中状态
+  // 跟踪图片数组长度变化，用于检测新生成的图片
+  const prevLengths = React.useRef<{text: number, image: number}>({text: 0, image: 0});
+
+  // 标签切换时的图片选择逻辑：为每个tab记住其选中状态，同时处理新生成的图片
   useEffect(() => {
     const currentImages = selectedTab === 'text' ? textGeneratedImages : imageGeneratedImages;
     const currentSelectedImage = selectedTab === 'text' ? textSelectedImage : imageSelectedImage;
+    const currentLength = currentImages.length;
+    const prevLength = selectedTab === 'text' ? prevLengths.current.text : prevLengths.current.image;
+    const hasNewImage = currentLength > prevLength;
     
-    // 如果当前tab没有选中的图片，且有历史图片，则选中第一张
-    if (!currentSelectedImage && currentImages.length > 0) {
-      const firstImageId = currentImages[0].id;
-      if (selectedTab === 'text') {
-        setTextSelectedImage(firstImageId);
+    // 更新长度记录
+    if (selectedTab === 'text') {
+      prevLengths.current.text = currentLength;
+    } else {
+      prevLengths.current.image = currentLength;
+    }
+    
+    
+    if (currentImages.length > 0) {
+      const latestImage = currentImages[0];
+      let targetImageId: string | null = null;
+      let shouldUpdate = false;
+      
+      // 决定选择哪个图片
+      if (!currentSelectedImage) {
+        // 如果当前tab没有记忆的选中图片，选择最新的
+        targetImageId = latestImage.id;
+        shouldUpdate = true;
       } else {
-        setImageSelectedImage(firstImageId);
+        // 检查记忆的图片是否还存在
+        const memoryImageExists = currentImages.some(img => img.id === currentSelectedImage);
+        if (!memoryImageExists) {
+          // 如果记忆的图片不存在了，选择最新的
+          targetImageId = latestImage.id;
+          shouldUpdate = true;
+        } else if (hasNewImage && currentSelectedImage !== latestImage.id) {
+          // 只有在有新图片生成时，且当前选中的不是最新的，才选择最新的
+          targetImageId = latestImage.id;
+          shouldUpdate = true;
+        } else {
+          // 保持当前记忆的选择，不做改变
+          targetImageId = currentSelectedImage;
+          // 只有当全局selectedImage不匹配时才更新
+          if (selectedImage !== currentSelectedImage) {
+            shouldUpdate = true;
+          }
+        }
       }
-      setSelectedImage(firstImageId);
-    } else if (currentSelectedImage) {
-      // 如果当前tab有选中的图片，则恢复选中状态
-      setSelectedImage(currentSelectedImage);
+      
+      // 更新状态（只在需要时）
+      if (shouldUpdate && targetImageId) {
+        if (selectedTab === 'text') {
+          setTextSelectedImage(targetImageId);
+        } else {
+          setImageSelectedImage(targetImageId);
+        }
+        setSelectedImage(targetImageId);
+        
+        // 切换tab时不应该填充任何属性，保持用户的当前设置
+        // fillImageAttributes 只应该在用户手动点击图片时调用
+      }
     }
   }, [selectedTab, textGeneratedImages, imageGeneratedImages, textSelectedImage, imageSelectedImage, setSelectedImage]);
 
@@ -1648,6 +1674,7 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
               // 使用图片的 id 进行选中状态判断，但如果有错误则不选中任何图片
               const isSelected = !error && selectedImage === image.id;
               const isLastImage = index === currentImages.length - 1;
+              
               return (
                 <div
                   key={image.id}

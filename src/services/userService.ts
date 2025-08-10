@@ -240,9 +240,12 @@ export class UserService {
       
       return user;
     } catch (error) {
-      if (error instanceof ApiError && error.errorCode === '1010') {
-        // Token过期，清除本地令牌
-        ApiUtils.clearTokens();
+      if (error instanceof ApiError) {
+        // 任何认证相关错误都清除本地令牌
+        if (error.errorCode === '1010' || error.message.includes('401') || error.message.includes('Unauthorized')) {
+          console.log('🔄 UserService: 认证失败，清除本地令牌');
+          ApiUtils.clearTokens();
+        }
       }
       return null;
     }

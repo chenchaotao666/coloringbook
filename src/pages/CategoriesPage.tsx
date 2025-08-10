@@ -10,8 +10,7 @@ import { getLocalizedText } from '../utils/textUtils';
 import { useAsyncTranslation } from '../contexts/LanguageContext';
 import { useCategories } from '../contexts/CategoriesContext';
 import SEOHead from '../components/common/SEOHead';
-import { getCategoryNameById } from '../utils/categoryUtils';
-import { navigateWithLanguage } from '../utils/navigationUtils';
+import { handleCategoryClick } from '../utils/categoryUtils';
 import WhyChooseColoringPages from '../components/common/WhyChooseColoringPages';
 import ColoringPagesFor from '../components/common/ColoringPagesFor';
 import HowToCreate, { HowToCreateData } from '../components/common/HowToCreate';
@@ -257,8 +256,18 @@ const CategoriesPage: React.FC = () => {
   
   // 状态管理
   const { categories, loading: isLoadingCategories } = useCategories();
+  
+  // 用于判断是否是初始加载状态
+  const [hasInitialLoad, setHasInitialLoad] = React.useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
+  
+  // 监听加载完成状态
+  React.useEffect(() => {
+    if (!isLoadingCategories && !hasInitialLoad) {
+      setHasInitialLoad(true);
+    }
+  }, [isLoadingCategories, hasInitialLoad]);
 
   // 计算过滤后的分类
   const filteredCategories = React.useMemo(() => {
@@ -273,12 +282,9 @@ const CategoriesPage: React.FC = () => {
     });
   }, [categories, isSearchActive, searchQuery, language]);
 
-  // 处理分类点击 - 导航到详情页面（使用英文名称）
-  const handleCategoryClick = (category: Category) => {
-    // 使用映射表获取SEO友好的名称
-    const categoryPath = getCategoryNameById(category.categoryId);
-    console.log('分类ID:', category.categoryId, '→ SEO路径:', categoryPath);
-    navigateWithLanguage(navigate, `/categories/${categoryPath}`);
+  // 包装器函数，调用共享的handleCategoryClick
+  const onCategoryClick = (category: Category) => {
+    handleCategoryClick(category, navigate);
   };
 
   // 执行搜索
@@ -342,12 +348,13 @@ const CategoriesPage: React.FC = () => {
         </div>
         
         {/* Category Grid */}
-        <div className="container mx-auto px-4 ">
+        <div className="container mx-auto px-4 min-h-[800px]">
           <CategoryGrid
             categories={filteredCategories}
             isLoading={isLoadingCategories}
             emptyState={
-              filteredCategories.length === 0 && !isLoadingCategories
+              // 只有在初始加载完成且确实没有数据时才显示空状态
+              filteredCategories.length === 0 && !isLoadingCategories && hasInitialLoad
                 ? isSearchActive
                   ? {
                       icon: noResultIcon,
@@ -361,7 +368,7 @@ const CategoriesPage: React.FC = () => {
                     }
                 : undefined
             }
-            onCategoryClick={handleCategoryClick}
+            onCategoryClick={onCategoryClick}
           />
         </div>
       </div>

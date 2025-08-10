@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { Button } from '../components/ui/button';
 import MasonryGrid from '../components/layout/MasonryGrid';
@@ -356,8 +356,12 @@ const CategoriesDetailPage: React.FC = () => {
   const { t } = useAsyncTranslation('categories');
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { language } = useLanguage();
   const { categories: allCategories, loading: categoriesLoading } = useCategories();
+  
+  // 从导航状态中获取分类数据
+  const categoryFromState = location.state?.category as Category | undefined;
 
   const [category, setCategory] = useState<Category | null>(null);
   const [, setActualCategoryId] = useState<string | null>(null); // 保存实际的categoryId
@@ -408,20 +412,67 @@ const CategoriesDetailPage: React.FC = () => {
     const loadCategoryData = async () => {
       if (!categoryId) return;
       
+      // 防止重复加载
+      const currentKey = `${categoryId}-${language}`;
+      if (loadingRef.current === currentKey) {
+        console.log('⚠️ Skipping - already loading for this key');
+        return;
+      }
+      loadingRef.current = currentKey;
+      
+      console.log('📍 Loading category data:', { categoryId, hasStateData: !!categoryFromState });
+      
+      // 优先使用从导航状态传递的数据
+      if (categoryFromState && categoryFromState.categoryId) {
+        console.log('🚀 Using category data from navigation state');
+        setCategory(categoryFromState);
+        setActualCategoryId(categoryFromState.categoryId);
+        setIsCategoryLoading(false);
+        
+        // 仍然需要加载图片数据
+        try {
+          setIsImagesLoading(true);
+          const result = await CategoriesService.getImagesByCategoryId(categoryFromState.categoryId);
+          setCategoryImages(result.images);
+          setFilteredImages(result.images);
+          updateImageMappings(result.images);
+          
+          // 处理标签数据
+          if (categoryFromState.tagCounts && categoryFromState.tagCounts.length > 0) {
+            const tagNames = categoryFromState.tagCounts.map((tagCount: TagCount) => {
+              return typeof tagCount.displayName === 'string' 
+                ? tagCount.displayName 
+                : getLocalizedText(tagCount.displayName, language);
+            });
+            setSubcategories(tagNames);
+            
+            const countMap = new Map<string, number>();
+            const mappingMap = new Map<string, string>();
+            categoryFromState.tagCounts.forEach((tagCount: TagCount) => {
+              const tagName = typeof tagCount.displayName === 'string' 
+                ? tagCount.displayName 
+                : getLocalizedText(tagCount.displayName, language);
+              countMap.set(tagName, tagCount.count);
+              mappingMap.set(tagName, tagCount.tagId);
+            });
+            setTagCounts(countMap);
+            setTagMapping(mappingMap);
+          }
+          
+          setIsImagesLoading(false);
+        } catch (error) {
+          console.error('Error loading images from state:', error);
+          setIsImagesLoading(false);
+        }
+        return;
+      }
+      
       // 等待分类数据加载完成
       if (categoriesLoading || allCategories.length === 0) {
         return;
       }
 
-      // 防止重复加载：如果已经为当前categoryId正在加载，则跳过
-      const currentKey = `${categoryId}`;
-      if (loadingRef.current === currentKey) {
-        console.log('⚠️ Skipping - already loading for this key');
-        return;
-      }
-
-      // 设置当前加载的key
-      loadingRef.current = currentKey;
+      console.log('🔍 Loading category from API');
 
       try {
         setIsCategoryLoading(true);
@@ -513,11 +564,12 @@ const CategoriesDetailPage: React.FC = () => {
         setIsImagesLoading(false);
       } finally {
         console.log('🏁 Finished loading for key:', currentKey);
+        loadingRef.current = ''; // 清空加载标记
       }
     };
 
     loadCategoryData();
-  }, [categoryId, categoriesLoading, allCategories]);
+  }, [categoryId, language]); // 最小依赖项，避免重复调用
 
   // 监听标签选择变化，重新应用过滤
   useEffect(() => {
@@ -605,18 +657,18 @@ const CategoriesDetailPage: React.FC = () => {
         </div>
 
         <div className="container mx-auto px-4 max-w-[1380px]">
-          {isCategoryLoading || isImagesLoading ? (
-            /* 加载中 - 不显示任何文本 */
-            <div className="flex justify-center items-center py-20 h-[1380px]">
+          {isCategoryLoading ? (
+            /* 分类信息加载中 */
+            <div className="flex justify-center items-center py-20 h-[400px]">
               {/* 加载时不显示任何内容 */}
             </div>
           ) : category ? (
-            /* 分类内容 */
+            /* 分类内容 - 分类信息加载完成后立即显示 */
             <>
               {/* Category Title */}
               <h1 className="text-center text-[#161616] text-3xl lg:text-[2.5rem] font-bold capitalize mb-4 md:mb-[24px] leading-relaxed lg:leading-[1]">
                 {t('detail.pageTitle', undefined, { 
-                  count: categoryImages.length, 
+                  count: isImagesLoading ? '...' : categoryImages.length, 
                   category: getLocalizedText(category.displayName, language) 
                 })}
               </h1>
@@ -625,7 +677,11 @@ const CategoriesDetailPage: React.FC = () => {
               <div className="mx-auto mb-12">
                 <div className="mb-4">
                   <p className="text-[#161616] text-lg font-medium">
-                    {t('detail.categoryIntro.imageCount', undefined, { count: categoryImages.length, category: getLocalizedText(category.displayName, language) })}
+                    {isImagesLoading ? (
+                      t('detail.categoryIntro.loadingCount', 'Loading images for {category}...', { category: getLocalizedText(category.displayName, language) })
+                    ) : (
+                      t('detail.categoryIntro.imageCount', undefined, { count: categoryImages.length, category: getLocalizedText(category.displayName, language) })
+                    )}
                   </p>
                 </div>
 
@@ -647,44 +703,53 @@ const CategoriesDetailPage: React.FC = () => {
                 />
               </div>
 
-              {/* Generate Section */}
+              {/* Generate Section - 分类信息有了就可以显示 */}
               <GenerateSection
                 category={category}
                 language={language}
                 t={t}
               />
 
-              {/* Subcategories Tags */}
-              {subcategories.length > 0 && (
-                <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-12">
-                  <button
-                    onClick={() => handleTagClick('All')}
-                    className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
-                      ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                      : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                      }`}
-                  >
-                    <span className="text-sm font-normal leading-4">
-                      All ({categoryImages.length})
-                    </span>
-                  </button>
-
-                  {subcategories.map((tag, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleTagClick(tag)}
-                      className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
-                        ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
-                        : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
-                        }`}
-                    >
-                      <span className="text-sm font-normal leading-4">
-                        {tag} ({tagCounts.get(tag) || 0})
-                      </span>
-                    </button>
-                  ))}
+              {/* Images Section - 只有在图片数据加载完成后才显示 */}
+              {isImagesLoading ? (
+                <div className="flex justify-center items-center py-16">
+                  <div className="text-center">
+                    <div className="animate-pulse text-[#6B7280]">Loading images...</div>
+                  </div>
                 </div>
-              )}
+              ) : (
+                <>
+                  {/* Subcategories Tags */}
+                  {subcategories.length > 0 && (
+                    <div className="flex justify-center items-center gap-2 flex-wrap mb-8 lg:mb-12">
+                      <button
+                        onClick={() => handleTagClick('All')}
+                        className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === null
+                          ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                          : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                          }`}
+                      >
+                        <span className="text-sm font-normal leading-4">
+                          All ({categoryImages.length})
+                        </span>
+                      </button>
+
+                      {subcategories.map((tag, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleTagClick(tag)}
+                          className={`px-3 py-2 rounded-lg border transition-colors duration-200 cursor-pointer hover:border-[#FF5C07] hover:bg-gray-50 ${selectedTag === tag
+                            ? 'bg-[#FFE4D6] border-[#FF5C07] text-[#FF5C07]'
+                            : 'bg-white border-[#EDEEF0] text-[#161616] hover:text-[#FF5C07]'
+                            }`}
+                        >
+                          <span className="text-sm font-normal leading-4">
+                            {tag} ({tagCounts.get(tag) || 0})
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
               {/* 交替显示描述和图片 */}
               {(() => {
@@ -830,6 +895,8 @@ const CategoriesDetailPage: React.FC = () => {
                   return null;
                 });
               })()}
+                </>
+              )}
 
               {/* AI Generate Guide - 页面末尾引导 */}
               <AIGenerateGuide />

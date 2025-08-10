@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage, Language, useAsyncTranslation } from '../../contexts/LanguageContext';
 import { generateLanguagePath } from '../common/LanguageRouter';
 import { Category } from '../../services/categoriesService';
 import { getLocalizedText } from '../../utils/textUtils';
+import { handleCategoryClick } from '../../utils/categoryUtils';
 
 // 导入图标 - 使用正确的 public 路径
 const logo = '/images/logo.svg';
@@ -25,6 +26,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const { t: navT } = useAsyncTranslation('navigation');
+  const navigate = useNavigate();
   // const location = useLocation(); // 暂时不需要
 
   // 获取用户头像，如果是谷歌邮箱用户且没有自定义头像，使用谷歌默认头像
@@ -207,7 +209,7 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
   // 将API数据转换为菜单显示格式
   const getCategoriesMenuData = () => {
     if (categoriesLoading || !categories || categories.length === 0) {
-      return { title: '', links: [] };
+      return { title: '', categories: [] };
     }
 
     // 取前21个分类（3列 × 7个）
@@ -215,9 +217,9 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
     
     return {
       title: navT('categories.popularColoringPages', 'Popular Coloring Pages'),
-      links: displayCategories.map((category: Category) => ({
+      categories: displayCategories.map((category: Category) => ({
         label: getLocalizedText(category.displayName, language) || category.name,
-        url: `/categories/${category.categoryId}`
+        category: category // 传递完整的分类对象
       }))
     };
   };
@@ -294,24 +296,27 @@ const Header: React.FC<HeaderProps> = ({ backgroundColor = 'transparent', catego
                   </p>
                   <div className="grid grid-cols-3 gap-6">
                     {(() => {
-                      // 将链接分成3列
-                      const links = categoriesMenuData.links;
-                      const itemsPerColumn = Math.ceil(links.length / 3);
+                      // 将分类分成3列
+                      const categoryItems = categoriesMenuData.categories;
+                      const itemsPerColumn = Math.ceil(categoryItems.length / 3);
                       const columns = [];
                       
                       for (let i = 0; i < 3; i++) {
-                        const columnLinks = links.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn);
+                        const columnCategories = categoryItems.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn);
                         columns.push(
                           <div key={i}>
                             <ul className="space-y-2">
-                              {columnLinks.map((link, linkIndex) => (
-                                <li key={linkIndex}>
-                                  <Link 
-                                    to={createLocalizedLink(link.url)} 
-                                    className="block py-2 px-3 -mx-3 text-gray-500 hover:text-orange-600 hover:bg-gray-50 transition-colors duration-200 text-sm rounded-md"
+                              {columnCategories.map((categoryItem, categoryIndex) => (
+                                <li key={categoryIndex}>
+                                  <button 
+                                    onClick={() => {
+                                      handleCategoryClick(categoryItem.category, navigate);
+                                      setIsCategoriesDropdownOpen(false);
+                                    }}
+                                    className="block w-full text-left py-2 px-3 -mx-3 text-gray-500 hover:text-orange-600 hover:bg-gray-50 transition-colors duration-200 text-sm rounded-md"
                                   >
-                                    {link.label}
-                                  </Link>
+                                    {categoryItem.label}
+                                  </button>
                                 </li>
                               ))}
                             </ul>

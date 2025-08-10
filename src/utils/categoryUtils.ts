@@ -1,4 +1,7 @@
 import { LocalizedText } from './textUtils';
+import { NavigateFunction } from 'react-router-dom';
+import { navigateWithLanguage } from './navigationUtils';
+import { Category } from '../services/categoriesService';
 
 // 动态映射存储
 let categoryIdToNameMap: Record<string, string> = {};
@@ -69,4 +72,16 @@ export const isCategoryName = (value: string): boolean => {
  */
 export const isCategoryId = (value: string): boolean => {
   return value in categoryIdToNameMap;
+};
+
+/**
+ * 处理分类点击 - 导航到详情页面（使用英文名称）
+ */
+export const handleCategoryClick = (
+  category: Category,
+  navigate: NavigateFunction
+) => {
+  // 使用映射表获取SEO友好的名称
+  const categoryPath = getCategoryNameById(category.categoryId);
+  navigateWithLanguage(navigate, `/categories/${categoryPath}`, { state: { category } });
 }; 

@@ -33,7 +33,7 @@ const PaypalPayment: React.FC<PaypalPaymentProps> = ({
   totalPrice = "156.00",
   discount = "46%",
   planCode = "PRO_MONTHLY",
-  billingPeriod
+  billingPeriod: _billingPeriod = "monthly"
 }) => {
   const { t } = useAsyncTranslation('pricing');
   const { refreshUser } = useAuth();
@@ -84,7 +84,8 @@ const PaypalPayment: React.FC<PaypalPaymentProps> = ({
         paypalRef.current.innerHTML = '';
         
         // 渲染 PayPal 按钮
-        paypal?.Buttons({
+        if (paypal?.Buttons) {
+          paypal.Buttons({
           style: {
             shape: 'rect',
             color: 'blue', 
@@ -132,7 +133,8 @@ const PaypalPayment: React.FC<PaypalPaymentProps> = ({
           onCancel: () => {
             setIsProcessing(false);
           },
-        }).render(paypalRef.current);
+          }).render(paypalRef.current);
+        }
 
         // 初始化 CardFields
         if (paypal.CardFields) {

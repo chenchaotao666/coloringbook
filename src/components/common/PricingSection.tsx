@@ -1,21 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loadScript as loadScriptPaypal } from "@paypal/paypal-js";
 import { Button } from '../ui/button';
 import GenerateFAQ, { FAQData } from '../common/GenerateFAQ';
 import { useAuth } from '../../contexts/AuthContext';
-import { PricingService } from '../../services/pricingService';
-import { ApiError } from '../../utils/apiUtils';
 import { useAsyncTranslation } from '../../contexts/LanguageContext';
-
-// PayPal Types
-import type { PayPalNamespace } from "@paypal/paypal-js";
-
-declare global {
-  interface Window {
-    paypal?: PayPalNamespace | null;
-  }
-}
+import PaypalPayment from './PaypalPayment';
 
 const arrowRightIcon = '/images/arrow-right-outline.svg';
 const checkIcon = '/images/check.svg';
@@ -38,20 +27,20 @@ interface PlanConfig {
 // 套餐配置
 const planConfigs: Record<string, PlanConfig> = {
   'Free': {
-    monthly: { price: 0, credits: 0, code: 'FREE' },
-    yearly: { price: 0, credits: 0, code: 'FREE', monthlyPrice: 0 }
+    monthly: { price: 0, credits: 50, code: 'FREE' },
+    yearly: { price: 0, credits: 50, code: 'FREE', monthlyPrice: 0 }
   },
   'Lite': {
-    monthly: { price: 9.99, credits: 100, code: 'LITE_MONTHLY' },
-    yearly: { price: 83.88, credits: 1200, code: 'LITE_YEARLY', monthlyPrice: 6.99 }
+    monthly: { price: 9.99, credits: 2000, code: 'LITE_MONTHLY' },
+    yearly: { price: 83.88, credits: 2000, code: 'LITE_YEARLY', monthlyPrice: 6.99 }
   },
   'Pro': {
-    monthly: { price: 19.99, credits: 300, code: 'PRO_MONTHLY' },
-    yearly: { price: 167.88, credits: 3600, code: 'PRO_YEARLY', monthlyPrice: 13.99 }
+    monthly: { price: 19.99, credits: 6000, code: 'PRO_MONTHLY' },
+    yearly: { price: 167.88, credits: 6000, code: 'PRO_YEARLY', monthlyPrice: 13.99 }
   },
   'Max': {
-    monthly: { price: 39.99, credits: 1000, code: 'MAX_MONTHLY' },
-    yearly: { price: 335.88, credits: 12000, code: 'MAX_YEARLY', monthlyPrice: 27.99 }
+    monthly: { price: 39.99, credits: 20000, code: 'MAX_MONTHLY' },
+    yearly: { price: 335.88, credits: 20000, code: 'MAX_YEARLY', monthlyPrice: 27.99 }
   }
 };
 
@@ -67,147 +56,6 @@ const FeatureItem = ({ text, highlighted = false }: { text: string, highlighted?
   </div>
 );
 
-// PayPal支付弹窗
-const PayPalModal = ({ 
-  isOpen, 
-  onClose, 
-  planTitle, 
-  price,
-  planCode,
-  paypalLoaded
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  planTitle: string;
-  price: string;
-  planCode: string;
-  paypalLoaded: boolean;
-}) => {
-  const { t } = useAsyncTranslation('pricing');
-  const paypalRef = useRef<HTMLDivElement>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { refreshUser } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isOpen && paypalLoaded && window.paypal && paypalRef.current) {
-      // 清空之前的PayPal按钮
-      paypalRef.current.innerHTML = '';
-      
-      const paypal = window.paypal;
-      if (paypal && paypal.Buttons) {
-        paypal.Buttons({
-          style: {
-            shape: 'rect',
-            color: 'blue',
-            layout: 'vertical',
-            label: 'paypal',
-          },
-          createOrder: async () => {
-            try {
-              setIsProcessing(true);
-              
-              // 从planCode解析planCode和chargeType
-              const planCodeValue = planTitle.toUpperCase() as 'LITE' | 'PRO';
-              const chargeType = planCode.includes('MONTHLY') ? 'Monthly' as const : 'Yearly' as const;
-              
-              const response = await PricingService.createOrder({
-                planCode: planCodeValue,
-                method: 'paypal',
-                chargeType
-                // rechargeAmount 对于 Monthly/Yearly 可省略，系统自动设定金额
-              });
-              return response.id;
-            } catch (error) {
-              console.error('创建订单失败:', error);
-              if (error instanceof ApiError) {
-                alert(`${t('payment.errors.createOrderFailed')}: ${error.message}`);
-              } else {
-                alert(t('payment.errors.tryAgainLater'));
-              }
-              setIsProcessing(false);
-              throw error;
-            }
-          },
-          onApprove: async (data: any) => {
-            try {
-              const { orderID } = data;
-              await PricingService.captureOrder(orderID);
-              
-              // 支付成功，刷新用户信息
-              await refreshUser();
-              
-              // 获取计划配置
-              const config = planConfigs[planTitle as keyof typeof planConfigs];
-              if (config) {
-                // const billingPeriod = planCode.includes('MONTHLY') ? 'monthly' : 'yearly';
-                // const credits = config[billingPeriod].credits; // 未使用的积分变量
-                
-                onClose();
-                // 这里可以显示成功弹窗
-                alert(t('payment.success.message'));
-                navigate('/text-coloring-page');
-              }
-            } catch (error) {
-              console.error('捕获支付失败:', error);
-              if (error instanceof ApiError) {
-                alert(`${t('payment.errors.paymentFailed')}: ${error.message}`);
-              } else {
-                alert(t('payment.errors.tryAgainLater'));
-              }
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-          onError: (error: any) => {
-            console.error('PayPal错误:', error);
-            alert(t('payment.errors.paypalError'));
-            setIsProcessing(false);
-          },
-          onCancel: () => {
-            console.log('支付已取消');
-            setIsProcessing(false);
-          },
-        }).render(paypalRef.current);
-      }
-    }
-  }, [isOpen, paypalLoaded, planCode, planTitle, onClose, refreshUser, navigate]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full">
-        <div className="text-center mb-6">
-          <h3 className="text-lg sm:text-xl font-medium text-[#161616] mb-2">{t('payment.title')}</h3>
-          <p className="text-sm text-[#6B7280]">
-            {planTitle} - ${price}
-          </p>
-        </div>
-
-        <div className="mb-6">
-          <div ref={paypalRef}></div>
-        </div>
-
-        {isProcessing && (
-          <div className="text-center text-sm text-[#6B7280] mb-4">
-            {t('payment.processing')}
-          </div>
-        )}
-
-        <div className="text-center">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isProcessing}
-          >
-            {t('buttons.cancel')}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // 充值成功弹窗
 const SuccessModal = ({ 
@@ -274,35 +122,30 @@ const PricingCard = ({
   popular = false, 
   priceNote, 
   features, 
-  onBuyClick,
-  selected,
-  onClick
+  onBuyClick
 }: { 
   title: string, 
   price: string, 
   popular?: boolean,
   priceNote?: string, 
   features: string[],
-  onBuyClick?: () => void,
-  selected: boolean;
-  onClick: () => void;
+  onBuyClick?: () => void
 }) => {
   const { t } = useAsyncTranslation('pricing');
   
   return (
     <div
-      className={`w-full sm:w-[350px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden transition-all duration-200 border-2 ${
+      className={`w-full max-w-[350px] p-6 sm:p-8 bg-[#F9FAFB] rounded-2xl relative overflow-hidden transition-all duration-200 border-2 ${
         popular ? 'border-[#FF5C07]' : 'border-[#EDEEF0]'
-      } ${selected ? 'border-[#FF5C07] shadow-lg' : ''} cursor-pointer hover:shadow-lg`}
-      onClick={onClick}
+      } hover:shadow-lg`}
     >
       {popular && (
         <div className="absolute -top-1 -right-1 px-4 sm:px-6 py-2 bg-[#6200E2] text-white font-bold italic text-xs sm:text-sm rounded-bl-2xl rounded-tr-2xl">
           {t('plans.lite.popular')}
         </div>
       )}
-      <div className="flex flex-col items-center gap-6 sm:gap-8">
-        <div className="flex flex-col items-center gap-4 sm:gap-6 w-full">
+      <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-[8px] w-full">
           <div className="text-center text-[#161616] text-2xl sm:text-4xl font-bold">
             {title}
           </div>
@@ -332,8 +175,7 @@ const PricingCard = ({
             className={`w-full h-12 sm:h-[60px] text-lg sm:text-xl font-bold ${
               !popular ? 'border border-[#818181] bg-white text-[#161616] hover:bg-gray-200' : ''
             }`}
-            onClick={(e) => {
-              e.stopPropagation(); // 阻止事件冒泡
+            onClick={() => {
               if (onBuyClick) onBuyClick();
             }}
           >
@@ -399,39 +241,12 @@ const PricingSection: React.FC<PricingSectionProps> = ({
     }
   ];
   
-  // 默认选择Pro计划和月付
-  const [selectedPlan, setSelectedPlan] = useState('Pro');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
-  const [showPayPalModal, setShowPayPalModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successCredits] = useState(0);
   const [currentPlan, setCurrentPlan] = useState<string>('');
   const [currentPlanCode, setCurrentPlanCode] = useState<string>('');
-
-  // 加载PayPal SDK
-  const [paypalLoaded, setPaypalLoaded] = useState(false);
-  const loadPaypal = useRef<Promise<any> | null>(null);
-
-  useEffect(() => {
-    const initPayPal = async () => {
-      try {
-        if (!loadPaypal.current) {
-          loadPaypal.current = loadScriptPaypal({
-            clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || 'YOUR_PAYPAL_CLIENT_ID',
-            components: "buttons",
-          });
-        }
-        
-        await loadPaypal.current;
-        setPaypalLoaded(true);
-        console.log('PayPal SDK loaded successfully');
-      } catch (error) {
-        console.error('Failed to load PayPal SDK:', error);
-      }
-    };
-
-    initPayPal();
-  }, []);
+  const [showPaypalPayment, setShowPaypalPayment] = useState(false);
 
   // Function to handle billing period change
   const handleBillingPeriodChange = (period: 'monthly' | 'yearly') => {
@@ -456,8 +271,31 @@ const PricingSection: React.FC<PricingSectionProps> = ({
       const planCode = config[billingPeriod].code;
       setCurrentPlan(planTitle);
       setCurrentPlanCode(planCode);
-      setShowPayPalModal(true);
+      setShowPaypalPayment(true);
     }
+  };
+
+  // 处理返回套餐按钮点击
+  const handleBackToPricing = () => {
+    setShowPaypalPayment(false);
+  };
+
+  // 获取当前计划的积分数
+  const getCurrentCredits = () => {
+    const config = planConfigs[currentPlan as keyof typeof planConfigs];
+    if (config) {
+      return config[billingPeriod].credits;
+    }
+    return 0;
+  };
+
+  // 获取当前计划的月付价格
+  const getCurrentMonthlyPrice = () => {
+    const config = planConfigs[currentPlan as keyof typeof planConfigs];
+    if (config) {
+      return billingPeriod === 'monthly' ? config.monthly.price.toFixed(2) : config.yearly.monthlyPrice.toFixed(2);
+    }
+    return '';
   };
 
   // 获取当前计划的价格
@@ -484,6 +322,8 @@ const PricingSection: React.FC<PricingSectionProps> = ({
         return translations?.plans?.lite?.features || [];
       case 'Pro':
         return translations?.plans?.pro?.features || [];
+      case 'Max':
+        return translations?.plans?.max?.features || [];
       default:
         return [];
     }
@@ -514,62 +354,92 @@ const PricingSection: React.FC<PricingSectionProps> = ({
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#161616] mb-4 sm:mb-12 md:mb-16 text-center">{t('title')}</h1>
         )}
         
-        {/* Toggle for Monthly/Yearly */}
-        <div className="h-10 sm:h-12 bg-[#F2F3F5] rounded-3xl inline-flex items-center p-1 mb-8 sm:mb-12 md:mb-16">
-          <div 
-            className={`w-24 sm:w-[150px] h-8 sm:h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
-              billingPeriod === 'monthly' ? 'bg-white' : 'hover:bg-white/50'
-            }`}
-            onClick={() => handleBillingPeriodChange('monthly')}
+        {/* 内容容器 */}
+        <div className="relative w-full max-w-[1450px] mx-auto overflow-hidden">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ 
+              transform: showPaypalPayment ? 'translateX(-50%)' : 'translateX(0%)',
+              width: '200%'
+            }}
           >
-            <div className={`text-xs sm:text-sm font-bold ${billingPeriod === 'monthly' ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
-              {t('billing.monthly')}
+            {/* 定价内容面板 */}
+            <div className="w-1/2 flex-shrink-0 px-8">
+              <div className="flex flex-col items-center">
+              {/* Toggle for Monthly/Yearly */}
+              <div className="h-10 sm:h-12 bg-[#F2F3F5] rounded-3xl inline-flex items-center p-1 mb-8 sm:mb-12 md:mb-16">
+                <div 
+                  className={`w-24 sm:w-[150px] h-8 sm:h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
+                    billingPeriod === 'monthly' ? 'bg-white' : 'hover:bg-white/50'
+                  }`}
+                  onClick={() => handleBillingPeriodChange('monthly')}
+                >
+                  <div className={`text-xs sm:text-sm font-bold ${billingPeriod === 'monthly' ? 'text-[#FF5C07]' : 'text-[#6B7280]'}`}>
+                    {t('billing.monthly')}
+                  </div>
+                </div>
+                <div 
+                  className={`w-32 sm:w-[150px] h-8 sm:h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
+                    billingPeriod === 'yearly' ? 'bg-white' : 'hover:bg-white/50'
+                  }`}
+                  onClick={() => handleBillingPeriodChange('yearly')}
+                >
+                  <div className={`text-xs sm:text-sm ${billingPeriod === 'yearly' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280] font-medium'}`}>
+                    {t('billing.yearly')} {t('billing.discount')}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Pricing Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 justify-items-center mb-8 sm:mb-12 md:mb-16 w-full max-w-[1450px]">
+                {Object.entries(planConfigs).map(([planKey, plan]) => (
+                  <PricingCard
+                    key={planKey}
+                    title={planKey}
+                    price={planKey === 'Free' ? t('plans.free.title') : billingPeriod === 'monthly' ? plan.monthly.price.toFixed(2) : plan.yearly.monthlyPrice.toFixed(2)}
+                    priceNote={billingPeriod === 'yearly' && planKey !== 'Free' ? `$${plan[billingPeriod].price.toFixed(2)}/ ${t('billing.yearly')}` : undefined}
+                    popular={planKey === 'Pro'}
+                    features={getFeatures(planKey)}
+                    onBuyClick={() => handleBuyClick(planKey)}
+                  />
+                ))}
+              </div>
+              
+                {/* Payment Methods */}
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                  <div className="text-[#6B7280] text-xs sm:text-sm mb-2 sm:mb-0">{t('security.title')}</div>
+                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                    <img src={protectIcon} alt="Secure" className="h-4 sm:h-6" />
+                    <div className="text-[#6B7280] text-xs sm:text-sm">{t('security.description')}</div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div 
-            className={`w-32 sm:w-[150px] h-8 sm:h-10 rounded-3xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
-              billingPeriod === 'yearly' ? 'bg-white' : 'hover:bg-white/50'
-            }`}
-            onClick={() => handleBillingPeriodChange('yearly')}
-          >
-            <div className={`text-xs sm:text-sm ${billingPeriod === 'yearly' ? 'text-[#FF5C07] font-bold' : 'text-[#6B7280] font-medium'}`}>
-              {t('billing.yearly')} {t('billing.discount')}
+
+            {/* PayPal Payment Component */}
+            <div className="w-1/2 flex-shrink-0">
+              <PaypalPayment
+                onBack={handleBackToPricing}
+                planTitle={currentPlan}
+                credits={getCurrentCredits()}
+                monthlyPrice={getCurrentMonthlyPrice()}
+                totalPrice={getCurrentPrice()}
+                discount="46%"
+                planCode={currentPlanCode}
+                billingPeriod={billingPeriod}
+              />
             </div>
-          </div>
-        </div>
-        
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center mb-8 sm:mb-12 md:mb-16 w-full max-w-[1450px]">
-          {Object.entries(planConfigs).map(([planKey, plan]) => (
-            <PricingCard
-              key={planKey}
-              title={planKey}
-              price={planKey === 'Free' ? t('plans.free.title') : billingPeriod === 'monthly' ? plan.monthly.price.toFixed(2) : plan.yearly.monthlyPrice.toFixed(2)}
-              priceNote={billingPeriod === 'yearly' && planKey !== 'Free' ? `$${plan[billingPeriod].price.toFixed(2)}/ ${t('billing.yearly')}` : undefined}
-              popular={planKey === 'Pro'}
-              features={getFeatures(planKey)}
-              onBuyClick={() => handleBuyClick(planKey)}
-              selected={selectedPlan === planKey}
-              onClick={() => setSelectedPlan(planKey)}
-            />
-          ))}
-        </div>
-        
-        {/* Payment Methods */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-4 sm:mb-16 md:mb-20 px-4">
-          <div className="text-[#6B7280] text-xs sm:text-sm mb-2 sm:mb-0">{t('security.title')}</div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
-            <img src={protectIcon} alt="Secure" className="h-4 sm:h-6" />
-            <div className="text-[#6B7280] text-xs sm:text-sm">{t('security.description')}</div>
           </div>
         </div>
         
         {/* FAQ Section - 可选 */}
         {showFAQ && (
-          <GenerateFAQ 
-            faqData={pricingFAQData} 
-            title={t('faq.title')}
-          />
+          <div className="mt-[4rem]">
+            <GenerateFAQ 
+              faqData={pricingFAQData} 
+              title={t('faq.title')}
+            />
+          </div>
         )}
         
         {/* CTA Section - 可选 */}
@@ -593,15 +463,6 @@ const PricingSection: React.FC<PricingSectionProps> = ({
         )}
       </div>
 
-      {/* PayPal支付弹窗 */}
-      <PayPalModal
-        isOpen={showPayPalModal}
-        onClose={() => setShowPayPalModal(false)}
-        planTitle={currentPlan}
-        price={getCurrentPrice()}
-        planCode={currentPlanCode}
-        paypalLoaded={paypalLoaded}
-      />
 
       {/* 充值成功弹窗 */}
       <SuccessModal

@@ -4,63 +4,48 @@
   "billing": {
     "monthly": "Month",
     "yearly": "Year",
-    "discount": "(Save 20%)"
+    "discount": "(Save 30%)"
   },
   "plans": {
     "free": {
       "title": "Free",
       "features": [
         "50 credits per month",
-        "Basic image generation",
-        "Standard quality",
-        "Community support"
+        "High quality generation",
+        "Standard support",
+        "Community access"
       ]
     },
     "lite": {
       "title": "Lite",
-      "price": {
-        "monthly": "$9.99/month",
-        "yearly": "$99.99/year"
-      },
-      "credits": {
-        "monthly": "300 credits/month",
-        "yearly": "3600 credits/year"
-      },
       "features": [
-        "300 credits per month",
-        "High-quality generation",
-        "Priority processing",
+        "2000 credits per month",
+        "High quality generation",
+        "Advanced features", 
         "Email support",
         "Commercial license"
       ],
-      "popular": "Most Popular",
-      "priceNote": {
-        "monthly": "For first time, then $10/month",
-        "yearly": "For first time, then $120/year (Save 20%)"
-      }
+      "popular": "Most Popular"
     },
     "pro": {
       "title": "Pro",
-      "price": {
-        "monthly": "$19.99/month",
-        "yearly": "$199.99/year"  
-      },
-      "credits": {
-        "monthly": "600 credits/month",
-        "yearly": "7200 credits/year"
-      },
       "features": [
-        "600 credits per month",
-        "Premium quality",
-        "Fastest processing",
-        "Priority support",
+        "6000 credits per month",
+        "High quality generation",
         "Advanced features",
+        "Email support", 
         "Commercial license"
-      ],
-      "priceNote": {
-        "monthly": "For first time, then $20/month",
-        "yearly": "For first time, then $240/year (Save 20%)"
-      }
+      ]
+    },
+    "max": {
+      "title": "Max", 
+      "features": [
+        "20000 credits per month",
+        "High quality generation",
+        "Advanced features",
+        "Email support",
+        "Commercial license"
+      ]
     }
   },
   "buttons": {

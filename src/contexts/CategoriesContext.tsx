@@ -23,7 +23,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
 
 export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({ children }) => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // 初始状态为true，表示需要加载
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { language } = useLanguage();

@@ -35,8 +35,6 @@ const ImageDetailPage: React.FC = () => {
   });
   
   const leftImagesRef = useRef<HTMLDivElement>(null);
-  const loadingRef = useRef<string>(''); // 防止重复加载
-
 
   // 解析 additionalInfo，直接从多语言对象中获取本地化文本
   const parseAdditionalInfo = (additionalInfo: any) => {
@@ -65,24 +63,17 @@ const ImageDetailPage: React.FC = () => {
     const loadImageData = async () => {
       if (!imageId) return;
 
-      // 防止重复加载：如果已经为当前imageId和categoryId组合正在加载，则跳过
-      const currentKey = `${imageId}-${categoryId || 'no-category'}`;
-      if (loadingRef.current === currentKey) {
-        console.log('Already loading for', currentKey, 'skipping...');
-        return;
-      }
-
-      // 设置当前加载的key
-      loadingRef.current = currentKey;
-
       try {
         setIsImageLoading(true);
         
         // 如果URL中有categoryId，使用优化的加载逻辑
         if (categoryId) {
           // 步骤1：使用categories context获取全量分类数据
-          if (categoriesLoading || !allCategories || allCategories.length === 0) {
-            console.log('Categories still loading, waiting...');
+          if (categoriesLoading) {
+            return;
+          }
+
+          if (allCategories.length === 0) {
             setIsImageLoading(false);
             return;
           }
@@ -222,9 +213,6 @@ const ImageDetailPage: React.FC = () => {
       } catch (error) {
         console.error('Failed to load image data:', error);
         setIsImageLoading(false);
-      } finally {
-        // 重置加载状态，允许下次加载
-        loadingRef.current = '';
       }
     };
 

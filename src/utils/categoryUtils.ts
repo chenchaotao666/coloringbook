@@ -35,15 +35,27 @@ export const getEnglishNameFromCategory = (displayName: LocalizedText | string):
 /**
  * 更新分类映射表（从API数据动态生成）
  */
-export const updateCategoryMappings = (categories: Array<{categoryId: string, displayName: LocalizedText | string}>) => {
-  categoryIdToNameMap = {};
-  categoryNameToIdMap = {};
+export const updateCategoryMappings = (categories: Array<{categoryId: string, displayName: LocalizedText | string}>, append: boolean = false) => {
+  if (!append) {
+    // 默认行为：重置映射表
+    categoryIdToNameMap = {};
+    categoryNameToIdMap = {};
+  }
   
   categories.forEach(category => {
     const seoName = getEnglishNameFromCategory(category.displayName);
     categoryIdToNameMap[category.categoryId] = seoName;
     categoryNameToIdMap[seoName] = category.categoryId;
   });
+};
+
+/**
+ * 添加单个分类到映射表
+ */
+export const addCategoryToMappings = (category: {categoryId: string, displayName: LocalizedText | string}) => {
+  const seoName = getEnglishNameFromCategory(category.displayName);
+  categoryIdToNameMap[category.categoryId] = seoName;
+  categoryNameToIdMap[seoName] = category.categoryId;
 };
 
 /**

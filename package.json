@@ -31,11 +31,12 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "tsc -b && npx vite build",
+    "build": "npm run generate-sitemap && tsc -b && npx vite build",
     "vercel-build": "npm run build",
     "netlify-build": "npm run build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "check-google-oauth": "node scripts/check-google-oauth.cjs"
+    "check-google-oauth": "node scripts/check-google-oauth.cjs",
+    "generate-sitemap": "node scripts/generate-sitemap.cjs"
   }
 }

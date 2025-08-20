@@ -1,44 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
-// https://vitejs.dev/config/
-// 动态生成robots.txt的插件
-const generateRobotsPlugin = () => {
-    return {
-        name: 'generate-robots',
-        writeBundle() {
-            const isDevelopment = process.env.NODE_ENV === 'development';
-            const isStaging = process.env.VITE_ENV === 'staging';
-            
-            let robotsContent;
-            
-            if (isDevelopment || isStaging) {
-                // 开发环境或测试环境 - 阻止搜索引擎
-                robotsContent = `User-agent: *
-Disallow: /
-
-# 阻止所有搜索引擎索引整个网站
-# 开发/测试阶段使用`;
-            } else {
-                // 生产环境 - 自定义robots配置
-                robotsContent = `User-agent: *
-Disallow:
-
-Sitemap: https://colorpages.art/sitemap.xml
-`;
-            }
-            
-            // 写入robots.txt到构建目录
-            const robotsPath = join(process.cwd(), 'dist', 'robots.txt');
-            writeFileSync(robotsPath, robotsContent);
-            console.log('✅ robots.txt generated for', isDevelopment ? 'development' : isStaging ? 'staging' : 'production');
-        }
-    };
-};
 
 export default defineConfig({
-    plugins: [react(), generateRobotsPlugin()],
+    plugins: [react()],
     base: '/',
     build: {
         outDir: 'dist',

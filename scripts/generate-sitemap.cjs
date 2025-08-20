@@ -241,7 +241,7 @@ async function getDynamicRoutes() {
         if (seoName && seoName.length > 0) {
           dynamicRoutes.push({
             path: `/categories/${seoName}`,
-            priority: 0.7,
+            priority: 0.8,
             changefreq: 'weekly',
             multilang: true
           });
@@ -278,7 +278,7 @@ async function getDynamicRoutes() {
             const encodedSlug = encodeURIComponent(post.slug);
             dynamicRoutes.push({
               path: `/blog/${encodedSlug}`,
-              priority: 0.6,
+              priority: 0.7,
               changefreq: 'monthly',
               multilang: true
             });

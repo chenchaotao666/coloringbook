@@ -25,7 +25,7 @@ Disallow: /
                 robotsContent = `User-agent: *
 Disallow:
 
-Sitemap: https://colorpages.art//sitemap.xml
+Sitemap: https://colorpages.art/sitemap.xml
 `;
             }
             

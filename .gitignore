@@ -101,3 +101,5 @@ public/uploads/
 *.tar.gz
 *.rar 
 .vercel
+
+sitemap.xml

@@ -1,16 +1,4 @@
 User-agent: *
-Disallow: /
+Disallow:
 
-# 阻止所有搜索引擎索引整个网站
-# 开发阶段使用，正式发布时可以删除或修改
-
-# 如果将来需要允许索引，可以使用以下配置：
-# User-agent: *
-# Allow: /
-# Disallow: /admin/
-# Disallow: /login
-# Disallow: /register
-# Disallow: /profile
-# Disallow: /generate
-# 
-# Sitemap: https://your-domain.com/sitemap.xml 
+Sitemap: https://colorpages.art/sitemap.xml

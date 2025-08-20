@@ -59,7 +59,8 @@ Disallow: /
 User-agent: meta-externalagent
 Disallow: /
 
-# END Cloudflare Managed Content`;
+# END Cloudflare Managed Content
+`;
             }
             
             // 写入robots.txt到构建目录

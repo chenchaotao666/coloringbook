@@ -303,7 +303,6 @@ const ImageDetailPage: React.FC = () => {
         keywords={image ? `${getLocalizedText(image.title, language).toLowerCase()} coloring page, free printable coloring page, ${getLocalizedText(image.title, language).toLowerCase()} coloring sheet` : 'coloring page, printable coloring page'}
         ogTitle={image ? `${getLocalizedText(image.title, language)} - Free Coloring Page` : 'Coloring Page'}
         ogDescription={image ? `Download free printable ${getLocalizedText(image.title, language).toLowerCase()} coloring page. High-quality PDF and PNG formats available instantly.` : 'Download free printable coloring pages.'}
-        noIndex={true}
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}

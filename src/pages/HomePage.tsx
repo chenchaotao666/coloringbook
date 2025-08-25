@@ -80,7 +80,6 @@ const HomePage = () => {
         keywords={tCommon('seo.home.keywords')}
         ogTitle={tCommon('seo.home.title')}
         ogDescription={tCommon('seo.home.description')}
-        noIndex={true}
       />
       <Layout>
         <div className="w-full min-w-0">

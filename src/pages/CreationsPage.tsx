@@ -187,7 +187,6 @@ const CreationsPage: React.FC<CreationsPageProps> = () => {
         keywords={tCommon('seo.creations.keywords', 'AI coloring gallery, user creations, coloring page inspiration, AI-generated art, community coloring pages')}
         ogTitle={tCommon('seo.creations.title', 'AI-Generated Coloring Pages Gallery - User Creations & Inspiration')}
         ogDescription={tCommon('seo.creations.description', 'Explore amazing AI-generated coloring pages created by our community. Get inspired and discover new ideas for your next coloring project.')}
-        noIndex={true}
       />
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-10">

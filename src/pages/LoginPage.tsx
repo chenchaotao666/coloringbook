@@ -134,7 +134,6 @@ const LoginPage: React.FC = () => {
         keywords="login, AI coloring pages, account access"
         ogTitle={`${tForms('auth.loginTitle', 'Login')} - AI Coloring Page Generator`}
         ogDescription={tForms('auth.loginTitle', 'Login') + " to your account to access premium AI coloring page generation features."}
-        noIndex={true}
       />
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
         {/* Logo */}

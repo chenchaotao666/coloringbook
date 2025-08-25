@@ -1723,7 +1723,6 @@ const GeneratePage: React.FC<GeneratePageProps> = ({ initialTab = 'text' }) => {
         keywords={t('seo.generate.keywords')}
         ogTitle={t('seo.generate.title')}
         ogDescription={t('seo.generate.description')}
-        noIndex={true}
       />
       {/* 错误提示 */}
       {/* {error && (

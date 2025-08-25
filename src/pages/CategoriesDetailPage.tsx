@@ -685,7 +685,6 @@ const CategoriesDetailPage: React.FC = () => {
         keywords={category ? `${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages, free printable coloring pages, ${getLocalizedText(category.displayName, language).toLowerCase()} coloring sheets` : 'coloring pages, printable coloring pages'}
         ogTitle={category ? `${categoryImages.length} ${getLocalizedText(category.seoTitle || category.displayName, language)}` : 'Category - Free Coloring Pages'}
         ogDescription={category ? getLocalizedText(category.seoDesc || `Download free printable ${getLocalizedText(category.displayName, language).toLowerCase()} coloring pages. High-quality PDF and PNG formats available instantly.`, language) : 'Browse free printable coloring pages by category.'}
-        noIndex={true}
       />
       <div className="w-full bg-[#F9FAFB] pb-4 md:pb-20 relative">
         {/* Breadcrumb - 始终显示 */}

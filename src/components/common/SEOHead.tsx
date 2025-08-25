@@ -9,7 +9,6 @@ interface SEOHeadProps {
   ogDescription?: string;
   ogImage?: string;
   canonicalUrl?: string;
-  noIndex?: boolean; // 是否阻止搜索引擎索引
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
@@ -20,7 +19,6 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   ogDescription,
   ogImage,
   canonicalUrl,
-  noIndex = true // 默认阻止索引
 }) => {
   const { language } = useLanguage();
 
@@ -55,17 +53,6 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     // 设置关键词
     if (keywords) {
       updateOrCreateMeta('keywords', keywords);
-    }
-
-    // 设置 SEO 索引配置
-    if (noIndex) {
-      updateOrCreateMeta('robots', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
-      updateOrCreateMeta('googlebot', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
-      updateOrCreateMeta('bingbot', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
-    } else {
-      updateOrCreateMeta('robots', 'index, follow');
-      updateOrCreateMeta('googlebot', 'index, follow');
-      updateOrCreateMeta('bingbot', 'index, follow');
     }
 
     // 设置语言
@@ -125,7 +112,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     updateOrCreateLink('apple-touch-icon', '/images/logo.svg');
     updateOrCreateLink('shortcut icon', '/images/logo.svg');
 
-  }, [title, description, keywords, ogTitle, ogDescription, ogImage, canonicalUrl, noIndex, language]);
+  }, [title, description, keywords, ogTitle, ogDescription, ogImage, canonicalUrl, language]);
 
   return null; // 这个组件不渲染任何内容
 };
